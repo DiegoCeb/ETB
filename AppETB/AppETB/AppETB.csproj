@@ -11,10 +11,10 @@
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <Deterministic>true</Deterministic>
+    <Deterministic>false</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -22,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -48,6 +49,20 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\App.ControlInsumos\App.ControlInsumos.csproj">
+      <Project>{4c0ff5ac-7ef4-4ada-a1e3-c707587efea4}</Project>
+      <Name>App.ControlInsumos</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\App.GestionProcesos\App.ControlProcesos.csproj">
+      <Project>{40f2f888-598c-4e6e-98ea-d6487974529b}</Project>
+      <Name>App.ControlProcesos</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\App.Variables\App.Variables.csproj">
+      <Project>{0f950ad7-bb7a-4b67-ba38-164caae7b775}</Project>
+      <Name>App.Variables</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
