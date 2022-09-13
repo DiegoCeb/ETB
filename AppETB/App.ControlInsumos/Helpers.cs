@@ -20,23 +20,38 @@ namespace App.ControlInsumos
         public static string RutaProceso { get; set; }
         public static string RutaOriginales { get; set; }
 
-        public static dynamic CargueDinamicoInsumos<TEntity>(string pIdentificadorInsumo, string pRutaInsumo, TEntity pObjEntradaRetorno, object[] pCondiciones)
+        public static dynamic CargueDinamicoInsumos<TEntity>(string pIdentificadorInsumo, string pRutaInsumo, TEntity pObjEntradaRetorno)
         {
-            object Condicion = "{X}.SubString(0, 4) == {DatoVariable}";
-            object CondicionDos = "{X}.SubString(4, 8) == {DatoVariable}";
-            object Retorno = "{X}.SubString(14)";
+            var newObject = pObjEntradaRetorno.GetType();
 
             if (Enum.IsDefined(typeof(Variables.Insumos), pIdentificadorInsumo))
             {
                 List<string> DatosInsumo = File.ReadAllLines(pRutaInsumo, Encoding.Default).ToList();
 
-                //var result = from datos in DatosInsumo
-                //             where Condicion select datos;
+                if (pIdentificadorInsumo == Variables.Insumos.ExcluirServiciosAdicionales.ToString())
+                {
+                    var result = from datos in DatosInsumo
+                                 where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
+                                 select datos;
 
+                    newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.ToList(), null);
+
+                    DatosInsumo.Clear();
+
+                    return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
+                }
+                else if (true)
+                {
+
+                }
 
             }
+            else
+            {
+                //TODO: No esta configurado el insumo no se puede cargar
+            }
 
-            return null;
+            return pObjEntradaRetorno;
         }
 
         /// <summary>

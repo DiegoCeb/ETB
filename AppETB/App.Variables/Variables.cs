@@ -109,10 +109,10 @@ namespace App.Variables
         PROCUNI = 31
     }
 
-    public struct EstructuraExclusionSA
+    public class EstructuraExclusionSA
     {
-        public string CruceCedulaCuenta;
-        public List<string> Resultados;
+        public string Cruce { get; set; }
+        public List<string> Resultados { get; set; }
     }
 
 }

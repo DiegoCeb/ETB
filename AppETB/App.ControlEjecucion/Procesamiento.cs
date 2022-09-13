@@ -67,8 +67,13 @@ namespace App.ControlEjecucion
             } 
             #endregion
 
-            //Ejemplo 11C101
-            var datosInsumoServicioExclusion = DiccionarioInsumos[App.Variables.RxGeneral._21_DISTRIBUCION_DUAL][Variables.Insumos.distribucion_especial.ToString()];
+            //Ejemplo
+            var datosInsumoServicioExclusion = DiccionarioInsumos[App.Variables.RxGeneral._2_SERVICIOS_ADICIONALES_TV][Variables.Insumos.ExcluirServiciosAdicionales.ToString()];
+
+            datosInsumoServicioExclusion.EstructuraSalida = ControlInsumos.Helpers.CargueDinamicoInsumos<Variables.EstructuraExclusionSA>(Variables.Insumos.ExcluirServiciosAdicionales.ToString(),
+                datosInsumoServicioExclusion.RutaInsumo, new Variables.EstructuraExclusionSA { Cruce = "163700573" } );
+
+
         }
 
     }
