@@ -15,6 +15,7 @@ namespace App.ControlEjecucion
         public Procesamiento()
         {
             //Cargue Lista Insumos para despues usar en el formateo
+            //
             CargueGeneralInsumos(Utilidades.LeerAppConfig("RutaInsumos"));
         }
 
@@ -72,7 +73,6 @@ namespace App.ControlEjecucion
 
             datosInsumoServicioExclusion.EstructuraSalida = ControlInsumos.Helpers.CargueDinamicoInsumos<Variables.EstructuraExclusionSA>(Variables.Insumos.ExcluirServiciosAdicionales.ToString(),
                 datosInsumoServicioExclusion.RutaInsumo, new Variables.EstructuraExclusionSA { Cruce = "163700573" } );
-
 
         }
 

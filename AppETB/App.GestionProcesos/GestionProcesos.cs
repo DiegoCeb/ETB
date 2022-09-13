@@ -27,9 +27,9 @@ namespace App.ControlProcesos
 
         public void Ejecutar(string pProceso)
         {
-            //Creacion de carpeta de salida Dinamica en base al proceso
+            //TODO: Creacion de carpeta de salida Dinamica en base al proceso
             Helpers.RutaProceso = Directory.CreateDirectory($"{Utilidades.LeerAppConfig("RutaSalida")}\\{DateTime.Now:yyyyMMdd}").FullName;
-            //Mover archivos de entrada a original y trabajar con los de original para liberar entrada
+            //TODO: Mover archivos de entrada a original y los la carpeta completa de insumos, guardar en variable y enviarla al constructor de procesamiento y trabajar con los de original para liberar entrada
 
             //Identificar Proceso para enviar a Procesamiento
             switch (pProceso)

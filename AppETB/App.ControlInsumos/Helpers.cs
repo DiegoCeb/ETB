@@ -22,6 +22,9 @@ namespace App.ControlInsumos
 
         public static dynamic CargueDinamicoInsumos<TEntity>(string pIdentificadorInsumo, string pRutaInsumo, TEntity pObjEntradaRetorno)
         {
+            //TODO: Catch Recursivo cuando el archivo esta siendo utilizado en otro proceso con limite de reintentos y 3 segundos de espera
+            //TODO: Finally limpiar lista de datos
+
             var newObject = pObjEntradaRetorno.GetType();
 
             if (Enum.IsDefined(typeof(Variables.Insumos), pIdentificadorInsumo))
