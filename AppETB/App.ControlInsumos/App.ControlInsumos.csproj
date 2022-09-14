@@ -48,21 +48,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClausulaPermanencia.cs" />
-    <Compile Include="CodigosBD.cs" />
-    <Compile Include="DistribucionDobleRevchain.cs" />
-    <Compile Include="Doc1Participaciones.cs" />
+    <Compile Include="AsignacionCartas.cs" />
+    <Compile Include="BaseCupones.cs" />
+    <Compile Include="BaseTranspromo.cs" />
+    <Compile Include="CicloCourier.cs" />
+    <Compile Include="ClientesEmailPrivado.cs" />
+    <Compile Include="ClientesEspecialesDatos.cs" />
+    <Compile Include="CuentasExtraer.cs" />
+    <Compile Include="Cuentas_LTE_96_97.cs" />
+    <Compile Include="DistribucionEspecial.cs" />
     <Compile Include="EstructuraExclusionSA.cs" />
-    <Compile Include="ETBCartasMora.cs" />
-    <Compile Include="ExclusionPagoInmediato.cs" />
-    <Compile Include="FADistribucionEmailRevchain.cs" />
+    <Compile Include="ETB_Horas_Exp.cs" />
+    <Compile Include="FechaPagoFijas.cs" />
     <Compile Include="Helpers.cs" />
-    <Compile Include="LocBar.cs" />
-    <Compile Include="MensajesClientesSuspendidos.cs" />
-    <Compile Include="Procuni.cs" />
+    <Compile Include="NivelReclamacion.cs" />
+    <Compile Include="PromosionesLTE.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TelefonosPrivadosRevchain.cs" />
-    <Compile Include="Tramites.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\App.Variables\App.Variables.csproj">
