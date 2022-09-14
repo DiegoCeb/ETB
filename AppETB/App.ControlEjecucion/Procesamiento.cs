@@ -73,6 +73,11 @@ namespace App.ControlEjecucion
             datosInsumoServicioExclusion.EstructuraSalida = ControlInsumos.Helpers.CargueDinamicoInsumos<App.ControlInsumos.EstructuraExclusionSA>(Variables.Insumos.ExcluirServiciosAdicionales.ToString(),
                 datosInsumoServicioExclusion.RutaInsumo, new App.ControlInsumos.EstructuraExclusionSA { Cruce = "163700573" } );
 
+            var datospruebas = DiccionarioInsumos[App.Variables.RxGeneral._51_PROCUNI][Variables.Insumos.PROCUNI.ToString()];
+
+            datospruebas.EstructuraSalida = ControlInsumos.Helpers.CargueDinamicoInsumos<App.ControlInsumos.Procuni>(Variables.Insumos.PROCUNI.ToString(),
+                datospruebas.RutaInsumo, new App.ControlInsumos.Procuni { Cruce = "12051743217" });
+
         }
 
     }

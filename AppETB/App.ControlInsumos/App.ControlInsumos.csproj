@@ -48,9 +48,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClausulaPermanencia.cs" />
+    <Compile Include="CodigosBD.cs" />
+    <Compile Include="DistribucionDobleRevchain.cs" />
+    <Compile Include="Doc1Participaciones.cs" />
     <Compile Include="EstructuraExclusionSA.cs" />
+    <Compile Include="ETBCartasMora.cs" />
+    <Compile Include="ExclusionPagoInmediato.cs" />
+    <Compile Include="FADistribucionEmailRevchain.cs" />
     <Compile Include="Helpers.cs" />
+    <Compile Include="LocBar.cs" />
+    <Compile Include="MensajesClientesSuspendidos.cs" />
+    <Compile Include="Procuni.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TelefonosPrivadosRevchain.cs" />
+    <Compile Include="Tramites.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\App.Variables\App.Variables.csproj">
