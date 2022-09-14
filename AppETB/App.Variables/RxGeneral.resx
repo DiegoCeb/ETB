@@ -153,6 +153,9 @@
   <data name="25_CLAUSULAS_PERMANENCIAS" xml:space="preserve">
     <value>25_CLAUSULAS_PERMANENCIAS</value>
   </data>
+  <data name="27_PROMOSIONES_LTE" xml:space="preserve">
+    <value>27_PROMOSIONES_LTE</value>
+  </data>
   <data name="29_DISTRIBUCION_SMS" xml:space="preserve">
     <value>29_DISTRIBUCION_SMS</value>
   </data>

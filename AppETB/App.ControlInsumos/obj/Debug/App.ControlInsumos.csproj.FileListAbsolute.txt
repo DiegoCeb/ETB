@@ -20,3 +20,13 @@ C:\Proyectos\ETB\AppETB\App.ControlInsumos\obj\Debug\App.ControlInsumos.csproj.C
 C:\Proyectos\ETB\AppETB\App.ControlInsumos\obj\Debug\App.ControlInsumos.csproj.CopyComplete
 C:\Proyectos\ETB\AppETB\App.ControlInsumos\obj\Debug\App.ControlInsumos.dll
 C:\Proyectos\ETB\AppETB\App.ControlInsumos\obj\Debug\App.ControlInsumos.pdb
+C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.ControlInsumos\bin\Debug\App.ControlInsumos.dll
+C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.ControlInsumos\bin\Debug\App.ControlInsumos.pdb
+C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.ControlInsumos\bin\Debug\App.Variables.dll
+C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.ControlInsumos\bin\Debug\App.Variables.pdb
+C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.ControlInsumos\bin\Debug\DLL_Utilidades.pdb
+C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.ControlInsumos\obj\Debug\App.ControlInsumos.csproj.AssemblyReference.cache
+C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.ControlInsumos\obj\Debug\App.ControlInsumos.csproj.CoreCompileInputs.cache
+C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.ControlInsumos\obj\Debug\App.ControlInsumos.csproj.CopyComplete
+C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.ControlInsumos\obj\Debug\App.ControlInsumos.dll
+C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.ControlInsumos\obj\Debug\App.ControlInsumos.pdb

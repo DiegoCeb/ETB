@@ -178,6 +178,15 @@ namespace App.Variables {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a 27_PROMOSIONES_LTE.
+        /// </summary>
+        public static string _27_PROMOSIONES_LTE {
+            get {
+                return ResourceManager.GetString("27_PROMOSIONES_LTE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a 29_DISTRIBUCION_SMS.
         /// </summary>
         public static string _29_DISTRIBUCION_SMS {

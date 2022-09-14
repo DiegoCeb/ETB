@@ -106,7 +106,9 @@ namespace App.Variables
         [System.ComponentModel.Description("ETB_Factura_Electronica")]
         ETB_Factura_Electronica = 30,
         [System.ComponentModel.Description("PROCUNI")]
-        PROCUNI = 31
+        PROCUNI = 31,
+        [System.ComponentModel.Description("PromocionesLTE")]
+        PROMOSIONESLTE = 32
     }
 
 }
