@@ -108,11 +108,7 @@ namespace App.Variables
         [System.ComponentModel.Description("PROCUNI")]
         PROCUNI = 31,
         [System.ComponentModel.Description("PromocionesLTE")]
-        PromocionesLTE = 32,
-        [System.ComponentModel.Description("ClientesEspeciales")]
-        ClientesEspeciales = 33,
-        [System.ComponentModel.Description("ETB_Horas_Exp")]
-        ETB_Horas_Exp = 34
+        PromocionesLTE = 32
     }
 
 }

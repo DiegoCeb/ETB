@@ -120,9 +120,6 @@
   <data name="10_PAQUETE_FIBRA" xml:space="preserve">
     <value>10_PAQUETE_FIBRA</value>
   </data>
-  <data name="12_PARAMETROS_CTAS_NETWORKING" xml:space="preserve">
-    <value>12_PARAMETROS_CTAS_NETWORKING</value>
-  </data>
   <data name="13_TABLA_SUSTITUCION" xml:space="preserve">
     <value>13_TABLA_SUSTITUCION</value>
   </data>
@@ -155,9 +152,6 @@
   </data>
   <data name="25_CLAUSULAS_PERMANENCIAS" xml:space="preserve">
     <value>25_CLAUSULAS_PERMANENCIAS</value>
-  </data>
-  <data name="26_LLANOS" xml:space="preserve">
-    <value>26_LLANOS</value>
   </data>
   <data name="27_PROMOSIONES_LTE" xml:space="preserve">
     <value>27_PROMOSIONES_LTE</value>

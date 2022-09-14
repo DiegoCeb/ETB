@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace App.ControlInsumos
 {
-    public class ClientesEmailPrivado
+    public class MensajesClientesSuspendidos
     {
         public string Cruce { get; set; }
-        public string Resultados { get; set; }
+        public List<string> Resultados { get; set; }
     }
 }

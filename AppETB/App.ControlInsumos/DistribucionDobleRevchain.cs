@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace App.ControlInsumos
 {
-    public class ClientesEspecialesDatos
+    public class DistribucionDobleRevchain
     {
         public string Cruce { get; set; }
         public string Resultados { get; set; }

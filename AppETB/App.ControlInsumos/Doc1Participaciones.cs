@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace App.ControlInsumos
 {
-    public class BaseCupones
+    public class Doc1Participaciones
     {
         public string Cruce { get; set; }
         public List<string> Resultados { get; set; }
