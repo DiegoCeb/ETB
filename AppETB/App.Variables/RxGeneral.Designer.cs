@@ -70,6 +70,15 @@ namespace App.Variables {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a 12_PARAMETROS_CTAS_NETWORKING.
+        /// </summary>
+        public static string _12_PARAMETROS_CTAS_NETWORKING {
+            get {
+                return ResourceManager.GetString("12_PARAMETROS_CTAS_NETWORKING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a 13_TABLA_SUSTITUCION.
         /// </summary>
         public static string _13_TABLA_SUSTITUCION {
@@ -174,6 +183,15 @@ namespace App.Variables {
         public static string _25_CLAUSULAS_PERMANENCIAS {
             get {
                 return ResourceManager.GetString("25_CLAUSULAS_PERMANENCIAS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a 26_LLANOS.
+        /// </summary>
+        public static string _26_LLANOS {
+            get {
+                return ResourceManager.GetString("26_LLANOS", resourceCulture);
             }
         }
         
