@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace App.ControlInsumos
 {
-    public class ExclusionPagoInmediato
+    public class AsignacionCartas
     {
         public string Cruce { get; set; }
-        public string Resultados { get; set; }
+        public List<string> Resultados { get; set; }
     }
 }

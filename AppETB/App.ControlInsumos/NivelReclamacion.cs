@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace App.ControlInsumos
 {
-    public class ClausulaPermanencia
+    public class NivelReclamacion
     {
         public string Cruce { get; set; }
         public List<string> Resultados { get; set; }
