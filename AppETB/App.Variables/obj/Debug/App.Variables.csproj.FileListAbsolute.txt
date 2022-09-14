@@ -6,3 +6,11 @@ C:\Users\adieg\Documents\GitHub\ETB\AppETB\App.Variables\obj\Debug\App.Variables
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\App.Variables\obj\Debug\App.Variables.pdb
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\App.Variables\obj\Debug\App.Variables.RxGeneral.resources
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\App.Variables\obj\Debug\App.Variables.csproj.GenerateResource.cache
+C:\Proyectos\ETB\AppETB\App.Variables\bin\Debug\App.Variables.dll
+C:\Proyectos\ETB\AppETB\App.Variables\bin\Debug\App.Variables.pdb
+C:\Proyectos\ETB\AppETB\App.Variables\obj\Debug\App.Variables.csproj.AssemblyReference.cache
+C:\Proyectos\ETB\AppETB\App.Variables\obj\Debug\App.Variables.RxGeneral.resources
+C:\Proyectos\ETB\AppETB\App.Variables\obj\Debug\App.Variables.csproj.GenerateResource.cache
+C:\Proyectos\ETB\AppETB\App.Variables\obj\Debug\App.Variables.csproj.CoreCompileInputs.cache
+C:\Proyectos\ETB\AppETB\App.Variables\obj\Debug\App.Variables.dll
+C:\Proyectos\ETB\AppETB\App.Variables\obj\Debug\App.Variables.pdb

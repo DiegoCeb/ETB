@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-
 namespace App.ControlEjecucion
 {
     public class Procesamiento : App.Variables.Variables
@@ -71,8 +70,8 @@ namespace App.ControlEjecucion
             //Ejemplo
             var datosInsumoServicioExclusion = DiccionarioInsumos[App.Variables.RxGeneral._2_SERVICIOS_ADICIONALES_TV][Variables.Insumos.ExcluirServiciosAdicionales.ToString()];
 
-            datosInsumoServicioExclusion.EstructuraSalida = ControlInsumos.Helpers.CargueDinamicoInsumos<Variables.EstructuraExclusionSA>(Variables.Insumos.ExcluirServiciosAdicionales.ToString(),
-                datosInsumoServicioExclusion.RutaInsumo, new Variables.EstructuraExclusionSA { Cruce = "163700573" } );
+            datosInsumoServicioExclusion.EstructuraSalida = ControlInsumos.Helpers.CargueDinamicoInsumos<App.ControlInsumos.EstructuraExclusionSA>(Variables.Insumos.ExcluirServiciosAdicionales.ToString(),
+                datosInsumoServicioExclusion.RutaInsumo, new App.ControlInsumos.EstructuraExclusionSA { Cruce = "163700573" } );
 
         }
 
