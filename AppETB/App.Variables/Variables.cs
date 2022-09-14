@@ -108,7 +108,7 @@ namespace App.Variables
         [System.ComponentModel.Description("PROCUNI")]
         PROCUNI = 31,
         [System.ComponentModel.Description("PromocionesLTE")]
-        PROMOSIONESLTE = 32
+        PromocionesLTE = 32
     }
 
 }
