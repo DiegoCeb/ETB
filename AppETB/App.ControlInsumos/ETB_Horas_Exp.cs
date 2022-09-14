@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace App.ControlInsumos
 {
-    public class CodigosBD
+    public class ETB_Horas_Exp
     {
         public string Cruce { get; set; }
-        public List<string> Resultados { get; set; }
+        public string Resultados { get; set; }
     }
 }
