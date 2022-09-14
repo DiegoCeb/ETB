@@ -160,9 +160,125 @@ namespace App.ControlInsumos
                     newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.ToList(), null);
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
-                else if (true)
+                else if (pIdentificadorInsumo == Variables.Insumos.doc1_participaciones.ToString())
                 {
+                    var result = from datos in DatosInsumo
+                                 where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
+                                 select datos;
 
+                    newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.ToList(), null);
+
+                    return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
+                }
+                else if (pIdentificadorInsumo == Variables.Insumos.CodigosBD.ToString())
+                {
+                    var result = from datos in DatosInsumo
+                                 where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
+                                 select datos;
+
+                    newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.ToList(), null);
+
+                    return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
+                }
+                else if (pIdentificadorInsumo == Variables.Insumos.LOC_BAR.ToString())
+                {
+                    var result = from datos in DatosInsumo
+                                 where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
+                                 select datos;
+
+                    newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.ToList(), null);
+
+                    return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
+                }
+                else if (pIdentificadorInsumo == Variables.Insumos.TelefonosPrivadosRevchain.ToString())
+                {
+                    var result = from datos in DatosInsumo
+                                 where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos)
+                                 select datos;
+
+                    newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.FirstOrDefault(), null);
+
+                    return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
+                }
+                else if (pIdentificadorInsumo == Variables.Insumos.TRAMITES.ToString())
+                {
+                    var result = from datos in DatosInsumo
+                                 where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
+                                 select datos;
+
+                    newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.ToList(), null);
+
+                    return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
+                }
+                else if (pIdentificadorInsumo == Variables.Insumos.FA_DISTRIBUCION_EMAIL_REVCHAIN.ToString())
+                {
+                    var result = from datos in DatosInsumo
+                                 where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
+                                 select datos;
+
+                    newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.ToList(), null);
+
+                    return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
+                }
+                else if (pIdentificadorInsumo == Variables.Insumos.DistribucionDoble_REVCHAIN.ToString())
+                {
+                    var result = from datos in DatosInsumo
+                                 where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos)
+                                 select datos;
+
+                    newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.FirstOrDefault(), null);
+
+                    return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
+                }
+                else if (pIdentificadorInsumo == Variables.Insumos.ClausulaPermanencia.ToString())
+                {
+                    var result = from datos in DatosInsumo
+                                 where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
+                                 select datos;
+
+                    newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.ToList(), null);
+
+                    return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
+                }
+                else if (pIdentificadorInsumo == Variables.Insumos.EXCLUSION_PAGO_INMEDIATO.ToString())
+                {
+                    var result = from datos in DatosInsumo
+                                 where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos)
+                                 select datos;
+
+                    newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.FirstOrDefault(), null);
+
+                    return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
+                }
+                else if (pIdentificadorInsumo == Variables.Insumos.ETB_Cartas_Mora.ToString())
+                {
+                    var result = from datos in DatosInsumo
+                                 where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split(' ').ElementAt(0))
+                                 select datos;
+
+                    newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.ToList(), null);
+
+                    return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
+                }
+                else if (pIdentificadorInsumo == Variables.Insumos.MENSAJE_CLIENTES_SUSPENDIDOS.ToString())
+                {
+                    var result = from datos in DatosInsumo
+                                 where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split(' ').ElementAt(0))
+                                 select datos;
+
+                    newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.ToList(), null);
+
+                    return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
+                }
+                else if (pIdentificadorInsumo == Variables.Insumos.PROCUNI.ToString())
+                {
+                    var result = from datos in DatosInsumo
+                                 where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Substring(0,20).TrimStart('0'))
+                                 select datos;
+
+                    newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.ToList(), null);
+
+                    return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
 
             }

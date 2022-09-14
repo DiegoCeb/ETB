@@ -138,6 +138,11 @@ namespace App.ControlEjecucion
             datosInsumobaseCupones.EstructuraSalida = ControlInsumos.Helpers.CargueDinamicoInsumos<App.ControlInsumos.BaseCupones>(Variables.Insumos.BASE_CUPONES.ToString(),
                 datosInsumobaseCupones.RutaInsumo, new App.ControlInsumos.BaseCupones { Cruce = "12054349936" });
 
+            var datospruebas = DiccionarioInsumos[App.Variables.RxGeneral._51_PROCUNI][Variables.Insumos.PROCUNI.ToString()];
+
+            datospruebas.EstructuraSalida = ControlInsumos.Helpers.CargueDinamicoInsumos<App.ControlInsumos.Procuni>(Variables.Insumos.PROCUNI.ToString(),
+                datospruebas.RutaInsumo, new App.ControlInsumos.Procuni { Cruce = "12051743217" });
+
         }
 
     }
