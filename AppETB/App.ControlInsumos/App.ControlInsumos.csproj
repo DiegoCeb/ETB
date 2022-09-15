@@ -66,7 +66,15 @@
     <Compile Include="CuentasExtraer.cs" />
     <Compile Include="CuentasLTE.cs" />
     <Compile Include="DistribucionEspecial.cs" />
-    <Compile Include="EstructuraExclusionSA.cs" />
+    <Compile Include="EstructuraCodigosUniverSvas.cs" />
+    <Compile Include="EstructuraConformacionPaquetes.cs" />
+    <Compile Include="EstructuraCuentasEnvioSms.cs" />
+    <Compile Include="EstructuraCuentasSvasFueraBundle.cs" />
+    <Compile Include="EstructuraExclusionSa.cs" />
+    <Compile Include="EstructuraParametrizacionPaquetesFibra.cs" />
+    <Compile Include="EstructuraServiciosAdicionalesTv.cs" />
+    <Compile Include="EstructuraTablaSutitucion.cs" />
+    <Compile Include="EstructuraVelocidadFibra.cs" />
     <Compile Include="ETBHorasExp.cs" />
     <Compile Include="FechaPagoFijas.cs" />
     <Compile Include="Helpers.cs" />
@@ -76,7 +84,6 @@
     <Compile Include="CodigosBD.cs" />
     <Compile Include="DistribucionDobleRevchain.cs" />
     <Compile Include="Doc1Participaciones.cs" />
-    <Compile Include="EstructuraExclusionSA.cs" />
     <Compile Include="ETBCartasMora.cs" />
     <Compile Include="ExclusionPagoInmediato.cs" />
     <Compile Include="FADistribucionEmailRevchain.cs" />

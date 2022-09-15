@@ -14,7 +14,6 @@ namespace App.ControlEjecucion
         public Procesamiento()
         {
             //Cargue Lista Insumos para despues usar en el formateo
-            //
             CargueGeneralInsumos(Utilidades.LeerAppConfig("RutaInsumos"));
         }
 
@@ -64,13 +63,13 @@ namespace App.ControlEjecucion
                     }
                 }
 
-            } 
+            }
             #endregion
 
             //Ejemplo
             var datosInsumoServicioExclusion = DiccionarioInsumos[App.Variables.RxGeneral._2_SERVICIOS_ADICIONALES_TV][Variables.Insumos.ExcluirServiciosAdicionales.ToString()];
             datosInsumoServicioExclusion.EstructuraSalida = ControlInsumos.Helpers.CargueDinamicoInsumos<App.ControlInsumos.EstructuraExclusionSa>(Variables.Insumos.ExcluirServiciosAdicionales.ToString(),
-                datosInsumoServicioExclusion.RutaInsumo, new App.ControlInsumos.EstructuraExclusionSa { Cruce = "163700573" } );
+                datosInsumoServicioExclusion.RutaInsumo, new App.ControlInsumos.EstructuraExclusionSa { Cruce = "163700573" });
 
             var datosInsumoServicioAdicionalesTV = DiccionarioInsumos[App.Variables.RxGeneral._2_SERVICIOS_ADICIONALES_TV][Variables.Insumos.ServiciosAdicionalesTV.ToString()];
             datosInsumoServicioAdicionalesTV.EstructuraSalida = ControlInsumos.Helpers.CargueDinamicoInsumos<App.ControlInsumos.EstructuraServiciosAdicionalesTv>(Variables.Insumos.ServiciosAdicionalesTV.ToString(),
@@ -100,9 +99,9 @@ namespace App.ControlEjecucion
             datosInsumoCuentaSvasFueraBundle.EstructuraSalida = ControlInsumos.Helpers.CargueDinamicoInsumos<App.ControlInsumos.EstructuraCuentasSvasFueraBundle>(Variables.Insumos.Cuentas_SVAS_FueradeBundle.ToString(),
                 datosInsumoCuentaSvasFueraBundle.RutaInsumo, new App.ControlInsumos.EstructuraCuentasSvasFueraBundle { Cruce = "708375" });
 
-            var datosInsumoTablaSustitucion = DiccionarioInsumos[App.Variables.RxGeneral._13_TABLA_SUSTITUCION][Variables.Insumos.doc1tsub.ToString()];
-            datosInsumoTablaSustitucion.EstructuraSalida = ControlInsumos.Helpers.CargueDinamicoInsumos<App.ControlInsumos.EstructuraTablaSutitucion>(Variables.Insumos.Cuentas_SVAS_FueradeBundle.ToString(),
-                datosInsumoTablaSustitucion.RutaInsumo, new App.ControlInsumos.EstructuraTablaSutitucion { Cruce = "708375" });
+            //var datosInsumoTablaSustitucion = DiccionarioInsumos[App.Variables.RxGeneral._13_TABLA_SUSTITUCION][Variables.Insumos.doc1tsub.ToString()];
+            //datosInsumoTablaSustitucion.EstructuraSalida = ControlInsumos.Helpers.CargueDinamicoInsumos<App.ControlInsumos.EstructuraTablaSutitucion>(Variables.Insumos.doc1tsub.ToString(),
+            //    datosInsumoTablaSustitucion.RutaInsumo, new App.ControlInsumos.EstructuraTablaSutitucion { Cruce = "708375" });
 
             var datosInsumoCuentaExtraer = DiccionarioInsumos[App.Variables.RxGeneral._3_CUENTAS_RETENIDAS][Variables.Insumos.cuentasExtraer.ToString()];
 
