@@ -33,6 +33,114 @@ namespace App.ControlInsumos
 
                 if (pIdentificadorInsumo == Variables.Insumos.ExcluirServiciosAdicionales.ToString())
                 {
+                    #region Variables.Insumos.ExcluirServiciosAdicionales
+                    var result = from datos in DatosInsumo
+                                 where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
+                                 select datos;
+
+                    newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.ToList(), null);
+
+                    return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
+                    #endregion
+                }
+                else if (pIdentificadorInsumo == Variables.Insumos.ServiciosAdicionalesTV.ToString())
+                {
+                    #region Variables.Insumos.ServiciosAdicionalesTV
+                    var result = from datos in DatosInsumo
+                                 where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
+                                 select datos;
+
+                    newObject.GetProperty("DescripcionServicio").SetValue(pObjEntradaRetorno, result.FirstOrDefault(), null);
+
+                    return newObject.GetProperty("DescripcionServicio").GetValue(pObjEntradaRetorno);
+                    #endregion
+                }
+                else if (pIdentificadorInsumo == Variables.Insumos.VelocidadFibra.ToString())
+                {
+                    #region Variables.Insumos.VelocidadFibra
+                    var result = from datos in DatosInsumo
+                                 where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
+                                 select datos;
+
+                    newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.ToList(), null);
+
+                    return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
+                    #endregion
+                }
+                else if (pIdentificadorInsumo == Variables.Insumos.ConformacionPaquetes.ToString())
+                {
+                    #region Variables.Insumos.ConformacionPaquetes
+                    var result = from datos in DatosInsumo
+                                 where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
+                                 select datos;
+
+                    newObject.GetProperty("DescripcionPaquete").SetValue(pObjEntradaRetorno, result.FirstOrDefault(), null);
+
+                    return newObject.GetProperty("DescripcionPaquete").GetValue(pObjEntradaRetorno);
+                    #endregion
+                }
+                else if (pIdentificadorInsumo == Variables.Insumos.ParametrizacionPaquetesFibra.ToString())
+                {
+                    #region Variables.Insumos.ParametrizacionPaquetesFibra
+                    var result = from datos in DatosInsumo
+                                 where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(1))
+                                 select datos;
+
+                    newObject.GetProperty("DescripcionTipo").SetValue(pObjEntradaRetorno, result.FirstOrDefault(), null);
+
+                    return newObject.GetProperty("DescripcionTipo").GetValue(pObjEntradaRetorno);
+                    #endregion
+                }
+                else if (pIdentificadorInsumo == Variables.Insumos.cuentas_Envio_SMS.ToString())
+                {
+                    #region Variables.Insumos.cuentas_Envio_SMS
+                    var result = from datos in DatosInsumo
+                                 where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos)
+                                 select datos;
+
+                    newObject.GetProperty("CuentaSms").SetValue(pObjEntradaRetorno, result.FirstOrDefault(), null);
+
+                    return newObject.GetProperty("CuentaSms").GetValue(pObjEntradaRetorno);
+                    #endregion
+                }
+                else if (pIdentificadorInsumo == Variables.Insumos.Codigos_Univer_SVAS.ToString())
+                {
+                    #region Variables.Insumos.Codigos_Univer_SVAS
+                    var result = from datos in DatosInsumo
+                                 where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(1))
+                                 select datos;
+
+                    newObject.GetProperty("DescripcionCodigo").SetValue(pObjEntradaRetorno, result.FirstOrDefault(), null);
+
+                    return newObject.GetProperty("DescripcionCodigo").GetValue(pObjEntradaRetorno);
+                    #endregion
+                }
+                else if (pIdentificadorInsumo == Variables.Insumos.Cuentas_SVAS_FueradeBundle.ToString())
+                {
+                    #region Variables.Insumos.Cuentas_SVAS_FueradeBundle
+                    var result = from datos in DatosInsumo
+                                 where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
+                                 select datos;
+
+                    newObject.GetProperty("DescripcionCiclo").SetValue(pObjEntradaRetorno, result.FirstOrDefault(), null);
+
+                    return newObject.GetProperty("DescripcionCiclo").GetValue(pObjEntradaRetorno);
+                    #endregion
+                }
+                else if (pIdentificadorInsumo == Variables.Insumos.doc1tsub.ToString())
+                {
+                    #region Variables.Insumos.doc1tsub
+                    var result = from datos in DatosInsumo
+                                 where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos)
+                                 select datos;
+
+                    newObject.GetProperty("DescripcionCiclo").SetValue(pObjEntradaRetorno, result.FirstOrDefault(), null);
+
+                    return newObject.GetProperty("DescripcionCiclo").GetValue(pObjEntradaRetorno);
+                    #endregion
+                }
+                else if(pIdentificadorInsumo == Variables.Insumos.ExcluirServiciosAdicionales.ToString())
+                {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
                                  select datos;
@@ -43,7 +151,7 @@ namespace App.ControlInsumos
 
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
-                if (pIdentificadorInsumo == Variables.Insumos.cuentasExtraer.ToString())
+                else if(pIdentificadorInsumo == Variables.Insumos.cuentasExtraer.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos)
@@ -52,7 +160,7 @@ namespace App.ControlInsumos
                     newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.FirstOrDefault(), null);
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
-                if (pIdentificadorInsumo == Variables.Insumos.distribucion_especial.ToString())
+                else if(pIdentificadorInsumo == Variables.Insumos.distribucion_especial.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
@@ -61,7 +169,7 @@ namespace App.ControlInsumos
                     newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.ToList(), null);
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
-                if (pIdentificadorInsumo == Variables.Insumos.CicloCourier.ToString())
+                else if(pIdentificadorInsumo == Variables.Insumos.CicloCourier.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
@@ -70,7 +178,7 @@ namespace App.ControlInsumos
                     newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.FirstOrDefault(), null);
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
-                if (pIdentificadorInsumo == Variables.Insumos.ClientesEspeciales.ToString())
+                else if(pIdentificadorInsumo == Variables.Insumos.ClientesEspeciales.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
@@ -79,7 +187,7 @@ namespace App.ControlInsumos
                     newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.FirstOrDefault(), null);
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
-                if (pIdentificadorInsumo == Variables.Insumos.BaseTranspromo.ToString())
+                else if(pIdentificadorInsumo == Variables.Insumos.BaseTranspromo.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
@@ -88,7 +196,7 @@ namespace App.ControlInsumos
                     newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.ToList(), null);
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
-                if (pIdentificadorInsumo == Variables.Insumos.ASIGNACION_CARTAS.ToString())
+                else if(pIdentificadorInsumo == Variables.Insumos.ASIGNACION_CARTAS.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
@@ -97,7 +205,7 @@ namespace App.ControlInsumos
                     newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.ToList(), null);
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
-                if (pIdentificadorInsumo == Variables.Insumos.NIVEL_RECLAMACION.ToString())
+                else if(pIdentificadorInsumo == Variables.Insumos.NIVEL_RECLAMACION.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
@@ -106,7 +214,7 @@ namespace App.ControlInsumos
                     newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.ToList(), null);
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
-                if (pIdentificadorInsumo == Variables.Insumos.Fechas_Pago_Fijas.ToString())
+                else if(pIdentificadorInsumo == Variables.Insumos.Fechas_Pago_Fijas.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
@@ -115,7 +223,7 @@ namespace App.ControlInsumos
                     newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.FirstOrDefault(), null);
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
-                if (pIdentificadorInsumo == Variables.Insumos.ETB_Horas_Exp.ToString())
+                else if(pIdentificadorInsumo == Variables.Insumos.ETB_Horas_Exp.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split(' ').ElementAt(0))
@@ -124,7 +232,7 @@ namespace App.ControlInsumos
                     newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.FirstOrDefault(), null);
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
-                if (pIdentificadorInsumo == Variables.Insumos.PromocionesLTE.ToString())
+                else if(pIdentificadorInsumo == Variables.Insumos.PromocionesLTE.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
@@ -133,7 +241,7 @@ namespace App.ControlInsumos
                     newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.FirstOrDefault(), null);
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
-                if (pIdentificadorInsumo == Variables.Insumos.Cuentas_LTE.ToString())
+                else if(pIdentificadorInsumo == Variables.Insumos.Cuentas_LTE.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos)
@@ -142,7 +250,7 @@ namespace App.ControlInsumos
                     newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.FirstOrDefault(), null);
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
-                if (pIdentificadorInsumo == Variables.Insumos.Clientes_Email_Privado.ToString())
+                else if(pIdentificadorInsumo == Variables.Insumos.Clientes_Email_Privado.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split(' ').ElementAt(0))
@@ -151,7 +259,7 @@ namespace App.ControlInsumos
                     newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.FirstOrDefault(), null);
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
-                if (pIdentificadorInsumo == Variables.Insumos.BASE_CUPONES.ToString())
+                else if(pIdentificadorInsumo == Variables.Insumos.BASE_CUPONES.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
