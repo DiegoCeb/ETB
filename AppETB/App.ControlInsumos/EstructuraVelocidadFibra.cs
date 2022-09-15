@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace App.ControlInsumos
 {
-    public class EstructuraExclusionSa
+    public class EstructuraVelocidadFibra
     {
         public string Cruce { get; set; }
         public List<string> Resultados { get; set; }

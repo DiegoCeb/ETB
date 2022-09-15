@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace App.ControlInsumos
 {
-    public class EstructuraExclusionSa
+    public class EstructuraCodigosUniverSvas
     {
         public string Cruce { get; set; }
-        public List<string> Resultados { get; set; }
+        public string DescripcionCodigo { get; set; }
     }
 }
