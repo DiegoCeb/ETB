@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace App.ControlInsumos
 {
-    public class Cuentas_LTE_96_97
+    public class Procuni
     {
         public string Cruce { get; set; }
-        public string Resultados { get; set; }
+        public List<string> Resultados { get; set; }
     }
 }

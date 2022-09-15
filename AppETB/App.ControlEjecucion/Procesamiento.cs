@@ -115,8 +115,8 @@ namespace App.ControlEjecucion
 
             var datosInsumoLlanos = DiccionarioInsumos[App.Variables.RxGeneral._26_LLANOS][Variables.Insumos.ETB_Horas_Exp.ToString()];
 
-            datosInsumoLlanos.EstructuraSalida = ControlInsumos.Helpers.CargueDinamicoInsumos<App.ControlInsumos.ETB_Horas_Exp>(Variables.Insumos.ETB_Horas_Exp.ToString(),
-                datosInsumoLlanos.RutaInsumo, new App.ControlInsumos.ETB_Horas_Exp { Cruce = "C" });
+            datosInsumoLlanos.EstructuraSalida = ControlInsumos.Helpers.CargueDinamicoInsumos<App.ControlInsumos.ETBHorasExp>(Variables.Insumos.ETB_Horas_Exp.ToString(),
+                datosInsumoLlanos.RutaInsumo, new App.ControlInsumos.ETBHorasExp { Cruce = "C" });
 
             var datosInsumoPromosionesLTE = DiccionarioInsumos[App.Variables.RxGeneral._27_PROMOSIONES_LTE][Variables.Insumos.PromocionesLTE.ToString()];
 
@@ -125,8 +125,8 @@ namespace App.ControlEjecucion
 
             var datosInsumoCuentasLTE = DiccionarioInsumos[App.Variables.RxGeneral._30_FACTURACION_VENCIDA_LTE_CORPORATIVO][Variables.Insumos.Cuentas_LTE.ToString()];
 
-            datosInsumoCuentasLTE.EstructuraSalida = ControlInsumos.Helpers.CargueDinamicoInsumos<App.ControlInsumos.Cuentas_LTE_96_97>(Variables.Insumos.Cuentas_LTE.ToString(),
-                datosInsumoCuentasLTE.RutaInsumo, new App.ControlInsumos.Cuentas_LTE_96_97 { Cruce = "12051575579" });
+            datosInsumoCuentasLTE.EstructuraSalida = ControlInsumos.Helpers.CargueDinamicoInsumos<App.ControlInsumos.CuentasLTE>(Variables.Insumos.Cuentas_LTE.ToString(),
+                datosInsumoCuentasLTE.RutaInsumo, new App.ControlInsumos.CuentasLTE { Cruce = "12051575579" });
 
             var datosInsumoClienteEmailPrivado = DiccionarioInsumos[App.Variables.RxGeneral._34_EMAIL_PRIVADO][Variables.Insumos.Clientes_Email_Privado.ToString()];
 
@@ -137,6 +137,11 @@ namespace App.ControlEjecucion
 
             datosInsumobaseCupones.EstructuraSalida = ControlInsumos.Helpers.CargueDinamicoInsumos<App.ControlInsumos.BaseCupones>(Variables.Insumos.BASE_CUPONES.ToString(),
                 datosInsumobaseCupones.RutaInsumo, new App.ControlInsumos.BaseCupones { Cruce = "12054349936" });
+
+            var datospruebas = DiccionarioInsumos[App.Variables.RxGeneral._51_PROCUNI][Variables.Insumos.PROCUNI.ToString()];
+
+            datospruebas.EstructuraSalida = ControlInsumos.Helpers.CargueDinamicoInsumos<App.ControlInsumos.Procuni>(Variables.Insumos.PROCUNI.ToString(),
+                datospruebas.RutaInsumo, new App.ControlInsumos.Procuni { Cruce = "12051743217" });
 
         }
 
