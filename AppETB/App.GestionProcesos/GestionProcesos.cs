@@ -21,23 +21,21 @@ namespace App.ControlProcesos
         {
             #region GestionProcesos
             //CargueInsumos
+
             _objProcesamiento = new Procesamiento();
             #endregion
         }
 
         public void Ejecutar(string pProceso)
         {
-            //TODO: Creacion de carpeta de salida Dinamica en base al proceso
-            Helpers.RutaProceso = Directory.CreateDirectory($"{Utilidades.LeerAppConfig("RutaSalida")}\\{DateTime.Now:yyyyMMdd}").FullName;
-            //TODO: Mover archivos de entrada a original y los la carpeta completa de insumos, guardar en variable y enviarla al constructor de procesamiento y trabajar con los de original para liberar entrada
-
             //Identificar Proceso para enviar a Procesamiento
             switch (pProceso)
             {
                 case "1": //Masivos
+                    //Se crea carpeta salida se mueven datos de entrada e insumos a originales
+                    _objProcesamiento.AdecuarTrabajoApp("Masivos");
                     //Inicio cargue archivos y proceso de formateo
                     _objProcesamiento.EjecutarProcesoMasivo(Helpers.RutaOriginales);
-
                     break;
             }
 

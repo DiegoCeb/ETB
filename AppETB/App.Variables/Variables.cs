@@ -10,8 +10,7 @@ namespace App.Variables
     public class Variables
     {
         public string Proceso { get; set; }
-        public string NombreProceso { get; set; }
-        public string MensajeError { get; set; }
+        public string RutaPremaestra { get; set; }
 
         public static Dictionary<string, Dictionary<string, string>> DicGuias = new Dictionary<string, Dictionary<string, string>>();
         //Cuenta  - Formateo

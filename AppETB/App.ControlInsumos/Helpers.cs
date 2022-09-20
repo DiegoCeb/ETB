@@ -19,6 +19,7 @@ namespace App.ControlInsumos
     {
         public static string RutaProceso { get; set; }
         public static string RutaOriginales { get; set; }
+        public static string RutaInsumos{ get; set; }
 
         public static dynamic CargueDinamicoInsumos<TEntity>(string pIdentificadorInsumo, string pRutaInsumo, TEntity pObjEntradaRetorno)
         {
@@ -29,6 +30,7 @@ namespace App.ControlInsumos
 
             if (Enum.IsDefined(typeof(Variables.Insumos), pIdentificadorInsumo))
             {
+                #region Logica Busqueda Insumos Configurados
                 List<string> DatosInsumo = File.ReadAllLines(pRutaInsumo, Encoding.Default).ToList();
 
                 if (pIdentificadorInsumo == Variables.Insumos.ExcluirServiciosAdicionales.ToString())
@@ -130,16 +132,172 @@ namespace App.ControlInsumos
                 else if (pIdentificadorInsumo == Variables.Insumos.doc1tsub.ToString())
                 {
                     #region Variables.Insumos.doc1tsub
-                    var result = from datos in DatosInsumo
-                                 where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos)
-                                 select datos;
 
-                    newObject.GetProperty("DescripcionCiclo").SetValue(pObjEntradaRetorno, result.FirstOrDefault(), null);
+                    IEnumerable<string> result = null;
 
-                    return newObject.GetProperty("DescripcionCiclo").GetValue(pObjEntradaRetorno);
+                    #region Segmentos Busqueda
+                    switch (newObject.GetProperty("IdentificardorBusqueda").GetValue(pObjEntradaRetorno))
+                    {
+                        case "1": // ACTR ACTIVIDAD REVCHAIN
+                        case "2": // TASM TASAS DE MORA POR ACTIVIDAD
+                        case "3": // CSERCENTROS DE SERVICIO POR DEPARTAMENTO
+                        case "4": // DANCCODIGOS DANE POR MUNICIPIO
+                        case "5": // DE216
+                            result = from datos in DatosInsumo
+                                     where datos.Length > 6
+                                     let comp = datos.Substring(0, 6).Trim()
+                                     where comp == newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).ToString()
+                                     select datos;
+                            break;
+
+                        case "6": // CODLCODIGOS DE LOCALIDAD
+                            result = from datos in DatosInsumo
+                                     where datos.Length > 7
+                                     let comp = datos.Substring(0, 7).Trim()
+                                     where comp == newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).ToString()
+                                     select datos;
+                            break;
+
+                        case "7": // CODIGO DE BARRASCODBAR32
+                        case "8": // TASNTASA DE MORA ANTERIOR
+                        case "9": // TSERTIPOS DE SERVICIO
+                        case "10": // SSUPSERVICIOS SUPLEMENTARIOS EMPAQUETADOS
+                        case "11": // CODSCODIGOS DE SUBOPERADOR
+                        case "12": // FACLINLíneaS DE NEGOCIO PARA FACTURA
+                        case "13": // ZPOSZONAS POSTALES PARA PUNTOS DE PAGO
+                        case "14": // MDEPLPLAN FD MDE
+                            result = from datos in DatosInsumo
+                                     where datos.Length > 8
+                                     let comp = datos.Substring(0, 8).Trim()
+                                     where comp == newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).ToString()
+                                     select datos;
+                            break;
+
+                        case "15": // DANDCODIGOS DANE DE DEPARTAMENTOS
+                        case "16": // CLTFCLASE DE TARIFA DE MULTIMEDICION POR CODIGO DANE
+                        case "17": // NRATNUMERO DE ATENCION TELEFONICA POR CODIGO DANE
+                        case "18": // PPPUNTO DE PAGO CUNDINAMARCA POR CUENTA
+                            result = from datos in DatosInsumo
+                                     where datos.Length > 9
+                                     let comp = datos.Substring(0, 9).Trim()
+                                     where comp == newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).ToString()
+                                     select datos;
+                            break;
+
+                        case "19": // FACPRODPRODUCTOS PARA FACTURA
+                        case "20": // CZONADIRECCION CENTROS DE SERVICIO POR ZONA
+                            result = from datos in DatosInsumo
+                                     where datos.Length > 10
+                                     let comp = datos.Substring(0, 10).Trim()
+                                     where comp == newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).ToString()
+                                     select datos;
+                            break;
+
+                        case "21": // CARRDIRECCION CENTROS DE SERVICIO POR LSP
+                        case "22": // NCARNOMBRE DE LSPS
+                        case "23": // CODTOTALES DE FACTURACION :::: etapa1
+                        case "24": // OPERNUMERO DE NIT DE OPERADORES
+                        case "25": // CBSUBCONSUMO BASICO DE SUBSISTENCIA
+                            result = from datos in DatosInsumo
+                                     where datos.Length > 11
+                                     let comp = datos.Substring(0, 11).Trim()
+                                     where comp == newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).ToString()
+                                     select datos;
+                            break;
+
+                        case "26": // FECPFECHA DE PAGO NORMAL
+                        case "27": // FECLFECHA ULTIMA DE PAGO EXTEMPORANEO
+                        case "28": // FECXFECHA DE EXPEDICION DE LA FACTURA
+                        case "29": // PLPLANES REVCHAIN DE LOCAL 
+                        case "30": // XC PL BA IC LD DV DELL 
+                        case "31": // SVSERVICIOS PLANES REVCHAIN DE LOCAL
+                        case "32": // CODXCODIGOS DE BARRIOS
+                        case "33": // CJURI1EMPRESAS DE COBRO JURIDICO POR MES
+                        case "34": // CJURI2DIRECCION EMPRESAS DE COBRO JURIDICO POR MES
+                        case "35": // PERIODOS DE CORTES SERVICIO LTE
+                            result = from datos in DatosInsumo
+                                     where datos.Length > 12
+                                     let comp = datos.Substring(0, 12).Trim()
+                                     where comp == newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).ToString()
+                                     select datos;
+                            break;
+
+
+                        case "36": // obsoletos segun requerimiento No 142
+                            result = from datos in DatosInsumo
+                                     where datos.Length > 13
+                                     let comp = datos.Substring(0, 13).Trim()
+                                     where comp == newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).ToString()
+                                     select datos;
+                            break;
+
+                        case "37": // REICOSTOS DE REINSTALACION POR PLAN DE VOZ LOCAL
+                        case "38": // CODFCODIGOS DE FACTURACION
+                        case "39": // MINCMINUTOS LOCALES INCLUIDOS POR PLAN DE LOCAL   --FABICORA, ACTUALIADO AL 19 DE NOV DE 2012
+                            result = from datos in DatosInsumo
+                                     where datos.Length > 14
+                                     let comp = datos.Substring(0, 14).Trim()
+                                     where comp == newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).ToString()
+                                     select datos;
+                            break;
+
+                        case "40": // NPRPLANNOMBRE PLANES NPR
+                            result = from datos in DatosInsumo
+                                     where datos.Length > 15
+                                     let comp = datos.Substring(0, 15).Trim()
+                                     where comp == newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).ToString()
+                                     select datos;
+                            break;
+
+                        case "41": // CODDATCODIGOS DE DATOS
+                            result = from datos in DatosInsumo
+                                     where datos.Length > 16
+                                     let comp = datos.Substring(0, 16).Trim()
+                                     where comp == newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).ToString()
+                                     select datos;
+                            break;
+
+                        case "42": // NPRVALVALORES PLANES NPR
+                            result = from datos in DatosInsumo
+                                     where datos.Length > 17
+                                     let comp = datos.Substring(0, 17).Trim()
+                                     where comp == newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).ToString()
+                                     select datos;
+                            break;
+
+                        case "43": // BALOTO DANE LOC BAR    --CADENA PARA INCLUIR EL PUNTO BALOTO MAS CERCANO
+                            result = from datos in DatosInsumo
+                                     where datos.Length > 29
+                                     let comp = datos.Substring(0, 29).Trim()
+                                     where comp == newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).ToString()
+                                     select datos;
+                            break;
+
+
+                        case "44": // VMIN VALOR DEL MINUTO POR PLAN, ESTRATO Y TIPO DE SELLO EN LA FACTURA
+                            result = from datos in DatosInsumo
+                                     where datos.Length > 101
+                                     let comp = datos.Substring(0, 101).Trim()
+                                     where comp == newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).ToString()
+                                     select datos;
+                            break;
+
+                        case "45": // VFGE VALOR DEL MINUTO ADICIONAL PARA GOBIERNO Y ESPECIALES POR PLAN Y ESTRATO.
+                            result = from datos in DatosInsumo
+                                     where datos.Length > 104
+                                     let comp = datos.Substring(0, 104).Trim()
+                                     where comp == newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).ToString()
+                                     select datos;
+                            break;
+                    }
+                    #endregion
+
+                    newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.ToList(), null);
+
+                    return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                     #endregion
                 }
-                else if(pIdentificadorInsumo == Variables.Insumos.ExcluirServiciosAdicionales.ToString())
+                else if (pIdentificadorInsumo == Variables.Insumos.ExcluirServiciosAdicionales.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
@@ -151,7 +309,7 @@ namespace App.ControlInsumos
 
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
-                else if(pIdentificadorInsumo == Variables.Insumos.cuentasExtraer.ToString())
+                else if (pIdentificadorInsumo == Variables.Insumos.cuentasExtraer.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos)
@@ -160,7 +318,7 @@ namespace App.ControlInsumos
                     newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.FirstOrDefault(), null);
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
-                else if(pIdentificadorInsumo == Variables.Insumos.distribucion_especial.ToString())
+                else if (pIdentificadorInsumo == Variables.Insumos.distribucion_especial.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
@@ -169,7 +327,7 @@ namespace App.ControlInsumos
                     newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.ToList(), null);
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
-                else if(pIdentificadorInsumo == Variables.Insumos.CicloCourier.ToString())
+                else if (pIdentificadorInsumo == Variables.Insumos.CicloCourier.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
@@ -178,7 +336,7 @@ namespace App.ControlInsumos
                     newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.FirstOrDefault(), null);
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
-                else if(pIdentificadorInsumo == Variables.Insumos.ClientesEspeciales.ToString())
+                else if (pIdentificadorInsumo == Variables.Insumos.ClientesEspeciales.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
@@ -187,7 +345,7 @@ namespace App.ControlInsumos
                     newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.FirstOrDefault(), null);
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
-                else if(pIdentificadorInsumo == Variables.Insumos.BaseTranspromo.ToString())
+                else if (pIdentificadorInsumo == Variables.Insumos.BaseTranspromo.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
@@ -196,7 +354,7 @@ namespace App.ControlInsumos
                     newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.ToList(), null);
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
-                else if(pIdentificadorInsumo == Variables.Insumos.ASIGNACION_CARTAS.ToString())
+                else if (pIdentificadorInsumo == Variables.Insumos.ASIGNACION_CARTAS.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
@@ -205,7 +363,7 @@ namespace App.ControlInsumos
                     newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.ToList(), null);
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
-                else if(pIdentificadorInsumo == Variables.Insumos.NIVEL_RECLAMACION.ToString())
+                else if (pIdentificadorInsumo == Variables.Insumos.NIVEL_RECLAMACION.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
@@ -214,7 +372,7 @@ namespace App.ControlInsumos
                     newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.ToList(), null);
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
-                else if(pIdentificadorInsumo == Variables.Insumos.Fechas_Pago_Fijas.ToString())
+                else if (pIdentificadorInsumo == Variables.Insumos.Fechas_Pago_Fijas.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
@@ -223,7 +381,7 @@ namespace App.ControlInsumos
                     newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.FirstOrDefault(), null);
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
-                else if(pIdentificadorInsumo == Variables.Insumos.ETB_Horas_Exp.ToString())
+                else if (pIdentificadorInsumo == Variables.Insumos.ETB_Horas_Exp.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split(' ').ElementAt(0))
@@ -232,7 +390,7 @@ namespace App.ControlInsumos
                     newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.FirstOrDefault(), null);
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
-                else if(pIdentificadorInsumo == Variables.Insumos.PromocionesLTE.ToString())
+                else if (pIdentificadorInsumo == Variables.Insumos.PromocionesLTE.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
@@ -241,7 +399,7 @@ namespace App.ControlInsumos
                     newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.FirstOrDefault(), null);
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
-                else if(pIdentificadorInsumo == Variables.Insumos.Cuentas_LTE.ToString())
+                else if (pIdentificadorInsumo == Variables.Insumos.Cuentas_LTE.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos)
@@ -250,7 +408,7 @@ namespace App.ControlInsumos
                     newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.FirstOrDefault(), null);
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
-                else if(pIdentificadorInsumo == Variables.Insumos.Clientes_Email_Privado.ToString())
+                else if (pIdentificadorInsumo == Variables.Insumos.Clientes_Email_Privado.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split(' ').ElementAt(0))
@@ -259,7 +417,7 @@ namespace App.ControlInsumos
                     newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.FirstOrDefault(), null);
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
-                else if(pIdentificadorInsumo == Variables.Insumos.BASE_CUPONES.ToString())
+                else if (pIdentificadorInsumo == Variables.Insumos.BASE_CUPONES.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
@@ -389,6 +547,7 @@ namespace App.ControlInsumos
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
 
+                #endregion
             }
             else
             {
@@ -1006,6 +1165,43 @@ namespace App.ControlInsumos
             }
 
             File.Move(rutaInsumoActual, $@"{nuevaRutaDirectorioInsumo}\{nombreInsumo}");
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pDirectorioOrigen"></param>
+        /// <param name="pDirectorioDestino"></param>
+        /// <param name="pRecursive"></param>
+        public static void CopiarCarpetaCompleta(string pDirectorioOrigen, string pDirectorioDestino, bool pRecursive)
+        {
+            #region MoverArchivoaCarpeta
+            // Get information about the source directory
+            var dir = new DirectoryInfo(pDirectorioOrigen);
+
+            // Cache directories before we start copying
+            DirectoryInfo[] dirs = dir.GetDirectories();
+
+            // Create the destination directory
+            Directory.CreateDirectory(pDirectorioDestino);
+
+            // Get the files in the source directory and copy to the destination directory
+            foreach (FileInfo file in dir.GetFiles())
+            {
+                string targetFilePath = Path.Combine(pDirectorioDestino, file.Name);
+                file.CopyTo(targetFilePath);
+            }
+
+            // If recursive and copying subdirectories, recursively call this method
+            if (pRecursive)
+            {
+                foreach (DirectoryInfo subDir in dirs)
+                {
+                    string newDestinationDir = Path.Combine(pDirectorioDestino, subDir.Name);
+                    CopiarCarpetaCompleta(subDir.FullName, newDestinationDir, true);
+                }
+            }
             #endregion
         }
     }

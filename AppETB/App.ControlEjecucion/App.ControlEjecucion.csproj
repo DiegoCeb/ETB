@@ -55,6 +55,10 @@
       <Project>{4c0ff5ac-7ef4-4ada-a1e3-c707587efea4}</Project>
       <Name>App.ControlInsumos</Name>
     </ProjectReference>
+    <ProjectReference Include="..\App.ControlLogicaProcesos\App.ControlLogicaProcesos.csproj">
+      <Project>{b534a069-b12f-4b13-8721-5c0f463b0377}</Project>
+      <Name>App.ControlLogicaProcesos</Name>
+    </ProjectReference>
     <ProjectReference Include="..\App.Variables\App.Variables.csproj">
       <Project>{0f950ad7-bb7a-4b67-ba38-164caae7b775}</Project>
       <Name>App.Variables</Name>
