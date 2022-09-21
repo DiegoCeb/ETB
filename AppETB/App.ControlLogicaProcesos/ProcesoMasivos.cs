@@ -136,10 +136,47 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        public string MapeoCanal1AAA(List<string> datosOriginales)
+        private string MapeoCanal1AAA(List<string> datosOriginales)
         {
             #region MapeoCanal1AAA
             string Linea1AAA = string.Empty;
+            string Linea010000 = string.Empty;
+
+            List<string> ListaCanal1AAA = new List<string>();
+            List<PosCortes> listaCortes = new List<PosCortes>();
+
+
+            ListaCanal1AAA.Add("1AAA");
+            ListaCanal1AAA.Add("KitXXXX");
+
+            var result = from busqueda in datosOriginales
+                         where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("010000")
+                         select busqueda;
+
+            if (result != null)
+            {
+                Linea010000 = result.FirstOrDefault();
+
+                listaCortes.Add(new PosCortes(6, 50));
+                listaCortes.Add(new PosCortes(56, 12));
+                listaCortes.Add(new PosCortes(68, 40));
+                ListaCanal1AAA.Add(Helpers.ExtraccionCamposSpool(listaCortes, Linea010000));
+                ListaCanal1AAA.Add(Helpers.GetTablaSutitucion( $"DANC{Linea010000.Substring(108,5).Trim()}", "15").Resultados.FirstOrDefault());
+                ListaCanal1AAA.Add(Helpers.GetTablaSutitucion($"DAND{Linea010000.Substring(108, 5).Trim()}", "4").Resultados.FirstOrDefault());
+                listaCortes.Add(new PosCortes(117, 20));
+                listaCortes.Add(new PosCortes(151, 4));
+                listaCortes.Add(new PosCortes(155, 13)); //TODO: Formatear Decimal
+                listaCortes.Add(new PosCortes(168, 8, TiposFormateo.Fecha01)); //TODO: Formatear Fecha
+                listaCortes.Add(new PosCortes(176, 2)); //TODO: Construir regla
+                listaCortes.Add(new PosCortes(178, 8)); //TODO: Formatear Fecha
+                listaCortes.Add(new PosCortes(186, 8)); //TODO: Formatear Fecha
+                listaCortes.Add(new PosCortes(176, 2)); //TODO: Construir regla
+
+
+                ListaCanal1AAA.Add(Helpers.ExtraccionCamposSpool(listaCortes, Linea010000));
+                
+            }
+
             return Linea1AAA; 
             #endregion
         }
@@ -149,7 +186,7 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        public IEnumerable<string> MapeoCanal1BBB(List<string> datosOriginales)
+        private IEnumerable<string> MapeoCanal1BBB(List<string> datosOriginales)
         {
             #region MapeoCanal1BBB
             IEnumerable<string> Lineas1BBB = new List<string>();
@@ -162,7 +199,7 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        public string MapeoCanal1CCA(List<string> datosOriginales)
+        private string MapeoCanal1CCA(List<string> datosOriginales)
         {
             #region MapeoCanal1CCA
             string Linea1CCA = string.Empty;
@@ -175,7 +212,7 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        public string MapeoCanal1CPA(List<string> datosOriginales)
+        private string MapeoCanal1CPA(List<string> datosOriginales)
         {
             #region MapeoCanal1CPA
             string Linea1CPA = string.Empty;
@@ -188,7 +225,7 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        public string MapeoCanal1AFI(List<string> datosOriginales)
+        private string MapeoCanal1AFI(List<string> datosOriginales)
         {
             #region MapeoCanal1AFI
             string Linea1AFI = string.Empty;
@@ -201,7 +238,7 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        public IEnumerable<string> MapeoCanal1BFI(List<string> datosOriginales)
+        private IEnumerable<string> MapeoCanal1BFI(List<string> datosOriginales)
         {
             #region MapeoCanal1BFI
             IEnumerable<string> Lineas1BFI = new List<string>();
@@ -214,7 +251,7 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        public IEnumerable<string> MapeoCanal1CFI(List<string> datosOriginales)
+        private IEnumerable<string> MapeoCanal1CFI(List<string> datosOriginales)
         {
             #region MapeoCanal1CFI
             IEnumerable<string> Lineas1CFI = new List<string>();
@@ -227,7 +264,7 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        public string MapeoCanal1TFI(List<string> datosOriginales)
+        private string MapeoCanal1TFI(List<string> datosOriginales)
         {
             #region MapeoCanal1TFI
             string Linea1TFI = string.Empty;
@@ -240,7 +277,7 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        public string MapeoCanal1CDP(List<string> datosOriginales)
+        private string MapeoCanal1CDP(List<string> datosOriginales)
         {
             #region MapeoCanal1CDP
             string Linea1CDP = string.Empty;
@@ -253,7 +290,7 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        public IEnumerable<string> MapeoCanalCART(List<string> datosOriginales)
+        private IEnumerable<string> MapeoCanalCART(List<string> datosOriginales)
         {
             #region MapeoCanalCART
             IEnumerable<string> LineasCART = new List<string>();
@@ -279,7 +316,7 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        public IEnumerable<string> MapeoCanalCONS(List<string> datosOriginales)
+        private IEnumerable<string> MapeoCanalCONS(List<string> datosOriginales)
         {
             #region MapeoCanalCONS
             IEnumerable<string> LineasCONS = new List<string>();
@@ -292,7 +329,7 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        public IEnumerable<string> MapeoCanalNTC5(List<string> datosOriginales)
+        private IEnumerable<string> MapeoCanalNTC5(List<string> datosOriginales)
         {
             #region MapeoCanalNTC5
             IEnumerable<string> LineasNTC5 = new List<string>();
@@ -305,7 +342,7 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        public string MapeoCanal1OOA(List<string> datosOriginales)
+        private string MapeoCanal1OOA(List<string> datosOriginales)
         {
             #region MapeoCanal1OOA
             string Linea1OOA = string.Empty;
@@ -318,7 +355,7 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        public string MapeoCanal1HIS(List<string> datosOriginales)
+        private string MapeoCanal1HIS(List<string> datosOriginales)
         {
             #region MapeoCanal1HIS
             string Linea1HIS = string.Empty;
@@ -331,7 +368,7 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        public string MapeoCanal1HDT(List<string> datosOriginales)
+        private string MapeoCanal1HDT(List<string> datosOriginales)
         {
             #region MapeoCanal1HDT
             string Linea1HDT = string.Empty;
@@ -344,7 +381,7 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        public string MapeoCanal1DET(List<string> datosOriginales)
+        private string MapeoCanal1DET(List<string> datosOriginales)
         {
             #region MapeoCanal1DET
             string Lineas1DET = string.Empty;
@@ -357,7 +394,7 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        public string MapeoCanal1LLL(List<string> datosOriginales)
+        private string MapeoCanal1LLL(List<string> datosOriginales)
         {
             #region MapeoCanal1LLL
             string Lineas1LLL = string.Empty;
@@ -370,7 +407,7 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        public string MapeoCanal1CIC(List<string> datosOriginales)
+        private string MapeoCanal1CIC(List<string> datosOriginales)
         {
             #region MapeoCanal1CIC
             string Lineas1CIC = string.Empty;
@@ -383,7 +420,7 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        public string MapeoCanal1RRT(List<string> datosOriginales)
+        private string MapeoCanal1RRT(List<string> datosOriginales)
         {
             #region MapeoCanal1RRT
             string Lineas1RRT = string.Empty;
@@ -396,7 +433,7 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        public string MapeoCanal1RRR(List<string> datosOriginales)
+        private string MapeoCanal1RRR(List<string> datosOriginales)
         {
             #region MapeoCanal1RRR
             string Lineas1RRR = string.Empty;
