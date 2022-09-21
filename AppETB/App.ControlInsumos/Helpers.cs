@@ -1303,10 +1303,11 @@ namespace App.ControlInsumos
         }
 
         /// <summary>
-        /// Metodo que extrae los campos de una linea de posiciones fijas
+        /// Metodo que extrae los campos de una linea de posiciones fijas y Formatea de acuerdo a Tipo
         /// </summary>
         /// <param name="posCortes">LIsta de Cortes</param>
         /// <param name="linea">Linea</param>
+        /// /// <param name="pFormateoTipo">FormateoTipo</param>
         /// <returns></returns>
         public static string ExtraccionCamposSpool(List<PosCortes> posCortes, string linea)
         {
@@ -1330,6 +1331,11 @@ namespace App.ControlInsumos
                         {
                             campo = linea.Substring(campos.PosInicial.Value).Trim();
                         }
+
+                        if (campos.FormateoTipo != null)
+                        {
+                            campo = FormatearCampos(campos.FormateoTipo, campo);
+                        }
                     }
                     catch
                     {
@@ -1350,6 +1356,40 @@ namespace App.ControlInsumos
             return lineaResultado;
             #endregion
 
+        }
+
+        /// <summary>
+        /// Metodo intermedio que indica como formatear Campo
+        /// </summary>
+        /// <param name="pFormateoTipo"></param>
+        /// <param name="pCampo"></param>
+        /// <returns></returns>
+        public static string FormatearCampos(TiposFormateo? pFormateoTipo, string pCampo)
+        {
+            switch (pFormateoTipo)
+            {
+                case TiposFormateo.Fecha01:
+                    return FormatearFecha("01", pCampo); // De ddMMyy a dd/MM/yyyy
+                default:
+                    return pCampo;
+            }
+        }
+
+        /// <summary>
+        /// FormateaFecha
+        /// </summary>
+        /// <param name="pCampo"></param>
+        /// <returns></returns>
+        private static string FormatearFecha(string pFormatoFechaTipo, string pCampo)
+        {
+            switch (pFormatoFechaTipo)
+            {
+                case "01":
+                    return string.Format("{0}/{1}/{2}", pCampo.Substring(0, 2), pCampo.Substring(2, 2), pCampo.Substring(4, 4));
+
+                default:
+                    return pCampo;
+            }
         }
 
         /// <summary>
@@ -1769,17 +1809,34 @@ namespace App.ControlInsumos
     {
         public Int32? PosInicial;
         public Int32? Cantidad;
+        public TiposFormateo? FormateoTipo;
 
         public PosCortes(Int32 posInicial, Int32 cantidad)
         {
             this.PosInicial = posInicial;
             this.Cantidad = cantidad;
+            this.FormateoTipo = null;
         }
 
         public PosCortes(Int32? posInicial, Int32? cantidad)
         {
             this.PosInicial = posInicial;
             this.Cantidad = cantidad;
+            this.FormateoTipo = null;
+        }
+
+        public PosCortes(Int32 posInicial, Int32 cantidad, TiposFormateo pFormateoTipo)
+        {
+            this.PosInicial = posInicial;
+            this.Cantidad = cantidad;
+            this.FormateoTipo = pFormateoTipo;
+        }
+
+        public PosCortes(Int32? posInicial, Int32? cantidad, TiposFormateo pFormateoTipo)
+        {
+            this.PosInicial = posInicial;
+            this.Cantidad = cantidad;
+            this.FormateoTipo = pFormateoTipo;
         }
     }
 
@@ -1792,5 +1849,12 @@ namespace App.ControlInsumos
         public string Clase;
         public string Error;
         public int? LineaError;
+    }
+
+    public enum TiposFormateo
+    {
+        Fecha01,
+        Fecha02,
+        Fecha03
     }
 }
