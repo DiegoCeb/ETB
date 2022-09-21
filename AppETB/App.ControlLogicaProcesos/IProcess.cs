@@ -9,7 +9,7 @@ namespace App.ControlLogicaProcesos
     public interface IProcess
     {
         void Ejecutar(string pArchivo);
-        void CargueArchivoDiccionario(string pArchivo);
-        List<string> FormatearArchivo(List<string> datosOriginales);
+        void CargueFormateoArchivo(string pArchivo);
+        List<string> FormatearArchivo(string pLLaveCruce, List<string> datosOriginales);
     }
 }

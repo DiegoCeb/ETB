@@ -9,7 +9,7 @@ namespace App.ControlInsumos
     public class EstructuraTablaSutitucion
     {
         public string Cruce { get; set; }
-
-
+        public string IdentificardorBusqueda { get; set; }
+        public List<string> Resultados { get; set; }
     }
 }

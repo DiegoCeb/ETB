@@ -58,3 +58,7 @@ C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\obj\Debug\AppETB.
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\obj\Debug\AppETB.csproj.CopyComplete
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\obj\Debug\AppETB.exe
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\obj\Debug\AppETB.pdb
+C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\bin\Debug\App.ControlLogicaProcesos.dll
+C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\bin\Debug\App.ControlLogicaProcesos.pdb
+C:\Proyectos\ETB\AppETB\AppETB\bin\Debug\App.ControlLogicaProcesos.dll
+C:\Proyectos\ETB\AppETB\AppETB\bin\Debug\App.ControlLogicaProcesos.pdb

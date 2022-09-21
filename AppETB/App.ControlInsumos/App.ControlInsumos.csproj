@@ -48,15 +48,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AsignacionCartas.cs" />
-    <Compile Include="BaseCupones.cs" />
-    <Compile Include="BaseTranspromo.cs" />
-    <Compile Include="CicloCourier.cs" />
-    <Compile Include="ClientesEmailPrivado.cs" />
-    <Compile Include="ClientesEspecialesDatos.cs" />
-    <Compile Include="CuentasExtraer.cs" />
-    <Compile Include="CuentasLTE.cs" />
-    <Compile Include="DistribucionEspecial.cs" />
     <Compile Include="EstructuraCodigosUniverSvas.cs" />
     <Compile Include="EstructuraConformacionPaquetes.cs" />
     <Compile Include="EstructuraCuentasEnvioSms.cs" />
@@ -66,6 +57,15 @@
     <Compile Include="EstructuraServiciosAdicionalesTv.cs" />
     <Compile Include="EstructuraTablaSutitucion.cs" />
     <Compile Include="EstructuraVelocidadFibra.cs" />
+    <Compile Include="AsignacionCartas.cs" />
+    <Compile Include="BaseCupones.cs" />
+    <Compile Include="BaseTranspromo.cs" />
+    <Compile Include="CicloCourier.cs" />
+    <Compile Include="ClientesEmailPrivado.cs" />
+    <Compile Include="ClientesEspecialesDatos.cs" />
+    <Compile Include="CuentasExtraer.cs" />
+    <Compile Include="CuentasLTE.cs" />
+    <Compile Include="DistribucionEspecial.cs" />
     <Compile Include="ETBHorasExp.cs" />
     <Compile Include="FechaPagoFijas.cs" />
     <Compile Include="Helpers.cs" />

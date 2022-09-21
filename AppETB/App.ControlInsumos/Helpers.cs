@@ -19,8 +19,9 @@ namespace App.ControlInsumos
     {
         public static string RutaProceso { get; set; }
         public static string RutaOriginales { get; set; }
+        public static string RutaInsumos{ get; set; }
 
-        public static dynamic CargueDinamicoInsumos<TEntity>(string pIdentificadorInsumo, string pRutaInsumo, TEntity pObjEntradaRetorno)
+        private static dynamic CargueDinamicoInsumos<TEntity>(string pIdentificadorInsumo, string pRutaInsumo, TEntity pObjEntradaRetorno)
         {
             //TODO: Catch Recursivo cuando el archivo esta siendo utilizado en otro proceso con limite de reintentos y 3 segundos de espera
             //TODO: Finally limpiar lista de datos
@@ -29,6 +30,7 @@ namespace App.ControlInsumos
 
             if (Enum.IsDefined(typeof(Variables.Insumos), pIdentificadorInsumo))
             {
+                #region Logica Busqueda Insumos Configurados
                 List<string> DatosInsumo = File.ReadAllLines(pRutaInsumo, Encoding.Default).ToList();
 
                 if (pIdentificadorInsumo == Variables.Insumos.ExcluirServiciosAdicionales.ToString())
@@ -130,16 +132,172 @@ namespace App.ControlInsumos
                 else if (pIdentificadorInsumo == Variables.Insumos.doc1tsub.ToString())
                 {
                     #region Variables.Insumos.doc1tsub
-                    var result = from datos in DatosInsumo
-                                 where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos)
-                                 select datos;
 
-                    newObject.GetProperty("DescripcionCiclo").SetValue(pObjEntradaRetorno, result.FirstOrDefault(), null);
+                    IEnumerable<string> result = null;
 
-                    return newObject.GetProperty("DescripcionCiclo").GetValue(pObjEntradaRetorno);
+                    #region Segmentos Busqueda
+                    switch (newObject.GetProperty("IdentificardorBusqueda").GetValue(pObjEntradaRetorno))
+                    {
+                        case "1": // ACTR ACTIVIDAD REVCHAIN
+                        case "2": // TASM TASAS DE MORA POR ACTIVIDAD
+                        case "3": // CSERCENTROS DE SERVICIO POR DEPARTAMENTO
+                        case "4": // DANCCODIGOS DANE POR MUNICIPIO
+                        case "5": // DE216
+                            result = from datos in DatosInsumo
+                                     where datos.Length > 6
+                                     let comp = datos.Substring(0, 6).Trim()
+                                     where comp == newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).ToString()
+                                     select datos;
+                            break;
+
+                        case "6": // CODLCODIGOS DE LOCALIDAD
+                            result = from datos in DatosInsumo
+                                     where datos.Length > 7
+                                     let comp = datos.Substring(0, 7).Trim()
+                                     where comp == newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).ToString()
+                                     select datos;
+                            break;
+
+                        case "7": // CODIGO DE BARRASCODBAR32
+                        case "8": // TASNTASA DE MORA ANTERIOR
+                        case "9": // TSERTIPOS DE SERVICIO
+                        case "10": // SSUPSERVICIOS SUPLEMENTARIOS EMPAQUETADOS
+                        case "11": // CODSCODIGOS DE SUBOPERADOR
+                        case "12": // FACLINLíneaS DE NEGOCIO PARA FACTURA
+                        case "13": // ZPOSZONAS POSTALES PARA PUNTOS DE PAGO
+                        case "14": // MDEPLPLAN FD MDE
+                            result = from datos in DatosInsumo
+                                     where datos.Length > 8
+                                     let comp = datos.Substring(0, 8).Trim()
+                                     where comp == newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).ToString()
+                                     select datos;
+                            break;
+
+                        case "15": // DANDCODIGOS DANE DE DEPARTAMENTOS
+                        case "16": // CLTFCLASE DE TARIFA DE MULTIMEDICION POR CODIGO DANE
+                        case "17": // NRATNUMERO DE ATENCION TELEFONICA POR CODIGO DANE
+                        case "18": // PPPUNTO DE PAGO CUNDINAMARCA POR CUENTA
+                            result = from datos in DatosInsumo
+                                     where datos.Length > 9
+                                     let comp = datos.Substring(0, 9).Trim()
+                                     where comp == newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).ToString()
+                                     select datos;
+                            break;
+
+                        case "19": // FACPRODPRODUCTOS PARA FACTURA
+                        case "20": // CZONADIRECCION CENTROS DE SERVICIO POR ZONA
+                            result = from datos in DatosInsumo
+                                     where datos.Length > 10
+                                     let comp = datos.Substring(0, 10).Trim()
+                                     where comp == newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).ToString()
+                                     select datos;
+                            break;
+
+                        case "21": // CARRDIRECCION CENTROS DE SERVICIO POR LSP
+                        case "22": // NCARNOMBRE DE LSPS
+                        case "23": // CODTOTALES DE FACTURACION :::: etapa1
+                        case "24": // OPERNUMERO DE NIT DE OPERADORES
+                        case "25": // CBSUBCONSUMO BASICO DE SUBSISTENCIA
+                            result = from datos in DatosInsumo
+                                     where datos.Length > 11
+                                     let comp = datos.Substring(0, 11).Trim()
+                                     where comp == newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).ToString()
+                                     select datos;
+                            break;
+
+                        case "26": // FECPFECHA DE PAGO NORMAL
+                        case "27": // FECLFECHA ULTIMA DE PAGO EXTEMPORANEO
+                        case "28": // FECXFECHA DE EXPEDICION DE LA FACTURA
+                        case "29": // PLPLANES REVCHAIN DE LOCAL 
+                        case "30": // XC PL BA IC LD DV DELL 
+                        case "31": // SVSERVICIOS PLANES REVCHAIN DE LOCAL
+                        case "32": // CODXCODIGOS DE BARRIOS
+                        case "33": // CJURI1EMPRESAS DE COBRO JURIDICO POR MES
+                        case "34": // CJURI2DIRECCION EMPRESAS DE COBRO JURIDICO POR MES
+                        case "35": // PERIODOS DE CORTES SERVICIO LTE
+                            result = from datos in DatosInsumo
+                                     where datos.Length > 12
+                                     let comp = datos.Substring(0, 12).Trim()
+                                     where comp == newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).ToString()
+                                     select datos;
+                            break;
+
+
+                        case "36": // obsoletos segun requerimiento No 142
+                            result = from datos in DatosInsumo
+                                     where datos.Length > 13
+                                     let comp = datos.Substring(0, 13).Trim()
+                                     where comp == newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).ToString()
+                                     select datos;
+                            break;
+
+                        case "37": // REICOSTOS DE REINSTALACION POR PLAN DE VOZ LOCAL
+                        case "38": // CODFCODIGOS DE FACTURACION
+                        case "39": // MINCMINUTOS LOCALES INCLUIDOS POR PLAN DE LOCAL   --FABICORA, ACTUALIADO AL 19 DE NOV DE 2012
+                            result = from datos in DatosInsumo
+                                     where datos.Length > 14
+                                     let comp = datos.Substring(0, 14).Trim()
+                                     where comp == newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).ToString()
+                                     select datos;
+                            break;
+
+                        case "40": // NPRPLANNOMBRE PLANES NPR
+                            result = from datos in DatosInsumo
+                                     where datos.Length > 15
+                                     let comp = datos.Substring(0, 15).Trim()
+                                     where comp == newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).ToString()
+                                     select datos;
+                            break;
+
+                        case "41": // CODDATCODIGOS DE DATOS
+                            result = from datos in DatosInsumo
+                                     where datos.Length > 16
+                                     let comp = datos.Substring(0, 16).Trim()
+                                     where comp == newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).ToString()
+                                     select datos;
+                            break;
+
+                        case "42": // NPRVALVALORES PLANES NPR
+                            result = from datos in DatosInsumo
+                                     where datos.Length > 17
+                                     let comp = datos.Substring(0, 17).Trim()
+                                     where comp == newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).ToString()
+                                     select datos;
+                            break;
+
+                        case "43": // BALOTO DANE LOC BAR    --CADENA PARA INCLUIR EL PUNTO BALOTO MAS CERCANO
+                            result = from datos in DatosInsumo
+                                     where datos.Length > 29
+                                     let comp = datos.Substring(0, 29).Trim()
+                                     where comp == newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).ToString()
+                                     select datos;
+                            break;
+
+
+                        case "44": // VMIN VALOR DEL MINUTO POR PLAN, ESTRATO Y TIPO DE SELLO EN LA FACTURA
+                            result = from datos in DatosInsumo
+                                     where datos.Length > 101
+                                     let comp = datos.Substring(0, 101).Trim()
+                                     where comp == newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).ToString()
+                                     select datos;
+                            break;
+
+                        case "45": // VFGE VALOR DEL MINUTO ADICIONAL PARA GOBIERNO Y ESPECIALES POR PLAN Y ESTRATO.
+                            result = from datos in DatosInsumo
+                                     where datos.Length > 104
+                                     let comp = datos.Substring(0, 104).Trim()
+                                     where comp == newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).ToString()
+                                     select datos;
+                            break;
+                    }
+                    #endregion
+
+                    newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.ToList(), null);
+
+                    return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                     #endregion
                 }
-                else if(pIdentificadorInsumo == Variables.Insumos.ExcluirServiciosAdicionales.ToString())
+                else if (pIdentificadorInsumo == Variables.Insumos.ExcluirServiciosAdicionales.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
@@ -151,7 +309,7 @@ namespace App.ControlInsumos
 
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
-                else if(pIdentificadorInsumo == Variables.Insumos.cuentasExtraer.ToString())
+                else if (pIdentificadorInsumo == Variables.Insumos.cuentasExtraer.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos)
@@ -160,7 +318,7 @@ namespace App.ControlInsumos
                     newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.FirstOrDefault(), null);
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
-                else if(pIdentificadorInsumo == Variables.Insumos.distribucion_especial.ToString())
+                else if (pIdentificadorInsumo == Variables.Insumos.distribucion_especial.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
@@ -169,7 +327,7 @@ namespace App.ControlInsumos
                     newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.ToList(), null);
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
-                else if(pIdentificadorInsumo == Variables.Insumos.CicloCourier.ToString())
+                else if (pIdentificadorInsumo == Variables.Insumos.CicloCourier.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
@@ -178,7 +336,7 @@ namespace App.ControlInsumos
                     newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.FirstOrDefault(), null);
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
-                else if(pIdentificadorInsumo == Variables.Insumos.ClientesEspeciales.ToString())
+                else if (pIdentificadorInsumo == Variables.Insumos.ClientesEspeciales.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
@@ -187,7 +345,7 @@ namespace App.ControlInsumos
                     newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.FirstOrDefault(), null);
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
-                else if(pIdentificadorInsumo == Variables.Insumos.BaseTranspromo.ToString())
+                else if (pIdentificadorInsumo == Variables.Insumos.BaseTranspromo.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
@@ -196,7 +354,7 @@ namespace App.ControlInsumos
                     newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.ToList(), null);
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
-                else if(pIdentificadorInsumo == Variables.Insumos.ASIGNACION_CARTAS.ToString())
+                else if (pIdentificadorInsumo == Variables.Insumos.ASIGNACION_CARTAS.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
@@ -205,7 +363,7 @@ namespace App.ControlInsumos
                     newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.ToList(), null);
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
-                else if(pIdentificadorInsumo == Variables.Insumos.NIVEL_RECLAMACION.ToString())
+                else if (pIdentificadorInsumo == Variables.Insumos.NIVEL_RECLAMACION.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
@@ -214,7 +372,7 @@ namespace App.ControlInsumos
                     newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.ToList(), null);
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
-                else if(pIdentificadorInsumo == Variables.Insumos.Fechas_Pago_Fijas.ToString())
+                else if (pIdentificadorInsumo == Variables.Insumos.Fechas_Pago_Fijas.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
@@ -223,7 +381,7 @@ namespace App.ControlInsumos
                     newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.FirstOrDefault(), null);
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
-                else if(pIdentificadorInsumo == Variables.Insumos.ETB_Horas_Exp.ToString())
+                else if (pIdentificadorInsumo == Variables.Insumos.ETB_Horas_Exp.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split(' ').ElementAt(0))
@@ -232,7 +390,7 @@ namespace App.ControlInsumos
                     newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.FirstOrDefault(), null);
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
-                else if(pIdentificadorInsumo == Variables.Insumos.PromocionesLTE.ToString())
+                else if (pIdentificadorInsumo == Variables.Insumos.PromocionesLTE.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
@@ -241,7 +399,7 @@ namespace App.ControlInsumos
                     newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.FirstOrDefault(), null);
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
-                else if(pIdentificadorInsumo == Variables.Insumos.Cuentas_LTE.ToString())
+                else if (pIdentificadorInsumo == Variables.Insumos.Cuentas_LTE.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos)
@@ -250,7 +408,7 @@ namespace App.ControlInsumos
                     newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.FirstOrDefault(), null);
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
-                else if(pIdentificadorInsumo == Variables.Insumos.Clientes_Email_Privado.ToString())
+                else if (pIdentificadorInsumo == Variables.Insumos.Clientes_Email_Privado.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split(' ').ElementAt(0))
@@ -259,7 +417,7 @@ namespace App.ControlInsumos
                     newObject.GetProperty("Resultados").SetValue(pObjEntradaRetorno, result.FirstOrDefault(), null);
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
-                else if(pIdentificadorInsumo == Variables.Insumos.BASE_CUPONES.ToString())
+                else if (pIdentificadorInsumo == Variables.Insumos.BASE_CUPONES.ToString())
                 {
                     var result = from datos in DatosInsumo
                                  where newObject.GetProperty("Cruce").GetValue(pObjEntradaRetorno).Equals(datos.Split('|').ElementAt(0))
@@ -389,6 +547,7 @@ namespace App.ControlInsumos
                     return newObject.GetProperty("Resultados").GetValue(pObjEntradaRetorno);
                 }
 
+                #endregion
             }
             else
             {
@@ -397,6 +556,565 @@ namespace App.ControlInsumos
 
             return pObjEntradaRetorno;
         }
+
+        #region Metodos Uso Insumos
+
+        /// <summary>
+        /// Obtiene el resultado del cruce con el insumo ExcluirServiciosAdicionales
+        /// </summary>
+        /// <param name="pLlaveCruce"></param>
+        /// <returns></returns>
+        public static EstructuraExclusionSa GetServiciosAdicionales(string pLlaveCruce)
+        {
+            #region GetServiciosAdicionales
+            var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._2_SERVICIOS_ADICIONALES_TV][Variables.Insumos.ExcluirServiciosAdicionales.ToString()];
+            resultado.EstructuraSalida = ControlInsumos.Helpers.CargueDinamicoInsumos<App.ControlInsumos.EstructuraExclusionSa>(Variables.Insumos.ExcluirServiciosAdicionales.ToString(),
+                resultado.RutaInsumo, new App.ControlInsumos.EstructuraExclusionSa { Cruce = pLlaveCruce });
+
+            return resultado.EstructuraSalida as App.ControlInsumos.EstructuraExclusionSa; 
+            #endregion
+        }
+
+        /// <summary>
+        /// Obtiene el resultado del cruce con el insumo TablaSutitucion
+        /// </summary>
+        /// <param name="pLlaveCruce"></param>
+        /// /// <param name="pIdentificardorBusqueda"></param>
+        /// <returns></returns>
+        public static EstructuraTablaSutitucion GetTablaSutitucion(string pLlaveCruce, string pIdentificardorBusqueda)
+        {
+            #region GetTablaSutitucion
+            var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._13_TABLA_SUSTITUCION][Variables.Insumos.doc1tsub.ToString()];
+            resultado.EstructuraSalida = ControlInsumos.Helpers.CargueDinamicoInsumos<App.ControlInsumos.EstructuraTablaSutitucion>(Variables.Insumos.doc1tsub.ToString(),
+                resultado.RutaInsumo, new App.ControlInsumos.EstructuraTablaSutitucion { Cruce = pLlaveCruce, IdentificardorBusqueda = pIdentificardorBusqueda });
+
+            return resultado.EstructuraSalida as App.ControlInsumos.EstructuraTablaSutitucion; 
+            #endregion
+        }
+
+        /// <summary>
+        /// Obtiene el resultado del cruce con el insumo ServiciosAdicionalesTv
+        /// </summary>
+        /// <param name="pLlaveCruce"></param>
+        /// <returns></returns>
+        public static EstructuraServiciosAdicionalesTv GetServiciosAdicionalesTv(string pLlaveCruce)
+        {
+            #region GetServiciosAdicionalesTv
+            var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._2_SERVICIOS_ADICIONALES_TV][Variables.Insumos.ServiciosAdicionalesTV.ToString()];
+            resultado.EstructuraSalida = ControlInsumos.Helpers.CargueDinamicoInsumos<App.ControlInsumos.EstructuraServiciosAdicionalesTv>(Variables.Insumos.ServiciosAdicionalesTV.ToString(),
+                resultado.RutaInsumo, new App.ControlInsumos.EstructuraServiciosAdicionalesTv { Cruce = pLlaveCruce });
+
+            return resultado.EstructuraSalida as App.ControlInsumos.EstructuraServiciosAdicionalesTv; 
+            #endregion
+        }
+
+        /// <summary>
+        /// Obtiene el resultado del cruce con el insumo VelocidadFibra
+        /// </summary>
+        /// <param name="pLlaveCruce"></param>
+        /// <returns></returns>
+        public static EstructuraVelocidadFibra GetVelocidadFibra(string pLlaveCruce)
+        {
+            #region GetVelocidadFibra
+            var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._2_SERVICIOS_ADICIONALES_TV][Variables.Insumos.VelocidadFibra.ToString()];
+            resultado.EstructuraSalida = ControlInsumos.Helpers.CargueDinamicoInsumos<App.ControlInsumos.EstructuraVelocidadFibra>(Variables.Insumos.VelocidadFibra.ToString(),
+                resultado.RutaInsumo, new App.ControlInsumos.EstructuraVelocidadFibra { Cruce = pLlaveCruce });
+
+            return resultado.EstructuraSalida as App.ControlInsumos.EstructuraVelocidadFibra; 
+            #endregion
+        }
+
+        /// <summary>
+        /// Obtiene el resultado del cruce con el insumo ParametrizacionPaquetesFibra
+        /// </summary>
+        /// <param name="pLlaveCruce"></param>
+        /// <returns></returns>
+        public static EstructuraParametrizacionPaquetesFibra GetParametrizacionPaquetesFibra(string pLlaveCruce)
+        {
+            #region GetParametrizacionPaquetesFibra
+            var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._10_PAQUETE_FIBRA][Variables.Insumos.ParametrizacionPaquetesFibra.ToString()];
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos(Variables.Insumos.ParametrizacionPaquetesFibra.ToString(),
+                resultado.RutaInsumo, new EstructuraParametrizacionPaquetesFibra { Cruce = pLlaveCruce });
+
+            return resultado.EstructuraSalida as App.ControlInsumos.EstructuraParametrizacionPaquetesFibra;
+            #endregion
+        }
+
+        /// <summary>
+        /// Obtiene el resultado del cruce con el insumo CuentasEnvioSms
+        /// </summary>
+        /// <param name="pLlaveCruce"></param>
+        /// <returns></returns>
+        public static EstructuraCuentasEnvioSms GetCuentasEnvioSms(string pLlaveCruce)
+        {
+            #region GetCuentasEnvioSms
+            var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._29_DISTRIBUCION_SMS][Variables.Insumos.cuentas_Envio_SMS.ToString()];
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<EstructuraCuentasEnvioSms>(Variables.Insumos.cuentas_Envio_SMS.ToString(),
+                resultado.RutaInsumo, new EstructuraCuentasEnvioSms { Cruce = pLlaveCruce });
+
+            return resultado.EstructuraSalida as EstructuraCuentasEnvioSms;
+            #endregion
+        }
+
+        /// <summary>
+        /// Obtiene el resultado del cruce con el insumo CodigosUniverSvas
+        /// </summary>
+        /// <param name="pLlaveCruce"></param>
+        /// <returns></returns>
+        public static EstructuraCodigosUniverSvas GetCodigosUniverSvas(string pLlaveCruce)
+        {
+            #region GetCodigosUniverSvas
+            var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._32_SVAS_Fuera_Bundle][Variables.Insumos.Codigos_Univer_SVAS.ToString()];
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<EstructuraCodigosUniverSvas>(Variables.Insumos.Codigos_Univer_SVAS.ToString(),
+                resultado.RutaInsumo, new EstructuraCodigosUniverSvas { Cruce = pLlaveCruce });
+
+            return resultado.EstructuraSalida as EstructuraCodigosUniverSvas;
+            #endregion
+        }
+
+        /// <summary>
+        /// Obtiene el resultado del cruce con el insumo CuentasSvasFueraBundle
+        /// </summary>
+        /// <param name="pLlaveCruce"></param>
+        /// <returns></returns>
+        public static EstructuraCuentasSvasFueraBundle GetCuentasSvasFueraBundle(string pLlaveCruce)
+        {
+            #region GetCuentasSvasFueraBundle
+            var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._32_SVAS_Fuera_Bundle][Variables.Insumos.Cuentas_SVAS_FueradeBundle.ToString()];
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<EstructuraCuentasSvasFueraBundle>(Variables.Insumos.Cuentas_SVAS_FueradeBundle.ToString(),
+                resultado.RutaInsumo, new EstructuraCuentasSvasFueraBundle { Cruce = pLlaveCruce });
+
+            return resultado.EstructuraSalida as EstructuraCuentasSvasFueraBundle;
+            #endregion
+        }
+
+        /// <summary>
+        /// Obtiene el resultado del cruce con el insumo CuentasExtraer
+        /// </summary>
+        /// <param name="pLlaveCruce"></param>
+        /// <returns></returns>
+        public static CuentasExtraer GetCuentasExtraer(string pLlaveCruce)
+        {
+            #region GetCuentasExtraer
+            var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._3_CUENTAS_RETENIDAS][Variables.Insumos.cuentasExtraer.ToString()];
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<CuentasExtraer>(Variables.Insumos.cuentasExtraer.ToString(),
+                resultado.RutaInsumo, new CuentasExtraer { Cruce = pLlaveCruce });
+
+            return resultado.EstructuraSalida as CuentasExtraer;
+            #endregion
+        }
+
+        /// <summary>
+        /// Obtiene el resultado del cruce con el insumo DistribucionEspecial
+        /// </summary>
+        /// <param name="pLlaveCruce"></param>
+        /// <returns></returns>
+        public static DistribucionEspecial GetDistribucionEspecial(string pLlaveCruce)
+        {
+            #region GetDistribucionEspecial
+            var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._4_DISTRIBUCION_ESPECIAL][Variables.Insumos.distribucion_especial.ToString()];
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<DistribucionEspecial>(Variables.Insumos.distribucion_especial.ToString(),
+                resultado.RutaInsumo, new DistribucionEspecial { Cruce = pLlaveCruce });
+
+            return resultado.EstructuraSalida as DistribucionEspecial;
+            #endregion
+        }
+
+        /// <summary>
+        /// Obtiene el resultado del cruce con el insumo CicloCourier
+        /// </summary>
+        /// <param name="pLlaveCruce"></param>
+        /// <returns></returns>
+        public static CicloCourier GetCicloCourier(string pLlaveCruce)
+        {
+            #region GetCicloCourier
+            var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._9_OFICINAS_ORDENAMIENTOS][Variables.Insumos.CicloCourier.ToString()];
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<CicloCourier>(Variables.Insumos.CicloCourier.ToString(),
+                resultado.RutaInsumo, new CicloCourier { Cruce = pLlaveCruce });
+
+
+            return resultado.EstructuraSalida as CicloCourier;
+            #endregion
+        }
+
+        /// <summary>
+        /// Obtiene el resultado del cruce con el insumo ClientesEspecialesDatos
+        /// </summary>
+        /// <param name="pLlaveCruce"></param>
+        /// <returns></returns>
+        public static ClientesEspecialesDatos GetClientesEspecialesDatos(string pLlaveCruce)
+        {
+            #region GetClientesEspecialesDatos
+            var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._12_PARAMETROS_CTAS_NETWORKING][Variables.Insumos.ClientesEspeciales.ToString()];
+
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<ClientesEspecialesDatos>(Variables.Insumos.ClientesEspeciales.ToString(),
+                resultado.RutaInsumo, new ClientesEspecialesDatos { Cruce = pLlaveCruce });
+
+
+            return resultado.EstructuraSalida as ClientesEspecialesDatos;
+            #endregion
+        }
+
+        /// <summary>
+        /// Obtiene el resultado del cruce con el insumo BaseTranspromo
+        /// </summary>
+        /// <param name="pLlaveCruce"></param>
+        /// <returns></returns>
+        public static BaseTranspromo GetBaseTranspromo(string pLlaveCruce)
+        {
+            #region GetBaseTranspromo
+            var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._16_TRASPROMOS][Variables.Insumos.BaseTranspromo.ToString()];
+
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<BaseTranspromo>(Variables.Insumos.BaseTranspromo.ToString(),
+                resultado.RutaInsumo, new BaseTranspromo { Cruce = pLlaveCruce });
+
+
+            return resultado.EstructuraSalida as BaseTranspromo;
+            #endregion
+        }
+
+        /// <summary>
+        /// Obtiene el resultado del cruce con el insumo AsignacionCartas
+        /// </summary>
+        /// <param name="pLlaveCruce"></param>
+        /// <returns></returns>
+        public static AsignacionCartas GetAsignacionCartas(string pLlaveCruce)
+        {
+            #region GetAsignacionCartas
+            var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._18_CARTAS_ANEXAS][Variables.Insumos.ASIGNACION_CARTAS.ToString()];
+
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<AsignacionCartas>(Variables.Insumos.ASIGNACION_CARTAS.ToString(),
+                resultado.RutaInsumo, new AsignacionCartas { Cruce = pLlaveCruce });
+
+
+            return resultado.EstructuraSalida as AsignacionCartas;
+            #endregion
+        }
+
+        /// <summary>
+        /// Obtiene el resultado del cruce con el insumo NivelReclamacion
+        /// </summary>
+        /// <param name="pLlaveCruce"></param>
+        /// <returns></returns>
+        public static NivelReclamacion GetNivelReclamacion(string pLlaveCruce)
+        {
+            #region GetNivelReclamacion
+            var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._20_NIVEL_RECLAMACION][Variables.Insumos.NIVEL_RECLAMACION.ToString()];
+
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<NivelReclamacion>(Variables.Insumos.NIVEL_RECLAMACION.ToString(),
+                resultado.RutaInsumo, new NivelReclamacion { Cruce = pLlaveCruce });
+
+            return resultado.EstructuraSalida as NivelReclamacion;
+            #endregion
+        }
+
+        /// <summary>
+        /// Obtiene el resultado del cruce con el insumo FechaPagoFijas
+        /// </summary>
+        /// <param name="pLlaveCruce"></param>
+        /// <returns></returns>
+        public static FechaPagoFijas GetFechaPagoFijas(string pLlaveCruce)
+        {
+            #region GetFechaPagoFijas
+            var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._23_FECHAS_PAGO_FIJAS][Variables.Insumos.Fechas_Pago_Fijas.ToString()];
+
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<FechaPagoFijas>(Variables.Insumos.Fechas_Pago_Fijas.ToString(),
+                resultado.RutaInsumo, new FechaPagoFijas { Cruce = pLlaveCruce });
+
+            return resultado.EstructuraSalida as FechaPagoFijas;
+            #endregion
+        }
+
+        /// <summary>
+        /// Obtiene el resultado del cruce con el insumo ETBHorasExp
+        /// </summary>
+        /// <param name="pLlaveCruce"></param>
+        /// <returns></returns>
+        public static ETBHorasExp GetETBHorasExp(string pLlaveCruce)
+        {
+            #region GetETBHorasExp
+            var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._26_LLANOS][Variables.Insumos.ETB_Horas_Exp.ToString()];
+
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<ETBHorasExp>(Variables.Insumos.ETB_Horas_Exp.ToString(),
+                resultado.RutaInsumo, new ETBHorasExp { Cruce = pLlaveCruce });
+
+            return resultado.EstructuraSalida as ETBHorasExp;
+            #endregion
+        }
+
+        /// <summary>
+        /// Obtiene el resultado del cruce con el insumo PromosionesLTE
+        /// </summary>
+        /// <param name="pLlaveCruce"></param>
+        /// <returns></returns>
+        public static PromosionesLTE GetPromosionesLTE(string pLlaveCruce)
+        {
+            #region GetPromosionesLTE
+            var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._27_PROMOSIONES_LTE][Variables.Insumos.PromocionesLTE.ToString()];
+
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<PromosionesLTE>(Variables.Insumos.PromocionesLTE.ToString(),
+                resultado.RutaInsumo, new PromosionesLTE { Cruce = pLlaveCruce });
+
+            return resultado.EstructuraSalida as PromosionesLTE;
+            #endregion
+        }
+
+        /// <summary>
+        /// Obtiene el resultado del cruce con el insumo CuentasLTE
+        /// </summary>
+        /// <param name="pLlaveCruce"></param>
+        /// <returns></returns>
+        public static CuentasLTE GetCuentasLTE(string pLlaveCruce)
+        {
+            #region GetCuentasLTE
+            var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._30_FACTURACION_VENCIDA_LTE_CORPORATIVO][Variables.Insumos.Cuentas_LTE.ToString()];
+
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<CuentasLTE>(Variables.Insumos.Cuentas_LTE.ToString(),
+                resultado.RutaInsumo, new CuentasLTE { Cruce = pLlaveCruce });
+
+            return resultado.EstructuraSalida as CuentasLTE;
+            #endregion
+        }
+
+        /// <summary>
+        /// Obtiene el resultado del cruce con el insumo ClientesEmailPrivado
+        /// </summary>
+        /// <param name="pLlaveCruce"></param>
+        /// <returns></returns>
+        public static ClientesEmailPrivado GetClientesEmailPrivado(string pLlaveCruce)
+        {
+            #region GetClientesEmailPrivado
+            var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._34_EMAIL_PRIVADO][Variables.Insumos.Clientes_Email_Privado.ToString()];
+
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<ClientesEmailPrivado>(Variables.Insumos.Clientes_Email_Privado.ToString(),
+                resultado.RutaInsumo, new ClientesEmailPrivado { Cruce = pLlaveCruce });
+
+            return resultado.EstructuraSalida as ClientesEmailPrivado;
+            #endregion
+        }
+
+        /// <summary>
+        /// Obtiene el resultado del cruce con el insumo BaseCupones
+        /// </summary>
+        /// <param name="pLlaveCruce"></param>
+        /// <returns></returns>
+        public static BaseCupones GetBaseCupones(string pLlaveCruce)
+        {
+            #region GetBaseCupones
+            var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._19_CUPONES_PUBLICITARIOS][Variables.Insumos.BASE_CUPONES.ToString()];
+
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<BaseCupones>(Variables.Insumos.BASE_CUPONES.ToString(),
+                resultado.RutaInsumo, new BaseCupones { Cruce = pLlaveCruce });
+
+            return resultado.EstructuraSalida as BaseCupones;
+            #endregion
+        }
+
+        /// <summary>
+        /// Obtiene el resultado del cruce con el insumo Procuni
+        /// </summary>
+        /// <param name="pLlaveCruce"></param>
+        /// <returns></returns>
+        public static Procuni GetProcuni(string pLlaveCruce)
+        {
+            #region GetProcuni
+            var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._51_PROCUNI][Variables.Insumos.PROCUNI.ToString()];
+
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<Procuni>(Variables.Insumos.PROCUNI.ToString(),
+                resultado.RutaInsumo, new Procuni { Cruce = "12051743217" });
+
+            return resultado.EstructuraSalida as Procuni;
+            #endregion
+        }
+
+        /// <summary>
+        /// Obtiene el resultado del cruce con el insumo Doc1Participaciones
+        /// </summary>
+        /// <param name="pLlaveCruce"></param>
+        /// <returns></returns>
+        public static Doc1Participaciones GetDoc1Participaciones(string pLlaveCruce)
+        {
+            #region GetDoc1Participaciones
+            var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._5_DOC1_PARTICIONES][Variables.Insumos.doc1_participaciones.ToString()];
+
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<Doc1Participaciones>(Variables.Insumos.doc1_participaciones.ToString(),
+                resultado.RutaInsumo, new Doc1Participaciones { Cruce = pLlaveCruce });
+
+            return resultado.EstructuraSalida as Doc1Participaciones;
+            #endregion
+        }
+
+        /// <summary>
+        /// Obtiene el resultado del cruce con el insumo CodigosBD
+        /// </summary>
+        /// <param name="pLlaveCruce"></param>
+        /// <returns></returns>
+        public static CodigosBD GetCodigosBD(string pLlaveCruce)
+        {
+            #region GetCodigosBD
+            var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._6_LLAVES_CODIGOS_FACTU][Variables.Insumos.CodigosBD.ToString()];
+
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<CodigosBD>(Variables.Insumos.CodigosBD.ToString(),
+                resultado.RutaInsumo, new CodigosBD { Cruce = pLlaveCruce });
+
+            return resultado.EstructuraSalida as CodigosBD;
+            #endregion
+        }
+
+        /// <summary>
+        /// Obtiene el resultado del cruce con el insumo LocBar
+        /// </summary>
+        /// <param name="pLlaveCruce"></param>
+        /// <returns></returns>
+        public static LocBar GetLocBar(string pLlaveCruce)
+        {
+            #region GetLocBar
+            var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._7_LOC_BAR][Variables.Insumos.LOC_BAR.ToString()];
+
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<LocBar>(Variables.Insumos.LOC_BAR.ToString(),
+                resultado.RutaInsumo, new LocBar { Cruce = pLlaveCruce });
+
+            return resultado.EstructuraSalida as LocBar;
+            #endregion
+        }
+
+        /// <summary>
+        /// Obtiene el resultado del cruce con el insumo TelefonosPrivadosRevchain
+        /// </summary>
+        /// <param name="pLlaveCruce"></param>
+        /// <returns></returns>
+        public static TelefonosPrivadosRevchain GetTelefonosPrivadosRevchain(string pLlaveCruce)
+        {
+            #region GetTelefonosPrivadosRevchain
+            var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._14_TEL_PRIVADOS][Variables.Insumos.TelefonosPrivadosRevchain.ToString()];
+
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<TelefonosPrivadosRevchain>(Variables.Insumos.TelefonosPrivadosRevchain.ToString(),
+                resultado.RutaInsumo, new TelefonosPrivadosRevchain { Cruce = pLlaveCruce });
+
+            return resultado.EstructuraSalida as TelefonosPrivadosRevchain;
+            #endregion
+        }
+
+        /// <summary>
+        /// Obtiene el resultado del cruce con el insumo Tramites
+        /// </summary>
+        /// <param name="pLlaveCruce"></param>
+        /// <returns></returns>
+        public static Tramites GetTramites(string pLlaveCruce)
+        {
+            #region GetTramites
+            var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._15_TRAMITES][Variables.Insumos.TRAMITES.ToString()];
+
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<Tramites>(Variables.Insumos.TRAMITES.ToString(),
+                resultado.RutaInsumo, new Tramites { Cruce = pLlaveCruce });
+
+            return resultado.EstructuraSalida as Tramites;
+            #endregion
+        }
+
+        /// <summary>
+        /// Obtiene el resultado del cruce con el insumo FADistribucionEmailRevchain
+        /// </summary>
+        /// <param name="pLlaveCruce"></param>
+        /// <returns></returns>
+        public static FADistribucionEmailRevchain GetFADistribucionEmailRevchain(string pLlaveCruce)
+        {
+            #region GetFADistribucionEmailRevchain
+            var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._17_DISTRIBUCION_EMAIL][Variables.Insumos.FA_DISTRIBUCION_EMAIL_REVCHAIN.ToString()];
+
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<FADistribucionEmailRevchain>(Variables.Insumos.FA_DISTRIBUCION_EMAIL_REVCHAIN.ToString(),
+                resultado.RutaInsumo, new FADistribucionEmailRevchain { Cruce = pLlaveCruce });
+
+            return resultado.EstructuraSalida as FADistribucionEmailRevchain;
+            #endregion
+        }
+
+        /// <summary>
+        /// Obtiene el resultado del cruce con el insumo DistribucionDobleRevchain
+        /// </summary>
+        /// <param name="pLlaveCruce"></param>
+        /// <returns></returns>
+        public static DistribucionDobleRevchain GetDistribucionDobleRevchain(string pLlaveCruce)
+        {
+            #region GetDistribucionDobleRevchain
+            var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._21_DISTRIBUCION_DUAL][Variables.Insumos.DistribucionDoble_REVCHAIN.ToString()];
+
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<DistribucionDobleRevchain>(Variables.Insumos.DistribucionDoble_REVCHAIN.ToString(),
+                resultado.RutaInsumo, new DistribucionDobleRevchain { Cruce = pLlaveCruce });
+
+            return resultado.EstructuraSalida as DistribucionDobleRevchain;
+            #endregion
+        }
+
+        /// <summary>
+        /// Obtiene el resultado del cruce con el insumo ClausulaPermanencia
+        /// </summary>
+        /// <param name="pLlaveCruce"></param>
+        /// <returns></returns>
+        public static ClausulaPermanencia GetClausulaPermanencia(string pLlaveCruce)
+        {
+            #region GetClausulaPermanencia
+            var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._25_CLAUSULAS_PERMANENCIAS][Variables.Insumos.ClausulaPermanencia.ToString()];
+
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<ClausulaPermanencia>(Variables.Insumos.ClausulaPermanencia.ToString(),
+                resultado.RutaInsumo, new ClausulaPermanencia { Cruce = pLlaveCruce });
+
+            return resultado.EstructuraSalida as ClausulaPermanencia;
+            #endregion
+        }
+
+        /// <summary>
+        /// Obtiene el resultado del cruce con el insumo MensajesClientesSuspendidos
+        /// </summary>
+        /// <param name="pLlaveCruce"></param>
+        /// <returns></returns>
+        public static MensajesClientesSuspendidos GetMensajesClientesSuspendidos(string pLlaveCruce)
+        {
+            #region GetMensajesClientesSuspendidos
+            var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._35_MENSAJE_CLIENTES_SUSPENDIDOS][Variables.Insumos.MENSAJE_CLIENTES_SUSPENDIDOS.ToString()];
+
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<MensajesClientesSuspendidos>(Variables.Insumos.MENSAJE_CLIENTES_SUSPENDIDOS.ToString(),
+                resultado.RutaInsumo, new MensajesClientesSuspendidos { Cruce = pLlaveCruce });
+
+            return resultado.EstructuraSalida as MensajesClientesSuspendidos;
+            #endregion
+        }
+
+        /// <summary>
+        /// Obtiene el resultado del cruce con el insumo ETBCartasMora
+        /// </summary>
+        /// <param name="pLlaveCruce"></param>
+        /// <returns></returns>
+        public static ETBCartasMora GetETBCartasMora(string pLlaveCruce)
+        {
+            #region GetETBCartasMora
+            var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._33_CARTAS_MORA][Variables.Insumos.ETB_Cartas_Mora.ToString()];
+
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<ETBCartasMora>(Variables.Insumos.ETB_Cartas_Mora.ToString(),
+                resultado.RutaInsumo, new ETBCartasMora { Cruce = pLlaveCruce });
+
+            return resultado.EstructuraSalida as ETBCartasMora;
+            #endregion
+        }
+
+        /// <summary>
+        /// Obtiene el resultado del cruce con el insumo ExclusionPagoInmediato
+        /// </summary>
+        /// <param name="pLlaveCruce"></param>
+        /// <returns></returns>
+        public static ExclusionPagoInmediato GetExclusionPagoInmediato(string pLlaveCruce)
+        {
+            #region GetExclusionPagoInmediato
+            var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._31_PAGO_INMEDIATO][Variables.Insumos.EXCLUSION_PAGO_INMEDIATO.ToString()];
+
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<ExclusionPagoInmediato>(Variables.Insumos.EXCLUSION_PAGO_INMEDIATO.ToString(),
+                resultado.RutaInsumo, new ExclusionPagoInmediato { Cruce = pLlaveCruce });
+
+            return resultado.EstructuraSalida as ExclusionPagoInmediato;
+            #endregion
+        }
+
+        #endregion
 
         /// <summary>
         /// Obtiene el tamaño del archivo
@@ -585,10 +1303,11 @@ namespace App.ControlInsumos
         }
 
         /// <summary>
-        /// Metodo que extrae los campos de una linea de posiciones fijas
+        /// Metodo que extrae los campos de una linea de posiciones fijas y Formatea de acuerdo a Tipo
         /// </summary>
         /// <param name="posCortes">LIsta de Cortes</param>
         /// <param name="linea">Linea</param>
+        /// /// <param name="pFormateoTipo">FormateoTipo</param>
         /// <returns></returns>
         public static string ExtraccionCamposSpool(List<PosCortes> posCortes, string linea)
         {
@@ -612,6 +1331,11 @@ namespace App.ControlInsumos
                         {
                             campo = linea.Substring(campos.PosInicial.Value).Trim();
                         }
+
+                        if (campos.FormateoTipo != null)
+                        {
+                            campo = FormatearCampos(campos.FormateoTipo, campo);
+                        }
                     }
                     catch
                     {
@@ -632,6 +1356,40 @@ namespace App.ControlInsumos
             return lineaResultado;
             #endregion
 
+        }
+
+        /// <summary>
+        /// Metodo intermedio que indica como formatear Campo
+        /// </summary>
+        /// <param name="pFormateoTipo"></param>
+        /// <param name="pCampo"></param>
+        /// <returns></returns>
+        public static string FormatearCampos(TiposFormateo? pFormateoTipo, string pCampo)
+        {
+            switch (pFormateoTipo)
+            {
+                case TiposFormateo.Fecha01:
+                    return FormatearFecha("01", pCampo); // De ddMMyy a dd/MM/yyyy
+                default:
+                    return pCampo;
+            }
+        }
+
+        /// <summary>
+        /// FormateaFecha
+        /// </summary>
+        /// <param name="pCampo"></param>
+        /// <returns></returns>
+        private static string FormatearFecha(string pFormatoFechaTipo, string pCampo)
+        {
+            switch (pFormatoFechaTipo)
+            {
+                case "01":
+                    return string.Format("{0}/{1}/{2}", pCampo.Substring(0, 2), pCampo.Substring(2, 2), pCampo.Substring(4, 4));
+
+                default:
+                    return pCampo;
+            }
         }
 
         /// <summary>
@@ -1008,23 +1766,77 @@ namespace App.ControlInsumos
             File.Move(rutaInsumoActual, $@"{nuevaRutaDirectorioInsumo}\{nombreInsumo}");
             #endregion
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pDirectorioOrigen"></param>
+        /// <param name="pDirectorioDestino"></param>
+        /// <param name="pRecursive"></param>
+        public static void CopiarCarpetaCompleta(string pDirectorioOrigen, string pDirectorioDestino, bool pRecursive)
+        {
+            #region MoverArchivoaCarpeta
+            // Get information about the source directory
+            var dir = new DirectoryInfo(pDirectorioOrigen);
+
+            // Cache directories before we start copying
+            DirectoryInfo[] dirs = dir.GetDirectories();
+
+            // Create the destination directory
+            Directory.CreateDirectory(pDirectorioDestino);
+
+            // Get the files in the source directory and copy to the destination directory
+            foreach (FileInfo file in dir.GetFiles())
+            {
+                string targetFilePath = Path.Combine(pDirectorioDestino, file.Name);
+                file.CopyTo(targetFilePath);
+            }
+
+            // If recursive and copying subdirectories, recursively call this method
+            if (pRecursive)
+            {
+                foreach (DirectoryInfo subDir in dirs)
+                {
+                    string newDestinationDir = Path.Combine(pDirectorioDestino, subDir.Name);
+                    CopiarCarpetaCompleta(subDir.FullName, newDestinationDir, true);
+                }
+            }
+            #endregion
+        }
     }
 
     public struct PosCortes
     {
         public Int32? PosInicial;
         public Int32? Cantidad;
+        public TiposFormateo? FormateoTipo;
 
         public PosCortes(Int32 posInicial, Int32 cantidad)
         {
             this.PosInicial = posInicial;
             this.Cantidad = cantidad;
+            this.FormateoTipo = null;
         }
 
         public PosCortes(Int32? posInicial, Int32? cantidad)
         {
             this.PosInicial = posInicial;
             this.Cantidad = cantidad;
+            this.FormateoTipo = null;
+        }
+
+        public PosCortes(Int32 posInicial, Int32 cantidad, TiposFormateo pFormateoTipo)
+        {
+            this.PosInicial = posInicial;
+            this.Cantidad = cantidad;
+            this.FormateoTipo = pFormateoTipo;
+        }
+
+        public PosCortes(Int32? posInicial, Int32? cantidad, TiposFormateo pFormateoTipo)
+        {
+            this.PosInicial = posInicial;
+            this.Cantidad = cantidad;
+            this.FormateoTipo = pFormateoTipo;
         }
     }
 
@@ -1037,5 +1849,12 @@ namespace App.ControlInsumos
         public string Clase;
         public string Error;
         public int? LineaError;
+    }
+
+    public enum TiposFormateo
+    {
+        Fecha01,
+        Fecha02,
+        Fecha03
     }
 }

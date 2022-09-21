@@ -12,3 +12,17 @@ C:\Proyectos\ETB\AppETB\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaPro
 C:\Proyectos\ETB\AppETB\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaProcesos.csproj.CopyComplete
 C:\Proyectos\ETB\AppETB\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaProcesos.dll
 C:\Proyectos\ETB\AppETB\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaProcesos.pdb
+C:\Users\adieg\Documents\GitHub\ETB\AppETB\App.ControlLogicaProcesos\bin\Debug\App.ControlLogicaProcesos.dll
+C:\Users\adieg\Documents\GitHub\ETB\AppETB\App.ControlLogicaProcesos\bin\Debug\App.ControlLogicaProcesos.pdb
+C:\Users\adieg\Documents\GitHub\ETB\AppETB\App.ControlLogicaProcesos\bin\Debug\App.ControlInsumos.dll
+C:\Users\adieg\Documents\GitHub\ETB\AppETB\App.ControlLogicaProcesos\bin\Debug\App.Variables.dll
+C:\Users\adieg\Documents\GitHub\ETB\AppETB\App.ControlLogicaProcesos\bin\Debug\SharpCompress.dll
+C:\Users\adieg\Documents\GitHub\ETB\AppETB\App.ControlLogicaProcesos\bin\Debug\DLL_Utilidades.dll
+C:\Users\adieg\Documents\GitHub\ETB\AppETB\App.ControlLogicaProcesos\bin\Debug\App.ControlInsumos.pdb
+C:\Users\adieg\Documents\GitHub\ETB\AppETB\App.ControlLogicaProcesos\bin\Debug\App.Variables.pdb
+C:\Users\adieg\Documents\GitHub\ETB\AppETB\App.ControlLogicaProcesos\bin\Debug\DLL_Utilidades.pdb
+C:\Users\adieg\Documents\GitHub\ETB\AppETB\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaProcesos.csproj.AssemblyReference.cache
+C:\Users\adieg\Documents\GitHub\ETB\AppETB\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaProcesos.csproj.CoreCompileInputs.cache
+C:\Users\adieg\Documents\GitHub\ETB\AppETB\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaProcesos.csproj.CopyComplete
+C:\Users\adieg\Documents\GitHub\ETB\AppETB\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaProcesos.dll
+C:\Users\adieg\Documents\GitHub\ETB\AppETB\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaProcesos.pdb
