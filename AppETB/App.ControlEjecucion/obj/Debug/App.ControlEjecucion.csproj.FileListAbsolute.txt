@@ -40,3 +40,5 @@ C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.ControlEjecucion\obj
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.ControlEjecucion\obj\Debug\App.ControlEjecucion.pdb
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\App.ControlEjecucion\bin\Debug\App.ControlLogicaProcesos.dll
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\App.ControlEjecucion\bin\Debug\App.ControlLogicaProcesos.pdb
+C:\Proyectos\ETB\AppETB\App.ControlEjecucion\bin\Debug\App.ControlLogicaProcesos.dll
+C:\Proyectos\ETB\AppETB\App.ControlEjecucion\bin\Debug\App.ControlLogicaProcesos.pdb
