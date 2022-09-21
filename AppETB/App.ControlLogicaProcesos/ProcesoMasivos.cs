@@ -406,20 +406,49 @@ namespace App.ControlLogicaProcesos
 
         private string FormateoCanal1CMP(List<string> datosOriginales)
         {
+            #region FormateoCanal1CMP
             string resultado = string.Empty;
 
+            var result = from busqueda in datosOriginales
+                         where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("060000")
+                         select busqueda;
 
+            if (result != null)
+            {
+                //poner condicion si es residencial O fibra para hacer esto
+                //Cruce Tabla sustitucion para los minutos del plan 040000 llave compuesta MINC Substring 133, 10 se busca
 
-            return resultado;
+                //resultado += $"1CMP|Minutos del Plan {}|Minutos Consumidos {result.FirstOrDefault().Substring(22, 8).TrimStart('0').Trim()}| ";
+            }
+
+            return resultado; 
+            #endregion
         }
 
         private string FormateoCanal1PPP(List<string> datosOriginales)
         {
             string resultado = string.Empty;
 
+            var result = from busqueda in datosOriginales
+                         where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("060000")
+                         select busqueda;
 
+            if (result != null)
+            {
+                var CanalFecha = from busqueda in datosOriginales
+                                 where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("010000")
+                                 select busqueda;
+
+                //resultado += $"1PPP|Promedio Historico|{result.FirstOrDefault().Substring(78, 8).TrimStart('0').Trim()}|{ArmarMesesHistograma(CanalFecha.FirstOrDefault().Substring(168, 8))}";
+
+            }
 
             return resultado;
+        }
+
+        private void ArmarMesesHistograma(string pFechaReferencia)
+        {
+
         }
 
         private IEnumerable<string> FormateoCanalADN1(List<string> datosOriginales)
