@@ -149,10 +149,10 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        public List<string> MapeoCanal1BBB(List<string> datosOriginales)
+        public IEnumerable<string> MapeoCanal1BBB(List<string> datosOriginales)
         {
             #region MapeoCanal1BBB
-            List<string> Lineas1BBB = new List<string>();
+            IEnumerable<string> Lineas1BBB = new List<string>();
             return Lineas1BBB; 
             #endregion
         }
@@ -201,10 +201,10 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        public List<string> MapeoCanal1BFI(List<string> datosOriginales)
+        public IEnumerable<string> MapeoCanal1BFI(List<string> datosOriginales)
         {
             #region MapeoCanal1BFI
-            List<string> Lineas1BFI = new List<string>();
+            IEnumerable<string> Lineas1BFI = new List<string>();
             return Lineas1BFI;
             #endregion
         }
@@ -214,10 +214,10 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        public List<string> MapeoCanal1CFI(List<string> datosOriginales)
+        public IEnumerable<string> MapeoCanal1CFI(List<string> datosOriginales)
         {
             #region MapeoCanal1CFI
-            List<string> Lineas1CFI = new List<string>();
+            IEnumerable<string> Lineas1CFI = new List<string>();
             return Lineas1CFI;
             #endregion
         }
@@ -253,10 +253,10 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        public List<string> MapeoCanalCART(List<string> datosOriginales)
+        public IEnumerable<string> MapeoCanalCART(List<string> datosOriginales)
         {
             #region MapeoCanalCART
-            List<string> LineasCART = new List<string>();
+            IEnumerable<string> LineasCART = new List<string>();
             return LineasCART;
             #endregion
         }
@@ -266,10 +266,10 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        public List<string> MapeoCanal1OMV(List<string> datosOriginales)
+        public IEnumerable<string> MapeoCanal1OMV(List<string> datosOriginales)
         {
             #region MapeoCanal1OMV
-            List<string> Lineas1OMV = new List<string>();
+            IEnumerable<string> Lineas1OMV = new List<string>();
             return Lineas1OMV;
             #endregion
         }
@@ -279,10 +279,10 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        public List<string> MapeoCanalCONS(List<string> datosOriginales)
+        public IEnumerable<string> MapeoCanalCONS(List<string> datosOriginales)
         {
             #region MapeoCanalCONS
-            List<string> LineasCONS = new List<string>();
+            IEnumerable<string> LineasCONS = new List<string>();
             return LineasCONS;
             #endregion
         }
@@ -292,10 +292,10 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        public List<string> MapeoCanalNTC5(List<string> datosOriginales)
+        public IEnumerable<string> MapeoCanalNTC5(List<string> datosOriginales)
         {
             #region MapeoCanalNTC5
-            List<string> LineasNTC5 = new List<string>();
+            IEnumerable<string> LineasNTC5 = new List<string>();
             return LineasNTC5;
             #endregion
         }
