@@ -9,6 +9,12 @@ namespace App.ControlLogicaProcesos
 {
     public class ProcesoMasivos : Variables.Variables, IProcess
     {
+        private bool IsResidencial { get; set; }
+        private bool IsGobierno { get; set; }
+        private bool IsFibra { get; set; }
+        private bool IsDatos { get; set; }
+        private bool IsLte { get; set; }
+        private bool IsLteCorporativo { get; set; }
 
         public ProcesoMasivos(string pArchivo)
         {
@@ -117,6 +123,10 @@ namespace App.ControlLogicaProcesos
         {
             List<string> resultado = new List<string>();
 
+            FormatearPropiedadesExtracto();
+
+            resultado.Add(FormateoCanal1CMP(datosOriginales));
+
             //resultado.Add(FormateoCanal1CMP(datosOriginales));
             //resultado.Add(FormateoCanal1PPP(datosOriginales));
             //resultado.AddRange(FormateoCanalADN1(datosOriginales));
@@ -131,6 +141,16 @@ namespace App.ControlLogicaProcesos
             return resultado;
         }
 
+        private void FormatearPropiedadesExtracto()
+        {
+            IsResidencial = false;
+            IsDatos = false;
+            IsFibra = false;
+            IsGobierno = false;
+            IsLte = false;
+            IsLteCorporativo = false;
+        }
+
         /// <summary>
         /// Metodo que obtiene la linea formateada de Canal 1AAA
         /// </summary>
@@ -140,7 +160,7 @@ namespace App.ControlLogicaProcesos
         {
             #region MapeoCanal1AAA
             string Linea1AAA = string.Empty;
-            return Linea1AAA; 
+            return Linea1AAA;
             #endregion
         }
 
@@ -153,7 +173,7 @@ namespace App.ControlLogicaProcesos
         {
             #region MapeoCanal1BBB
             IEnumerable<string> Lineas1BBB = new List<string>();
-            return Lineas1BBB; 
+            return Lineas1BBB;
             #endregion
         }
 
@@ -413,15 +433,21 @@ namespace App.ControlLogicaProcesos
                          where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("060000")
                          select busqueda;
 
-            if (result != null)
+            if (result == null)
             {
-                //poner condicion si es residencial O fibra para hacer esto
-                //Cruce Tabla sustitucion para los minutos del plan 040000 llave compuesta MINC Substring 133, 10 se busca
+                var valorMinutosConsumo = result.FirstOrDefault().Substring(22, 8).TrimStart('0').Trim();
 
-                //resultado += $"1CMP|Minutos del Plan {}|Minutos Consumidos {result.FirstOrDefault().Substring(22, 8).TrimStart('0').Trim()}| ";
+                if (IsResidencial || IsFibra && !string.IsNullOrEmpty(valorMinutosConsumo))
+                {
+                    var resultCanal = from busqueda in datosOriginales
+                                      where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("040000")
+                                      select busqueda;
+
+                    resultado += $"1CMP|Minutos del Plan {Helpers.GetTablaSutitucion($"MINC{resultCanal.FirstOrDefault().Substring(133, 10).TrimStart('0').Trim()}", "39").Resultados.FirstOrDefault()}|Minutos Consumidos {result.FirstOrDefault().Substring(22, 8).TrimStart('0').Trim()}| ";
+                }
             }
 
-            return resultado; 
+            return resultado;
             #endregion
         }
 
@@ -440,7 +466,6 @@ namespace App.ControlLogicaProcesos
                                  select busqueda;
 
                 //resultado += $"1PPP|Promedio Historico|{result.FirstOrDefault().Substring(78, 8).TrimStart('0').Trim()}|{ArmarMesesHistograma(CanalFecha.FirstOrDefault().Substring(168, 8))}";
-
             }
 
             return resultado;
