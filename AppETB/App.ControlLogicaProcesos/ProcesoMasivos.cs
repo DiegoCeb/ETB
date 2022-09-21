@@ -140,8 +140,9 @@ namespace App.ControlLogicaProcesos
         {
             #region Canal 1BBA
             string Linea1BBA = string.Empty;
-            return Linea1BBA; 
-		}
+            return Linea1BBA;
+            #endregion
+        }
 
         /// <summary>
         /// Metodo que obtiene la linea formateada de Canal 1AAA
@@ -203,8 +204,9 @@ namespace App.ControlLogicaProcesos
         {
             #region Canal 1CCC
             IEnumerable<string> Linea1CCC = null;
-            return Linea1CCC; 
-		}
+            return Linea1CCC;
+            #endregion
+        }
 		
         /// Metodo que obtiene las lineas formateadas de Canal 1BBB
         /// </summary>
@@ -229,8 +231,9 @@ namespace App.ControlLogicaProcesos
             #region Canal 1CCM
             string Linea1CCM = string.Empty;
             return Linea1CCM;
-		}
-		
+            #endregion
+        }
+
         /// Metodo que obtiene la linea formateada de Canal 1CCA
         /// </summary>
         /// <param name="datosOriginales"></param>
@@ -254,8 +257,9 @@ namespace App.ControlLogicaProcesos
             #region Canal 1KKK
             string Linea1KKK = string.Empty;
             return Linea1KKK;
-		}
-		
+            #endregion
+        }
+
         /// Metodo que obtiene la linea formateada de Canal 1CPA
         /// </summary>
         /// <param name="datosOriginales"></param>
@@ -278,8 +282,9 @@ namespace App.ControlLogicaProcesos
             #region Canal 1MMM
             List<string> Linea1MMM = new List<string>();
             return Linea1MMM;
-		}
-		
+            #endregion
+        }
+
         /// Metodo que obtiene la linea formateada de Canal 1AFI
         /// </summary>
         /// <param name="datosOriginales"></param>
@@ -303,8 +308,9 @@ namespace App.ControlLogicaProcesos
             #region Canal 1CUFE
             string LineaCUFE = string.Empty;
             return LineaCUFE;
-		}
-		
+            #endregion
+        }
+
         /// Metodo que obtiene las lineas formateadas de Canal 1BFI
         /// </summary>
         /// <param name="datosOriginales"></param>
@@ -328,8 +334,9 @@ namespace App.ControlLogicaProcesos
             #region Canal ADNC
             string LineaANDC = string.Empty;
             return LineaANDC;
-		}
-		
+            #endregion
+        }
+
         /// Metodo que obtiene las lineas formateadas de Canal 1CFI
         /// </summary>
         /// <param name="datosOriginales"></param>
@@ -353,8 +360,9 @@ namespace App.ControlLogicaProcesos
             #region Canal NTC2
             string LineaNTC2 = string.Empty;
             return LineaNTC2;
-		}
-		
+            #endregion
+        }
+
         /// Metodo que obtiene la linea formateada de Canal 1TFI
         /// </summary>
         /// <param name="datosOriginales"></param>
@@ -378,8 +386,9 @@ namespace App.ControlLogicaProcesos
             #region Canal NTC3
             string LineaNTC3 = string.Empty;
             return LineaNTC3;
-		}
-		
+            #endregion
+        }
+
         /// Metodo que obtiene la linea formateada de Canal 1CDP
         /// </summary>
         /// <param name="datosOriginales"></param>
@@ -403,8 +412,9 @@ namespace App.ControlLogicaProcesos
             #region Canal NTC4
             string LineaNTC4 = string.Empty;
             return LineaNTC4;
-		}
-		
+            #endregion
+        }
+
         /// Metodo que obtiene las lineas formateadas de Canal CART
         /// </summary>
         /// <param name="datosOriginales"></param>
@@ -428,8 +438,9 @@ namespace App.ControlLogicaProcesos
             #region Canal 1OPL
             string Linea1OPL = string.Empty;
             return Linea1OPL;
-		}
-		
+            #endregion
+        }
+
         /// Metodo que obtiene las lineas formateadas de Canal 1OMV
         /// </summary>
         /// <param name="datosOriginales"></param>
@@ -453,8 +464,9 @@ namespace App.ControlLogicaProcesos
             #region Canal 1OOB
             List<string> Linea1OOB = new List<string>();
             return Linea1OOB;
-		}
-		
+            #endregion
+        }
+
         /// Metodo que obtiene las lineas formateadas de Canal CONS
         /// </summary>
         /// <param name="datosOriginales"></param>
@@ -478,7 +490,8 @@ namespace App.ControlLogicaProcesos
             #region Canal 1PLA
             string Linea1PLA = string.Empty;
             return Linea1PLA;
-		}
+            #endregion
+        }
         /// Metodo que obtiene las lineas formateadas de Canal NTC5
         /// </summary>
         /// <param name="datosOriginales"></param>
@@ -502,8 +515,9 @@ namespace App.ControlLogicaProcesos
             #region Canal 1EE1
             List<string> Linea1EE1 = new List<string>();
             return Linea1EE1;
-		}
-		
+            #endregion
+        }
+
         /// Metodo que obtiene la linea formateada de Canal 1OOA
         /// </summary>
         /// <param name="datosOriginales"></param>
@@ -527,8 +541,9 @@ namespace App.ControlLogicaProcesos
             #region Canal 1EE2
             List<string> Linea1EE2 = new List<string>();
             return Linea1EE2;
-		}
-		
+            #endregion
+        }
+
         /// Metodo que obtiene la linea formateada de Canal 1HIS
         /// </summary>
         /// <param name="datosOriginales"></param>
@@ -552,8 +567,9 @@ namespace App.ControlLogicaProcesos
             #region Canal 1EE3
             List<string> Linea1EE3 = new List<string>();
             return Linea1EE3;
-		}
-		
+            #endregion
+        }
+
         /// Metodo que obtiene la linea formateada de Canal 1HDT
         /// </summary>
         /// <param name="datosOriginales"></param>
