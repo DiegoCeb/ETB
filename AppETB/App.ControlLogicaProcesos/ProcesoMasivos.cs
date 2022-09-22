@@ -1,6 +1,7 @@
 ﻿using App.ControlInsumos;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -125,7 +126,7 @@ namespace App.ControlLogicaProcesos
 
             FormatearPropiedadesExtracto();
 
-            resultado.Add(FormateoCanal1CMP(datosOriginales));
+            resultado.Add(FormateoCanal1PPP(datosOriginales));
 
             //resultado.Add(FormateoCanal1CMP(datosOriginales));
             //resultado.Add(FormateoCanal1PPP(datosOriginales));
@@ -194,7 +195,7 @@ namespace App.ControlLogicaProcesos
                 listaCortes.Add(new PosCortes(56, 12));
                 listaCortes.Add(new PosCortes(68, 40));
                 ListaCanal1AAA.Add(Helpers.ExtraccionCamposSpool(listaCortes, Linea010000));
-                ListaCanal1AAA.Add(Helpers.GetTablaSutitucion( $"DANC{Linea010000.Substring(108,5).Trim()}", "15").Resultados.FirstOrDefault());
+                ListaCanal1AAA.Add(Helpers.GetTablaSutitucion($"DANC{Linea010000.Substring(108, 5).Trim()}", "15").Resultados.FirstOrDefault());
                 ListaCanal1AAA.Add(Helpers.GetTablaSutitucion($"DAND{Linea010000.Substring(108, 5).Trim()}", "4").Resultados.FirstOrDefault());
                 listaCortes.Add(new PosCortes(117, 20));
                 listaCortes.Add(new PosCortes(151, 4));
@@ -207,7 +208,7 @@ namespace App.ControlLogicaProcesos
 
 
                 ListaCanal1AAA.Add(Helpers.ExtraccionCamposSpool(listaCortes, Linea010000));
-                
+
             }
 
             return Linea1AAA;
@@ -226,7 +227,7 @@ namespace App.ControlLogicaProcesos
             return Linea1CCC;
             #endregion
         }
-		
+
         /// Metodo que obtiene las lineas formateadas de Canal 1BBB
         /// </summary>
         /// <param name="datosOriginales"></param>
@@ -235,7 +236,7 @@ namespace App.ControlLogicaProcesos
         {
             #region MapeoCanal1BBB
             IEnumerable<string> Lineas1BBB = new List<string>();
-            return Lineas1BBB; 
+            return Lineas1BBB;
             #endregion
         }
 
@@ -613,7 +614,7 @@ namespace App.ControlLogicaProcesos
             return Linea1FFA;
             #endregion
         }
-		
+
         /// Metodo que obtiene las lineas formateadas de Canal 1DET
         /// </summary>
         /// <param name="datosOriginales"></param>
@@ -687,7 +688,7 @@ namespace App.ControlLogicaProcesos
                          where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("060000")
                          select busqueda;
 
-            if (result == null)
+            if (result != null)
             {
                 var valorMinutosConsumo = result.FirstOrDefault().Substring(22, 8).TrimStart('0').Trim();
 
@@ -707,27 +708,88 @@ namespace App.ControlLogicaProcesos
 
         private string FormateoCanal1PPP(List<string> datosOriginales)
         {
+            #region FormateoCanal1PPP
             string resultado = string.Empty;
 
-            var result = from busqueda in datosOriginales
-                         where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("060000")
-                         select busqueda;
+            var linea60000 = from busqueda in datosOriginales
+                             where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("060000")
+                             select busqueda;
 
-            if (result != null)
+            if (linea60000 != null)
             {
-                var CanalFecha = from busqueda in datosOriginales
-                                 where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("010000")
-                                 select busqueda;
+                var valorPromedio = linea60000.FirstOrDefault().Substring(78, 8).TrimStart('0').Trim();
 
-                //resultado += $"1PPP|Promedio Historico|{result.FirstOrDefault().Substring(78, 8).TrimStart('0').Trim()}|{ArmarMesesHistograma(CanalFecha.FirstOrDefault().Substring(168, 8))}";
+                if (/*IsResidencial || IsFibra &&*/ !string.IsNullOrEmpty(valorPromedio))
+                {
+                    var linea10000 = from busqueda in datosOriginales
+                                     where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("010000")
+                                     select busqueda;
+
+                    resultado += $"1PPP|Promedio Historico|{linea60000.FirstOrDefault().Substring(78, 8).TrimStart('0').Trim()}| |" +
+                        $"{ArmarMesesHistograma(Helpers.FormatearCampos(TiposFormateo.Fecha01, linea10000.FirstOrDefault().Substring(168, 8)))}| |" +
+                        $"{ArmarValoresHistograma(linea60000.FirstOrDefault())}|FALTA (Descuento)|FALTA (Valor Minuto)| ";
+                }
+            }
+
+            return resultado; 
+            #endregion
+        }
+
+        private string ArmarMesesHistograma(string pFechaReferencia)
+        {
+            #region ArmarMesesHistograma
+            string resultado = string.Empty;
+            List<string> meses = new List<string>();
+            CultureInfo culture = new CultureInfo("es-CO");
+
+            if (!string.IsNullOrEmpty(pFechaReferencia))
+            {
+                byte mesFacturacion = Convert.ToByte(pFechaReferencia.Split('/').ElementAt(1));
+                mesFacturacion--;
+
+                for (int i = mesFacturacion; i <= mesFacturacion; i--)
+                {
+                    if (i == 0)
+                        break;
+                    meses.Add(Helpers.FormatearCampos(TiposFormateo.LetraCapital, new DateTime(DateTime.Now.Year, i, DateTime.Now.Day).ToString("MMM", culture).Replace(".", string.Empty)));
+                }
+
+                meses.Reverse();
+
+                resultado = $"{meses.ElementAt(0)}|{meses.ElementAt(1)}|{meses.ElementAt(2)}|{meses.ElementAt(3)}|{meses.ElementAt(4)}|{meses.ElementAt(5)}";
+            }
+            else
+            {
+                //No deberia llegar aca 
+                resultado = "";
             }
 
             return resultado;
+            #endregion
         }
 
-        private void ArmarMesesHistograma(string pFechaReferencia)
+        private string ArmarValoresHistograma(string pLineaDatos)
         {
+            #region ArmarValoresHistograma
+            string resultado = string.Empty;
 
+            if (IsResidencial || IsFibra)
+            {
+                resultado = $" |{pLineaDatos.Substring(39, 8).TrimStart('0')}|{pLineaDatos.Substring(47, 8).TrimStart('0')}|{pLineaDatos.Substring(55, 8).TrimStart('0')}|" +
+                    $"{pLineaDatos.Substring(63, 8).TrimStart('0')}|{pLineaDatos.Substring(71, 8).TrimStart('0')}";
+            }
+            else if (IsLte || IsLteCorporativo)
+            {
+                resultado = $"{pLineaDatos.Substring(31, 8).TrimStart('0')}|{pLineaDatos.Substring(39, 8).TrimStart('0')}|{pLineaDatos.Substring(47, 8).TrimStart('0')}|" +
+                    $"{pLineaDatos.Substring(55, 8).TrimStart('0')}|{pLineaDatos.Substring(63, 8).TrimStart('0')}|{pLineaDatos.Substring(71, 8).TrimStart('0')}";
+            }
+            else
+            {
+                //No deberia llegar aca
+            }
+
+            return resultado;
+            #endregion
         }
 
         private IEnumerable<string> FormateoCanalADN1(List<string> datosOriginales)

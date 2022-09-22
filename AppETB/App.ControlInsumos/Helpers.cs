@@ -19,7 +19,7 @@ namespace App.ControlInsumos
     {
         public static string RutaProceso { get; set; }
         public static string RutaOriginales { get; set; }
-        public static string RutaInsumos{ get; set; }
+        public static string RutaInsumos { get; set; }
 
         private static dynamic CargueDinamicoInsumos<TEntity>(string pIdentificadorInsumo, string pRutaInsumo, TEntity pObjEntradaRetorno)
         {
@@ -571,7 +571,7 @@ namespace App.ControlInsumos
             resultado.EstructuraSalida = ControlInsumos.Helpers.CargueDinamicoInsumos<App.ControlInsumos.EstructuraExclusionSa>(Variables.Insumos.ExcluirServiciosAdicionales.ToString(),
                 resultado.RutaInsumo, new App.ControlInsumos.EstructuraExclusionSa { Cruce = pLlaveCruce });
 
-            return resultado.EstructuraSalida as App.ControlInsumos.EstructuraExclusionSa; 
+            return resultado.EstructuraSalida as App.ControlInsumos.EstructuraExclusionSa;
             #endregion
         }
 
@@ -588,7 +588,7 @@ namespace App.ControlInsumos
             resultado.EstructuraSalida = ControlInsumos.Helpers.CargueDinamicoInsumos<App.ControlInsumos.EstructuraTablaSutitucion>(Variables.Insumos.doc1tsub.ToString(),
                 resultado.RutaInsumo, new App.ControlInsumos.EstructuraTablaSutitucion { Cruce = pLlaveCruce, IdentificardorBusqueda = pIdentificardorBusqueda });
 
-            return resultado.EstructuraSalida as App.ControlInsumos.EstructuraTablaSutitucion; 
+            return resultado.EstructuraSalida as App.ControlInsumos.EstructuraTablaSutitucion;
             #endregion
         }
 
@@ -604,7 +604,7 @@ namespace App.ControlInsumos
             resultado.EstructuraSalida = ControlInsumos.Helpers.CargueDinamicoInsumos<App.ControlInsumos.EstructuraServiciosAdicionalesTv>(Variables.Insumos.ServiciosAdicionalesTV.ToString(),
                 resultado.RutaInsumo, new App.ControlInsumos.EstructuraServiciosAdicionalesTv { Cruce = pLlaveCruce });
 
-            return resultado.EstructuraSalida as App.ControlInsumos.EstructuraServiciosAdicionalesTv; 
+            return resultado.EstructuraSalida as App.ControlInsumos.EstructuraServiciosAdicionalesTv;
             #endregion
         }
 
@@ -620,7 +620,7 @@ namespace App.ControlInsumos
             resultado.EstructuraSalida = ControlInsumos.Helpers.CargueDinamicoInsumos<App.ControlInsumos.EstructuraVelocidadFibra>(Variables.Insumos.VelocidadFibra.ToString(),
                 resultado.RutaInsumo, new App.ControlInsumos.EstructuraVelocidadFibra { Cruce = pLlaveCruce });
 
-            return resultado.EstructuraSalida as App.ControlInsumos.EstructuraVelocidadFibra; 
+            return resultado.EstructuraSalida as App.ControlInsumos.EstructuraVelocidadFibra;
             #endregion
         }
 
@@ -1370,6 +1370,10 @@ namespace App.ControlInsumos
             {
                 case TiposFormateo.Fecha01:
                     return FormatearFecha("01", pCampo); // De ddMMyy a dd/MM/yyyy
+
+                case TiposFormateo.LetraCapital:
+                    return FormatearLetraCapital(pCampo);
+
                 default:
                     return pCampo;
             }
@@ -1390,6 +1394,25 @@ namespace App.ControlInsumos
                 default:
                     return pCampo;
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pCampo"></param>
+        /// <returns></returns>
+        private static string FormatearLetraCapital(string pCampo)
+        {
+            #region FormatearLetraCapital
+            string lower = string.Empty;
+            string letraCapital = string.Empty;
+            TextInfo myTextInfo = new CultureInfo("es-CO", false).TextInfo;
+
+            lower = myTextInfo.ToLower(pCampo);
+            letraCapital = myTextInfo.ToTitleCase(lower);
+
+            return letraCapital;
+            #endregion
         }
 
         /// <summary>
@@ -1565,7 +1588,10 @@ namespace App.ControlInsumos
             {
                 foreach (var _Archivo in Directory.GetFiles(RutaEntrada))
                 {
+#if DEBUG == false
                     File.Move(_Archivo, RutaSalida + "\\" + Path.GetFileName(_Archivo));
+#endif
+                    File.Copy(_Archivo, RutaSalida + "\\" + Path.GetFileName(_Archivo));
                 }
             }
             catch (Exception ex)
@@ -1855,6 +1881,7 @@ namespace App.ControlInsumos
     {
         Fecha01,
         Fecha02,
-        Fecha03
+        Fecha03,
+        LetraCapital
     }
 }
