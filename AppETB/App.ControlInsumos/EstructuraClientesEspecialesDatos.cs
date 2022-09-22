@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace App.ControlInsumos
 {
-    public class ETBHorasExp
+    public class EstructuraClientesEspecialesDatos
     {
         public string Cruce { get; set; }
         public string Resultados { get; set; }

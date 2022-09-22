@@ -139,6 +139,9 @@ namespace App.ControlLogicaProcesos
             //resultado.AddRange(FormateoCanal1OOO(datosOriginales));
             //resultado.AddRange(FormateoCanal1FFF(datosOriginales));
 
+            resultado.Add(MapeoCanal1BBA(datosOriginales));
+            resultado.AddRange(MapeoCanal1CCC(datosOriginales));
+
             return resultado;
         }
 
@@ -160,8 +163,42 @@ namespace App.ControlLogicaProcesos
         public string MapeoCanal1BBA(List<string> datosOriginales)
         {
             #region Canal 1BBA
+
             string Linea1BBA = string.Empty;
+
+            List<PosCortes> listaCortes = new List<PosCortes>();
+
+            var result = from busqueda in datosOriginales
+                         where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("010000")
+                         select busqueda;
+
+            string signo, valor = string.Empty;
+
+            
+            if (result != null)            
+            {
+                // Cortes
+                listaCortes.Add(new PosCortes(154, 14));                
+
+                // Linea Retornar
+                Linea1BBA = "1BBA|Valor por buscar ** |";
+                valor = Helpers.ExtraccionCamposSpool(listaCortes, result.FirstOrDefault());
+                
+                if(valor.Substring(0,1) == "-")
+                {
+                    signo = valor.Substring(0, 1);
+                }
+                else
+                {
+                    signo = "";
+                }
+
+                Linea1BBA +=  signo + valor.TrimStart('0') + "| ";
+                
+            }
+
             return Linea1BBA;
+
             #endregion
         }
 
@@ -275,6 +312,16 @@ namespace App.ControlLogicaProcesos
         {
             #region Canal 1CCC
             IEnumerable<string> Linea1CCC = null;
+
+            var result = from busqueda in datosOriginales
+                         where busqueda.Length > 6 && (busqueda.Substring(0, 6).Equals("06T931") || busqueda.Substring(0, 6).Equals("06T935"))
+                         select busqueda;
+            
+            if (result != null)
+            { 
+            
+            }
+
             return Linea1CCC;
             #endregion
         }
@@ -347,10 +394,10 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        public List<string> MapeoCanal1MMM(List<string> datosOriginales)
+        public IEnumerable<string> MapeoCanal1MMM(List<string> datosOriginales)
         {
             #region Canal 1MMM
-            List<string> Linea1MMM = new List<string>();
+            IEnumerable<string> Linea1MMM = null;
             return Linea1MMM;
             #endregion
         }
@@ -388,7 +435,7 @@ namespace App.ControlLogicaProcesos
         private IEnumerable<string> MapeoCanal1BFI(List<string> datosOriginales)
         {
             #region MapeoCanal1BFI
-            IEnumerable<string> Lineas1BFI = new List<string>();
+            IEnumerable<string> Lineas1BFI = null;
             return Lineas1BFI;
 
             #endregion
@@ -414,7 +461,7 @@ namespace App.ControlLogicaProcesos
         private IEnumerable<string> MapeoCanal1CFI(List<string> datosOriginales)
         {
             #region MapeoCanal1CFI
-            IEnumerable<string> Lineas1CFI = new List<string>();
+            IEnumerable<string> Lineas1CFI = null;
             return Lineas1CFI;
 
             #endregion
@@ -492,7 +539,7 @@ namespace App.ControlLogicaProcesos
         private IEnumerable<string> MapeoCanalCART(List<string> datosOriginales)
         {
             #region MapeoCanalCART
-            IEnumerable<string> LineasCART = new List<string>();
+            IEnumerable<string> LineasCART = null;
             return LineasCART;
 
             #endregion
@@ -518,7 +565,7 @@ namespace App.ControlLogicaProcesos
         public IEnumerable<string> MapeoCanal1OMV(List<string> datosOriginales)
         {
             #region MapeoCanal1OMV
-            IEnumerable<string> Lineas1OMV = new List<string>();
+            IEnumerable<string> Lineas1OMV = null;
             return Lineas1OMV;
 
             #endregion
@@ -529,10 +576,10 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        public List<string> MapeoCanal1OOB(List<string> datosOriginales)
+        public IEnumerable<string> MapeoCanal1OOB(List<string> datosOriginales)
         {
             #region Canal 1OOB
-            List<string> Linea1OOB = new List<string>();
+            IEnumerable<string> Linea1OOB = null;
             return Linea1OOB;
             #endregion
         }
@@ -544,7 +591,7 @@ namespace App.ControlLogicaProcesos
         private IEnumerable<string> MapeoCanalCONS(List<string> datosOriginales)
         {
             #region MapeoCanalCONS
-            IEnumerable<string> LineasCONS = new List<string>();
+            IEnumerable<string> LineasCONS = null;
             return LineasCONS;
 
             #endregion
@@ -569,7 +616,7 @@ namespace App.ControlLogicaProcesos
         private IEnumerable<string> MapeoCanalNTC5(List<string> datosOriginales)
         {
             #region MapeoCanalNTC5
-            IEnumerable<string> LineasNTC5 = new List<string>();
+            IEnumerable<string> LineasNTC5 = null;
             return LineasNTC5;
 
             #endregion
@@ -580,10 +627,10 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        public List<string> MapeoCanal1EE1(List<string> datosOriginales)
+        public IEnumerable<string> MapeoCanal1EE1(List<string> datosOriginales)
         {
             #region Canal 1EE1
-            List<string> Linea1EE1 = new List<string>();
+            IEnumerable<string> Linea1EE1 = null;
             return Linea1EE1;
             #endregion
         }
@@ -632,10 +679,10 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        public List<string> MapeoCanal1EE3(List<string> datosOriginales)
+        public IEnumerable<string> MapeoCanal1EE3(List<string> datosOriginales)
         {
             #region Canal 1EE3
-            List<string> Linea1EE3 = new List<string>();
+            IEnumerable<string> Linea1EE3 = null;
             return Linea1EE3;
             #endregion
         }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace App.ControlInsumos
 {
-    public class CuentasExtraer
+    public class EstructuraFechaPagoFijas
     {
         public string Cruce { get; set; }
         public string Resultados { get; set; }
