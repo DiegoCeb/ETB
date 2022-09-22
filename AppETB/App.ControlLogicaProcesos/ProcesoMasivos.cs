@@ -125,6 +125,7 @@ namespace App.ControlLogicaProcesos
 
             FormatearPropiedadesExtracto();
 
+            resultado.Add(MapeoCanal1AAA(datosOriginales));
             resultado.Add(FormateoCanal1CMP(datosOriginales));
 
             //resultado.Add(FormateoCanal1CMP(datosOriginales));
@@ -194,18 +195,30 @@ namespace App.ControlLogicaProcesos
                 listaCortes.Add(new PosCortes(56, 12));
                 listaCortes.Add(new PosCortes(68, 40));
                 ListaCanal1AAA.Add(Helpers.ExtraccionCamposSpool(listaCortes, Linea010000));
-                ListaCanal1AAA.Add(Helpers.GetTablaSutitucion( $"DANC{Linea010000.Substring(108,5).Trim()}", "15").Resultados.FirstOrDefault());
-                ListaCanal1AAA.Add(Helpers.GetTablaSutitucion($"DAND{Linea010000.Substring(108, 5).Trim()}", "4").Resultados.FirstOrDefault());
+
+                ListaCanal1AAA.Add(Helpers.GetTablaSutitucion($"DAND{Linea010000.Substring(108, 2).Trim()}", "4").Resultados.FirstOrDefault().Substring(6).Trim());
+                ListaCanal1AAA.Add(Helpers.GetTablaSutitucion($"DANC{Linea010000.Substring(108,5).Trim()}", "15").Resultados.FirstOrDefault().Substring(9).Trim());
+
+                listaCortes.Clear();
                 listaCortes.Add(new PosCortes(117, 20));
                 listaCortes.Add(new PosCortes(151, 4));
-                listaCortes.Add(new PosCortes(155, 13)); //TODO: Formatear Decimal
-                listaCortes.Add(new PosCortes(168, 8, TiposFormateo.Fecha01)); //TODO: Formatear Fecha
-                listaCortes.Add(new PosCortes(176, 2)); //TODO: Construir regla
-                listaCortes.Add(new PosCortes(178, 8, TiposFormateo.Fecha01)); //TODO: Formatear Fecha
-                listaCortes.Add(new PosCortes(186, 8, TiposFormateo.Fecha01)); //TODO: Formatear Fecha
-                listaCortes.Add(new PosCortes(176, 2)); //TODO: Construir regla
+                listaCortes.Add(new PosCortes(155, 13, TiposFormateo.Decimal01));
+                listaCortes.Add(new PosCortes(168, 8, TiposFormateo.Fecha01));
+                ListaCanal1AAA.Add(Helpers.ExtraccionCamposSpool(listaCortes, Linea010000));
+                ListaCanal1AAA.Add(GetMesMora(Linea010000.Substring(176, 2).Trim()));
+                
+                listaCortes.Clear();
+                listaCortes.Add(new PosCortes(178, 8, TiposFormateo.Fecha01));
+                listaCortes.Add(new PosCortes(186, 8, TiposFormateo.Fecha01));
+                ListaCanal1AAA.Add(Helpers.ExtraccionCamposSpool(listaCortes, Linea010000));
 
+                ListaCanal1AAA.Add(GetTelefono(datosOriginales)); //TODO: Verificar Reglas
+                ListaCanal1AAA.Add(IsFibra ? (string.IsNullOrEmpty(Linea010000.Substring(218, 20).Trim()) ? " " : Linea010000.Substring(218, 20).Trim()) : " ");
+                ListaCanal1AAA.Add(Helpers.GetTablaSutitucion($"FECP{Helpers.FormatearCampos(TiposFormateo.Fecha02,Linea010000.Substring(168, 8).Trim())}{Linea010000.Substring(151, 3).Trim().TrimStart('0')}", "26").Resultados.FirstOrDefault().Substring(12).Trim());
+                ListaCanal1AAA.Add(Helpers.GetTablaSutitucion($"FECL{Helpers.FormatearCampos(TiposFormateo.Fecha02, Linea010000.Substring(168, 8).Trim())}{Linea010000.Substring(151, 3).Trim().TrimStart('0')}", "27").Resultados.FirstOrDefault().Substring(12).Trim());
+                ListaCanal1AAA.Add(Helpers.GetTablaSutitucion($"FECX{Helpers.FormatearCampos(TiposFormateo.Fecha02, Linea010000.Substring(168, 8).Trim())}{Linea010000.Substring(151, 3).Trim().TrimStart('0')}", "28").Resultados.FirstOrDefault().Substring(12).Trim());
 
+                listaCortes.Clear();
                 ListaCanal1AAA.Add(Helpers.ExtraccionCamposSpool(listaCortes, Linea010000));
                 
             }
@@ -213,6 +226,45 @@ namespace App.ControlLogicaProcesos
             return Linea1AAA;
             #endregion
         }
+
+        /// <summary>
+        /// Regla de Mes Mora
+        /// </summary>
+        /// <param name="pCampo"></param>
+        /// <returns></returns>
+        private string GetMesMora(string pCampo)
+        {
+            #region GetMesMora
+            int mesMora = Convert.ToInt32(pCampo);
+            mesMora += 1;
+            mesMora = mesMora > 4 ? 4 : mesMora;
+            return mesMora.ToString(); 
+            #endregion
+        }
+
+       /// <summary>
+       /// Reglas Get Telefono
+       /// </summary>
+       /// <param name="datosOriginales"></param>
+       /// <returns></returns>
+        private string GetTelefono(List<string> datosOriginales)
+        {
+            #region GetTelefono
+            string telefono = string.Empty;
+
+            var result = from busqueda in datosOriginales
+                         where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("040000")
+                         select busqueda;
+
+            if (result != null)
+            {
+                telefono = result.FirstOrDefault().Substring(6,20).Trim();
+            }
+
+            return telefono;
+            #endregion
+        }
+
 
         /// <summary>
         /// Linea que obtiene canal 1CCC

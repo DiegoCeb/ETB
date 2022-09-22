@@ -585,10 +585,10 @@ namespace App.ControlInsumos
         {
             #region GetTablaSutitucion
             var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._13_TABLA_SUSTITUCION][Variables.Insumos.doc1tsub.ToString()];
-            resultado.EstructuraSalida = ControlInsumos.Helpers.CargueDinamicoInsumos<App.ControlInsumos.EstructuraTablaSutitucion>(Variables.Insumos.doc1tsub.ToString(),
-                resultado.RutaInsumo, new App.ControlInsumos.EstructuraTablaSutitucion { Cruce = pLlaveCruce, IdentificardorBusqueda = pIdentificardorBusqueda });
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<App.ControlInsumos.EstructuraTablaSutitucion>(Variables.Insumos.doc1tsub.ToString(),
+                resultado.RutaInsumo, new EstructuraTablaSutitucion { Cruce = pLlaveCruce, IdentificardorBusqueda = pIdentificardorBusqueda });
 
-            return resultado.EstructuraSalida as App.ControlInsumos.EstructuraTablaSutitucion; 
+            return new EstructuraTablaSutitucion { Resultados = resultado.EstructuraSalida}; 
             #endregion
         }
 
@@ -1370,6 +1370,12 @@ namespace App.ControlInsumos
             {
                 case TiposFormateo.Fecha01:
                     return FormatearFecha("01", pCampo); // De ddMMyy a dd/MM/yyyy
+
+                case TiposFormateo.Fecha02:
+                    return FormatearFecha("02", pCampo); // De ddMMyy a yyyyMM
+
+                case TiposFormateo.Decimal01:
+                    return FormatearDecimal("01", pCampo); 
                 default:
                     return pCampo;
             }
@@ -1386,6 +1392,29 @@ namespace App.ControlInsumos
             {
                 case "01":
                     return string.Format("{0}/{1}/{2}", pCampo.Substring(0, 2), pCampo.Substring(2, 2), pCampo.Substring(4, 4));
+
+                case "02":
+                    return string.Format("{0}{1}", pCampo.Substring(4, 4), pCampo.Substring(2, 2));
+
+                default:
+                    return pCampo;
+            }
+        }
+
+        /// <summary>
+        /// FormateaFecha
+        /// </summary>
+        /// <param name="pCampo"></param>
+        /// <returns></returns>
+        private static string FormatearDecimal(string pFormatoDecimalTipo, string pCampo)
+        {
+            switch (pFormatoDecimalTipo)
+            {
+                case "01":
+                    string transformado = pCampo.Trim().TrimStart('0');
+                    transformado = $"{transformado.Substring(0, transformado.Length - 2)}.{transformado.Substring(transformado.Length - 2)}";
+                    transformado = Convert.ToDouble(transformado).ToString("N2");
+                    return $"$ {transformado.Substring(0, transformado.LastIndexOf('.')).Replace(",", ".")},{transformado.Substring(transformado.LastIndexOf('.') + 1)}"; ;
 
                 default:
                     return pCampo;
@@ -1855,6 +1884,7 @@ namespace App.ControlInsumos
     {
         Fecha01,
         Fecha02,
-        Fecha03
+        Fecha03,
+        Decimal01
     }
 }
