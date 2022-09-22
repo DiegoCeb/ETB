@@ -915,15 +915,15 @@ namespace App.ControlInsumos
         /// </summary>
         /// <param name="pLlaveCruce"></param>
         /// <returns></returns>
-        public static Procuni GetProcuni(string pLlaveCruce)
+        public static EstructuraProcuni GetProcuni(string pLlaveCruce)
         {
             #region GetProcuni
             var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._51_PROCUNI][Variables.Insumos.PROCUNI.ToString()];
 
-            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<Procuni>(Variables.Insumos.PROCUNI.ToString(),
-                resultado.RutaInsumo, new Procuni { Cruce = "12051743217" });
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<EstructuraProcuni>(Variables.Insumos.PROCUNI.ToString(),
+                resultado.RutaInsumo, new EstructuraProcuni { Cruce = "12051743217" });
 
-            return resultado.EstructuraSalida as Procuni;
+            return resultado.EstructuraSalida as EstructuraProcuni;
             #endregion
         }
 
@@ -932,15 +932,15 @@ namespace App.ControlInsumos
         /// </summary>
         /// <param name="pLlaveCruce"></param>
         /// <returns></returns>
-        public static Doc1Participaciones GetDoc1Participaciones(string pLlaveCruce)
+        public static EstructuraDoc1Participaciones GetDoc1Participaciones(string pLlaveCruce)
         {
             #region GetDoc1Participaciones
             var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._5_DOC1_PARTICIONES][Variables.Insumos.doc1_participaciones.ToString()];
 
-            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<Doc1Participaciones>(Variables.Insumos.doc1_participaciones.ToString(),
-                resultado.RutaInsumo, new Doc1Participaciones { Cruce = pLlaveCruce });
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<EstructuraDoc1Participaciones>(Variables.Insumos.doc1_participaciones.ToString(),
+                resultado.RutaInsumo, new EstructuraDoc1Participaciones { Cruce = pLlaveCruce });
 
-            return resultado.EstructuraSalida as Doc1Participaciones;
+            return resultado.EstructuraSalida as EstructuraDoc1Participaciones;
             #endregion
         }
 
@@ -949,15 +949,15 @@ namespace App.ControlInsumos
         /// </summary>
         /// <param name="pLlaveCruce"></param>
         /// <returns></returns>
-        public static CodigosBD GetCodigosBD(string pLlaveCruce)
+        public static EstructuraCodigosBD GetCodigosBD(string pLlaveCruce)
         {
             #region GetCodigosBD
             var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._6_LLAVES_CODIGOS_FACTU][Variables.Insumos.CodigosBD.ToString()];
 
-            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<CodigosBD>(Variables.Insumos.CodigosBD.ToString(),
-                resultado.RutaInsumo, new CodigosBD { Cruce = pLlaveCruce });
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<EstructuraCodigosBD>(Variables.Insumos.CodigosBD.ToString(),
+                resultado.RutaInsumo, new EstructuraCodigosBD { Cruce = pLlaveCruce });
 
-            return resultado.EstructuraSalida as CodigosBD;
+            return resultado.EstructuraSalida as EstructuraCodigosBD;
             #endregion
         }
 
@@ -966,15 +966,15 @@ namespace App.ControlInsumos
         /// </summary>
         /// <param name="pLlaveCruce"></param>
         /// <returns></returns>
-        public static LocBar GetLocBar(string pLlaveCruce)
+        public static EstructuraLocBar GetLocBar(string pLlaveCruce)
         {
             #region GetLocBar
             var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._7_LOC_BAR][Variables.Insumos.LOC_BAR.ToString()];
 
-            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<LocBar>(Variables.Insumos.LOC_BAR.ToString(),
-                resultado.RutaInsumo, new LocBar { Cruce = pLlaveCruce });
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<EstructuraLocBar>(Variables.Insumos.LOC_BAR.ToString(),
+                resultado.RutaInsumo, new EstructuraLocBar { Cruce = pLlaveCruce });
 
-            return resultado.EstructuraSalida as LocBar;
+            return resultado.EstructuraSalida as EstructuraLocBar;
             #endregion
         }
 
@@ -983,15 +983,15 @@ namespace App.ControlInsumos
         /// </summary>
         /// <param name="pLlaveCruce"></param>
         /// <returns></returns>
-        public static TelefonosPrivadosRevchain GetTelefonosPrivadosRevchain(string pLlaveCruce)
+        public static EstructuraTelefonosPrivadosRevchain GetTelefonosPrivadosRevchain(string pLlaveCruce)
         {
             #region GetTelefonosPrivadosRevchain
             var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._14_TEL_PRIVADOS][Variables.Insumos.TelefonosPrivadosRevchain.ToString()];
 
-            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<TelefonosPrivadosRevchain>(Variables.Insumos.TelefonosPrivadosRevchain.ToString(),
-                resultado.RutaInsumo, new TelefonosPrivadosRevchain { Cruce = pLlaveCruce });
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<EstructuraTelefonosPrivadosRevchain>(Variables.Insumos.TelefonosPrivadosRevchain.ToString(),
+                resultado.RutaInsumo, new EstructuraTelefonosPrivadosRevchain { Cruce = pLlaveCruce });
 
-            return resultado.EstructuraSalida as TelefonosPrivadosRevchain;
+            return resultado.EstructuraSalida as EstructuraTelefonosPrivadosRevchain;
             #endregion
         }
 
@@ -1000,15 +1000,15 @@ namespace App.ControlInsumos
         /// </summary>
         /// <param name="pLlaveCruce"></param>
         /// <returns></returns>
-        public static Tramites GetTramites(string pLlaveCruce)
+        public static EstructuraTramites GetTramites(string pLlaveCruce)
         {
             #region GetTramites
             var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._15_TRAMITES][Variables.Insumos.TRAMITES.ToString()];
 
-            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<Tramites>(Variables.Insumos.TRAMITES.ToString(),
-                resultado.RutaInsumo, new Tramites { Cruce = pLlaveCruce });
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<EstructuraTramites>(Variables.Insumos.TRAMITES.ToString(),
+                resultado.RutaInsumo, new EstructuraTramites { Cruce = pLlaveCruce });
 
-            return resultado.EstructuraSalida as Tramites;
+            return resultado.EstructuraSalida as EstructuraTramites;
             #endregion
         }
 
@@ -1017,15 +1017,15 @@ namespace App.ControlInsumos
         /// </summary>
         /// <param name="pLlaveCruce"></param>
         /// <returns></returns>
-        public static FADistribucionEmailRevchain GetFADistribucionEmailRevchain(string pLlaveCruce)
+        public static EstructuraFADistribucionEmailRevchain GetFADistribucionEmailRevchain(string pLlaveCruce)
         {
             #region GetFADistribucionEmailRevchain
             var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._17_DISTRIBUCION_EMAIL][Variables.Insumos.FA_DISTRIBUCION_EMAIL_REVCHAIN.ToString()];
 
-            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<FADistribucionEmailRevchain>(Variables.Insumos.FA_DISTRIBUCION_EMAIL_REVCHAIN.ToString(),
-                resultado.RutaInsumo, new FADistribucionEmailRevchain { Cruce = pLlaveCruce });
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<EstructuraFADistribucionEmailRevchain>(Variables.Insumos.FA_DISTRIBUCION_EMAIL_REVCHAIN.ToString(),
+                resultado.RutaInsumo, new EstructuraFADistribucionEmailRevchain { Cruce = pLlaveCruce });
 
-            return resultado.EstructuraSalida as FADistribucionEmailRevchain;
+            return resultado.EstructuraSalida as EstructuraFADistribucionEmailRevchain;
             #endregion
         }
 
@@ -1034,15 +1034,15 @@ namespace App.ControlInsumos
         /// </summary>
         /// <param name="pLlaveCruce"></param>
         /// <returns></returns>
-        public static DistribucionDobleRevchain GetDistribucionDobleRevchain(string pLlaveCruce)
+        public static EstructuraDistribucionDobleRevchain GetDistribucionDobleRevchain(string pLlaveCruce)
         {
             #region GetDistribucionDobleRevchain
             var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._21_DISTRIBUCION_DUAL][Variables.Insumos.DistribucionDoble_REVCHAIN.ToString()];
 
-            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<DistribucionDobleRevchain>(Variables.Insumos.DistribucionDoble_REVCHAIN.ToString(),
-                resultado.RutaInsumo, new DistribucionDobleRevchain { Cruce = pLlaveCruce });
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<EstructuraDistribucionDobleRevchain>(Variables.Insumos.DistribucionDoble_REVCHAIN.ToString(),
+                resultado.RutaInsumo, new EstructuraDistribucionDobleRevchain { Cruce = pLlaveCruce });
 
-            return resultado.EstructuraSalida as DistribucionDobleRevchain;
+            return resultado.EstructuraSalida as EstructuraDistribucionDobleRevchain;
             #endregion
         }
 
@@ -1051,15 +1051,15 @@ namespace App.ControlInsumos
         /// </summary>
         /// <param name="pLlaveCruce"></param>
         /// <returns></returns>
-        public static ClausulaPermanencia GetClausulaPermanencia(string pLlaveCruce)
+        public static EstructuraClausulaPermanencia GetClausulaPermanencia(string pLlaveCruce)
         {
             #region GetClausulaPermanencia
             var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._25_CLAUSULAS_PERMANENCIAS][Variables.Insumos.ClausulaPermanencia.ToString()];
 
-            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<ClausulaPermanencia>(Variables.Insumos.ClausulaPermanencia.ToString(),
-                resultado.RutaInsumo, new ClausulaPermanencia { Cruce = pLlaveCruce });
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<EstructuraClausulaPermanencia>(Variables.Insumos.ClausulaPermanencia.ToString(),
+                resultado.RutaInsumo, new EstructuraClausulaPermanencia { Cruce = pLlaveCruce });
 
-            return resultado.EstructuraSalida as ClausulaPermanencia;
+            return resultado.EstructuraSalida as EstructuraClausulaPermanencia;
             #endregion
         }
 
@@ -1068,15 +1068,15 @@ namespace App.ControlInsumos
         /// </summary>
         /// <param name="pLlaveCruce"></param>
         /// <returns></returns>
-        public static MensajesClientesSuspendidos GetMensajesClientesSuspendidos(string pLlaveCruce)
+        public static EstructuraMensajesClientesSuspendidos GetMensajesClientesSuspendidos(string pLlaveCruce)
         {
             #region GetMensajesClientesSuspendidos
             var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._35_MENSAJE_CLIENTES_SUSPENDIDOS][Variables.Insumos.MENSAJE_CLIENTES_SUSPENDIDOS.ToString()];
 
-            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<MensajesClientesSuspendidos>(Variables.Insumos.MENSAJE_CLIENTES_SUSPENDIDOS.ToString(),
-                resultado.RutaInsumo, new MensajesClientesSuspendidos { Cruce = pLlaveCruce });
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<EstructuraMensajesClientesSuspendidos>(Variables.Insumos.MENSAJE_CLIENTES_SUSPENDIDOS.ToString(),
+                resultado.RutaInsumo, new EstructuraMensajesClientesSuspendidos { Cruce = pLlaveCruce });
 
-            return resultado.EstructuraSalida as MensajesClientesSuspendidos;
+            return resultado.EstructuraSalida as EstructuraMensajesClientesSuspendidos;
             #endregion
         }
 
@@ -1085,15 +1085,15 @@ namespace App.ControlInsumos
         /// </summary>
         /// <param name="pLlaveCruce"></param>
         /// <returns></returns>
-        public static ETBCartasMora GetETBCartasMora(string pLlaveCruce)
+        public static EstructuraETBCartasMora GetETBCartasMora(string pLlaveCruce)
         {
             #region GetETBCartasMora
             var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._33_CARTAS_MORA][Variables.Insumos.ETB_Cartas_Mora.ToString()];
 
-            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<ETBCartasMora>(Variables.Insumos.ETB_Cartas_Mora.ToString(),
-                resultado.RutaInsumo, new ETBCartasMora { Cruce = pLlaveCruce });
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<EstructuraETBCartasMora>(Variables.Insumos.ETB_Cartas_Mora.ToString(),
+                resultado.RutaInsumo, new EstructuraETBCartasMora { Cruce = pLlaveCruce });
 
-            return resultado.EstructuraSalida as ETBCartasMora;
+            return resultado.EstructuraSalida as EstructuraETBCartasMora;
             #endregion
         }
 
@@ -1102,15 +1102,15 @@ namespace App.ControlInsumos
         /// </summary>
         /// <param name="pLlaveCruce"></param>
         /// <returns></returns>
-        public static ExclusionPagoInmediato GetExclusionPagoInmediato(string pLlaveCruce)
+        public static EstructuraExclusionPagoInmediato GetExclusionPagoInmediato(string pLlaveCruce)
         {
             #region GetExclusionPagoInmediato
             var resultado = Variables.Variables.DiccionarioInsumos[App.Variables.RxGeneral._31_PAGO_INMEDIATO][Variables.Insumos.EXCLUSION_PAGO_INMEDIATO.ToString()];
 
-            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<ExclusionPagoInmediato>(Variables.Insumos.EXCLUSION_PAGO_INMEDIATO.ToString(),
-                resultado.RutaInsumo, new ExclusionPagoInmediato { Cruce = pLlaveCruce });
+            resultado.EstructuraSalida = Helpers.CargueDinamicoInsumos<EstructuraExclusionPagoInmediato>(Variables.Insumos.EXCLUSION_PAGO_INMEDIATO.ToString(),
+                resultado.RutaInsumo, new EstructuraExclusionPagoInmediato { Cruce = pLlaveCruce });
 
-            return resultado.EstructuraSalida as ExclusionPagoInmediato;
+            return resultado.EstructuraSalida as EstructuraExclusionPagoInmediato;
             #endregion
         }
 

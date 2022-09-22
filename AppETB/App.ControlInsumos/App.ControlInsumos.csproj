@@ -71,18 +71,18 @@
     <Compile Include="Helpers.cs" />
     <Compile Include="NivelReclamacion.cs" />
     <Compile Include="PromosionesLTE.cs" />
-    <Compile Include="ClausulaPermanencia.cs" />
-    <Compile Include="CodigosBD.cs" />
-    <Compile Include="DistribucionDobleRevchain.cs" />
-    <Compile Include="Doc1Participaciones.cs" />
-    <Compile Include="ETBCartasMora.cs" />
-    <Compile Include="ExclusionPagoInmediato.cs" />
-    <Compile Include="FADistribucionEmailRevchain.cs" />
-    <Compile Include="LocBar.cs" />
-    <Compile Include="MensajesClientesSuspendidos.cs" />
-    <Compile Include="Procuni.cs" />
-    <Compile Include="TelefonosPrivadosRevchain.cs" />
-    <Compile Include="Tramites.cs" />
+    <Compile Include="EstructuraClausulaPermanencia.cs" />
+    <Compile Include="EstructuraCodigosBD.cs" />
+    <Compile Include="EstructuraDistribucionDobleRevchain.cs" />
+    <Compile Include="EstructuraDoc1Participaciones.cs" />
+    <Compile Include="EstructuraETBCartasMora.cs" />
+    <Compile Include="EstructuraExclusionPagoInmediato.cs" />
+    <Compile Include="EstructuraFADistribucionEmailRevchain.cs" />
+    <Compile Include="EstructuraLocBar.cs" />
+    <Compile Include="EstructuraMensajesClientesSuspendidos.cs" />
+    <Compile Include="EstructuraProcuni.cs" />
+    <Compile Include="EstructuraTelefonosPrivadosRevchain.cs" />
+    <Compile Include="EstructuraTramites.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

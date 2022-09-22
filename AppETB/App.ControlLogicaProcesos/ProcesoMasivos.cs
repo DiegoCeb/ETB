@@ -168,8 +168,8 @@ namespace App.ControlLogicaProcesos
                 listaCortes.Add(new PosCortes(155, 13)); //TODO: Formatear Decimal
                 listaCortes.Add(new PosCortes(168, 8, TiposFormateo.Fecha01)); //TODO: Formatear Fecha
                 listaCortes.Add(new PosCortes(176, 2)); //TODO: Construir regla
-                listaCortes.Add(new PosCortes(178, 8)); //TODO: Formatear Fecha
-                listaCortes.Add(new PosCortes(186, 8)); //TODO: Formatear Fecha
+                listaCortes.Add(new PosCortes(178, 8, TiposFormateo.Fecha01)); //TODO: Formatear Fecha
+                listaCortes.Add(new PosCortes(186, 8, TiposFormateo.Fecha01)); //TODO: Formatear Fecha
                 listaCortes.Add(new PosCortes(176, 2)); //TODO: Construir regla
 
 
