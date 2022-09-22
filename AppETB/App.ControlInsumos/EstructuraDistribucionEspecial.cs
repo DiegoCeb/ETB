@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace App.ControlInsumos
 {
-    public class FechaPagoFijas
+    public class EstructuraDistribucionEspecial
     {
         public string Cruce { get; set; }
-        public string Resultados { get; set; }
+        public List<string> Resultados { get; set; }
     }
 }
