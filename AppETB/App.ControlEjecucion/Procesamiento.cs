@@ -10,13 +10,20 @@ using App.ControlInsumos;
 
 namespace App.ControlEjecucion
 {
+    /// <summary>
+    /// Clase Procesamiento
+    /// </summary>
     public class Procesamiento : App.Variables.Variables
     {
+        /// <summary>
+        /// metodo Procesamiento
+        /// </summary>
         public Procesamiento()
         { }
 
         public void AdecuarTrabajoApp(string pIdentificadorProceso)
         {
+            #region AdecuarTrabajoApp
             //Creacion Carpeta Salida
             Helpers.RutaProceso = Directory.CreateDirectory($"{Utilidades.LeerAppConfig("RutaSalida")}\\{pIdentificadorProceso}{DateTime.Now:yyyyMMddhhmmss}").FullName;
 
@@ -30,10 +37,13 @@ namespace App.ControlEjecucion
 
             //Cargue Lista Insumos para despues usar en el formateo desde originales
             CargueGeneralInsumos(Helpers.RutaInsumos);
+            #endregion
         }
 
         public void EjecutarProcesoMasivo(string pRutaArchivosProcesar)
         {
+            #region EjecutarProcesoMasivo
+
             //Llamada a App.ControlLogicaProcesos
             //TODO: si es muy lento esto se puede lanzar en hilos ya que se llena el diccionario de formateo y al finalizar con un ContinueWith del hilo se encadena la escritura
             foreach (var archivo in Directory.GetFiles(pRutaArchivosProcesar))
@@ -53,7 +63,9 @@ namespace App.ControlEjecucion
             }
 
             //TODO: Escribir Diccionario Formateados llamando a un metodo de cracion de salidas donde se realice la segmentacion
-            App.ControlInsumos.Helpers.EscribirEnArchivo($"{App.ControlInsumos.Helpers.RutaProceso}\\MasivoCompletoPrueba.sal", DiccionarioExtractosFormateados.SelectMany(d => d.Value).ToList());
+            App.ControlInsumos.Helpers.EscribirEnArchivo($"{App.ControlInsumos.Helpers.RutaProceso}\\MasivoCompletoPrueba.sal", DiccionarioExtractosFormateados.SelectMany(d => d.Value).ToList()); 
+
+            #endregion
         }
 
         public void CargueGeneralInsumos(string Pruta)
