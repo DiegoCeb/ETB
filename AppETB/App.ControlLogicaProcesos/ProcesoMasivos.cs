@@ -173,7 +173,6 @@ namespace App.ControlLogicaProcesos
         {
             #region MapeoCanal1AAA
             string Linea1AAA = string.Empty;
-            return Linea1AAA;
             string Linea010000 = string.Empty;
 
             List<string> ListaCanal1AAA = new List<string>();
