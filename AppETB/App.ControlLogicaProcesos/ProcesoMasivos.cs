@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DLL_Utilidades;
 
 namespace App.ControlLogicaProcesos
 {
@@ -255,8 +256,10 @@ namespace App.ControlLogicaProcesos
                 ListaCanal1AAA.Add(IsFibra ? (string.IsNullOrEmpty(Linea010000.Substring(218, 20).Trim()) ? " " : Linea010000.Substring(218, 20).Trim()) : " ");
                 ListaCanal1AAA.Add(Helpers.GetTablaSutitucion($"FECP{Helpers.FormatearCampos(TiposFormateo.Fecha02,Linea010000.Substring(168, 8).Trim())}{Linea010000.Substring(151, 3).Trim().TrimStart('0')}", "26").Resultados.FirstOrDefault().Substring(12).Trim());
                 ListaCanal1AAA.Add(Helpers.GetTablaSutitucion($"FECL{Helpers.FormatearCampos(TiposFormateo.Fecha02, Linea010000.Substring(168, 8).Trim())}{Linea010000.Substring(151, 3).Trim().TrimStart('0')}", "27").Resultados.FirstOrDefault().Substring(12).Trim());
-                ListaCanal1AAA.Add(Helpers.GetTablaSutitucion($"FECX{Helpers.FormatearCampos(TiposFormateo.Fecha02, Linea010000.Substring(168, 8).Trim())}{Linea010000.Substring(151, 3).Trim().TrimStart('0')}", "28").Resultados.FirstOrDefault().Substring(12).Trim());
-
+                ListaCanal1AAA.Add(Helpers.GetTablaSutitucion($"FECX{Helpers.FormatearCampos(TiposFormateo.Fecha02, Linea010000.Substring(168, 8).Trim())}{Linea010000.Substring(151, 3).Trim().TrimStart('0')}", "28").Resultados.FirstOrDefault().Substring(12).Trim()); // TODO: Validar
+                ListaCanal1AAA.Add(GetNumeroReferencia(Linea010000.Substring(139, 12)));
+                ListaCanal1AAA.AddRange(GetCodigosBarras(Linea010000.Substring(139, 12), Linea010000)); //TODO: Verificar valor a pagar
+                ListaCanal1AAA.Add(GetTipoEtapas(Linea010000.Substring(151, 3))); 
                 listaCortes.Clear();
                 ListaCanal1AAA.Add(Helpers.ExtraccionCamposSpool(listaCortes, Linea010000));
 
@@ -304,6 +307,126 @@ namespace App.ControlLogicaProcesos
             #endregion
         }
 
+        /// <summary>
+        /// Metodo que Obtiene el Numero de Referencia
+        /// </summary>
+        /// <param name="pNumReferencia"></param>
+        /// <returns></returns>
+        private string GetNumeroReferencia(string pNumReferencia)
+        {
+            #region GetNumeroReferencia
+
+            string numFijoRef = Utilidades.LeerAppConfig("numeroReferencia");
+
+            string numReferencia = $"{numFijoRef}{pNumReferencia}";
+
+            int digitoVerificacion = 0;
+
+            for (int i = 1; i <= numReferencia.Length; i++) 
+            {
+                if (i % 2 == 0)
+                {
+                    digitoVerificacion += Convert.ToInt32(numReferencia.Substring((i - 1), 1)) * 3;
+                }
+                else
+                {
+                    digitoVerificacion += Convert.ToInt32(numReferencia.Substring((i - 1), 1)) * 1;
+                }
+            }
+
+            var Multiplo = Math.Ceiling((decimal)digitoVerificacion / 10) * 10;
+
+            digitoVerificacion = (int)Multiplo - digitoVerificacion;
+
+            return $"{numFijoRef}-{pNumReferencia}-{digitoVerificacion.ToString()}";
+
+            #endregion
+        }
+
+        /// <summary>
+        /// Metodo que Obtiene Los Codigos de Barras
+        /// </summary>
+        /// <param name="pNumReferencia"></param>
+        /// <returns></returns>
+        private List<string> GetCodigosBarras(string pNumReferencia, string pLinea010000)
+        {
+            #region GetCodigosBarras
+            List<string> result = new List<string>();
+            string numeroETB = Utilidades.LeerAppConfig("numeroETB");
+            string numFijoRef = Utilidades.LeerAppConfig("numeroReferencia");
+            string totalPagar = pLinea010000.Substring(155, 11).PadLeft(10, '0');
+            string fechaPago = Helpers.GetTablaSutitucion($"FECL{Helpers.FormatearCampos(TiposFormateo.Fecha03, pLinea010000.Substring(168, 8).Trim())}{pLinea010000.Substring(151, 3).Trim().TrimStart('0')}", "27").Resultados.FirstOrDefault().Substring(12).Trim();
+
+            string CodeBar1 = $"(415){numeroETB}(8020){numFijoRef}{pNumReferencia}(3900){totalPagar}(96){fechaPago}";
+            //"(415)$numero_etb(8020){$valores_temp["Total1BBB"]["numero_referencia"]}(3900)0000000000(96)" . formatear_fecha($valores_temp["fecha_pago_extemporaneo"], 4);
+            result.Add(CodeBar1);
+
+            string CodeBar2 = $"(415){numeroETB}(8020){numFijoRef}{pNumReferencia}(3900){totalPagar}(96){fechaPago}";
+            //"(415)$numero_etb(8020){$valores_temp["Total1BBB"]["numero_referencia"]}(3900)0000000000(96)" . formatear_fecha($valores_temp["fecha_pago_extemporaneo"], 4);
+            result.Add(CodeBar2);
+            return result;
+            #endregion
+        }
+
+        /// <summary>
+        /// Metodo que Obtiene Los Codigos de Barras
+        /// </summary>
+        /// <param name="pNumReferencia"></param>
+        /// <returns></returns>
+        private string GetTipoEtapas(string pCiclo)
+        {
+            #region GetTipoEtapas
+            string tipociclo = string.Empty;
+            
+            Int16 ciclo = Convert.ToInt16(pCiclo);
+
+            switch (ciclo)
+            {
+                case 15: case 16: 
+                case 87:
+                    tipociclo = "FIB";
+                    IsFibra = true;
+                    break;
+
+                case 17: 
+                case 31: case 32: case 33: case 34: case 35: case 36: case 38: case 39:
+                case 40: case 44: case 45: case 46: case 47: case 48: case 49: 
+                case 50: case 51: case 52: case 53: case 54: case 55: case 56: case 57: case 58: case 59:
+                case 60: case 61: case 62: case 63: case 68:
+                case 70: case 71:
+                    tipociclo = "PAR";
+                    IsResidencial = true;
+                    break;
+
+                case 18: case 19:
+                case 37:
+                case 64: case 67: case 69:
+                    tipociclo = "GOB";
+                    IsGobierno = true;
+                    break;
+
+                case 66:
+                case 79:
+                case 80: case 81: case 82: case 84: case 85: case 86: case 88:
+                    tipociclo = "DAT";
+                    IsDatos = true;
+                    break;
+
+                case 3:  case 4:  case 5:  case 6:  case 7:  case 8: 
+                case 90: case 91: case 92: case 93: case 94: case 95:
+                    tipociclo = "LTE";
+                    IsLte = true;
+                    break;
+
+                case 96: case 97:
+                    tipociclo = "LTE_CORP";
+                    IsLteCorporativo = true;
+                    break;
+            }
+
+            return tipociclo;
+            #endregion
+        }
 
         /// <summary>
         /// Linea que obtiene canal 1CCC

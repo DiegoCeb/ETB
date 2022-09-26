@@ -1373,6 +1373,9 @@ namespace App.ControlInsumos
                 case TiposFormateo.Fecha02:
                     return FormatearFecha("02", pCampo); // De ddMMyy a yyyyMM
 
+                case TiposFormateo.Fecha03:
+                    return FormatearFecha("03", pCampo); // De ddMMyy a yyyyMM
+
                 case TiposFormateo.Decimal01:
                     return FormatearDecimal("01", pCampo); 
                 default:
@@ -1394,6 +1397,9 @@ namespace App.ControlInsumos
 
                 case "02":
                     return string.Format("{0}{1}", pCampo.Substring(4, 4), pCampo.Substring(2, 2));
+
+                case "03":
+                    return string.Format("{0}{1}{2}", pCampo.Substring(4, 4), pCampo.Substring(2, 2), pCampo.Substring(0, 2));
 
                 default:
                     return pCampo;
