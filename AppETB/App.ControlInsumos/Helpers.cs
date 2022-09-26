@@ -1412,8 +1412,19 @@ namespace App.ControlInsumos
                 case "01":
                     string transformado = pCampo.Trim().TrimStart('0');
                     transformado = $"{transformado.Substring(0, transformado.Length - 2)}.{transformado.Substring(transformado.Length - 2)}";
-                    transformado = Convert.ToDouble(transformado).ToString("N2");
-                    return $"$ {transformado.Substring(0, transformado.LastIndexOf('.')).Replace(",", ".")},{transformado.Substring(transformado.LastIndexOf('.') + 1)}"; ;
+                    var temTransformado = Convert.ToDouble(transformado);
+
+                    if (temTransformado < 0)
+                    {
+                        temTransformado = temTransformado * -1;
+                        transformado = temTransformado.ToString("N2");
+                        return $"-$ {transformado.Substring(0, transformado.LastIndexOf('.')).Replace(",", ".")},{transformado.Substring(transformado.LastIndexOf('.') + 1)}";
+                    }
+                    else
+                    {
+                        transformado = temTransformado.ToString("N2");
+                        return $"$ {transformado.Substring(0, transformado.LastIndexOf('.')).Replace(",", ".")},{transformado.Substring(transformado.LastIndexOf('.') + 1)}"; ;
+                    }                    
 
                 default:
                     return pCampo;

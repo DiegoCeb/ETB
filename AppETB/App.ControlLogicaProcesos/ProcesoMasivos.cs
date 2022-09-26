@@ -16,6 +16,7 @@ namespace App.ControlLogicaProcesos
         private bool IsDatos { get; set; }
         private bool IsLte { get; set; }
         private bool IsLteCorporativo { get; set; }
+        private bool IsAnexoFibra { get; set; }
 
         public ProcesoMasivos(string pArchivo)
         {
@@ -141,8 +142,18 @@ namespace App.ControlLogicaProcesos
             //resultado.AddRange(FormateoCanal1OOO(datosOriginales));
             //resultado.AddRange(FormateoCanal1FFF(datosOriginales));
 
-            resultado.Add(MapeoCanal1BBA(datosOriginales));
-            resultado.AddRange(MapeoCanal1CCC(datosOriginales));
+            List<string> linea1BBB = new List<string> { "1BBB|Valor factura anterior|$ 29.900,00 | ",
+                                                        "1BBB|Gracias por su pago|-$ 29.900,00 | | ",
+                                                        "1BBB|Servicios etb con IVA|$ 32.500,19 | ",
+                                                        "1BBB|Ajuste a la decena|-$ 0,19 | "};
+
+            resultado.Add(MapeoCanal1BBA(datosOriginales,linea1BBB.ToList()));
+            //resultado.AddRange(MapeoCanal1CCC(datosOriginales));
+
+            string Linea1AAA = "1AAA|176411_112369|PATRICIA HELENA FUENTES LOZANO|30668970|KR 18P BIS 67C 16 SUR|Bogotá|Cundinamarca|12054338377|000305487709|70|$ 144.700,00|17/07/2022|1|01/06/2022|30/06/2022|6017631210| |04/08/2022|08/08/2022|22072022 013000|1-000305487709-4|(415)7707181500017(8020)10003054877094(3900)0000144700(96)20220808|(415)7707181500017(8020)10003054877094(3900)0000034566(96)20220808|PAR|0.48|11001| |Residencial|3| | | | | |jesusbarros12102013@gmail.com|solo_email| | |FACTURA_SOLO_EMAIL|1\\3  |11001| | |I| | | | | | |https://tracking.carvajalcomunicacion.com/wdelta/w/m/aa/?ack=H1MTIwNTQzMzgzNzc=H1UEFUUklDSUEgSEVMRU5BIEZVRU5URVMgTE9aQU5P| | |20220701 - 20220714|**periodo_lte**|000000187640249555|22072022 013000|170720|22 00000000000000000| 0Hogares y mipymes|Plata|Hogares|Hogares| BA | ";
+            resultado.Add(MapeoCanal1CCM(datosOriginales, Linea1AAA));
+
+            resultado.AddRange(MapeoCanal1CFI(datosOriginales));
 
             return resultado;
         }
@@ -162,10 +173,26 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        public string MapeoCanal1BBA(List<string> datosOriginales)
+        public string MapeoCanal1BBA(List<string> datosOriginales, List<string> Lineas1BBB)
         {
             #region Canal 1BBA
 
+            // Calcuar el subtotal del 1BBB
+            double subtotal1BBB = 0;
+
+            if (Lineas1BBB.Count > 0)
+            {   
+                string valorActual = string.Empty;
+
+                foreach (string LineaActual1BBB in Lineas1BBB)
+                {
+                    valorActual = LineaActual1BBB.Split('|')[2].Replace("$", "").Replace(".", "").Replace(",", "").Replace(" ", "").Trim();
+                    subtotal1BBB += Convert.ToDouble(valorActual);
+                }
+            }
+            
+
+            // Creacion Canal 1BBA
             string Linea1BBA = string.Empty;
 
             List<PosCortes> listaCortes = new List<PosCortes>();
@@ -173,30 +200,27 @@ namespace App.ControlLogicaProcesos
             var result = from busqueda in datosOriginales
                          where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("010000")
                          select busqueda;
-
-            string signo, valor = string.Empty;
-
             
             if (result != null)            
             {
-                // Cortes
-                listaCortes.Add(new PosCortes(154, 14));                
+                // Cortes                
+                listaCortes.Add(new PosCortes(154, 14, TiposFormateo.Decimal01));
 
                 // Linea Retornar
-                Linea1BBA = "1BBA|Valor por buscar ** |";
-                valor = Helpers.ExtraccionCamposSpool(listaCortes, result.FirstOrDefault());
-                
-                if(valor.Substring(0,1) == "-")
+                Linea1BBA = "1BBA";
+
+                // Se vaida que el Subtotal del 1BBB se
+                if(subtotal1BBB > 0)
                 {
-                    signo = valor.Substring(0, 1);
+                    Linea1BBA += IsFibra ? "|Valor total a pagar" : "|Total de la Factura ETB"; 
                 }
                 else
                 {
-                    signo = "";
-                }
+                    Linea1BBA += IsFibra ? "|Valor total a pagar" : "|Saldo a Favor";                    
+                }                
 
-                Linea1BBA +=  signo + valor.TrimStart('0') + "| ";
-                
+                Linea1BBA += "|" + Helpers.ExtraccionCamposSpool(listaCortes, result.FirstOrDefault());
+                Linea1BBA += "| ";                
             }
 
             return Linea1BBA;
@@ -345,10 +369,26 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        public string MapeoCanal1CCM(List<string> datosOriginales)
+        public string MapeoCanal1CCM(List<string> datosOriginales, string linea1AAA)
         {
             #region Canal 1CCM
             string Linea1CCM = string.Empty;
+            string cargosCCM = string.Empty;
+
+            if (linea1AAA.Split('|')[9] == "70")
+            {
+                cargosCCM = "Cargos: " + linea1AAA.Split('|')[19];
+            }
+
+            if(!IsLte && !IsLteCorporativo)
+            {
+                Linea1CCM = "1CCM| |" + cargosCCM +" | ";
+            }
+            else
+            {
+                Linea1CCM = "1CCM| | | ";
+            }            
+
             return Linea1CCM;
             #endregion
         }
@@ -464,6 +504,63 @@ namespace App.ControlLogicaProcesos
         {
             #region MapeoCanal1CFI
             IEnumerable<string> Lineas1CFI = null;
+            string lineaTemp1CFI = string.Empty;
+
+            List<string> resultadoLinea1CFI = new List<string>();            
+            List<PosCortes> listaCortes = new List<PosCortes>();
+
+
+            var result = from busqueda in datosOriginales
+                         where busqueda.Length > 6 && (busqueda.Substring(0, 6).Equals("11C10101") || busqueda.Substring(0, 6).Equals("11C304") || busqueda.Substring(0, 6).Equals("11C401"))
+                         select busqueda;
+
+            if(result != null)
+            {
+                // Se valida que es anexo fibra
+                if(IsAnexoFibra)
+                {
+
+                }
+
+                foreach (var resultadoActual in result)
+                {
+                    if(Convert.ToInt32(resultadoActual.Substring(16,14).Trim()) > 0)
+                    {
+
+                    }
+                }
+            }
+
+
+            #region Ajuste a la decena
+            // Llenar el canal con el ajuste a la decena si lo tiene
+            var resultAjusteDecena = from busqueda in datosOriginales
+                                     where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("02T003")
+                                     select busqueda;
+
+            // Validar que tenga Ajuste a la decena
+            if (resultAjusteDecena != null)
+            {
+                listaCortes.Clear();
+
+                listaCortes.Add(new PosCortes(6, 14, TiposFormateo.Decimal01));
+
+                lineaTemp1CFI = string.Empty;
+                lineaTemp1CFI = "1CFI| |Ajuste Decena|";
+                lineaTemp1CFI += Helpers.ExtraccionCamposSpool(listaCortes, resultAjusteDecena.FirstOrDefault());
+                lineaTemp1CFI += "| |";
+                lineaTemp1CFI += Helpers.ExtraccionCamposSpool(listaCortes, resultAjusteDecena.FirstOrDefault());
+                lineaTemp1CFI += "| | ";
+
+                resultadoLinea1CFI.Add(lineaTemp1CFI);
+            } 
+            #endregion
+
+
+            //string SVAS 
+
+            Lineas1CFI = resultadoLinea1CFI;
+
             return Lineas1CFI;
 
             #endregion
