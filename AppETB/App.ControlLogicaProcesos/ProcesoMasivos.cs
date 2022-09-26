@@ -2,13 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace App.ControlLogicaProcesos
 {
-    public class ProcesoMasivos : Variables.Variables, IProcess
+    public class ProcesoMasivos : IProcess
     {
         private bool IsResidencial { get; set; }
         private bool IsGobierno { get; set; }
@@ -48,13 +49,12 @@ namespace App.ControlLogicaProcesos
         public void CargueFormateoArchivo(string pArchivo)
         {
             #region CargueFormateoArchivo
-            Lector = new System.IO.StreamReader(pArchivo, Encoding.Default);
+            List<string> DatosArchivo = File.ReadAllLines(pArchivo, Encoding.Default).ToList();
             List<string> datosExtractoFormateo = new List<string>();
-            string linea = string.Empty;
             bool extractoCompleto = false;
             string llaveCruce = string.Empty;
 
-            while ((linea = Lector.ReadLine()) != null)
+            foreach (var linea in DatosArchivo)
             {
                 if (linea.Substring(0, 6) == "000000") //Inicio Extracto
                 {
@@ -67,7 +67,7 @@ namespace App.ControlLogicaProcesos
 
                     if (extractoCompleto)
                     {
-                        llaveCruce = datosExtractoFormateo.ElementAt(1).Substring(117, 22).Trim();
+                        llaveCruce = datosExtractoFormateo.ElementAt(1).Substring(117, 20).Trim();
 
                         AgregarDiccionario(llaveCruce, FormatearArchivo(llaveCruce, datosExtractoFormateo));
 
@@ -85,14 +85,14 @@ namespace App.ControlLogicaProcesos
             //Ultimo Extracto
             if (datosExtractoFormateo.Count > 1)
             {
-                llaveCruce = datosExtractoFormateo.ElementAt(1).Substring(117, 22).Trim();
+                llaveCruce = datosExtractoFormateo.ElementAt(1).Substring(117, 20).Trim();
 
                 AgregarDiccionario(llaveCruce, FormatearArchivo(llaveCruce, datosExtractoFormateo));
 
                 datosExtractoFormateo.Clear();
             }
 
-            Lector.Close();
+            DatosArchivo.Clear();
             #endregion
         }
 
@@ -104,13 +104,13 @@ namespace App.ControlLogicaProcesos
         private void AgregarDiccionario(string pLlaveCruce, List<string> pTemp)
         {
             #region AgregarDiccionario
-            if (DiccionarioExtractosFormateados.ContainsKey(pLlaveCruce))
+            if (Variables.Variables.DiccionarioExtractosFormateados.ContainsKey(pLlaveCruce))
             {
-                DiccionarioExtractosFormateados[pLlaveCruce].AddRange(pTemp);
+                Variables.Variables.DiccionarioExtractosFormateados[pLlaveCruce].AddRange(pTemp);
             }
             else
             {
-                DiccionarioExtractosFormateados.Add(pLlaveCruce, new List<string>(pTemp));
+                Variables.Variables.DiccionarioExtractosFormateados.Add(pLlaveCruce, new List<string>(pTemp));
             }
             #endregion
         }
@@ -124,12 +124,28 @@ namespace App.ControlLogicaProcesos
         {
             List<string> resultado = new List<string>();
 
+            if (pLLaveCruce == "2484047")
+            {
+
+            }
+
             FormatearPropiedadesExtracto();
 
-            resultado.Add(FormateoCanal1PPP(datosOriginales));
-            resultado.Add(MapeoCanal1AAA(datosOriginales));
-            resultado.Add(FormateoCanal1CMP(datosOriginales));
+            string canal1CMP = FormateoCanal1CMP(datosOriginales);
 
+            if (!string.IsNullOrEmpty(canal1CMP))
+            {
+                resultado.Add(canal1CMP);
+            }
+
+            string canal1PPP = FormateoCanal1PPP(datosOriginales);
+
+            if (!string.IsNullOrEmpty(canal1PPP))
+            {
+                resultado.Add(canal1PPP);
+            }
+
+            //resultado.Add(MapeoCanal1AAA(datosOriginales));
             //resultado.Add(FormateoCanal1CMP(datosOriginales));
             //resultado.Add(FormateoCanal1PPP(datosOriginales));
             //resultado.AddRange(FormateoCanalADN1(datosOriginales));
@@ -141,8 +157,8 @@ namespace App.ControlLogicaProcesos
             //resultado.AddRange(FormateoCanal1OOO(datosOriginales));
             //resultado.AddRange(FormateoCanal1FFF(datosOriginales));
 
-            resultado.Add(MapeoCanal1BBA(datosOriginales));
-            resultado.AddRange(MapeoCanal1CCC(datosOriginales));
+            //resultado.Add(MapeoCanal1BBA(datosOriginales));
+            //resultado.AddRange(MapeoCanal1CCC(datosOriginales));
 
             return resultado;
         }
@@ -176,17 +192,17 @@ namespace App.ControlLogicaProcesos
 
             string signo, valor = string.Empty;
 
-            
-            if (result != null)            
+
+            if (result != null)
             {
                 // Cortes
-                listaCortes.Add(new PosCortes(154, 14));                
+                listaCortes.Add(new PosCortes(154, 14));
 
                 // Linea Retornar
                 Linea1BBA = "1BBA|Valor por buscar ** |";
                 valor = Helpers.ExtraccionCamposSpool(listaCortes, result.FirstOrDefault());
-                
-                if(valor.Substring(0,1) == "-")
+
+                if (valor.Substring(0, 1) == "-")
                 {
                     signo = valor.Substring(0, 1);
                 }
@@ -195,8 +211,8 @@ namespace App.ControlLogicaProcesos
                     signo = "";
                 }
 
-                Linea1BBA +=  signo + valor.TrimStart('0') + "| ";
-                
+                Linea1BBA += signo + valor.TrimStart('0') + "| ";
+
             }
 
             return Linea1BBA;
@@ -235,8 +251,8 @@ namespace App.ControlLogicaProcesos
                 listaCortes.Add(new PosCortes(68, 40));
                 ListaCanal1AAA.Add(Helpers.ExtraccionCamposSpool(listaCortes, Linea010000));
 
-                ListaCanal1AAA.Add(Helpers.GetTablaSutitucion($"DAND{Linea010000.Substring(108, 2).Trim()}", "4").Resultados.FirstOrDefault().Substring(6).Trim());
-                ListaCanal1AAA.Add(Helpers.GetTablaSutitucion($"DANC{Linea010000.Substring(108,5).Trim()}", "15").Resultados.FirstOrDefault().Substring(9).Trim());
+                //ListaCanal1AAA.Add(Helpers.GetTablaSutitucion($"DAND{Linea010000.Substring(108, 2).Trim()}", "4").Resultados.FirstOrDefault().Substring(6).Trim());
+                //ListaCanal1AAA.Add(Helpers.GetTablaSutitucion($"DANC{Linea010000.Substring(108, 5).Trim()}", "15").Resultados.FirstOrDefault().Substring(9).Trim());
 
                 listaCortes.Clear();
                 listaCortes.Add(new PosCortes(117, 20));
@@ -245,7 +261,7 @@ namespace App.ControlLogicaProcesos
                 listaCortes.Add(new PosCortes(168, 8, TiposFormateo.Fecha01));
                 ListaCanal1AAA.Add(Helpers.ExtraccionCamposSpool(listaCortes, Linea010000));
                 ListaCanal1AAA.Add(GetMesMora(Linea010000.Substring(176, 2).Trim()));
-                
+
                 listaCortes.Clear();
                 listaCortes.Add(new PosCortes(178, 8, TiposFormateo.Fecha01));
                 listaCortes.Add(new PosCortes(186, 8, TiposFormateo.Fecha01));
@@ -253,9 +269,9 @@ namespace App.ControlLogicaProcesos
 
                 ListaCanal1AAA.Add(GetTelefono(datosOriginales)); //TODO: Verificar Reglas
                 ListaCanal1AAA.Add(IsFibra ? (string.IsNullOrEmpty(Linea010000.Substring(218, 20).Trim()) ? " " : Linea010000.Substring(218, 20).Trim()) : " ");
-                ListaCanal1AAA.Add(Helpers.GetTablaSutitucion($"FECP{Helpers.FormatearCampos(TiposFormateo.Fecha02,Linea010000.Substring(168, 8).Trim())}{Linea010000.Substring(151, 3).Trim().TrimStart('0')}", "26").Resultados.FirstOrDefault().Substring(12).Trim());
-                ListaCanal1AAA.Add(Helpers.GetTablaSutitucion($"FECL{Helpers.FormatearCampos(TiposFormateo.Fecha02, Linea010000.Substring(168, 8).Trim())}{Linea010000.Substring(151, 3).Trim().TrimStart('0')}", "27").Resultados.FirstOrDefault().Substring(12).Trim());
-                ListaCanal1AAA.Add(Helpers.GetTablaSutitucion($"FECX{Helpers.FormatearCampos(TiposFormateo.Fecha02, Linea010000.Substring(168, 8).Trim())}{Linea010000.Substring(151, 3).Trim().TrimStart('0')}", "28").Resultados.FirstOrDefault().Substring(12).Trim());
+                //ListaCanal1AAA.Add(Helpers.GetTablaSutitucion($"FECP{Helpers.FormatearCampos(TiposFormateo.Fecha02, Linea010000.Substring(168, 8).Trim())}{Linea010000.Substring(151, 3).Trim().TrimStart('0')}", "26").Resultados.FirstOrDefault().Substring(12).Trim());
+                //ListaCanal1AAA.Add(Helpers.GetTablaSutitucion($"FECL{Helpers.FormatearCampos(TiposFormateo.Fecha02, Linea010000.Substring(168, 8).Trim())}{Linea010000.Substring(151, 3).Trim().TrimStart('0')}", "27").Resultados.FirstOrDefault().Substring(12).Trim());
+                //ListaCanal1AAA.Add(Helpers.GetTablaSutitucion($"FECX{Helpers.FormatearCampos(TiposFormateo.Fecha02, Linea010000.Substring(168, 8).Trim())}{Linea010000.Substring(151, 3).Trim().TrimStart('0')}", "28").Resultados.FirstOrDefault().Substring(12).Trim());
 
                 listaCortes.Clear();
                 ListaCanal1AAA.Add(Helpers.ExtraccionCamposSpool(listaCortes, Linea010000));
@@ -277,15 +293,15 @@ namespace App.ControlLogicaProcesos
             int mesMora = Convert.ToInt32(pCampo);
             mesMora += 1;
             mesMora = mesMora > 4 ? 4 : mesMora;
-            return mesMora.ToString(); 
+            return mesMora.ToString();
             #endregion
         }
 
-       /// <summary>
-       /// Reglas Get Telefono
-       /// </summary>
-       /// <param name="datosOriginales"></param>
-       /// <returns></returns>
+        /// <summary>
+        /// Reglas Get Telefono
+        /// </summary>
+        /// <param name="datosOriginales"></param>
+        /// <returns></returns>
         private string GetTelefono(List<string> datosOriginales)
         {
             #region GetTelefono
@@ -297,7 +313,7 @@ namespace App.ControlLogicaProcesos
 
             if (result != null)
             {
-                telefono = result.FirstOrDefault().Substring(6,20).Trim();
+                telefono = result.FirstOrDefault().Substring(6, 20).Trim();
             }
 
             return telefono;
@@ -318,10 +334,10 @@ namespace App.ControlLogicaProcesos
             var result = from busqueda in datosOriginales
                          where busqueda.Length > 6 && (busqueda.Substring(0, 6).Equals("06T931") || busqueda.Substring(0, 6).Equals("06T935"))
                          select busqueda;
-            
+
             if (result != null)
-            { 
-            
+            {
+
             }
 
             return Linea1CCC;
@@ -792,13 +808,21 @@ namespace App.ControlLogicaProcesos
             {
                 var valorMinutosConsumo = result.FirstOrDefault().Substring(22, 8).TrimStart('0').Trim();
 
-                if (IsResidencial || IsFibra && !string.IsNullOrEmpty(valorMinutosConsumo))
+                if (/*IsResidencial || IsFibra &&*/ true)
                 {
                     var resultCanal = from busqueda in datosOriginales
                                       where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("040000")
                                       select busqueda;
 
-                    resultado += $"1CMP|Minutos del Plan {Helpers.GetTablaSutitucion($"MINC{resultCanal.FirstOrDefault().Substring(133, 10).TrimStart('0').Trim()}", "39").Resultados.FirstOrDefault()}|Minutos Consumidos {result.FirstOrDefault().Substring(22, 8).TrimStart('0').Trim()}| ";
+                    string minutosPlan = string.Empty;
+                    string llave = $"MINC{resultCanal.FirstOrDefault().Substring(133, 10).Trim()}";
+
+                    if (Variables.Variables.DatosInsumoTablaSustitucion.ContainsKey(llave))
+                    {
+                        minutosPlan = Variables.Variables.DatosInsumoTablaSustitucion[llave].FirstOrDefault().Substring(14).Trim();
+                    }
+
+                    resultado += $"1CMP|Minutos del Plan {minutosPlan}|Minutos Consumidos {result.FirstOrDefault().Substring(22, 8).TrimStart('0').Trim()}| ";
                 }
             }
 
@@ -817,21 +841,33 @@ namespace App.ControlLogicaProcesos
 
             if (linea60000 != null)
             {
-                var valorPromedio = linea60000.FirstOrDefault().Substring(78, 8).TrimStart('0').Trim();
-
-                if (/*IsResidencial || IsFibra &&*/ !string.IsNullOrEmpty(valorPromedio))
+                if (/*IsResidencial || IsFibra &&*/ true)
                 {
                     var linea10000 = from busqueda in datosOriginales
                                      where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("010000")
                                      select busqueda;
 
-                    resultado += $"1PPP|Promedio Historico|{linea60000.FirstOrDefault().Substring(78, 8).TrimStart('0').Trim()}| |" +
+                    var linea40000 = from busqueda in datosOriginales
+                                     where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("040000")
+                                     select busqueda;
+
+                    string valor = string.Empty;
+                    string llave = $"VMIN{linea40000.FirstOrDefault().Substring(133, 10)}";
+
+                    if (Variables.Variables.DatosInsumoTablaSustitucion.ContainsKey(llave))
+                    {
+                        valor = Variables.Variables.DatosInsumoTablaSustitucion[llave].FirstOrDefault().Trim();
+                    }
+
+                    var valorPromedio = linea60000.FirstOrDefault().Substring(78, 8).TrimStart('0').Trim() == "" ? "0" : linea60000.FirstOrDefault().Substring(78, 8).TrimStart('0').Trim();
+
+                    resultado += Helpers.ValidarPipePipe($"1PPP|Promedio Historico|{valorPromedio}| |" +
                         $"{ArmarMesesHistograma(Helpers.FormatearCampos(TiposFormateo.Fecha01, linea10000.FirstOrDefault().Substring(168, 8)))}| |" +
-                        $"{ArmarValoresHistograma(linea60000.FirstOrDefault())}|FALTA (Descuento)|FALTA (Valor Minuto)| ";
+                        $"{ArmarValoresHistograma(linea60000.FirstOrDefault())}| |{GetValorMinutoPlan(linea40000.FirstOrDefault(), valor)}| ");
                 }
             }
 
-            return resultado; 
+            return resultado;
             #endregion
         }
 
@@ -873,19 +909,61 @@ namespace App.ControlLogicaProcesos
             #region ArmarValoresHistograma
             string resultado = string.Empty;
 
-            if (IsResidencial || IsFibra)
+            string valor1 = pLineaDatos.Substring(30, 8).TrimStart('0') == "" ? "0" : pLineaDatos.Substring(30, 8).TrimStart('0');
+            string valor2 = pLineaDatos.Substring(38, 8).TrimStart('0') == "" ? "0" : pLineaDatos.Substring(38, 8).TrimStart('0');
+            string valor3 = pLineaDatos.Substring(46, 8).TrimStart('0') == "" ? "0" : pLineaDatos.Substring(46, 8).TrimStart('0');
+            string valor4 = pLineaDatos.Substring(54, 8).TrimStart('0') == "" ? "0" : pLineaDatos.Substring(54, 8).TrimStart('0');
+            string valor5 = pLineaDatos.Substring(62, 8).TrimStart('0') == "" ? "0" : pLineaDatos.Substring(62, 8).TrimStart('0');
+            string valor6 = pLineaDatos.Substring(70, 8).TrimStart('0') == "" ? "0" : pLineaDatos.Substring(70, 8).TrimStart('0');
+
+            resultado = $"{valor1}|{valor2}|{valor3}|{valor4}|{valor5}|{valor6}";
+
+            return resultado;
+            #endregion
+        }
+
+        private string GetValorMinutoPlan(string pLineaDatos, string pLineaTablaSustitucion)
+        {
+            #region GetValorMinutoPlan
+            string resultado = " ";
+
+            string estrato = pLineaDatos.Substring(123, 1);
+
+            if (!string.IsNullOrEmpty(pLineaTablaSustitucion))
             {
-                resultado = $" |{pLineaDatos.Substring(39, 8).TrimStart('0')}|{pLineaDatos.Substring(47, 8).TrimStart('0')}|{pLineaDatos.Substring(55, 8).TrimStart('0')}|" +
-                    $"{pLineaDatos.Substring(63, 8).TrimStart('0')}|{pLineaDatos.Substring(71, 8).TrimStart('0')}";
-            }
-            else if (IsLte || IsLteCorporativo)
-            {
-                resultado = $"{pLineaDatos.Substring(31, 8).TrimStart('0')}|{pLineaDatos.Substring(39, 8).TrimStart('0')}|{pLineaDatos.Substring(47, 8).TrimStart('0')}|" +
-                    $"{pLineaDatos.Substring(55, 8).TrimStart('0')}|{pLineaDatos.Substring(63, 8).TrimStart('0')}|{pLineaDatos.Substring(71, 8).TrimStart('0')}";
-            }
-            else
-            {
-                //No deberia llegar aca
+                switch (estrato)
+                {
+                    #region Estrato
+                    case "1":
+                        resultado = Helpers.FormatearCampos(TiposFormateo.Decimal01, pLineaTablaSustitucion.Substring(14, 10));
+                        break;
+
+                    case "2":
+                        resultado = Helpers.FormatearCampos(TiposFormateo.Decimal01, pLineaTablaSustitucion.Substring(24, 10));
+                        break;
+
+                    case "3":
+                        resultado = Helpers.FormatearCampos(TiposFormateo.Decimal01, pLineaTablaSustitucion.Substring(34, 10));
+                        break;
+
+                    case "4":
+                        resultado = Helpers.FormatearCampos(TiposFormateo.Decimal01, pLineaTablaSustitucion.Substring(44, 10));
+                        break;
+
+                    case "5":
+                        resultado = Helpers.FormatearCampos(TiposFormateo.Decimal01, pLineaTablaSustitucion.Substring(54, 10));
+                        break;
+
+                    case "6":
+                        resultado = Helpers.FormatearCampos(TiposFormateo.Decimal01, pLineaTablaSustitucion.Substring(64, 10));
+                        break;
+
+                    default:
+                        //Por defecto va con estrato 6
+                        resultado = Helpers.FormatearCampos(TiposFormateo.Decimal01, pLineaTablaSustitucion.Substring(64, 10));
+                        break;
+                        #endregion
+                }
             }
 
             return resultado;
