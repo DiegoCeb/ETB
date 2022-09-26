@@ -48,41 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EstructuraCodigosUniverSvas.cs" />
-    <Compile Include="EstructuraConformacionPaquetes.cs" />
-    <Compile Include="EstructuraCuentasEnvioSms.cs" />
-    <Compile Include="EstructuraCuentasSvasFueraBundle.cs" />
-    <Compile Include="EstructuraExclusionSa.cs" />
-    <Compile Include="EstructuraParametrizacionPaquetesFibra.cs" />
-    <Compile Include="EstructuraServiciosAdicionalesTv.cs" />
-    <Compile Include="EstructuraTablaSutitucion.cs" />
-    <Compile Include="EstructuraVelocidadFibra.cs" />
-    <Compile Include="EstructuraAsignacionCartas.cs" />
-    <Compile Include="EstructuraBaseCupones.cs" />
-    <Compile Include="EstructuraBaseTranspromo.cs" />
-    <Compile Include="EstructuraCicloCourier.cs" />
-    <Compile Include="EstructuraClientesEmailPrivado.cs" />
-    <Compile Include="EstructuraClientesEspecialesDatos.cs" />
-    <Compile Include="EstructuraCuentasExtraer.cs" />
-    <Compile Include="EstructuraCuentasLTE.cs" />
-    <Compile Include="EstructuraDistribucionEspecial.cs" />
-    <Compile Include="EstructuraETBHorasExp.cs" />
-    <Compile Include="EstructuraFechaPagoFijas.cs" />
     <Compile Include="Helpers.cs" />
-    <Compile Include="EstructuraNivelReclamacion.cs" />
-    <Compile Include="EstructuraPromosionesLTE.cs" />
-    <Compile Include="EstructuraClausulaPermanencia.cs" />
-    <Compile Include="EstructuraCodigosBD.cs" />
-    <Compile Include="EstructuraDistribucionDobleRevchain.cs" />
-    <Compile Include="EstructuraDoc1Participaciones.cs" />
-    <Compile Include="EstructuraETBCartasMora.cs" />
-    <Compile Include="EstructuraExclusionPagoInmediato.cs" />
-    <Compile Include="EstructuraFADistribucionEmailRevchain.cs" />
-    <Compile Include="EstructuraLocBar.cs" />
-    <Compile Include="EstructuraMensajesClientesSuspendidos.cs" />
-    <Compile Include="EstructuraProcuni.cs" />
-    <Compile Include="EstructuraTelefonosPrivadosRevchain.cs" />
-    <Compile Include="EstructuraTramites.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

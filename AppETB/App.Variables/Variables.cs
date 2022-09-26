@@ -7,16 +7,51 @@ namespace App.Variables
     /// <summary>
     /// Clase Variables 
     /// </summary>
-    public class Variables
+    public static class Variables
     {
-        public string Proceso { get; set; }
-        public string RutaPremaestra { get; set; }
+        public static string Proceso { get; set; }
+        public static string RutaPremaestra { get; set; }
 
         public static Dictionary<string, Dictionary<string, string>> DicGuias = new Dictionary<string, Dictionary<string, string>>();
-        //Cuenta  - Formateo
+        //Cuenta - Formateo
         public static Dictionary<string, List<string>> DiccionarioExtractosFormateados = new Dictionary<string, List<string>>();
         //NombreCarpeta - NombreInsumo(Enumeracion) - DatosInsumos
         public static Dictionary<string, Dictionary<string, DatosInsumos>> DiccionarioInsumos = new Dictionary<string, Dictionary<string, DatosInsumos>>();
+
+        public static Dictionary<string, List<string>> DatosInsumoTablaSustitucion = new Dictionary<string, List<string>>();
+        public static Dictionary<string, List<string>> DatosInsumoExcluirServiciosAdicionales = new Dictionary<string, List<string>>();
+        public static Dictionary<string, string> DatosInsumoServiciosAdicionalesTv = new Dictionary<string, string>();
+        public static Dictionary<string, List<string>> DatosInsumoVelocidadFibra = new Dictionary<string, List<string>>();
+        public static Dictionary<string, string> DatosInsumoParametrizacionPaquetesFibra = new Dictionary<string, string>();
+        public static Dictionary<string, string> DatosInsumoCuentasEnvioSms = new Dictionary<string, string>();
+        public static Dictionary<string, string> DatosInsumoCodigosUniverSvas = new Dictionary<string, string>();
+        public static Dictionary<string, string> DatosInsumoCuentasSvasFueraBundle = new Dictionary<string, string>();
+        public static Dictionary<string, string> DatosInsumoCuentasExtraer = new Dictionary<string, string>();
+        public static Dictionary<string, List<string>> DatosInsumoDistribucionEspecial = new Dictionary<string, List<string>>();
+        public static Dictionary<string, string> DatosInsumoCicloCourier = new Dictionary<string, string>();
+        public static Dictionary<string, string> DatosInsumoClientesEspecialesDatos = new Dictionary<string, string>();
+        public static Dictionary<string, List<string>> DatosInsumoBaseTranspromo = new Dictionary<string, List<string>>();
+        public static Dictionary<string, List<string>> DatosInsumoAsignacionCartas = new Dictionary<string, List<string>>();
+        public static Dictionary<string, List<string>> DatosInsumoNivelReclamacion = new Dictionary<string, List<string>>();
+        public static Dictionary<string, string> DatosInsumoFechaPagoFijas = new Dictionary<string, string>();
+        public static Dictionary<string, string> DatosInsumoEtbHorasExp = new Dictionary<string, string>();
+        public static Dictionary<string, string> DatosInsumoPromocionesLte = new Dictionary<string, string>();
+        public static Dictionary<string, string> DatosInsumoCuentasLte = new Dictionary<string, string>();
+        public static Dictionary<string, string> DatosInsumoClientesEmailPrivado = new Dictionary<string, string>();
+        public static Dictionary<string, List<string>> DatosInsumoBaseCupones = new Dictionary<string, List<string>>();
+        public static Dictionary<string, List<string>> DatosInsumoProcuni = new Dictionary<string, List<string>>();
+        public static Dictionary<string, List<string>> DatosInsumoDoc1Participaciones = new Dictionary<string, List<string>>();
+        public static Dictionary<string, List<string>> DatosInsumoCodigosBd = new Dictionary<string, List<string>>();
+        public static Dictionary<string, List<string>> DatosInsumoLocBar = new Dictionary<string, List<string>>();
+        public static Dictionary<string, string> DatosInsumoTelefonosPrivadosRevchain = new Dictionary<string, string>();
+        public static Dictionary<string, List<string>> DatosInsumoTramites = new Dictionary<string, List<string>>();
+        public static Dictionary<string, List<string>> DatosInsumoDistribucionEmailRevchain = new Dictionary<string, List<string>>();
+        public static Dictionary<string, string> DatosInsumoDistribucionDobleRevchain = new Dictionary<string, string>();
+        public static Dictionary<string, List<string>> DatosInsumoClausulaPermanencia = new Dictionary<string, List<string>>();
+        public static Dictionary<string, List<string>> DatosInsumoMensajesClientesSuspendidos = new Dictionary<string, List<string>>();
+        public static Dictionary<string, List<string>> DatosInsumoEtbCartasMora = new Dictionary<string, List<string>>();
+        public static Dictionary<string, string> DatosInsumoExclusionPagoInmediato = new Dictionary<string, string>();
+        public static Dictionary<string, string> DatosInsumoConformacionPaquetes = new Dictionary<string, string>();
 
         public static StreamReader Lector;
     }

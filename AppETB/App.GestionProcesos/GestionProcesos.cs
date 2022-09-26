@@ -9,7 +9,7 @@ using DLL_Utilidades;
 
 namespace App.ControlProcesos
 {
-    public class GestionProcesos : Variables.Variables, IControl, IDisposable
+    public class GestionProcesos : IControl, IDisposable
     {
         private bool _disposed = false;
         private readonly Procesamiento _objProcesamiento = null;
@@ -90,10 +90,10 @@ namespace App.ControlProcesos
             Console.WriteLine("");
             Console.WriteLine("1. Masivos");
             Console.WriteLine("");
-            Proceso = Console.ReadKey().KeyChar.ToString();
+            Variables.Variables.Proceso = Console.ReadKey().KeyChar.ToString();
             Console.WriteLine("");
 
-            switch (Proceso)
+            switch (Variables.Variables.Proceso)
             {
                 case "1":
                     Ejecutar("1");
