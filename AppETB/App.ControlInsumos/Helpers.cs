@@ -24,6 +24,56 @@ namespace App.ControlInsumos
         #region Metodos Cargue Insumos
 
         /// <summary>
+        ///
+        /// </summary>
+        /// <param name="pDiccionario"></param>
+        /// <param name="pLlave"></param>
+        /// <returns></returns>
+        public static List<string> GetValueInsumoLista(Dictionary<string, List<string>> pDiccionario, string pLlave)
+        {
+            #region GetValueInsumoLista
+            List<string> resultado = new List<string>();
+
+
+
+            if (pDiccionario.ContainsKey(pLlave))
+            {
+                resultado = pDiccionario[pLlave];
+            }
+
+
+
+            return resultado;
+            #endregion
+        }
+
+
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="pDiccionario"></param>
+        /// <param name="pLlave"></param>
+        /// <returns></returns>
+        public static string GetValueInsumoCadena(Dictionary<string, string> pDiccionario, string pLlave)
+        {
+            #region GetValueInsumoCadena
+            string resultado = string.Empty;
+
+
+
+            if (pDiccionario.ContainsKey(pLlave))
+            {
+                resultado = pDiccionario[pLlave];
+            }
+
+
+
+            return resultado;
+            #endregion
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="pDatosInsumo"></param>
@@ -444,6 +494,7 @@ namespace App.ControlInsumos
 
             #endregion
         }
+
 
         /// <summary>
         /// 

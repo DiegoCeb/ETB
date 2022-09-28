@@ -19,6 +19,9 @@ namespace App.ControlLogicaProcesos
         private bool IsLte { get; set; }
         private bool IsLteCorporativo { get; set; }
         private bool IsAnexoFibra { get; set; }
+        private string Cuenta { get; set; }
+        private string Ciclo { get; set; }
+        private string Estrato { get; set; }
 
         public ProcesoMasivos(string pArchivo)
         {
@@ -187,6 +190,9 @@ namespace App.ControlLogicaProcesos
             IsGobierno = false;
             IsLte = false;
             IsLteCorporativo = false;
+            Cuenta = string.Empty;
+            Ciclo = string.Empty;
+            Estrato = string.Empty;
         }
 
         /// <summary>
@@ -259,6 +265,7 @@ namespace App.ControlLogicaProcesos
             #region MapeoCanal1AAA
             string Linea1AAA = string.Empty;
             string Linea010000 = string.Empty;
+            string Linea040000 = string.Empty;
 
             List<string> ListaCanal1AAA = new List<string>();
             List<PosCortes> listaCortes = new List<PosCortes>();
@@ -271,9 +278,14 @@ namespace App.ControlLogicaProcesos
                          where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("010000")
                          select busqueda;
 
+            var result040000 = from busqueda in datosOriginales
+                         where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("040000")
+                         select busqueda;
+
             if (result != null)
             {
                 Linea010000 = result.FirstOrDefault();
+                Linea040000 = result.FirstOrDefault();
 
                 listaCortes.Add(new PosCortes(6, 50));
                 listaCortes.Add(new PosCortes(56, 12));
@@ -285,7 +297,9 @@ namespace App.ControlLogicaProcesos
 
                 listaCortes.Clear();
                 listaCortes.Add(new PosCortes(117, 20));
+                Cuenta = Linea010000.Substring(117, 20).Trim(); // Asignamos Cuenta a variable Global
                 listaCortes.Add(new PosCortes(151, 4));
+                Ciclo = Linea010000.Substring(151, 4).Trim().TrimStart('0'); // Asignamos Ciclo a variable Global
                 listaCortes.Add(new PosCortes(155, 13, TiposFormateo.Decimal01));
                 listaCortes.Add(new PosCortes(168, 8, TiposFormateo.Fecha01));
                 ListaCanal1AAA.Add(Helpers.ExtraccionCamposSpool(listaCortes, Linea010000));
@@ -298,14 +312,20 @@ namespace App.ControlLogicaProcesos
 
                 ListaCanal1AAA.Add(GetTelefono(datosOriginales)); //TODO: Verificar Reglas
                 ListaCanal1AAA.Add(IsFibra ? (string.IsNullOrEmpty(Linea010000.Substring(218, 20).Trim()) ? " " : Linea010000.Substring(218, 20).Trim()) : " ");
-                ListaCanal1AAA.Add(Helpers.GetTablaSutitucion($"FECP{Helpers.FormatearCampos(TiposFormateo.Fecha02,Linea010000.Substring(168, 8).Trim())}{Linea010000.Substring(151, 3).Trim().TrimStart('0')}", "26").Resultados.FirstOrDefault().Substring(12).Trim());
-                ListaCanal1AAA.Add(Helpers.GetTablaSutitucion($"FECL{Helpers.FormatearCampos(TiposFormateo.Fecha02, Linea010000.Substring(168, 8).Trim())}{Linea010000.Substring(151, 3).Trim().TrimStart('0')}", "27").Resultados.FirstOrDefault().Substring(12).Trim());
-                ListaCanal1AAA.Add(Helpers.GetTablaSutitucion($"FECX{Helpers.FormatearCampos(TiposFormateo.Fecha02, Linea010000.Substring(168, 8).Trim())}{Linea010000.Substring(151, 3).Trim().TrimStart('0')}", "28").Resultados.FirstOrDefault().Substring(12).Trim()); // TODO: Validar
+                //ListaCanal1AAA.Add(Helpers.GetTablaSutitucion($"FECP{Helpers.FormatearCampos(TiposFormateo.Fecha02,Linea010000.Substring(168, 8).Trim())}{Linea010000.Substring(151, 3).Trim().TrimStart('0')}", "26").Resultados.FirstOrDefault().Substring(12).Trim());
+                //ListaCanal1AAA.Add(Helpers.GetTablaSutitucion($"FECL{Helpers.FormatearCampos(TiposFormateo.Fecha02, Linea010000.Substring(168, 8).Trim())}{Linea010000.Substring(151, 3).Trim().TrimStart('0')}", "27").Resultados.FirstOrDefault().Substring(12).Trim());
+                //ListaCanal1AAA.Add(Helpers.GetTablaSutitucion($"FECX{Helpers.FormatearCampos(TiposFormateo.Fecha02, Linea010000.Substring(168, 8).Trim())}{Linea010000.Substring(151, 3).Trim().TrimStart('0')}", "28").Resultados.FirstOrDefault().Substring(12).Trim()); // TODO: Validar
                 ListaCanal1AAA.Add(GetNumeroReferencia(Linea010000.Substring(139, 12)));
                 ListaCanal1AAA.AddRange(GetCodigosBarras(Linea010000.Substring(139, 12), Linea010000)); //TODO: Verificar valor a pagar
-                ListaCanal1AAA.Add(GetTipoEtapas(Linea010000.Substring(151, 3))); 
+                ListaCanal1AAA.Add(GetTipoEtapas(Linea010000.Substring(151, 3)));
+                ListaCanal1AAA.Add(GetTasaInteres(Linea040000));
                 listaCortes.Clear();
+                listaCortes.Add(new PosCortes(284, 5));
                 ListaCanal1AAA.Add(Helpers.ExtraccionCamposSpool(listaCortes, Linea010000));
+                ListaCanal1AAA.Add(string.Empty); // TODO: Anexos Publicitarios - Verificar regla
+                ListaCanal1AAA.Add(GetActividad(Linea040000));
+                ListaCanal1AAA.Add(GetEstrato(Linea040000));
+                ListaCanal1AAA.AddRange(GetBarrioLocalidad());
 
             }
 
@@ -391,6 +411,7 @@ namespace App.ControlLogicaProcesos
         /// Metodo que Obtiene Los Codigos de Barras
         /// </summary>
         /// <param name="pNumReferencia"></param>
+        /// <param name="pLinea010000"></param>
         /// <returns></returns>
         private List<string> GetCodigosBarras(string pNumReferencia, string pLinea010000)
         {
@@ -399,7 +420,7 @@ namespace App.ControlLogicaProcesos
             string numeroETB = Utilidades.LeerAppConfig("numeroETB");
             string numFijoRef = Utilidades.LeerAppConfig("numeroReferencia");
             string totalPagar = pLinea010000.Substring(155, 11).PadLeft(10, '0');
-            string fechaPago = Helpers.GetTablaSutitucion($"FECL{Helpers.FormatearCampos(TiposFormateo.Fecha03, pLinea010000.Substring(168, 8).Trim())}{pLinea010000.Substring(151, 3).Trim().TrimStart('0')}", "27").Resultados.FirstOrDefault().Substring(12).Trim();
+            string fechaPago = string.Empty; //string fechaPago = Helpers.GetTablaSutitucion($"FECL{Helpers.FormatearCampos(TiposFormateo.Fecha03, pLinea010000.Substring(168, 8).Trim())}{pLinea010000.Substring(151, 3).Trim().TrimStart('0')}", "27").Resultados.FirstOrDefault().Substring(12).Trim();
 
             string CodeBar1 = $"(415){numeroETB}(8020){numFijoRef}{pNumReferencia}(3900){totalPagar}(96){fechaPago}";
             //"(415)$numero_etb(8020){$valores_temp["Total1BBB"]["numero_referencia"]}(3900)0000000000(96)" . formatear_fecha($valores_temp["fecha_pago_extemporaneo"], 4);
@@ -413,9 +434,9 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo que Obtiene Los Codigos de Barras
+        /// Metodo que Obtiene el Tipo de Etapa
         /// </summary>
-        /// <param name="pNumReferencia"></param>
+        /// <param name="pCiclo"></param>
         /// <returns></returns>
         private string GetTipoEtapas(string pCiclo)
         {
@@ -469,6 +490,207 @@ namespace App.ControlLogicaProcesos
             }
 
             return tipociclo;
+            #endregion
+        }
+
+        /// <summary>
+        /// Metodo que Obtiene la TasaInteres
+        /// </summary>
+        /// <param name="pLinea040000"></param>
+        /// <returns></returns>
+        private string GetTasaInteres(string pLinea040000)
+        {
+            #region GetActividad
+            string idActividad = GetIdActividad(pLinea040000.Substring(124, 2));
+
+            string tasaInteresTablaSustitucion = string.Empty;
+            string llave = $"TASM{idActividad}";
+
+            if (Variables.Variables.DatosInsumoTablaSustitucion.ContainsKey(llave))
+            {
+                tasaInteresTablaSustitucion = Variables.Variables.DatosInsumoTablaSustitucion[llave].FirstOrDefault().Substring(14).Trim();
+                tasaInteresTablaSustitucion = tasaInteresTablaSustitucion.Replace("TASAS DE MORA POR ACTIVIDAD", string.Empty);
+            }
+
+            if (!string.IsNullOrEmpty(tasaInteresTablaSustitucion))
+            {
+                return tasaInteresTablaSustitucion;
+            }
+            else
+            {
+                if (IsDatos || IsLteCorporativo)
+                {
+                    llave = $"TASM10";
+
+                    if (Variables.Variables.DatosInsumoTablaSustitucion.ContainsKey(llave))
+                    {
+                        tasaInteresTablaSustitucion = Variables.Variables.DatosInsumoTablaSustitucion[llave].FirstOrDefault().Substring(14).Trim();
+                    }
+                    return tasaInteresTablaSustitucion;
+                }
+                else if (IsLte)
+                {
+                    llave = $"TASM08";
+
+                    if (Variables.Variables.DatosInsumoTablaSustitucion.ContainsKey(llave))
+                    {
+                        tasaInteresTablaSustitucion = Variables.Variables.DatosInsumoTablaSustitucion[llave].FirstOrDefault().Substring(14).Trim();
+                    }
+                    return tasaInteresTablaSustitucion;
+                }
+                else if (IsResidencial || IsFibra || IsGobierno)
+                {
+                    llave = $"TASM08";
+
+                    if (Variables.Variables.DatosInsumoTablaSustitucion.ContainsKey(llave))
+                    {
+                        tasaInteresTablaSustitucion = Variables.Variables.DatosInsumoTablaSustitucion[llave].FirstOrDefault().Substring(14).Trim();
+                    }
+
+                    llave = $"TASM10";
+
+                    if (Variables.Variables.DatosInsumoTablaSustitucion.ContainsKey(llave))
+                    {
+                        tasaInteresTablaSustitucion += $" {Variables.Variables.DatosInsumoTablaSustitucion[llave].FirstOrDefault().Substring(14).Trim()}";
+                    }
+                    return tasaInteresTablaSustitucion;
+                }
+                else
+                {
+                    return string.Empty;
+                }
+            }
+
+
+
+            #endregion
+        }
+
+        /// <summary>
+        /// Metodo que Obtiene el ID Actividad
+        /// </summary>
+        /// <param name="pActividadSpool"></param>
+        /// <returns></returns>
+        private string GetIdActividad(string pActividadSpool)
+        {
+            #region GetIdActividad
+            string actividad = pActividadSpool;
+
+            if ((IsLte || IsLteCorporativo) && !string.IsNullOrEmpty(actividad))
+            {
+                actividad = "00";
+            }
+
+            if ((Ciclo == "66" || Ciclo == "79" || (Ciclo.Length == 2 && (Ciclo != "8" && Ciclo.Substring(0, 1) == "8"))) && Ciclo != "87")
+            {
+                actividad = "10";
+            }
+
+            return actividad;
+            #endregion
+        }
+
+        /// <summary>
+        /// Metodo que Obtiene la Actividad
+        /// </summary>
+        /// <param name="pLinea040000"></param>
+        /// <returns></returns>
+        private string GetActividad(string pLinea040000)
+        {
+            #region GetActividad
+            string idActividad = GetIdActividad(pLinea040000.Substring(124, 2));
+
+            string actividadTablaSustitucion = string.Empty;
+
+            actividadTablaSustitucion = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"ACTR{idActividad}").FirstOrDefault()?.Substring(14).Trim() ?? string.Empty;
+            actividadTablaSustitucion = actividadTablaSustitucion.Replace("ACTIVIDAD REVCHAIN", string.Empty);
+
+            if (!string.IsNullOrEmpty(actividadTablaSustitucion) && IsResidencial && IsFibra && IsGobierno)
+            {
+                return actividadTablaSustitucion;
+            }
+            else
+            {
+                return string.Empty;                
+            }
+
+
+            
+            #endregion
+        }
+
+        /// <summary>
+        /// Metodo que Obtiene el Estrato
+        /// </summary>
+        /// <param name="pLinea040000"></param>
+        /// <returns></returns>
+        private string GetEstrato(string pLinea040000)
+        {
+            #region GetEstrato
+            string Estrato = GetIdActividad(pLinea040000.Substring(123, 1));
+
+            if (!string.IsNullOrEmpty(Estrato))
+            {
+                try
+                {
+                    int estratoInt = Convert.ToInt16(Estrato);
+                    estratoInt = estratoInt > 6 ? 6 : estratoInt;
+                    Estrato = estratoInt.ToString();
+                    return estratoInt.ToString();
+                }
+                catch
+                {
+                    return string.Empty;
+                }
+
+            }
+            else
+            {
+                return string.Empty ;
+            }
+            #endregion
+        }
+
+        /// <summary>
+        /// Metodo que Obtiene el Estrato
+        /// </summary>
+        /// <param name="pLinea040000"></param>
+        /// <returns></returns>
+        private List<string> GetBarrioLocalidad()
+        {
+            #region GetBarrioLocalidad
+            List<string> resultado = new  List<string>();
+
+            string barrio = string.Empty;
+            string localidad = string.Empty;
+            string locBar = string.Empty;
+
+            locBar = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoLocBar, $"{Cuenta}").FirstOrDefault();
+
+            if (!string.IsNullOrEmpty(locBar))
+            {
+                List<string> camposlocBar = locBar.Split('|').ToList();
+
+                string llaveBarrio = $"CODX{camposlocBar[1].TrimStart('0')}{camposlocBar[2]}";
+                string llaveLocalidad = $"CODL{camposlocBar[1]}";
+
+                if (!string.IsNullOrEmpty(llaveBarrio))
+                {
+                    barrio = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveBarrio).FirstOrDefault()?.Substring(12).Trim() ?? string.Empty;
+
+                }
+
+                if (!string.IsNullOrEmpty(llaveLocalidad))
+                {
+                    localidad = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveLocalidad).FirstOrDefault()?.Substring(7).Trim() ?? string.Empty;
+                }
+            }
+
+
+            resultado.Add(barrio);
+            resultado.Add(localidad);
+
+            return resultado;
             #endregion
         }
 
