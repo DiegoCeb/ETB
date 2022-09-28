@@ -255,8 +255,9 @@ namespace App.ControlLogicaProcesos
             //string Linea1AAA = "1AAA|176411_112369|PATRICIA HELENA FUENTES LOZANO|30668970|KR 18P BIS 67C 16 SUR|Bogotá|Cundinamarca|12054338377|000305487709|70|$ 144.700,00|17/07/2022|1|01/06/2022|30/06/2022|6017631210| |04/08/2022|08/08/2022|22072022 013000|1-000305487709-4|(415)7707181500017(8020)10003054877094(3900)0000144700(96)20220808|(415)7707181500017(8020)10003054877094(3900)0000034566(96)20220808|PAR|0.48|11001| |Residencial|3| | | | | |jesusbarros12102013@gmail.com|solo_email| | |FACTURA_SOLO_EMAIL|1\\3  |11001| | |I| | | | | | |https://tracking.carvajalcomunicacion.com/wdelta/w/m/aa/?ack=H1MTIwNTQzMzgzNzc=H1UEFUUklDSUEgSEVMRU5BIEZVRU5URVMgTE9aQU5P| | |20220701 - 20220714|**periodo_lte**|000000187640249555|22072022 013000|170720|22 00000000000000000| 0Hogares y mipymes|Plata|Hogares|Hogares| BA | ";
             //resultado.Add(MapeoCanal1CCM(datosOriginales, Linea1AAA));
 
-            //resultado.AddRange(MapeoCanal1CFI(datosOriginales));
-
+            resultado.Add(MapeoCanal1AFI(datosOriginales));
+            resultado.AddRange(MapeoCanal1BFI(datosOriginales));
+            resultado.AddRange(MapeoCanal1CFI(datosOriginales));
             //resultado.Add(MapeoCanal1BBA(datosOriginales));
             //resultado.AddRange(MapeoCanal1CCC(datosOriginales));
 
@@ -720,19 +721,6 @@ namespace App.ControlLogicaProcesos
             #endregion
         }
 
-        /// Metodo que obtiene la linea formateada de Canal 1AFI
-        /// </summary>
-        /// <param name="datosOriginales"></param>
-        /// <returns></returns>
-        private string MapeoCanal1AFI(List<string> datosOriginales)
-        {
-            #region MapeoCanal1AFI
-            string Linea1AFI = string.Empty;
-            return Linea1AFI;
-
-            #endregion
-        }
-
         /// <summary>
         /// Linea que obtiene canal CUFE
         /// </summary>
@@ -746,6 +734,184 @@ namespace App.ControlLogicaProcesos
             #endregion
         }
 
+        /// Metodo que obtiene la linea formateada de Canal 1AFI
+        /// </summary>
+        /// <param name="datosOriginales"></param>
+        /// <returns></returns>
+        private string MapeoCanal1AFI(List<string> datosOriginales)
+        {
+            #region MapeoCanal1AFI      
+
+            #region Variables con Valores a pintar
+            List<PosCortes> listaCortes = new List<PosCortes>();
+
+            string Linea1AFI = string.Empty;
+            string letrasPaquetes = string.Empty;
+            bool banPrimer11C304 = false;
+            string periodo = string.Empty;
+            string valorBase = string.Empty;
+            string valorIva = string.Empty;
+            string valorTotal = string.Empty;
+            string subsidio = " ";
+            string periodoLargo = string.Empty;
+            string periodoDesde = string.Empty;
+            string periodoHasta = string.Empty;
+
+            List<string> listaFechas11C304 = new List<string>();            
+            List<string> listaFechasDesde = new List<string>();
+            List<string> listaFechasHasta = new List<string>();
+
+            #endregion
+
+            var resultLetras = from busqueda in datosOriginales
+                         where busqueda.Length > 6 && (busqueda.Substring(0, 6).Equals("11C101") || 
+                                                       busqueda.Substring(0, 6).Equals("11C304") || 
+                                                       busqueda.Substring(0, 6).Equals("11C401") ||
+                                                       busqueda.Substring(0, 6).Equals("02T004"))
+                               select busqueda;
+
+
+            if(resultLetras != null)
+            {
+                // se capturan las letras de los paquetes
+                foreach(var letraActual in resultLetras)
+                {
+                    string llaveUno = $"{letraActual.Substring(6, 10)}";
+                    string llaveDos = $"{letraActual.Substring(6, 6)}";
+                    string valor = string.Empty;
+
+                    if (Variables.Variables.DatosInsumoParametrizacionPaquetesFibra.ContainsKey(llaveUno))
+                    {
+                        valor = Variables.Variables.DatosInsumoParametrizacionPaquetesFibra[llaveUno];
+                    }
+                    else if (Variables.Variables.DatosInsumoParametrizacionPaquetesFibra.ContainsKey(llaveDos))
+                    {
+                        valor = Variables.Variables.DatosInsumoParametrizacionPaquetesFibra[llaveDos];
+                    }
+
+                    if (!string.IsNullOrEmpty(valor))
+                    {
+                        if(!letrasPaquetes.Contains(valor.Split('|')[2]))
+                        {
+                            letrasPaquetes += valor.Split('|')[2];
+                        }
+                    }
+
+                    // Capturar el periodo
+                    if(letraActual.Substring(0,6) == "11C304" && banPrimer11C304 == false)
+                    {
+                        periodo = letraActual.Substring(128, 6);
+                        banPrimer11C304 = true;
+                    }
+
+                    // Capturar fechas del 11C304
+                    if (letraActual.Substring(0, 6) == "11C304")
+                    {
+                        listaFechas11C304.Add(letraActual.Substring(128, 19));
+
+                        listaFechasDesde.Add(letraActual.Substring(128, 8));
+                        listaFechasHasta.Add(letraActual.Substring(139, 8));
+                    }
+
+                    // Capturar el totales
+                    if (letraActual.Substring(0, 6) == "02T004")
+                    {                        
+                        listaCortes.Add(new PosCortes(6, 14, TiposFormateo.Decimal01));
+                        valorBase = Helpers.ExtraccionCamposSpool(listaCortes, letraActual);
+                        listaCortes.Clear();
+
+                        listaCortes.Add(new PosCortes(34, 14, TiposFormateo.Decimal01));
+                        valorIva = Helpers.ExtraccionCamposSpool(listaCortes, letraActual);
+                        listaCortes.Clear();
+
+                        List<string> listCamposSumar = new List<string>();
+                        listCamposSumar.Add(letraActual.Substring(6,14));
+                        listCamposSumar.Add(letraActual.Substring(34, 14));
+                        valorTotal = Helpers.SumarCampos(listCamposSumar);
+                    }
+                }
+
+                // Capturar el nombre del paquete
+                string nombrePaquete = GetNombrePaquete(letrasPaquetes);
+
+                // Se captura fecha mas reciente
+                string fechaReciente = Helpers.GetFechaMasReciente(listaFechas11C304);
+                periodoLargo = "(" + Helpers.FormatearCampos(TiposFormateo.Fecha04, fechaReciente.Substring(4, 4)) + " - " + Helpers.FormatearCampos(TiposFormateo.Fecha04, fechaReciente.Substring(13, 4)) + ")";
+
+                // Se captura la Fecha periodoDesde se toma la fecha mas antigua
+                periodoDesde = Helpers.getFechaMaximaOMinima(listaFechasDesde, 2);
+
+                // Se captura la Fecha periodoHasta se toma la fecha mas Reciente
+                periodoHasta = Helpers.getFechaMaximaOMinima(listaFechasHasta, 1);
+
+                Linea1AFI = "1AFI|";
+                Linea1AFI += periodo + "|";
+                Linea1AFI += nombrePaquete + "|";
+                Linea1AFI += valorBase + "|";
+                Linea1AFI += valorIva + "|";
+                Linea1AFI += valorTotal  + "|";
+                Linea1AFI += subsidio + "|";
+                Linea1AFI += periodoLargo + "| |";
+                Linea1AFI += periodoDesde + "|";
+                Linea1AFI += periodoHasta + "| ";
+            }
+
+            return Linea1AFI;
+
+            #endregion
+        }
+
+        private string GetNombrePaquete(string letras)
+        {
+            #region GetNombrePaquete
+
+            string llave = string.Empty;
+            string valor = string.Empty;
+
+            if(letras.Contains("A") && letras.Contains("B") && letras.Contains("C"))
+            {
+                valor = Variables.Variables.DatosInsumoConformacionPaquetes["ABC"];
+                return valor.Split('|')[1];
+            }
+            else if (letras.Contains("A") && letras.Contains("B"))
+            {
+                valor = Variables.Variables.DatosInsumoConformacionPaquetes["AB"];
+                return valor.Split('|')[1];
+            }
+            else if (letras.Contains("A") && letras.Contains("C"))
+            {
+                valor = Variables.Variables.DatosInsumoConformacionPaquetes["AC"];
+                return valor.Split('|')[1];
+            }
+            else if (letras.Contains("B") && letras.Contains("C"))
+            {
+                valor = Variables.Variables.DatosInsumoConformacionPaquetes["BC"];
+                return valor.Split('|')[1];
+            }
+            else if (letras.Contains("F") && letras.Contains("G"))
+            {
+                valor = Variables.Variables.DatosInsumoConformacionPaquetes["FG"];
+                return valor.Split('|')[1];
+            }
+            else if (letras.Contains("A") && letras.Contains("G"))
+            {
+                valor = Variables.Variables.DatosInsumoConformacionPaquetes["AG"];
+                return valor.Split('|')[1];
+            }
+            else if (letras.Contains("B") && letras.Contains("F"))
+            {
+                valor = Variables.Variables.DatosInsumoConformacionPaquetes["BF"];
+                return valor.Split('|')[1];
+            }
+            else
+            {
+                return " ";
+            }
+
+
+            #endregion
+        }
+
         /// Metodo que obtiene las lineas formateadas de Canal 1BFI
         /// </summary>
         /// <param name="datosOriginales"></param>
@@ -753,11 +919,58 @@ namespace App.ControlLogicaProcesos
         private IEnumerable<string> MapeoCanal1BFI(List<string> datosOriginales)
         {
             #region MapeoCanal1BFI
-            IEnumerable<string> Lineas1BFI = null;
-            return Lineas1BFI;
+            IEnumerable<string> Lineas1CFI = null;
+            string lineaTemp1CFI = string.Empty;
+
+            List<string> resultadoLinea1CFI = new List<string>();
+            List<PosCortes> listaCortes = new List<PosCortes>();
+
+            var result = from busqueda in datosOriginales
+                         where busqueda.Length > 6 && (busqueda.Substring(0, 6).Equals("11C101") || busqueda.Substring(0, 6).Equals("11C304") || busqueda.Substring(0, 6).Equals("11C401"))
+                         let x = busqueda
+                         group x by busqueda.Substring(6, 10) into busqueda
+                         select busqueda;
+
+
+            if (result != null)
+            {
+                foreach (var resultadoActual in result.SelectMany(x => x))
+                {
+
+                    if (Convert.ToInt32(resultadoActual.Substring(16, 14).Trim()) > 0)
+                    {
+                        string llave = $"CODF{resultadoActual.Substring(6, 10)}";
+                        string valor = string.Empty;
+
+                        if (Variables.Variables.DatosInsumoTablaSustitucion.ContainsKey(llave))
+                        {
+                            valor = Variables.Variables.DatosInsumoTablaSustitucion[llave].FirstOrDefault().Trim();
+                        }
+
+
+                        // Tabla Suti = CODF0163730650 SVA Access Point Wifi Plus
+
+                        //    /// 1. Si esta en Codigos_Univer_SVAS pinto, y en elnombre de sustitusion SI este la palabra SVA/                        
+                        //    /// 2. Validar en este archivo ExcluirServiciosAdicionales_JUL2022
+                        //    // Se valida que es anexo fibra
+                        //    if (IsAnexoFibra)
+                        //    {
+
+                        //    }
+
+                    }
+                }
+            }
+
+            
+
+            //string SVAS 
+
+            Lineas1CFI = resultadoLinea1CFI;
+
+            return Lineas1CFI;
 
             #endregion
-        }
 
         /// <summary>
         /// Linea que obtiene canal ADNC
@@ -804,26 +1017,39 @@ namespace App.ControlLogicaProcesos
 
 
             var result = from busqueda in datosOriginales
-                         where busqueda.Length > 6 && (busqueda.Substring(0, 6).Equals("11C10101") || busqueda.Substring(0, 6).Equals("11C304") || busqueda.Substring(0, 6).Equals("11C401"))
+                         where busqueda.Length > 6 && (busqueda.Substring(0, 6).Equals("11C101") || busqueda.Substring(0, 6).Equals("11C304") || busqueda.Substring(0, 6).Equals("11C401"))
+                         let x = busqueda
+                         group x by busqueda.Substring(6, 10) into busqueda
                          select busqueda;
 
             if (result != null)
             {
-                // Se valida que es anexo fibra
-                if (IsAnexoFibra)
-                {
-
-                }
-
-                foreach (var resultadoActual in result)
+                foreach (var resultadoActual in result.SelectMany(x => x))
                 {
                     if (Convert.ToInt32(resultadoActual.Substring(16, 14).Trim()) > 0)
                     {
+                        string llave = $"CODF{resultadoActual.Substring(6, 10)}";
+                        string valor = string.Empty;
+
+                        if (Variables.Variables.DatosInsumoTablaSustitucion.ContainsKey(llave))
+                        {
+                            valor = Variables.Variables.DatosInsumoTablaSustitucion[llave].FirstOrDefault().Trim();
+                        }
+
+
+                        // Tabla Suti = CODF0163730650 SVA Access Point Wifi Plus
+
+                        //    /// 1. Si esta en Codigos_Univer_SVAS pinto, y en elnombre de sustitusion SI este la palabra SVA/                        
+                        //    /// 2. Validar en este archivo ExcluirServiciosAdicionales_JUL2022
+                        //    // Se valida que es anexo fibra
+                        //    if (IsAnexoFibra)
+                        //    {
+
+                        //    }
 
                     }
                 }
             }
-
 
             #region Ajuste a la decena
             // Llenar el canal con el ajuste a la decena si lo tiene
@@ -883,6 +1109,7 @@ namespace App.ControlLogicaProcesos
             #endregion
         }
 
+
         /// Metodo que obtiene la linea formateada de Canal 1TFI
         /// </summary>
         /// <param name="datosOriginales"></param>
@@ -895,6 +1122,36 @@ namespace App.ControlLogicaProcesos
 
             #endregion
         }
+
+        /// <summary>
+        /// Linea que obtiene canal ADNC
+        /// </summary>
+        /// <param name="datosOriginales"></param>
+        /// <returns></returns>
+        public string MapeoCanalADNC(List<string> datosOriginales)
+        {
+            #region Canal ADNC
+            string LineaANDC = string.Empty;
+            return LineaANDC;
+            #endregion
+        }
+
+        
+
+        /// <summary>
+        /// Linea que obtiene canal NTC2
+        /// </summary>
+        /// <param name="datosOriginales"></param>
+        /// <returns></returns>
+        public string MapeoCanalNTC2(List<string> datosOriginales)
+        {
+            #region Canal NTC2
+            string LineaNTC2 = string.Empty;
+            return LineaNTC2;
+            #endregion
+        }
+
+        
 
         /// <summary>
         /// Linea que obtiene canal NTC3
