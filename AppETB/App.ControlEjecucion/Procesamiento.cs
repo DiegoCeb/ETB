@@ -52,15 +52,28 @@ namespace App.ControlEjecucion
                            where !busqueda.Contains("CONTEO") && !busqueda.Contains("IDENTIFICACION") && !busqueda.Contains("premaestra") //TODO: se omiten estos archivos peor ahi que revisar para que sirven
                            select busqueda;
 
-            var result = Parallel.ForEach(archivos, archivo =>
-            {
-                var hilo = Task.Run(() =>
-                {
-                    _ = new ProcesoMasivos(archivo);
-                });
+            var archivoPeriodo = from busqueda in Directory.GetFiles(pRutaArchivosProcesar)
+                                 where busqueda.Contains("IDENTIFICACION")
+                                 select busqueda;
 
-                hilo.Wait();
-            });
+            string periodo = File.ReadAllLines(archivoPeriodo.FirstOrDefault()).ToList().ElementAt(0).Split('\t').ElementAt(1);
+
+#if DEBUG == false
+            var result = Parallel.ForEach(archivos, archivo =>
+    {
+        var hilo = Task.Run(() =>
+        {
+            _ = new ProcesoMasivos(archivo, periodo);
+        });
+
+        hilo.Wait();
+    }); 
+#endif
+
+            foreach (var archivo in archivos)
+            {
+                _ = new ProcesoMasivos(archivo, periodo);
+            }
 
             List<string> datosImprimir = new List<string>();
 
@@ -129,7 +142,7 @@ namespace App.ControlEjecucion
                             else if (EnumInsumo.ToString() == Variables.Insumos.Codigos_Univer_SVAS.ToString())
                             {
                                 Helpers.GetCodigosUniverSvas(File.ReadAllLines(Archivo, Encoding.Default).ToList());
-                            } 
+                            }
                             else if (EnumInsumo.ToString() == Variables.Insumos.Cuentas_SVAS_FueradeBundle.ToString())
                             {
                                 Helpers.GetCuentasSvasFueraBundle(File.ReadAllLines(Archivo, Encoding.Default).ToList());
@@ -137,7 +150,7 @@ namespace App.ControlEjecucion
                             else if (EnumInsumo.ToString() == Variables.Insumos.cuentasExtraer.ToString())
                             {
                                 Helpers.GetCuentasExtraer(File.ReadAllLines(Archivo, Encoding.Default).ToList());
-                            } 
+                            }
                             else if (EnumInsumo.ToString() == Variables.Insumos.distribucion_especial.ToString())
                             {
                                 Helpers.GetDistribucionEspecial(File.ReadAllLines(Archivo, Encoding.Default).ToList());
@@ -161,7 +174,7 @@ namespace App.ControlEjecucion
                             else if (EnumInsumo.ToString() == Variables.Insumos.NIVEL_RECLAMACION.ToString())
                             {
                                 Helpers.GetNivelReclamacion(File.ReadAllLines(Archivo, Encoding.Default).ToList());
-                            } 
+                            }
                             else if (EnumInsumo.ToString() == Variables.Insumos.Fechas_Pago_Fijas.ToString())
                             {
                                 Helpers.GetFechaPagoFijas(File.ReadAllLines(Archivo, Encoding.Default).ToList());
