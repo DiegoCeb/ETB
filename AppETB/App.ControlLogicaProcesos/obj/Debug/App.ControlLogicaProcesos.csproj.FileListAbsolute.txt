@@ -6,7 +6,6 @@ C:\Proyectos\ETB\AppETB\App.ControlLogicaProcesos\bin\Debug\SharpCompress.dll
 C:\Proyectos\ETB\AppETB\App.ControlLogicaProcesos\bin\Debug\DLL_Utilidades.dll
 C:\Proyectos\ETB\AppETB\App.ControlLogicaProcesos\bin\Debug\App.ControlInsumos.pdb
 C:\Proyectos\ETB\AppETB\App.ControlLogicaProcesos\bin\Debug\App.Variables.pdb
-C:\Proyectos\ETB\AppETB\App.ControlLogicaProcesos\bin\Debug\DLL_Utilidades.pdb
 C:\Proyectos\ETB\AppETB\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaProcesos.csproj.AssemblyReference.cache
 C:\Proyectos\ETB\AppETB\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaProcesos.csproj.CoreCompileInputs.cache
 C:\Proyectos\ETB\AppETB\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaProcesos.csproj.CopyComplete

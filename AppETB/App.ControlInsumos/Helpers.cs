@@ -21,46 +21,6 @@ namespace App.ControlInsumos
         public static string RutaOriginales { get; set; }
         public static string RutaInsumos { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="pDiccionario"></param>
-        /// <param name="pLlave"></param>
-        /// <returns></returns>
-        public static List<string> GetValueInsumoLista(Dictionary<string, List<string>> pDiccionario, string pLlave)
-        {
-            #region GetValueInsumoLista
-            List<string> resultado = new List<string>();
-
-            if (pDiccionario.ContainsKey(pLlave))
-            {
-                resultado = pDiccionario[pLlave];
-            }
-
-            return resultado; 
-            #endregion
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="pDiccionario"></param>
-        /// <param name="pLlave"></param>
-        /// <returns></returns>
-        public static string GetValueInsumoCadena(Dictionary<string, string> pDiccionario, string pLlave)
-        {
-            #region GetValueInsumoCadena
-            string resultado = string.Empty;
-
-            if (pDiccionario.ContainsKey(pLlave))
-            {
-                resultado = pDiccionario[pLlave];
-            }
-
-            return resultado; 
-            #endregion
-        }
-
         #region Metodos Cargue Insumos
 
         /// <summary>
@@ -1636,7 +1596,7 @@ namespace App.ControlInsumos
         /// <param name="listaFechas"></param>
         /// <param name="accion">1 = Maxima -- 2 = Minima</param>
         /// <returns></returns>
-        public static string getFechaMaximaOMinima(List<string> listaFechas, int accion)
+        public static string GetFechaMaximaOMinima(List<string> listaFechas, int accion)
         {
             DateTime fecha;
             DateTime fechaTem = new DateTime();

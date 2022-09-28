@@ -1058,10 +1058,10 @@ namespace App.ControlLogicaProcesos
                 periodoLargo = "(" + Helpers.FormatearCampos(TiposFormateo.Fecha04, fechaReciente.Substring(4, 4)) + " - " + Helpers.FormatearCampos(TiposFormateo.Fecha04, fechaReciente.Substring(13, 4)) + ")";
 
                 // Se captura la Fecha periodoDesde se toma la fecha mas antigua
-                periodoDesde = Helpers.getFechaMaximaOMinima(listaFechasDesde, 2);
+                periodoDesde = Helpers.GetFechaMaximaOMinima(listaFechasDesde, 2);
 
                 // Se captura la Fecha periodoHasta se toma la fecha mas Reciente
-                periodoHasta = Helpers.getFechaMaximaOMinima(listaFechasHasta, 1);
+                periodoHasta = Helpers.GetFechaMaximaOMinima(listaFechasHasta, 1);
 
                 Linea1AFI = "1AFI|";
                 Linea1AFI += periodo + "|";
