@@ -1373,6 +1373,9 @@ namespace App.ControlInsumos
 
                 case TiposFormateo.Fecha03:
                     return FormatearFecha("03", pCampo); // De ddMMyy a yyyyMM
+                
+                case TiposFormateo.Fecha04:
+                    return FormatearFecha("04", pCampo); // De MMdd a dd MM (17 Jul)
 
                 case TiposFormateo.Decimal01:
                     return FormatearDecimal("01", pCampo);
@@ -1388,6 +1391,7 @@ namespace App.ControlInsumos
         /// <returns></returns>
         private static string FormatearFecha(string pFormatoFechaTipo, string pCampo)
         {
+            #region FormatearFecha
             switch (pFormatoFechaTipo)
             {
                 case "01":
@@ -1398,10 +1402,33 @@ namespace App.ControlInsumos
 
                 case "03":
                     return string.Format("{0}{1}{2}", pCampo.Substring(4, 4), pCampo.Substring(2, 2), pCampo.Substring(0, 2));
+                case "04":
+
+                    Dictionary<string,string> dicMeses = new Dictionary<string, string>();
+
+                    dicMeses.Add("01", "Ene");
+                    dicMeses.Add("02", "Feb");
+                    dicMeses.Add("03", "Mar");
+                    dicMeses.Add("04", "Abr");
+                    dicMeses.Add("05", "May");
+                    dicMeses.Add("06", "Jun");
+                    dicMeses.Add("07", "Jul");
+                    dicMeses.Add("08", "Ago");
+                    dicMeses.Add("09", "Sep");
+                    dicMeses.Add("10", "Oct");
+                    dicMeses.Add("11", "Nov");
+                    dicMeses.Add("12", "Dic");
+
+                    string dia, Mes = string.Empty;
+                    dia = pCampo.Substring(2, 2);
+                    Mes = dicMeses[pCampo.Substring(0, 2)];                    
+
+                    return string.Format("{0} {1}", dia, Mes);
 
                 default:
                     return pCampo;
-            }
+            } 
+            #endregion
         }
 
         /// <summary>
@@ -1452,6 +1479,104 @@ namespace App.ControlInsumos
 
             return letraCapital;
             #endregion
+        }
+
+        /// <summary>
+        /// Metodo para tomar la fecha mas reciente
+        /// </summary>
+        /// <param name="ListaFechas"></param>
+        /// <returns></returns>
+        public static string GetFechaMasReciente ( List<string> ListaFechas)
+        {
+            #region GetFechaMasReciente
+
+            DateTime fechaUno, fechaDos;
+            DateTime fechaUnoTem = new DateTime(), fechaDosTem = new DateTime();
+            bool PrimeraVez = false;
+
+            string fechaReciente = string.Empty;
+
+            foreach (string valorActual in ListaFechas)
+            {
+                fechaUno = Convert.ToDateTime(valorActual.Substring(0, 4) + "/" + valorActual.Substring(4, 2) + "/" + valorActual.Substring(6, 2));
+                fechaDos = Convert.ToDateTime(valorActual.Substring(11, 4) + "/" + valorActual.Substring(15, 2) + "/" + valorActual.Substring(17, 2));
+
+                if (PrimeraVez == false)
+                {
+                    fechaUnoTem = fechaUno;
+                    fechaDosTem = fechaDos;
+                    fechaReciente = fechaUno.ToString("yyyyMMdd") + "-" + fechaDos.ToString("yyyyMMdd");
+                    PrimeraVez = true;
+                }
+
+                if (DateTime.Compare(fechaUno, fechaUnoTem) >= 0 && DateTime.Compare(fechaDos, fechaDosTem) >= 0)
+                {
+                    fechaReciente = fechaUno.ToString("yyyyMMdd") + "-" + fechaDos.ToString("yyyyMMdd");
+                    fechaUnoTem = fechaUno;
+                    fechaDosTem = fechaDos;
+                }
+            }
+
+            return fechaReciente; 
+
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="listaFechas"></param>
+        /// <param name="accion">1 = Maxima -- 2 = Minima</param>
+        /// <returns></returns>
+        public static string getFechaMaximaOMinima(List<string> listaFechas, int accion)
+        {
+            DateTime fecha;
+            DateTime fechaTem = new DateTime();
+            bool PrimeraVez = false;
+            string fechaResultado = string.Empty;
+
+            foreach (string registroActual in listaFechas)
+            {
+                fecha = Convert.ToDateTime(registroActual.Substring(0, 4) + "/" + registroActual.Substring(4, 2) + "/" + registroActual.Substring(6, 2));
+
+                if (PrimeraVez == false)
+                {
+                    fechaTem = fecha;                    
+                    PrimeraVez = true;
+                }
+
+                switch (accion)
+                {
+                    // Fecha Maxima
+                    case 1:
+
+                        var ddd = DateTime.Compare(fecha, fechaTem);
+
+                        if (DateTime.Compare(fecha, fechaTem) >= 0 )
+                        {
+                            fechaResultado = fecha.ToString("yyyyMMdd");
+                            fechaTem = fecha;
+                        }
+
+                        break;
+
+                    // Fecha Minima
+                    case 2:
+
+                        var hhh = DateTime.Compare(fecha, fechaTem);
+                        if (DateTime.Compare(fecha, fechaTem) <= 0)
+                        {
+                            var d = DateTime.Compare(fecha, fechaTem);
+                            fechaResultado = fecha.ToString("yyyyMMdd");
+                            fechaTem = fecha;
+                        }
+
+                        break;
+                    default:
+                        break;
+                }
+            }
+            return fechaResultado;
         }
 
         /// <summary>
@@ -1868,6 +1993,30 @@ namespace App.ControlInsumos
             }
             #endregion
         }
+
+        /// <summary>
+        /// Metodo para sumar varios numeros
+        /// </summary>
+        /// <param name="pCamposSumar">Lista de campos a Sumar</param>
+        /// <returns>string formateado con la suma d elos valores</returns>
+        public static string SumarCampos(List<string> pCamposSumar)
+        {
+            #region SumarCampos
+            double totalSuma = 0;
+
+            if (pCamposSumar.Count > 0)
+            {
+                foreach (string NumeroActual in pCamposSumar)
+                {
+                    string transformado = NumeroActual.Replace("$", "").Replace(" ", "");
+                    var temTransformado = Convert.ToDouble(transformado);
+                    totalSuma += temTransformado;
+                }
+            }
+            string ValorSumadoFormateado = FormatearCampos(TiposFormateo.Decimal01, totalSuma.ToString());
+            return ValorSumadoFormateado; 
+            #endregion
+        }
     }
 
     public struct PosCortes
@@ -1921,6 +2070,7 @@ namespace App.ControlInsumos
         Fecha01,
         Fecha02,
         Fecha03,
+        Fecha04,
         LetraCapital,
         Decimal01
     }
