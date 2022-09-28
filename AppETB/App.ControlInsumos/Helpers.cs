@@ -21,6 +21,46 @@ namespace App.ControlInsumos
         public static string RutaOriginales { get; set; }
         public static string RutaInsumos { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pDiccionario"></param>
+        /// <param name="pLlave"></param>
+        /// <returns></returns>
+        public static List<string> GetValueInsumoLista(Dictionary<string, List<string>> pDiccionario, string pLlave)
+        {
+            #region GetValueInsumoLista
+            List<string> resultado = new List<string>();
+
+            if (pDiccionario.ContainsKey(pLlave))
+            {
+                resultado = pDiccionario[pLlave];
+            }
+
+            return resultado; 
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pDiccionario"></param>
+        /// <param name="pLlave"></param>
+        /// <returns></returns>
+        public static string GetValueInsumoCadena(Dictionary<string, string> pDiccionario, string pLlave)
+        {
+            #region GetValueInsumoCadena
+            string resultado = string.Empty;
+
+            if (pDiccionario.ContainsKey(pLlave))
+            {
+                resultado = pDiccionario[pLlave];
+            }
+
+            return resultado; 
+            #endregion
+        }
+
         #region Metodos Cargue Insumos
 
         /// <summary>
@@ -1374,6 +1414,9 @@ namespace App.ControlInsumos
                 case TiposFormateo.Fecha03:
                     return FormatearFecha("03", pCampo); // De ddMMyy a yyyyMM
 
+                case TiposFormateo.Fecha04:
+                    return FormatearFecha("04", pCampo); // De MMyyyy a yyyyMM
+
                 case TiposFormateo.Decimal01:
                     return FormatearDecimal("01", pCampo);
                 default:
@@ -1399,6 +1442,9 @@ namespace App.ControlInsumos
                 case "03":
                     return string.Format("{0}{1}{2}", pCampo.Substring(4, 4), pCampo.Substring(2, 2), pCampo.Substring(0, 2));
 
+                case "04":
+                    return string.Format("{0}{1}", pCampo.Substring(2, 4), pCampo.Substring(0, 2));
+
                 default:
                     return pCampo;
             }
@@ -1415,6 +1461,17 @@ namespace App.ControlInsumos
             {
                 case "01":
                     string transformado = pCampo.Trim().TrimStart('0');
+
+                    if (string.IsNullOrEmpty(transformado))
+                    {
+                        transformado = "00";
+                    }
+
+                    if (transformado.Length == 1)
+                    {
+                        transformado = transformado.PadLeft(2, '0');
+                    }
+
                     transformado = $"{transformado.Substring(0, transformado.Length - 2)}.{transformado.Substring(transformado.Length - 2)}";
                     var temTransformado = Convert.ToDouble(transformado);
 
@@ -1921,6 +1978,7 @@ namespace App.ControlInsumos
         Fecha01,
         Fecha02,
         Fecha03,
+        Fecha04,
         LetraCapital,
         Decimal01
     }
