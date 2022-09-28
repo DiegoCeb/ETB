@@ -757,24 +757,24 @@ namespace App.ControlLogicaProcesos
             string periodoDesde = string.Empty;
             string periodoHasta = string.Empty;
 
-            List<string> listaFechas11C304 = new List<string>();            
+            List<string> listaFechas11C304 = new List<string>();
             List<string> listaFechasDesde = new List<string>();
             List<string> listaFechasHasta = new List<string>();
 
             #endregion
 
             var resultLetras = from busqueda in datosOriginales
-                         where busqueda.Length > 6 && (busqueda.Substring(0, 6).Equals("11C101") || 
-                                                       busqueda.Substring(0, 6).Equals("11C304") || 
-                                                       busqueda.Substring(0, 6).Equals("11C401") ||
-                                                       busqueda.Substring(0, 6).Equals("02T004"))
+                               where busqueda.Length > 6 && (busqueda.Substring(0, 6).Equals("11C101") ||
+                                                             busqueda.Substring(0, 6).Equals("11C304") ||
+                                                             busqueda.Substring(0, 6).Equals("11C401") ||
+                                                             busqueda.Substring(0, 6).Equals("02T004"))
                                select busqueda;
 
 
-            if(resultLetras != null)
+            if (resultLetras != null)
             {
                 // se capturan las letras de los paquetes
-                foreach(var letraActual in resultLetras)
+                foreach (var letraActual in resultLetras)
                 {
                     string llaveUno = $"{letraActual.Substring(6, 10)}";
                     string llaveDos = $"{letraActual.Substring(6, 6)}";
@@ -791,14 +791,14 @@ namespace App.ControlLogicaProcesos
 
                     if (!string.IsNullOrEmpty(valor))
                     {
-                        if(!letrasPaquetes.Contains(valor.Split('|')[2]))
+                        if (!letrasPaquetes.Contains(valor.Split('|')[2]))
                         {
                             letrasPaquetes += valor.Split('|')[2];
                         }
                     }
 
                     // Capturar el periodo
-                    if(letraActual.Substring(0,6) == "11C304" && banPrimer11C304 == false)
+                    if (letraActual.Substring(0, 6) == "11C304" && banPrimer11C304 == false)
                     {
                         periodo = letraActual.Substring(128, 6);
                         banPrimer11C304 = true;
@@ -815,7 +815,7 @@ namespace App.ControlLogicaProcesos
 
                     // Capturar el totales
                     if (letraActual.Substring(0, 6) == "02T004")
-                    {                        
+                    {
                         listaCortes.Add(new PosCortes(6, 14, TiposFormateo.Decimal01));
                         valorBase = Helpers.ExtraccionCamposSpool(listaCortes, letraActual);
                         listaCortes.Clear();
@@ -825,7 +825,7 @@ namespace App.ControlLogicaProcesos
                         listaCortes.Clear();
 
                         List<string> listCamposSumar = new List<string>();
-                        listCamposSumar.Add(letraActual.Substring(6,14));
+                        listCamposSumar.Add(letraActual.Substring(6, 14));
                         listCamposSumar.Add(letraActual.Substring(34, 14));
                         valorTotal = Helpers.SumarCampos(listCamposSumar);
                     }
@@ -849,7 +849,7 @@ namespace App.ControlLogicaProcesos
                 Linea1AFI += nombrePaquete + "|";
                 Linea1AFI += valorBase + "|";
                 Linea1AFI += valorIva + "|";
-                Linea1AFI += valorTotal  + "|";
+                Linea1AFI += valorTotal + "|";
                 Linea1AFI += subsidio + "|";
                 Linea1AFI += periodoLargo + "| |";
                 Linea1AFI += periodoDesde + "|";
@@ -868,7 +868,7 @@ namespace App.ControlLogicaProcesos
             string llave = string.Empty;
             string valor = string.Empty;
 
-            if(letras.Contains("A") && letras.Contains("B") && letras.Contains("C"))
+            if (letras.Contains("A") && letras.Contains("B") && letras.Contains("C"))
             {
                 valor = Variables.Variables.DatosInsumoConformacionPaquetes["ABC"];
                 return valor.Split('|')[1];
@@ -962,7 +962,7 @@ namespace App.ControlLogicaProcesos
                 }
             }
 
-            
+
 
             //string SVAS 
 
@@ -971,6 +971,7 @@ namespace App.ControlLogicaProcesos
             return Lineas1CFI;
 
             #endregion
+        }
 
         /// <summary>
         /// Linea que obtiene canal ADNC
@@ -1122,36 +1123,6 @@ namespace App.ControlLogicaProcesos
 
             #endregion
         }
-
-        /// <summary>
-        /// Linea que obtiene canal ADNC
-        /// </summary>
-        /// <param name="datosOriginales"></param>
-        /// <returns></returns>
-        public string MapeoCanalADNC(List<string> datosOriginales)
-        {
-            #region Canal ADNC
-            string LineaANDC = string.Empty;
-            return LineaANDC;
-            #endregion
-        }
-
-        
-
-        /// <summary>
-        /// Linea que obtiene canal NTC2
-        /// </summary>
-        /// <param name="datosOriginales"></param>
-        /// <returns></returns>
-        public string MapeoCanalNTC2(List<string> datosOriginales)
-        {
-            #region Canal NTC2
-            string LineaNTC2 = string.Empty;
-            return LineaNTC2;
-            #endregion
-        }
-
-        
 
         /// <summary>
         /// Linea que obtiene canal NTC3
@@ -1857,7 +1828,7 @@ namespace App.ControlLogicaProcesos
                                 conceptoPrimario = Helpers.FormatearCampos(TiposFormateo.LetraCapital, linea040011.FirstOrDefault().Substring(6, 30).Trim());
 
                                 resultado.Add($"1ODD|periodo|{conceptoPrimario} (periodo)|@base|iva|impuesto|suma|" +
-                                    $"{Helpers.FormatearCampos(TiposFormateo.Fecha04, PeriodoFacturacion)}|{Helpers.FormatearCampos(TiposFormateo.Fecha04, PeriodoFacturacion)}|" +
+                                    $"{Helpers.FormatearCampos(TiposFormateo.Fecha05, PeriodoFacturacion)}|{Helpers.FormatearCampos(TiposFormateo.Fecha05, PeriodoFacturacion)}|" +
                                     $"{numeroConexion}| ");
                             }
                             else
@@ -1886,7 +1857,7 @@ namespace App.ControlLogicaProcesos
 
 
                         resultado.Add($"1ODD|periodo|{concepto} (periodo)|@base|iva|impuesto|suma|" +
-                            $"{Helpers.FormatearCampos(TiposFormateo.Fecha04, PeriodoFacturacion)}|{Helpers.FormatearCampos(TiposFormateo.Fecha04, PeriodoFacturacion)}|" +
+                            $"{Helpers.FormatearCampos(TiposFormateo.Fecha05, PeriodoFacturacion)}|{Helpers.FormatearCampos(TiposFormateo.Fecha05, PeriodoFacturacion)}|" +
                             $"{numeroConexion}| ");
                     }
 
@@ -1905,7 +1876,7 @@ namespace App.ControlLogicaProcesos
             string iva = Helpers.FormatearCampos(TiposFormateo.Decimal01, pLinea.Substring(34, 14).TrimStart('0'));
 
             resultado = $"1ODD|periodo|Recargo de Mora (periodo)|{@base}|{iva}|$ 0,00|suma|" +
-                $"{Helpers.FormatearCampos(TiposFormateo.Fecha04, PeriodoFacturacion)}|{Helpers.FormatearCampos(TiposFormateo.Fecha04, PeriodoFacturacion)}|" +
+                $"{Helpers.FormatearCampos(TiposFormateo.Fecha05, PeriodoFacturacion)}|{Helpers.FormatearCampos(TiposFormateo.Fecha05, PeriodoFacturacion)}|" +
                 $"{pNumeroConexion}| ";
 
             return resultado;
