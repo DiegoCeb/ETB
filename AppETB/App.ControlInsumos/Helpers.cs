@@ -1566,23 +1566,27 @@ namespace App.ControlInsumos
 
             foreach (string valorActual in ListaFechas)
             {
-                fechaUno = Convert.ToDateTime(valorActual.Substring(0, 4) + "/" + valorActual.Substring(4, 2) + "/" + valorActual.Substring(6, 2));
-                fechaDos = Convert.ToDateTime(valorActual.Substring(11, 4) + "/" + valorActual.Substring(15, 2) + "/" + valorActual.Substring(17, 2));
-
-                if (PrimeraVez == false)
+                if (!string.IsNullOrEmpty(valorActual.Trim()) && valorActual.Contains("-"))
                 {
-                    fechaUnoTem = fechaUno;
-                    fechaDosTem = fechaDos;
-                    fechaReciente = fechaUno.ToString("yyyyMMdd") + "-" + fechaDos.ToString("yyyyMMdd");
-                    PrimeraVez = true;
-                }
+                    fechaUno = Convert.ToDateTime(valorActual.Substring(0, 4) + "/" + valorActual.Substring(4, 2) + "/" + valorActual.Substring(6, 2));
+                    fechaDos = Convert.ToDateTime(valorActual.Substring(11, 4) + "/" + valorActual.Substring(15, 2) + "/" + valorActual.Substring(17, 2));
 
-                if (DateTime.Compare(fechaUno, fechaUnoTem) >= 0 && DateTime.Compare(fechaDos, fechaDosTem) >= 0)
-                {
-                    fechaReciente = fechaUno.ToString("yyyyMMdd") + "-" + fechaDos.ToString("yyyyMMdd");
-                    fechaUnoTem = fechaUno;
-                    fechaDosTem = fechaDos;
+                    if (PrimeraVez == false)
+                    {
+                        fechaUnoTem = fechaUno;
+                        fechaDosTem = fechaDos;
+                        fechaReciente = fechaUno.ToString("yyyyMMdd") + "-" + fechaDos.ToString("yyyyMMdd");
+                        PrimeraVez = true;
+                    }
+
+                    if (DateTime.Compare(fechaUno, fechaUnoTem) >= 0 && DateTime.Compare(fechaDos, fechaDosTem) >= 0)
+                    {
+                        fechaReciente = fechaUno.ToString("yyyyMMdd") + "-" + fechaDos.ToString("yyyyMMdd");
+                        fechaUnoTem = fechaUno;
+                        fechaDosTem = fechaDos;
+                    }
                 }
+                    
             }
 
             return fechaReciente; 
@@ -1605,44 +1609,43 @@ namespace App.ControlInsumos
 
             foreach (string registroActual in listaFechas)
             {
-                fecha = Convert.ToDateTime(registroActual.Substring(0, 4) + "/" + registroActual.Substring(4, 2) + "/" + registroActual.Substring(6, 2));
-
-                if (PrimeraVez == false)
+                if(!string.IsNullOrEmpty(registroActual.Trim()) && registroActual.Contains("-"))
                 {
-                    fechaTem = fecha;                    
-                    PrimeraVez = true;
+                    fecha = Convert.ToDateTime(registroActual.Substring(0, 4) + "/" + registroActual.Substring(4, 2) + "/" + registroActual.Substring(6, 2));
+
+                    if (PrimeraVez == false)
+                    {
+                        fechaTem = fecha;
+                        PrimeraVez = true;
+                    }
+
+                    switch (accion)
+                    {
+                        // Fecha Maxima
+                        case 1:
+                            if (DateTime.Compare(fecha, fechaTem) >= 0)
+                            {
+                                fechaResultado = fecha.ToString("yyyyMMdd");
+                                fechaTem = fecha;
+                            }
+
+                            break;
+
+                        // Fecha Minima
+                        case 2:
+                            if (DateTime.Compare(fecha, fechaTem) <= 0)
+                            {
+                                var d = DateTime.Compare(fecha, fechaTem);
+                                fechaResultado = fecha.ToString("yyyyMMdd");
+                                fechaTem = fecha;
+                            }
+
+                            break;
+                        default:
+                            break;
+                    }
                 }
-
-                switch (accion)
-                {
-                    // Fecha Maxima
-                    case 1:
-
-                        var ddd = DateTime.Compare(fecha, fechaTem);
-
-                        if (DateTime.Compare(fecha, fechaTem) >= 0 )
-                        {
-                            fechaResultado = fecha.ToString("yyyyMMdd");
-                            fechaTem = fecha;
-                        }
-
-                        break;
-
-                    // Fecha Minima
-                    case 2:
-
-                        var hhh = DateTime.Compare(fecha, fechaTem);
-                        if (DateTime.Compare(fecha, fechaTem) <= 0)
-                        {
-                            var d = DateTime.Compare(fecha, fechaTem);
-                            fechaResultado = fecha.ToString("yyyyMMdd");
-                            fechaTem = fecha;
-                        }
-
-                        break;
-                    default:
-                        break;
-                }
+                
             }
             return fechaResultado;
         }
