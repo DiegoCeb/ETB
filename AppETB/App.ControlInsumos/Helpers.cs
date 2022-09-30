@@ -199,7 +199,7 @@ namespace App.ControlInsumos
                           let comp4 = datos.Substring(0, 4).Trim()
                           let comp6 = datos.Substring(0, 6).Trim()
                           where
-                          comp6 == "DANC" ||
+                          comp4 == "DANC" ||
                           comp4 == "CLTF" ||
                           comp4 == "NRAT" ||
                           comp2 == "PP"
@@ -1431,6 +1431,9 @@ namespace App.ControlInsumos
                 case TiposFormateo.Fecha05:
                     return FormatearFecha("05", pCampo); // De MMyyyy a yyyyMM
 
+                case TiposFormateo.Fecha08:
+                    return FormatearFecha("08", pCampo); // De dd/MM/yyyy a yyyyMMdd
+
                 case TiposFormateo.Decimal01:
                     return FormatearDecimal("01", pCampo);
                 default:
@@ -1481,6 +1484,18 @@ namespace App.ControlInsumos
 
                 case "05":
                     return string.Format("{0}{1}", pCampo.Substring(2, 4), pCampo.Substring(0, 2));
+
+                case "08":
+                    string[] camposFecha = pCampo.Split('/');
+                    if (camposFecha.Length > 2)
+                    {
+                        return $"{camposFecha[2]}{camposFecha[1]}{camposFecha[0]}";
+                    }
+                    else
+                    {
+                        return string.Empty;
+                    }
+                    
 
                 default:
                     return pCampo;
@@ -2143,6 +2158,7 @@ namespace App.ControlInsumos
         Fecha03,
         Fecha04,
         Fecha05,
+        Fecha08,
         LetraCapital,
         Decimal01
     }
