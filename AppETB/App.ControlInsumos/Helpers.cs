@@ -1424,12 +1424,18 @@ namespace App.ControlInsumos
 
                 case TiposFormateo.Fecha03:
                     return FormatearFecha("03", pCampo); // De ddMMyy a yyyyMM
-                
+
                 case TiposFormateo.Fecha04:
-                    return FormatearFecha("04", pCampo); // De MMdd a dd MM (17 Jul)
+                    return FormatearFecha("04", pCampo); // De MMdd a dd MMM (17 Jul)
 
                 case TiposFormateo.Fecha05:
                     return FormatearFecha("05", pCampo); // De MMyyyy a yyyyMM
+
+                case TiposFormateo.Fecha06:
+                    return FormatearFecha("06", pCampo); // De yyyyMMdd a MMMM dd
+
+                case TiposFormateo.Fecha07:
+                    return FormatearFecha("07", pCampo); // De yyyyMMdd a MMM dd
 
                 case TiposFormateo.Decimal01:
                     return FormatearDecimal("01", pCampo);
@@ -1446,6 +1452,8 @@ namespace App.ControlInsumos
         private static string FormatearFecha(string pFormatoFechaTipo, string pCampo)
         {
             #region FormatearFecha
+            string fechaRetorno = string.Empty;
+
             switch (pFormatoFechaTipo)
             {
                 case "01":
@@ -1458,7 +1466,7 @@ namespace App.ControlInsumos
                     return string.Format("{0}{1}{2}", pCampo.Substring(4, 4), pCampo.Substring(2, 2), pCampo.Substring(0, 2));
                 case "04":
 
-                    Dictionary<string,string> dicMeses = new Dictionary<string, string>();
+                    Dictionary<string, string> dicMeses = new Dictionary<string, string>();
 
                     dicMeses.Add("01", "Ene");
                     dicMeses.Add("02", "Feb");
@@ -1475,16 +1483,26 @@ namespace App.ControlInsumos
 
                     string dia, Mes = string.Empty;
                     dia = pCampo.Substring(2, 2);
-                    Mes = dicMeses[pCampo.Substring(0, 2)];                    
+                    Mes = dicMeses[pCampo.Substring(0, 2)];
 
                     return string.Format("{0} {1}", dia, Mes);
 
                 case "05":
                     return string.Format("{0}{1}", pCampo.Substring(2, 4), pCampo.Substring(0, 2));
 
+                case "06":
+                    fechaRetorno = Convert.ToDateTime($"{pCampo.Substring(0, 4)}/{pCampo.Substring(4, 2)}/{pCampo.Substring(6, 2)}").ToString("MMMM dd");
+
+                    return FormatearCampos(TiposFormateo.LetraCapital, fechaRetorno);
+
+                case "07":
+                    fechaRetorno = Convert.ToDateTime($"{pCampo.Substring(0, 4)}/{pCampo.Substring(4, 2)}/{pCampo.Substring(6, 2)}").ToString("MMM dd").Replace(".", "");
+
+                    return FormatearCampos(TiposFormateo.LetraCapital, fechaRetorno);
+
                 default:
                     return pCampo;
-            } 
+            }
             #endregion
         }
 
@@ -1523,7 +1541,7 @@ namespace App.ControlInsumos
                     {
                         transformado = temTransformado.ToString("N2");
                         return $"$ {transformado.Substring(0, transformado.LastIndexOf('.')).Replace(",", ".")},{transformado.Substring(transformado.LastIndexOf('.') + 1)}"; ;
-                    }                    
+                    }
 
                 default:
                     return pCampo;
@@ -1554,7 +1572,7 @@ namespace App.ControlInsumos
         /// </summary>
         /// <param name="ListaFechas"></param>
         /// <returns></returns>
-        public static string GetFechaMasReciente ( List<string> ListaFechas)
+        public static string GetFechaMasReciente(List<string> ListaFechas)
         {
             #region GetFechaMasReciente
 
@@ -1566,27 +1584,29 @@ namespace App.ControlInsumos
 
             foreach (string valorActual in ListaFechas)
             {
-                fechaUno = Convert.ToDateTime(valorActual.Substring(0, 4) + "/" + valorActual.Substring(4, 2) + "/" + valorActual.Substring(6, 2));
-                fechaDos = Convert.ToDateTime(valorActual.Substring(11, 4) + "/" + valorActual.Substring(15, 2) + "/" + valorActual.Substring(17, 2));
-
-                if (PrimeraVez == false)
+                if (!string.IsNullOrEmpty(valorActual.Trim()) && valorActual.Contains("-"))
                 {
-                    fechaUnoTem = fechaUno;
-                    fechaDosTem = fechaDos;
-                    fechaReciente = fechaUno.ToString("yyyyMMdd") + "-" + fechaDos.ToString("yyyyMMdd");
-                    PrimeraVez = true;
-                }
+                    fechaUno = Convert.ToDateTime(valorActual.Substring(0, 4) + "/" + valorActual.Substring(4, 2) + "/" + valorActual.Substring(6, 2));
+                    fechaDos = Convert.ToDateTime(valorActual.Substring(11, 4) + "/" + valorActual.Substring(15, 2) + "/" + valorActual.Substring(17, 2));
 
-                if (DateTime.Compare(fechaUno, fechaUnoTem) >= 0 && DateTime.Compare(fechaDos, fechaDosTem) >= 0)
-                {
-                    fechaReciente = fechaUno.ToString("yyyyMMdd") + "-" + fechaDos.ToString("yyyyMMdd");
-                    fechaUnoTem = fechaUno;
-                    fechaDosTem = fechaDos;
+                    if (PrimeraVez == false)
+                    {
+                        fechaUnoTem = fechaUno;
+                        fechaDosTem = fechaDos;
+                        fechaReciente = fechaUno.ToString("yyyyMMdd") + "-" + fechaDos.ToString("yyyyMMdd");
+                        PrimeraVez = true;
+                    }
+
+                    if (DateTime.Compare(fechaUno, fechaUnoTem) >= 0 && DateTime.Compare(fechaDos, fechaDosTem) >= 0)
+                    {
+                        fechaReciente = fechaUno.ToString("yyyyMMdd") + "-" + fechaDos.ToString("yyyyMMdd");
+                        fechaUnoTem = fechaUno;
+                        fechaDosTem = fechaDos;
+                    }
                 }
             }
 
-            return fechaReciente; 
-
+            return fechaReciente;
             #endregion
         }
 
@@ -1605,43 +1625,46 @@ namespace App.ControlInsumos
 
             foreach (string registroActual in listaFechas)
             {
-                fecha = Convert.ToDateTime(registroActual.Substring(0, 4) + "/" + registroActual.Substring(4, 2) + "/" + registroActual.Substring(6, 2));
-
-                if (PrimeraVez == false)
+                if (!string.IsNullOrEmpty(registroActual.Trim()) && registroActual.Contains("-"))
                 {
-                    fechaTem = fecha;                    
-                    PrimeraVez = true;
-                }
+                    fecha = Convert.ToDateTime(registroActual.Substring(0, 4) + "/" + registroActual.Substring(4, 2) + "/" + registroActual.Substring(6, 2));
 
-                switch (accion)
-                {
-                    // Fecha Maxima
-                    case 1:
+                    if (PrimeraVez == false)
+                    {
+                        fechaTem = fecha;
+                        PrimeraVez = true;
+                    }
 
-                        var ddd = DateTime.Compare(fecha, fechaTem);
+                    switch (accion)
+                    {
+                        // Fecha Maxima
+                        case 1:
 
-                        if (DateTime.Compare(fecha, fechaTem) >= 0 )
-                        {
-                            fechaResultado = fecha.ToString("yyyyMMdd");
-                            fechaTem = fecha;
-                        }
+                            var ddd = DateTime.Compare(fecha, fechaTem);
 
-                        break;
+                            if (DateTime.Compare(fecha, fechaTem) >= 0)
+                            {
+                                fechaResultado = fecha.ToString("yyyyMMdd");
+                                fechaTem = fecha;
+                            }
 
-                    // Fecha Minima
-                    case 2:
+                            break;
 
-                        var hhh = DateTime.Compare(fecha, fechaTem);
-                        if (DateTime.Compare(fecha, fechaTem) <= 0)
-                        {
-                            var d = DateTime.Compare(fecha, fechaTem);
-                            fechaResultado = fecha.ToString("yyyyMMdd");
-                            fechaTem = fecha;
-                        }
+                        // Fecha Minima
+                        case 2:
 
-                        break;
-                    default:
-                        break;
+                            var hhh = DateTime.Compare(fecha, fechaTem);
+                            if (DateTime.Compare(fecha, fechaTem) <= 0)
+                            {
+                                var d = DateTime.Compare(fecha, fechaTem);
+                                fechaResultado = fecha.ToString("yyyyMMdd");
+                                fechaTem = fecha;
+                            }
+
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
             return fechaResultado;
@@ -2071,18 +2094,26 @@ namespace App.ControlInsumos
         {
             #region SumarCampos
             double totalSuma = 0;
+            string numeroSuma = string.Empty;
 
             if (pCamposSumar.Count > 0)
             {
-                foreach (string NumeroActual in pCamposSumar)
+                foreach (string numeroActual in pCamposSumar)
                 {
-                    string transformado = NumeroActual.Replace("$", "").Replace(" ", "");
+                    numeroSuma = numeroActual;
+
+                    if (string.IsNullOrEmpty(numeroSuma))
+                    {
+                        numeroSuma = "0";
+                    }
+
+                    string transformado = numeroSuma.Replace("$", "").Replace(" ", "");
                     var temTransformado = Convert.ToDouble(transformado);
                     totalSuma += temTransformado;
                 }
             }
             string ValorSumadoFormateado = FormatearCampos(TiposFormateo.Decimal01, totalSuma.ToString());
-            return ValorSumadoFormateado; 
+            return ValorSumadoFormateado;
             #endregion
         }
     }
@@ -2140,6 +2171,8 @@ namespace App.ControlInsumos
         Fecha03,
         Fecha04,
         Fecha05,
+        Fecha06,
+        Fecha07,
         LetraCapital,
         Decimal01
     }
