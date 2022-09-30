@@ -199,7 +199,7 @@ namespace App.ControlInsumos
                           let comp4 = datos.Substring(0, 4).Trim()
                           let comp6 = datos.Substring(0, 6).Trim()
                           where
-                          comp6 == "DANC" ||
+                          comp4 == "DANC" ||
                           comp4 == "CLTF" ||
                           comp4 == "NRAT" ||
                           comp2 == "PP"
@@ -1437,6 +1437,9 @@ namespace App.ControlInsumos
                 case TiposFormateo.Fecha07:
                     return FormatearFecha("07", pCampo); // De yyyyMMdd a MMM dd
 
+                case TiposFormateo.Fecha08:
+                    return FormatearFecha("08", pCampo); // De dd/MM/yyyy a yyyyMMdd
+					
                 case TiposFormateo.Decimal01:
                     return FormatearDecimal("01", pCampo);
                 default:
@@ -1499,6 +1502,17 @@ namespace App.ControlInsumos
                     fechaRetorno = Convert.ToDateTime($"{pCampo.Substring(0, 4)}/{pCampo.Substring(4, 2)}/{pCampo.Substring(6, 2)}").ToString("MMM dd").Replace(".", "");
 
                     return FormatearCampos(TiposFormateo.LetraCapital, fechaRetorno);
+
+                case "08":
+                    string[] camposFecha = pCampo.Split('/');
+                    if (camposFecha.Length > 2)
+                    {
+                        return $"{camposFecha[2]}{camposFecha[1]}{camposFecha[0]}";
+                    }
+                    else
+                    {
+                        return string.Empty;
+                    }
 
                 default:
                     return pCampo;
@@ -1604,6 +1618,7 @@ namespace App.ControlInsumos
                         fechaDosTem = fechaDos;
                     }
                 }
+                    
             }
 
             return fechaReciente;
@@ -1625,7 +1640,7 @@ namespace App.ControlInsumos
 
             foreach (string registroActual in listaFechas)
             {
-                if (!string.IsNullOrEmpty(registroActual.Trim()) && registroActual.Contains("-"))
+                if(!string.IsNullOrEmpty(registroActual.Trim()) && registroActual.Contains("-"))
                 {
                     fecha = Convert.ToDateTime(registroActual.Substring(0, 4) + "/" + registroActual.Substring(4, 2) + "/" + registroActual.Substring(6, 2));
 
@@ -1639,9 +1654,6 @@ namespace App.ControlInsumos
                     {
                         // Fecha Maxima
                         case 1:
-
-                            var ddd = DateTime.Compare(fecha, fechaTem);
-
                             if (DateTime.Compare(fecha, fechaTem) >= 0)
                             {
                                 fechaResultado = fecha.ToString("yyyyMMdd");
@@ -1652,8 +1664,6 @@ namespace App.ControlInsumos
 
                         // Fecha Minima
                         case 2:
-
-                            var hhh = DateTime.Compare(fecha, fechaTem);
                             if (DateTime.Compare(fecha, fechaTem) <= 0)
                             {
                                 var d = DateTime.Compare(fecha, fechaTem);
@@ -1666,6 +1676,7 @@ namespace App.ControlInsumos
                             break;
                     }
                 }
+                
             }
             return fechaResultado;
         }
@@ -2173,6 +2184,7 @@ namespace App.ControlInsumos
         Fecha05,
         Fecha06,
         Fecha07,
+        Fecha08,
         LetraCapital,
         Decimal01
     }
