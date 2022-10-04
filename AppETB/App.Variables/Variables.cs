@@ -52,6 +52,8 @@ namespace App.Variables
         public static Dictionary<string, List<string>> DatosInsumoEtbCartasMora = new Dictionary<string, List<string>>();
         public static Dictionary<string, string> DatosInsumoExclusionPagoInmediato = new Dictionary<string, string>();
         public static Dictionary<string, string> DatosInsumoConformacionPaquetes = new Dictionary<string, string>();
+        public static Dictionary<string, string> DatosInsumoConfiguracionLLavesDoc1 = new Dictionary<string, string>();
+        public static Dictionary<string, List<string>> CuentasNoImprimir = new Dictionary<string, List<string>>();
 
         public static StreamReader Lector;
     }
@@ -146,7 +148,9 @@ namespace App.Variables
         [System.ComponentModel.Description("ClientesEspeciales")]
         ClientesEspeciales = 33,
         [System.ComponentModel.Description("ETB_Horas_Exp")]
-        ETB_Horas_Exp = 34
+        ETB_Horas_Exp = 34,
+        [System.ComponentModel.Description("ConfiguracionLlavesDoc1")]
+        ConfiguracionLlavesDoc1 = 35
     }
 
 }

@@ -47,8 +47,6 @@ namespace App.ControlInsumos
             #endregion
         }
 
-
-
         /// <summary>
         ///
         /// </summary>
@@ -1159,6 +1157,28 @@ namespace App.ControlInsumos
             #endregion
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pDatosInsumo"></param>
+        public static void GetConfiguracionLLavesDoc1(List<string> pDatosInsumo)
+        {
+            #region GetConfiguracionLLavesDoc1
+
+            foreach (var datoLinea in pDatosInsumo)
+            {
+                string llaveCruce = datoLinea.Split('|').ElementAt(4);
+
+                if (!Variables.Variables.DatosInsumoConfiguracionLLavesDoc1.ContainsKey(llaveCruce))
+                {
+                    Variables.Variables.DatosInsumoConfiguracionLLavesDoc1.Add(llaveCruce, datoLinea);
+                }
+            }
+
+            #endregion
+        }
+
+
         #endregion
 
         /// <summary>
@@ -1439,9 +1459,18 @@ namespace App.ControlInsumos
 
                 case TiposFormateo.Fecha08:
                     return FormatearFecha("08", pCampo); // De dd/MM/yyyy a yyyyMMdd
-					
+
+                case TiposFormateo.Fecha09:
+                    return FormatearFecha("09", pCampo); // De dd/MM/yyyy a yyyyMMdd
+
                 case TiposFormateo.Decimal01:
                     return FormatearDecimal("01", pCampo);
+
+                case TiposFormateo.Decimal02:
+                    return FormatearDecimal("02", pCampo);
+
+                case TiposFormateo.HoraMinuto:
+                    return FormatearHoraMinuto(pCampo);
                 default:
                     return pCampo;
             }
@@ -1514,6 +1543,9 @@ namespace App.ControlInsumos
                         return string.Empty;
                     }
 
+                case "09":
+                    return string.Format("{0}/{1}/{2}", pCampo.Substring(0, 4), pCampo.Substring(4, 2), pCampo.Substring(6, 2));
+
                 default:
                     return pCampo;
             }
@@ -1527,10 +1559,12 @@ namespace App.ControlInsumos
         /// <returns></returns>
         private static string FormatearDecimal(string pFormatoDecimalTipo, string pCampo)
         {
+            string transformado = string.Empty;
+
             switch (pFormatoDecimalTipo)
             {
                 case "01":
-                    string transformado = pCampo.Trim().TrimStart('0');
+                    transformado = pCampo.Trim().TrimStart('0');
 
                     if (string.IsNullOrEmpty(transformado))
                     {
@@ -1557,6 +1591,23 @@ namespace App.ControlInsumos
                         return $"$ {transformado.Substring(0, transformado.LastIndexOf('.')).Replace(",", ".")},{transformado.Substring(transformado.LastIndexOf('.') + 1)}"; ;
                     }
 
+                case "2":
+                    transformado = pCampo.Trim().TrimStart('0');
+
+                    if (string.IsNullOrEmpty(transformado))
+                    {
+                        transformado = "00";
+                    }
+
+                    if (transformado.Length == 1)
+                    {
+                        transformado = transformado.PadLeft(2, '0');
+                    }
+
+                    transformado = $"{transformado.Substring(0, transformado.Length - 2)}.{transformado.Substring(transformado.Length - 2)}";
+
+                    return transformado;
+
                 default:
                     return pCampo;
             }
@@ -1578,6 +1629,18 @@ namespace App.ControlInsumos
             letraCapital = myTextInfo.ToTitleCase(lower);
 
             return letraCapital;
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pCampo"></param>
+        /// <returns></returns>
+        private static string FormatearHoraMinuto(string pCampo)
+        {
+            #region FormatearHoraMinuto
+            return String.Format("{0}:{1}", pCampo.Substring(0, 2), pCampo.Substring(2, 2));
             #endregion
         }
 
@@ -1618,7 +1681,7 @@ namespace App.ControlInsumos
                         fechaDosTem = fechaDos;
                     }
                 }
-                    
+
             }
 
             return fechaReciente;
@@ -1640,7 +1703,7 @@ namespace App.ControlInsumos
 
             foreach (string registroActual in listaFechas)
             {
-                if(!string.IsNullOrEmpty(registroActual.Trim()) && registroActual.Contains("-"))
+                if (!string.IsNullOrEmpty(registroActual.Trim()) && registroActual.Contains("-"))
                 {
                     fecha = Convert.ToDateTime(registroActual.Substring(0, 4) + "/" + registroActual.Substring(4, 2) + "/" + registroActual.Substring(6, 2));
 
@@ -1676,7 +1739,7 @@ namespace App.ControlInsumos
                             break;
                     }
                 }
-                
+
             }
             return fechaResultado;
         }
@@ -2185,7 +2248,10 @@ namespace App.ControlInsumos
         Fecha06,
         Fecha07,
         Fecha08,
+        Fecha09,
         LetraCapital,
-        Decimal01
+        Decimal01,
+        Decimal02,
+        HoraMinuto
     }
 }
