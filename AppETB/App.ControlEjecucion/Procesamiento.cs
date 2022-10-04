@@ -195,10 +195,6 @@ namespace App.ControlEjecucion
                             {
                                 Helpers.GetClientesEmailPrivado(File.ReadAllLines(Archivo, Encoding.Default).ToList());
                             }
-                            else if (EnumInsumo.ToString() == Variables.Insumos.ETB_Factura_Electronica.ToString())
-                            {
-                                Helpers.GetETBFacturaElectronica(File.ReadAllLines(Archivo, Encoding.Default).ToList());
-                            }
                             else if (EnumInsumo.ToString() == Variables.Insumos.BASE_CUPONES.ToString())
                             {
                                 Helpers.GetBaseCupones(File.ReadAllLines(Archivo, Encoding.Default).ToList());
