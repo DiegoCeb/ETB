@@ -1159,6 +1159,27 @@ namespace App.ControlInsumos
             #endregion
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pDatosInsumo"></param>
+        public static void GetETBFacturaElectronica(List<string> pDatosInsumo)
+        {
+            #region GetETBFacturaElectronica
+
+            foreach (var datoLinea in pDatosInsumo)
+            {
+                string llaveCruce = datoLinea.Split(' ').ElementAt(0).Trim();
+
+                if (!Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey(llaveCruce))
+                {
+                    Variables.Variables.DatosInsumoETBFacturaElectronica.Add(llaveCruce, datoLinea);
+                }
+            }
+
+            #endregion
+        }
+
         #endregion
 
         /// <summary>
@@ -1439,7 +1460,10 @@ namespace App.ControlInsumos
 
                 case TiposFormateo.Fecha08:
                     return FormatearFecha("08", pCampo); // De dd/MM/yyyy a yyyyMMdd
-					
+                
+                case TiposFormateo.Fecha09:
+                    return FormatearFecha("10", pCampo); // De yyyyMMdd a yyyy/MM/dd
+
                 case TiposFormateo.Decimal01:
                     return FormatearDecimal("01", pCampo);
                 default:
@@ -1513,6 +1537,9 @@ namespace App.ControlInsumos
                     {
                         return string.Empty;
                     }
+                case "10":
+
+                    return $"{pCampo.Substring(0, 4)}/{pCampo.Substring(4, 2)}/{pCampo.Substring(6, 2)}";
 
                 default:
                     return pCampo;
@@ -2185,6 +2212,8 @@ namespace App.ControlInsumos
         Fecha06,
         Fecha07,
         Fecha08,
+        Fecha09,
+        Fecha10,
         LetraCapital,
         Decimal01
     }
