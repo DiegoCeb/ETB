@@ -282,15 +282,6 @@ namespace App.ControlLogicaProcesos
                 Is1OOA = true;
             }
 
-
-            string canal1ODC = FormateoCanal1ODC(datosOriginales);
-
-            if (!string.IsNullOrEmpty(canal1ODC))
-            {
-                resultado.Add(canal1ODC);
-                Is1ODC = true;
-            }
-
             string canal1OPL = MapeoCanal1OPL(datosOriginales);
 
             if (!string.IsNullOrEmpty(canal1OPL))
@@ -303,6 +294,7 @@ namespace App.ControlLogicaProcesos
             if (!string.IsNullOrEmpty(canal1ODC))
             {
                 resultado.Add(canal1ODC);
+                Is1ODC = true;
             }
 
             IEnumerable<string> canal1ODD = FormateoCanal1ODD(datosOriginales);
@@ -1155,7 +1147,7 @@ namespace App.ControlLogicaProcesos
                 {
                     campoValidar = linea.Substring(6, 10);
 
-                    if (campoValidar == "3874040341" || campoValidar == "0164040342" || campoValidar == "3874041341" || campoValidar == "0164041342") ;
+                    if (campoValidar == "3874040341" || campoValidar == "0164040342" || campoValidar == "3874041341" || campoValidar == "0164041342")
                     {
                         LogoCivico = "CIVICO";
                     }
