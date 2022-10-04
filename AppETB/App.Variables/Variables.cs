@@ -54,7 +54,7 @@ namespace App.Variables
         public static Dictionary<string, string> DatosInsumoConformacionPaquetes = new Dictionary<string, string>();
         public static Dictionary<string, string> DatosInsumoConfiguracionLLavesDoc1 = new Dictionary<string, string>();
         public static Dictionary<string, List<string>> CuentasNoImprimir = new Dictionary<string, List<string>>();
-
+        public static Dictionary<string, string> DatosInsumoETBFacturaElectronica = new Dictionary<string, string>();
         public static StreamReader Lector;
     }
 

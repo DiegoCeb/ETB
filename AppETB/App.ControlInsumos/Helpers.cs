@@ -1172,14 +1172,29 @@ namespace App.ControlInsumos
                 if (!Variables.Variables.DatosInsumoConfiguracionLLavesDoc1.ContainsKey(llaveCruce))
                 {
                     Variables.Variables.DatosInsumoConfiguracionLLavesDoc1.Add(llaveCruce, datoLinea);
+				}
+			}
+			#endregion
+		}
+
+        public static void GetETBFacturaElectronica(List<string> pDatosInsumo)
+        {
+            #region GetETBFacturaElectronica
+
+            foreach (var datoLinea in pDatosInsumo)
+            {
+                string llaveCruce = datoLinea.Split(' ').ElementAt(0).Trim();
+
+                if (!Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey(llaveCruce))
+                {
+                    Variables.Variables.DatosInsumoETBFacturaElectronica.Add(llaveCruce, datoLinea);
                 }
             }
 
             #endregion
         }
 
-
-        #endregion
+        
 
         /// <summary>
         /// Obtiene el tamaño del archivo
@@ -1463,6 +1478,9 @@ namespace App.ControlInsumos
                 case TiposFormateo.Fecha09:
                     return FormatearFecha("09", pCampo); // De dd/MM/yyyy a yyyyMMdd
 
+                case TiposFormateo.Fecha10:
+                    return FormatearFecha("10", pCampo); // De yyyyMMdd a yyyy/MM/dd
+
                 case TiposFormateo.Decimal01:
                     return FormatearDecimal("01", pCampo);
 
@@ -1542,6 +1560,9 @@ namespace App.ControlInsumos
                     {
                         return string.Empty;
                     }
+                case "10":
+
+                    return $"{pCampo.Substring(0, 4)}/{pCampo.Substring(4, 2)}/{pCampo.Substring(6, 2)}";
 
                 case "09":
                     return string.Format("{0}/{1}/{2}", pCampo.Substring(0, 4), pCampo.Substring(4, 2), pCampo.Substring(6, 2));
@@ -1816,7 +1837,14 @@ namespace App.ControlInsumos
                 if (!string.IsNullOrEmpty(resultado))
                 { resultado += separador; }
 
-                resultado += $"{campo.Trim()}";
+                if (string.IsNullOrEmpty(campo.Trim()))
+                {
+                    resultado += $" ";
+                }
+                else
+                {
+                    resultado += $"{campo.Trim()}";
+                }
             }
 
             return resultado;
@@ -2249,6 +2277,7 @@ namespace App.ControlInsumos
         Fecha07,
         Fecha08,
         Fecha09,
+        Fecha10,
         LetraCapital,
         Decimal01,
         Decimal02,

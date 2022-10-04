@@ -30,7 +30,6 @@ C:\Proyectos\ETB\AppETB\AppETB\bin\Debug\App.ControlEjecucion.dll
 C:\Proyectos\ETB\AppETB\AppETB\bin\Debug\App.ControlInsumos.pdb
 C:\Proyectos\ETB\AppETB\AppETB\bin\Debug\App.ControlProcesos.pdb
 C:\Proyectos\ETB\AppETB\AppETB\bin\Debug\App.Variables.pdb
-C:\Proyectos\ETB\AppETB\AppETB\bin\Debug\DLL_Utilidades.pdb
 C:\Proyectos\ETB\AppETB\AppETB\bin\Debug\App.ControlEjecucion.pdb
 C:\Proyectos\ETB\AppETB\AppETB\obj\Debug\AppETB.csproj.AssemblyReference.cache
 C:\Proyectos\ETB\AppETB\AppETB\obj\Debug\AppETB.csproj.SuggestedBindingRedirects.cache
@@ -50,7 +49,6 @@ C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\bin\Debug\App.Con
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\bin\Debug\App.ControlInsumos.pdb
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\bin\Debug\App.ControlProcesos.pdb
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\bin\Debug\App.Variables.pdb
-C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\bin\Debug\DLL_Utilidades.pdb
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\bin\Debug\App.ControlEjecucion.pdb
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\obj\Debug\AppETB.csproj.AssemblyReference.cache
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\obj\Debug\AppETB.csproj.SuggestedBindingRedirects.cache
