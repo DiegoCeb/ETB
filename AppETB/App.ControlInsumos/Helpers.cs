@@ -829,6 +829,27 @@ namespace App.ControlInsumos
         /// 
         /// </summary>
         /// <param name="pDatosInsumo"></param>
+        public static void GetETBFacturaElectronica(List<string> pDatosInsumo)
+        {
+            #region GetETBFacturaElectronica
+
+            foreach (var datoLinea in pDatosInsumo)
+            {
+                string llaveCruce = datoLinea.Split(' ').ElementAt(0);
+
+                if (!Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey(llaveCruce))
+                {
+                    Variables.Variables.DatosInsumoETBFacturaElectronica.Add(llaveCruce, datoLinea);
+                }
+            }
+
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pDatosInsumo"></param>
         public static void GetBaseCupones(List<string> pDatosInsumo)
         {
             #region GetBaseCupones
@@ -1753,7 +1774,14 @@ namespace App.ControlInsumos
                 if (!string.IsNullOrEmpty(resultado))
                 { resultado += separador; }
 
-                resultado += $"{campo.Trim()}";
+                if (string.IsNullOrEmpty(campo.Trim()))
+                {
+                    resultado += $" ";
+                }
+                else
+                {
+                    resultado += $"{campo.Trim()}";
+                }
             }
 
             return resultado;

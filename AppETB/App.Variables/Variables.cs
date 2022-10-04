@@ -38,6 +38,7 @@ namespace App.Variables
         public static Dictionary<string, string> DatosInsumoPromocionesLte = new Dictionary<string, string>();
         public static Dictionary<string, string> DatosInsumoCuentasLte = new Dictionary<string, string>();
         public static Dictionary<string, string> DatosInsumoClientesEmailPrivado = new Dictionary<string, string>();
+        public static Dictionary<string, string> DatosInsumoETBFacturaElectronica = new Dictionary<string, string>();
         public static Dictionary<string, List<string>> DatosInsumoBaseCupones = new Dictionary<string, List<string>>();
         public static Dictionary<string, List<string>> DatosInsumoProcuni = new Dictionary<string, List<string>>();
         public static Dictionary<string, List<string>> DatosInsumoDoc1Participaciones = new Dictionary<string, List<string>>();
