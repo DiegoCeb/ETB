@@ -255,6 +255,10 @@ namespace App.ControlEjecucion
                             {
                                 Helpers.GetConformacionPaquetes(File.ReadAllLines(Archivo, Encoding.Default).ToList());
                             }
+                            else if (EnumInsumo.ToString() == Variables.Insumos.ETB_Factura_Electronica.ToString())
+                            {
+                                Helpers.GetETBFacturaElectronica(File.ReadAllLines(Archivo, Encoding.Default).ToList());
+                            }
                             #endregion
 
                             insumoConfiguradoExiste = true;
