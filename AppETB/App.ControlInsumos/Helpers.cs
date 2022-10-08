@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Globalization;
+using System.Text.RegularExpressions;
 using DLL_Utilidades;
 using SharpCompress.Archives;
 using SharpCompress.Readers;
@@ -1479,7 +1480,10 @@ namespace App.ControlInsumos
                     return FormatearFecha("09", pCampo); // De dd/MM/yyyy a yyyyMMdd
 
                 case TiposFormateo.Fecha10:
-                    return FormatearFecha("10", pCampo); // De yyyyMMdd a yyyy/MM/dd
+                    return FormatearFecha("10", pCampo); // De yyyyMMdd a yyyy/MM/dd                
+
+                case TiposFormateo.Fecha11:
+                    return FormatearFecha("11", pCampo); // De yyyyMMdd a yyyy/MM/dd
 
                 case TiposFormateo.Decimal01:
                     return FormatearDecimal("01", pCampo);
@@ -1562,10 +1566,22 @@ namespace App.ControlInsumos
                     }
                 case "10":
 
-                    return $"{pCampo.Substring(0, 4)}/{pCampo.Substring(4, 2)}/{pCampo.Substring(6, 2)}";
+                    return $"{pCampo.Substring(0, 4)}/{pCampo.Substring(4, 2)}/{pCampo.Substring(6, 2)}";               
+                
 
                 case "09":
                     return string.Format("{0}/{1}/{2}", pCampo.Substring(0, 4), pCampo.Substring(4, 2), pCampo.Substring(6, 2));
+
+                case "11":
+                    string[] campos = pCampo.Split(new string[] { "de" }, StringSplitOptions.None);
+                    if (campos.Length > 2)
+                    {
+                        return $"{campos[0]}/{campos[1].ToLower()}/{campos[2]}";
+                    }
+                    else
+                    {
+                        return string.Empty;
+                    }
 
                 default:
                     return pCampo;
@@ -1763,6 +1779,70 @@ namespace App.ControlInsumos
 
             }
             return fechaResultado;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="listaFechas"></param>
+        /// <param name="accion">1 = Maxima -- 2 = Minima</param>
+        /// <returns></returns>
+        public static string GetFechaMaximaMinima(List<string> listaFechas, int accion)
+        {
+            DateTime fecha;
+            DateTime fechaTem = new DateTime();
+            bool PrimeraVez = false;
+            string fechaResultado = string.Empty;
+
+            foreach (string registroActual in listaFechas)
+            {
+                if (!string.IsNullOrEmpty(registroActual.Trim()) && registroActual.Length == 8)
+                {
+                    fecha = Convert.ToDateTime(registroActual.Substring(0, 4) + "/" + registroActual.Substring(4, 2) + "/" + registroActual.Substring(6, 2));
+
+                    if (PrimeraVez == false)
+                    {
+                        fechaTem = fecha;
+                        PrimeraVez = true;
+                    }
+
+                    switch (accion)
+                    {
+                        // Fecha Maxima
+                        case 1:
+                            if (DateTime.Compare(fecha, fechaTem) >= 0)
+                            {
+                                fechaResultado = fecha.ToString("yyyyMMdd");
+                                fechaTem = fecha;
+                            }
+
+                            break;
+
+                        // Fecha Minima
+                        case 2:
+                            if (DateTime.Compare(fecha, fechaTem) <= 0)
+                            {
+                                var d = DateTime.Compare(fecha, fechaTem);
+                                fechaResultado = fecha.ToString("yyyyMMdd");
+                                fechaTem = fecha;
+                            }
+
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+            }
+            return fechaResultado;
+        }
+
+        public static bool GetContieneLetras(string pCampo)
+        {
+            if (Regex.IsMatch(pCampo.Replace(" ", string.Empty), @"^[a-zA-Z]+$"))
+            { return true; }
+            else
+            { return false; }
         }
 
         /// <summary>
@@ -2278,6 +2358,7 @@ namespace App.ControlInsumos
         Fecha08,
         Fecha09,
         Fecha10,
+        Fecha11,
         LetraCapital,
         Decimal01,
         Decimal02,

@@ -56,7 +56,7 @@ namespace App.ControlEjecucion
                                  where busqueda.Contains("IDENTIFICACION")
                                  select busqueda;
 
-            string periodo = File.ReadAllLines(archivoPeriodo.FirstOrDefault()).ToList().ElementAt(0).Split('\t').ElementAt(1);
+            string periodo = File.ReadAllLines(archivoPeriodo.FirstOrDefault()).ToList().ElementAt(0).Split('\t').ElementAt(1).PadLeft(6,'0');
 
 #if DEBUG == false
             var result = Parallel.ForEach(archivos, archivo =>
