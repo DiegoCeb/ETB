@@ -1479,7 +1479,7 @@ namespace App.ControlInsumos
                     return FormatearFecha("09", pCampo); // De dd/MM/yyyy a yyyyMMdd
 
                 case TiposFormateo.Fecha10:
-                    return FormatearFecha("10", pCampo); // De yyyyMMdd a yyyy/MM/dd
+                    return FormatearFecha("10", pCampo); // De yyyyMMdd a yyyy/MM/dd                
 
                 case TiposFormateo.Decimal01:
                     return FormatearDecimal("01", pCampo);
@@ -1562,7 +1562,8 @@ namespace App.ControlInsumos
                     }
                 case "10":
 
-                    return $"{pCampo.Substring(0, 4)}/{pCampo.Substring(4, 2)}/{pCampo.Substring(6, 2)}";
+                    return $"{pCampo.Substring(0, 4)}/{pCampo.Substring(4, 2)}/{pCampo.Substring(6, 2)}";               
+                
 
                 case "09":
                     return string.Format("{0}/{1}/{2}", pCampo.Substring(0, 4), pCampo.Substring(4, 2), pCampo.Substring(6, 2));
