@@ -80,6 +80,64 @@ namespace App.ControlEjecucion
             #endregion
         }
 
+        public void EjecutarProcesoDatos(string pRutaArchivosProcesar)
+        {
+            #region EjecutarProcesoDatos
+
+            var archivos = from busqueda in Directory.GetFiles(pRutaArchivosProcesar)
+                           select busqueda;
+
+#if DEBUG == false
+            var result = Parallel.ForEach(archivos, archivo =>
+    {
+        var hilo = Task.Run(() =>
+        {
+            _ = new ProcesoDatos(archivo);
+        });
+
+        hilo.Wait();
+    }); 
+#endif
+            foreach (var archivo in archivos)
+            {
+                _ = new ProcesoDatos(archivo);
+            }
+
+            //Escribir Diccionario Formateados llamando a un metodo de cracion de salidas donde se realice la segmentacion
+            //TODO: Verificar
+            EscribirSalidasProceso($"{App.ControlInsumos.Helpers.RutaProceso}", Variables.Variables.DiccionarioExtractosFormateados, "1");
+            #endregion
+        }
+
+        public void EjecutarProcesoGobiernos(string pRutaArchivosProcesar)
+        {
+            #region EjecutarProcesoGobiernos
+
+            var archivos = from busqueda in Directory.GetFiles(pRutaArchivosProcesar)
+                           select busqueda;
+
+#if DEBUG == false
+            var result = Parallel.ForEach(archivos, archivo =>
+    {
+        var hilo = Task.Run(() =>
+        {
+            _ = new ProcesoGobiernos(archivo);
+        });
+
+        hilo.Wait();
+    }); 
+#endif
+            foreach (var archivo in archivos)
+            {
+                _ = new ProcesoGobiernos(archivo);
+            }
+
+            //Escribir Diccionario Formateados llamando a un metodo de cracion de salidas donde se realice la segmentacion
+            //TODO: Verificar
+            EscribirSalidasProceso($"{App.ControlInsumos.Helpers.RutaProceso}", Variables.Variables.DiccionarioExtractosFormateados, "1");
+            #endregion
+        }
+
         public void CargueGeneralInsumos(string Pruta)
         {
             #region CargueGeneralInsumos
@@ -243,7 +301,7 @@ namespace App.ControlEjecucion
                             else if (EnumInsumo.ToString() == Variables.Insumos.ConfiguracionLlavesDoc1.ToString())
                             {
                                 Helpers.GetConfiguracionLLavesDoc1(File.ReadAllLines(Archivo, Encoding.Default).ToList());
-							}
+                            }
                             else if (EnumInsumo.ToString() == Variables.Insumos.ETB_Factura_Electronica.ToString())
                             {
                                 Helpers.GetETBFacturaElectronica(File.ReadAllLines(Archivo, Encoding.Default).ToList());
@@ -282,11 +340,14 @@ namespace App.ControlEjecucion
                     EscribirDatosSalidaNoImprimir($"{pRutaSalida}\\NoImprimir", $"MasivoNoImprimir{DateTime.Now:yyyyMMddhhmm}.sal");
                     EscribirDatosSalidaSms(pDatosImprimir, $"{pRutaSalida}\\SMS", $"MasivoSMS{DateTime.Now:yyyyMMddhhmm}.sal");
                     EscribirDatosSalidaEmail(pDatosImprimir, $"{pRutaSalida}\\Email", $"MasivoEmail{DateTime.Now:yyyyMMddhhmm}.sal");
-                    EscribirDatosSalidaDistribucionEspecial(pDatosImprimir, $"{pRutaSalida}\\DistribucionEspecial", $"MasivoDistribucionEspecial{DateTime.Now:yyyyMMddhhmm}.sal");
+                    EscribirDatosSalidaDistribucionEspecial(pDatosImprimir, $"{pRutaSalida}\\MasivoDistribucionEspecial", $"MasivoDistribucionEspecial{DateTime.Now:yyyyMMddhhmm}.sal");
+                    EscribirDatosSalidaErrorLte(pDatosImprimir, $"{pRutaSalida}\\MasivoErrorLTE", $"MasivoErrorLTE{DateTime.Now:yyyyMMddhhmm}.sal");
+
                     EscribirDatosSalidaDiferencias(pDatosImprimir, $"{pRutaSalida}\\Diferencias", $"MasivoDiferencias{DateTime.Now:yyyyMMddhhmm}.sal");
+                    EscribirDatosSalidaOtros(pDatosImprimir, $"{pRutaSalida}\\Otros", $"MasivoOtros{DateTime.Now:yyyyMMddhhmm}.sal");
                     EscribirDatosSalidaImpresion(pDatosImprimir, $"{pRutaSalida}\\Impresion", $"MasivoImpresion{DateTime.Now:yyyyMMddhhmm}.sal");
                     break;
-            } 
+            }
             #endregion
         }
 
@@ -371,7 +432,7 @@ namespace App.ControlEjecucion
             }
             #endregion
         }
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -414,7 +475,71 @@ namespace App.ControlEjecucion
         private void EscribirDatosSalidaDistribucionEspecial(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo)
         {
             #region EscribirDatosSalidaDistribucionEspecial
-            List<string> resultado = new List<string>();
+            List<string> datosFinales = new List<string>();
+            string rutaDistribucionEspecial = string.Empty;
+
+            var busquedaCuentas = (from busqueda in pDatosImprimir
+                                   where Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
+                                   !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key)
+                                   select busqueda).ToDictionary(x => x.Key).Values;
+
+            foreach (var dato in busquedaCuentas)
+            {
+                if (pDatosImprimir.ContainsKey(dato.Key))
+                {
+                    string fechaPeriodoProceso = pDatosImprimir[dato.Key].FirstOrDefault().Split('|').ElementAt(11).Substring(3);
+                    string fechaPeriodoInsumo = Variables.Variables.DatosInsumoDistribucionEspecial[dato.Key].FirstOrDefault().Split('|').ElementAt(2);
+
+                    if (fechaPeriodoProceso == fechaPeriodoInsumo)
+                    {
+                        datosFinales.AddRange(dato.Value);
+                    }
+                }        
+            }
+
+            if (datosFinales.Any())
+            {
+                Helpers.EscribirEnArchivo($"{rutaDistribucionEspecial}\\{pNombreArchivo}", datosFinales);
+            }
+
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pDatosImprimir"></param>
+        /// <param name="pRuta"></param>
+        /// <param name="pNombreArchivo"></param>
+        private void EscribirDatosSalidaErrorLte(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo)
+        {
+            #region EscribirDatosSalidaDistribucionEspecial
+            List<string> datosFinales = new List<string>();
+            string rutaDistribucionEspecial = string.Empty;
+
+            var busquedaCuentas = (from busqueda in pDatosImprimir
+                                   where Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
+                                   !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key)
+                                   select busqueda).ToDictionary(x => x.Key).Values;
+
+            foreach (var dato in busquedaCuentas)
+            {
+                if (pDatosImprimir.ContainsKey(dato.Key))
+                {
+                    string fechaPeriodoProceso = pDatosImprimir[dato.Key].FirstOrDefault().Split('|').ElementAt(11).Substring(3);
+                    string fechaPeriodoInsumo = Variables.Variables.DatosInsumoDistribucionEspecial[dato.Key].FirstOrDefault().Split('|').ElementAt(2);
+
+                    if (fechaPeriodoProceso == fechaPeriodoInsumo)
+                    {
+                        datosFinales.AddRange(dato.Value);
+                    }
+                }
+            }
+
+            if (datosFinales.Any())
+            {
+                Helpers.EscribirEnArchivo($"{rutaDistribucionEspecial}\\{pNombreArchivo}", datosFinales);
+            }
 
             #endregion
         }
@@ -429,7 +554,22 @@ namespace App.ControlEjecucion
         {
             #region EscribirDatosSalidaDiferencias
             List<string> resultado = new List<string>();
-            
+
+
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pDatosImprimir"></param>
+        /// <param name="pRuta"></param>
+        /// <param name="pNombreArchivo"></param>
+        private void EscribirDatosSalidaOtros(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo)
+        {
+            #region EscribirDatosSalidaOtros
+            List<string> resultado = new List<string>();
+
 
             #endregion
         }

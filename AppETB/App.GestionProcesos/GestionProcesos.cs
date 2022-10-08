@@ -37,6 +37,20 @@ namespace App.ControlProcesos
                     //Inicio cargue archivos y proceso de formateo
                     _objProcesamiento.EjecutarProcesoMasivo(Helpers.RutaOriginales);
                     break;
+
+                case "2": //Datos
+                    //Se crea carpeta salida se mueven datos de entrada e insumos a originales
+                    _objProcesamiento.AdecuarTrabajoApp("Datos");
+                    //Inicio cargue archivos y proceso de formateo
+                    _objProcesamiento.EjecutarProcesoDatos(Helpers.RutaOriginales);
+                    break;
+
+                case "3": //Gobiernos
+                    //Se crea carpeta salida se mueven datos de entrada e insumos a originales
+                    _objProcesamiento.AdecuarTrabajoApp("Gobiernos");
+                    //Inicio cargue archivos y proceso de formateo
+                    _objProcesamiento.EjecutarProcesoGobiernos(Helpers.RutaOriginales);
+                    break;
             }
 
 
@@ -90,6 +104,10 @@ namespace App.ControlProcesos
             Console.WriteLine("");
             Console.WriteLine("1. Masivos");
             Console.WriteLine("");
+            Console.WriteLine("2. Datos");
+            Console.WriteLine("");
+            Console.WriteLine("3. Gobiernos");
+            Console.WriteLine("");
             Variables.Variables.Proceso = Console.ReadKey().KeyChar.ToString();
             Console.WriteLine("");
 
@@ -100,7 +118,11 @@ namespace App.ControlProcesos
                     break;
 
                 case "2":
+                    Ejecutar("2");
+                    break;
 
+                case "3":
+                    Ejecutar("3");
                     break;
 
                 default:
