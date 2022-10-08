@@ -30,8 +30,8 @@ namespace App.ControlLogicaProcesos
         private int? MesMora { get; set; }
         private string CodigoDANE { get; set; }
         private bool Is1OOA { get; set; }
-        private bool Is1ODC { get; set; } 
-        private bool Is1AFI { get; set; } 
+        private bool Is1ODC { get; set; }
+        private bool Is1AFI { get; set; }
         #endregion
 
         public ProcesoMasivos(string pArchivo, string pPeridoFacturacion)
@@ -184,20 +184,13 @@ namespace App.ControlLogicaProcesos
             }
 
             resultadoFormateoLinea = MapeoCanal1BBA(datosOriginales, linea1BBB.ToList());
-			
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
-
-            resultadoFormateoLinea = MapeoCanal1CCA(datosOriginales);
 
             if (!string.IsNullOrEmpty(resultadoFormateoLinea))
             {
                 resultado.Add(resultadoFormateoLinea);
             }
 
-            resultadoFormateoLinea = MapeoCanal1CCC(datosOriginales);
+            resultadoFormateoLinea = MapeoAgrupacion1CCA(datosOriginales);
 
             if (((IEnumerable<string>)resultadoFormateoLinea).Any())
             {
@@ -494,7 +487,7 @@ namespace App.ControlLogicaProcesos
             }
             #endregion
 
-            return resultado; 
+            return resultado;
             #endregion
         }
 
@@ -517,8 +510,8 @@ namespace App.ControlLogicaProcesos
             MesMora = null;
             CodigoDANE = string.Empty;
             Is1OOA = false;
-            Is1ODC = false; 
-			Is1AFI = false;
+            Is1ODC = false;
+            Is1AFI = false;
             #endregion           
         }
 
@@ -711,7 +704,7 @@ namespace App.ControlLogicaProcesos
                     ListaCanal1AAA.Add(string.Empty); //ETB_Segmento Vacio
                     ListaCanal1AAA.Add(string.Empty); //ETB_Segmento_UEN Vacio
                 }
-                
+
 
                 ListaCanal1AAA.Add(string.Empty); //TODO: Validar Combos - ConformacionPaquetes
                 ListaCanal1AAA.Add(string.Empty); //CampoVacio
@@ -1573,29 +1566,6 @@ namespace App.ControlLogicaProcesos
 
         #endregion Metodos 1AAA
 
-        /// <summary>
-        /// Linea que obtiene canal 1CCC
-        /// </summary>
-        /// <param name="datosOriginales"></param>
-        /// <returns></returns>
-        public IEnumerable<string> MapeoCanal1CCC(List<string> datosOriginales)
-        {
-            #region Canal 1CCC
-            IEnumerable<string> Linea1CCC = new List<string>();
-
-            var result = from busqueda in datosOriginales
-                         where busqueda.Length > 6 && (busqueda.Substring(0, 6).Equals("06T931") || busqueda.Substring(0, 6).Equals("06T935"))
-                         select busqueda;
-
-            if (result != null)
-            {
-
-            }
-
-            return Linea1CCC;
-            #endregion
-        }
-		
         /// Metodo que obtiene las lineas formateadas de Canal 1BBB
         /// </summary>
         /// <param name="datosOriginales"></param>
@@ -1608,6 +1578,7 @@ namespace App.ControlLogicaProcesos
             string llave = string.Empty;
             decimal Total1BBB = 0;
             decimal ValorPagarMes = 0;
+
             #region Notas Crédito
             var result29000 = from busqueda in datosOriginales
                               where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("29000")
@@ -1635,8 +1606,8 @@ namespace App.ControlLogicaProcesos
                                  select busqueda;
 
             var result150001 = from busqueda in datosOriginales
-                         where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("150001")
-                         select busqueda;
+                               where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("150001")
+                               select busqueda;
 
             string linea150001 = string.Empty;
 
@@ -1664,7 +1635,8 @@ namespace App.ControlLogicaProcesos
                     {
                         descripcion = descripcion.Substring(0, 23);
                     }
-                    else if(llave == "02T112" && !IsFibra) {
+                    else if (llave == "02T112" && !IsFibra)
+                    {
                         descripcion = descripcion.Substring(0, 31);
                     }
 
@@ -1741,11 +1713,11 @@ namespace App.ControlLogicaProcesos
                     {
                         int impuestoConsumo = 0;
                         if (IsFibra || IsDatos || IsGobierno || IsLte || IsLteCorporativo)
-                        { impuestoConsumo = Convert.ToInt32(detalle.Substring(118, 14));  }
+                        { impuestoConsumo = Convert.ToInt32(detalle.Substring(118, 14)); }
 
                         decimal sumatoria = Convert.ToInt32(detalle.Substring(6, 14)) + Convert.ToInt32(detalle.Substring(20, 14)) + Convert.ToInt32(detalle.Substring(34, 14)) + Convert.ToInt32(detalle.Substring(48, 14)) + Convert.ToInt32(detalle.Substring(62, 14)) + impuestoConsumo;
 
-                        if (IsFibra ||llave == "02T014")
+                        if (IsFibra || llave == "02T014")
                         {
                             Lineas1BBB.Add($"1BBB|{descripcion}|{sumatoria.ToString()}| ");
                         }
@@ -1759,9 +1731,6 @@ namespace App.ControlLogicaProcesos
 
             }
             #endregion
-
-
-
 
             return Lineas1BBB;
             #endregion
@@ -1803,28 +1772,28 @@ namespace App.ControlLogicaProcesos
         private IEnumerable<string> MapeoAgrupacion1CCA(List<string> datosOriginales)
         {
             #region MapeoCanal1CCA
-            IEnumerable<string> Linea1CCA = null;            
+            IEnumerable<string> Linea1CCA = null;
             List<PosCortes> listaCortes = new List<PosCortes>();
 
             var resultPaquetes = from busqueda in datosOriginales
-                               where busqueda.Length > 4 && (busqueda.Substring(0, 4).Equals("02T1") || busqueda.Substring(0, 4).Equals("02T2") || busqueda.Substring(0, 4).Equals("02T3")
-                                                          || busqueda.Substring(0, 4).Equals("02T4") || busqueda.Substring(0, 4).Equals("02T5") || busqueda.Substring(0, 4).Equals("02T6")
-                                                          || busqueda.Substring(0, 4).Equals("02T7") || busqueda.Substring(0, 4).Equals("02T8") || busqueda.Substring(0, 4).Equals("02T9"))            
-                               select busqueda;
+                                 where busqueda.Length > 4 && (busqueda.Substring(0, 4).Equals("02T1") || busqueda.Substring(0, 4).Equals("02T2") || busqueda.Substring(0, 4).Equals("02T3")
+                                                            || busqueda.Substring(0, 4).Equals("02T4") || busqueda.Substring(0, 4).Equals("02T5") || busqueda.Substring(0, 4).Equals("02T6")
+                                                            || busqueda.Substring(0, 4).Equals("02T7") || busqueda.Substring(0, 4).Equals("02T8") || busqueda.Substring(0, 4).Equals("02T9"))
+                                 select busqueda;
 
-            
-            if(resultPaquetes.Any())
+
+            if (resultPaquetes.Any())
             {
-                if(IsFibra || IsResidencial)
+                if (IsFibra || IsResidencial)
                 {
 
                 }
             }
 
 
-            
 
-                return Linea1CCA;
+
+            return Linea1CCA;
 
             #endregion
         }
@@ -1929,18 +1898,18 @@ namespace App.ControlLogicaProcesos
             var result02T001 = from busqueda in datosOriginales
                                where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("02T001")
                                select busqueda;
-            
+
 
             if (result02T001.Any())
-            {                
-                if(Convert.ToDouble(result02T001.FirstOrDefault().Substring(6,14).Trim()) > 0)
+            {
+                if (Convert.ToDouble(result02T001.FirstOrDefault().Substring(6, 14).Trim()) > 0)
                 {
                     lineaTemp1MMM = "1MMM|tramites|" + FechaExpedicion + "|PRESENTA CHEQUE DEVUELTO. SU SERVICIO SERÁ SUSPENDIDO. SIRVASE CANCELAR ESTA FACTURA EN EFECTIVO O CHEQUE DE GERENCIA Y DOS DIAS DESPUES ACERCARSE A RECLAMAR EL CHEQUE A LA COORDINACION DE RECAUDO  Cra 8 No 20 - 00  Piso 8.";
                     listaTemp1MMM.Add(Helpers.ValidarPipePipe(lineaTemp1MMM));
                     lineaTemp1MMM = string.Empty;
                 }
             }
-            
+
             if (Variables.Variables.DatosInsumoTramites.ContainsKey(Cuenta))
             {
                 foreach (var insumoActual in Variables.Variables.DatosInsumoTramites[Cuenta])
@@ -1951,7 +1920,7 @@ namespace App.ControlLogicaProcesos
                     lineaTemp1MMM += insumoActual.Split('|')[2] + "|";
                     lineaTemp1MMM += insumoActual.Split('|')[3] + "|| ";
                     listaTemp1MMM.Add(Helpers.ValidarPipePipe(lineaTemp1MMM));
-                }                
+                }
             }
             return listaTemp1MMM;
             #endregion
@@ -3096,9 +3065,9 @@ namespace App.ControlLogicaProcesos
                                where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("12M123")
                                select busqueda;
 
-            if(result11C304.Any())
+            if (result11C304.Any())
             {
-                
+
             }
 
             return listalinea1EE3;
@@ -3194,7 +3163,7 @@ namespace App.ControlLogicaProcesos
             List<string> camposSumar = new List<string>();
             List<PosCortes> listaCortes = new List<PosCortes>();
 
-            if(Is1ODC)
+            if (Is1ODC)
             {
                 #region Consultas
                 var linea040000 = from busqueda in datosOriginales
@@ -3292,9 +3261,9 @@ namespace App.ControlLogicaProcesos
                 else
                 {
                     Lineas1DET += "|| ";
-                } 
+                }
                 #endregion
-            }            
+            }
 
             return Helpers.ValidarPipePipe(Lineas1DET);
             #endregion
@@ -3688,11 +3657,11 @@ namespace App.ControlLogicaProcesos
             if (IsLte || IsLteCorporativo)
             {
                 // Si trae este canal se pinta el 1OMT
-                if(result040011.Any())
+                if (result040011.Any())
                 {
                     resultado = "1OMT|";
 
-                   if (result040000.Any())
+                    if (result040000.Any())
                     {
                         foreach (var registroActual in result040000)
                         {
@@ -3700,9 +3669,9 @@ namespace App.ControlLogicaProcesos
                         }
                     }
 
-                   resultado += llave + "|";
+                    resultado += llave + "|";
 
-                   if (result11C901.Any())
+                    if (result11C901.Any())
                     {
                         foreach (var registroActual in result11C901)
                         {
@@ -3713,10 +3682,10 @@ namespace App.ControlLogicaProcesos
                                 listaCortes.Add(new PosCortes(44, 14, TiposFormateo.Decimal01));
                                 listaCortes.Add(new PosCortes(172, 14, TiposFormateo.Decimal01));
                                 camposValores = Helpers.ExtraccionCamposSpool(listaCortes, registroActual);
-                               camposSumar.Add(registroActual.Substring(16, 14).Trim());
+                                camposSumar.Add(registroActual.Substring(16, 14).Trim());
                                 camposSumar.Add(registroActual.Substring(44, 14).Trim());
                                 camposSumar.Add(registroActual.Substring(172, 14).Trim());
-                               break;
+                                break;
                             }
                             else
                             {
@@ -3725,10 +3694,10 @@ namespace App.ControlLogicaProcesos
                         }
                     }
 
-                   resultado += camposValores + "|";
+                    resultado += camposValores + "|";
                     resultado += Helpers.SumarCampos(camposSumar) + "|";
                     resultado += "Etb| ";
-                }                
+                }
             }
 
             return Helpers.ValidarPipePipe(resultado);
@@ -4138,7 +4107,7 @@ namespace App.ControlLogicaProcesos
 
             return resultado;
             #endregion
-        } 
+        }
         #endregion
     }
 }
