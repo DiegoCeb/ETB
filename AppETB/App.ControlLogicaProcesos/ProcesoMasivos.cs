@@ -205,48 +205,48 @@ namespace App.ControlLogicaProcesos
                 resultado.Add(resultadoFormateoLinea);
             }
 
-            //resultadoFormateoLinea = linea1BBB = MapeoCanal1BBB(datosOriginales);
+            resultadoFormateoLinea = linea1BBB = MapeoCanal1BBB(datosOriginales);
 
-            //if (((IEnumerable<string>)resultadoFormateoLinea).Any())
-            //{
-            //    resultado.AddRange(resultadoFormateoLinea);
-            //}
+            if (((IEnumerable<string>)resultadoFormateoLinea).Any())
+            {
+                resultado.AddRange(resultadoFormateoLinea);
+            }
 
-            //resultadoFormateoLinea = MapeoAgrupacion1CCA(datosOriginales);
+            resultadoFormateoLinea = MapeoAgrupacion1CCA(datosOriginales);
 
-            //if (((IEnumerable<string>)resultadoFormateoLinea).Any())
-            //{
-            //    resultado.AddRange(resultadoFormateoLinea);
-            //}
+            if (((IEnumerable<string>)resultadoFormateoLinea).Any())
+            {
+                resultado.AddRange(resultadoFormateoLinea);
+            }
 
-            //resultadoFormateoLinea = MapeoCanalADNC(datosOriginales);
+            resultadoFormateoLinea = MapeoCanalADNC(datosOriginales);
 
-            //if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            //{
-            //    resultado.Add(resultadoFormateoLinea);
-            //}
+            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            {
+                resultado.Add(resultadoFormateoLinea);
+            }
 
-            //resultadoFormateoLinea = FormateoCanalADN1(datosOriginales);
+            resultadoFormateoLinea = FormateoCanalADN1(datosOriginales);
 
-            //if (((IEnumerable<string>)resultadoFormateoLinea).Any())
-            //{
-            //    resultado.AddRange(resultadoFormateoLinea);
-            //}
+            if (((IEnumerable<string>)resultadoFormateoLinea).Any())
+            {
+                resultado.AddRange(resultadoFormateoLinea);
+            }
 
-            //resultadoFormateoLinea = FormarPaqueteEEE(datosOriginales);
+            resultadoFormateoLinea = FormarPaqueteEEE(datosOriginales);
 
-            //if (((IEnumerable<string>)resultadoFormateoLinea).Any())
-            //{
-            //    resultado.AddRange(resultadoFormateoLinea);
-            //}
+            if (((IEnumerable<string>)resultadoFormateoLinea).Any())
+            {
+                resultado.AddRange(resultadoFormateoLinea);
+            }
 
-            //resultadoFormateoLinea = MapeoCanal1OOA(datosOriginales);
+            resultadoFormateoLinea = MapeoCanal1OOA(datosOriginales);
 
-            //if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            //{
-            //    resultado.Add(resultadoFormateoLinea);
-            //    Is1OOA = true;
-            //}
+            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            {
+                resultado.Add(resultadoFormateoLinea);
+                Is1OOA = true;
+            }
 
             resultadoFormateoLinea = MapeoCanal1OPL(datosOriginales);
 
@@ -3808,7 +3808,7 @@ namespace App.ControlLogicaProcesos
             #region MapeoCanal1LLL
             string Lineas1LLL = string.Empty;
 
-			if (!IsResidencial && !IsFibra && MesMora > 1 && MesMora < 4)
+            if (!IsResidencial && !IsFibra && MesMora > 1 && MesMora < 4)
             {
                 Lineas1LLL = $"1LLL|{Variables.RxGeneral.TextoMora_1}| ";
             }
@@ -3829,7 +3829,7 @@ namespace App.ControlLogicaProcesos
                 Lineas1LLL = $"1LLL|{Variables.RxGeneral.TextoMora_5}| ";
             }
 
-			return Lineas1LLL;
+            return Lineas1LLL;
             #endregion
         }
 

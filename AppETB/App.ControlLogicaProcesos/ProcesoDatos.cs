@@ -1668,20 +1668,6 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        private string FormateoCanalCONS(List<string> datosOriginales)
-        {
-            #region FormateoCanalCONS
-            string resultado = string.Empty;
-
-            return resultado;
-            #endregion
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="datosOriginales"></param>
-        /// <returns></returns>
         private string FormateoCanalCUFE(List<string> datosOriginales)
         {
             #region FormateoCanalCUFE

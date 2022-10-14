@@ -363,13 +363,6 @@ namespace App.ControlLogicaProcesos
                 resultado.Add(resultadoFormateoLinea);
             }
 
-            resultadoFormateoLinea = FormateoCanalCONS(datosOriginales);
-
-            if (((IEnumerable<string>)resultadoFormateoLinea).Any())
-            {
-                resultado.AddRange(resultadoFormateoLinea);
-            }
-
             resultadoFormateoLinea = FormateoCanal1MMM(datosOriginales);
 
             if (((IEnumerable<string>)resultadoFormateoLinea).Any())
@@ -1673,20 +1666,6 @@ namespace App.ControlLogicaProcesos
             }
 
             return lineaOficinaPQR;
-            #endregion
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="datosOriginales"></param>
-        /// <returns></returns>
-        private string FormateoCanalCONS(List<string> datosOriginales)
-        {
-            #region FormateoCanalCONS
-            string resultado = string.Empty;
-
-            return resultado;
             #endregion
         }
 
