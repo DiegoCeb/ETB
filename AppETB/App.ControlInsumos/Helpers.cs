@@ -1485,14 +1485,23 @@ namespace App.ControlInsumos
                 case TiposFormateo.Fecha11:
                     return FormatearFecha("11", pCampo); // De yyyyMMdd a yyyy/MM/dd
 
+                case TiposFormateo.Fecha12:
+                    return FormatearFecha("12", pCampo); // De yyyyMMdd a ddMMMyyyy
+
                 case TiposFormateo.Decimal01:
                     return FormatearDecimal("01", pCampo);
 
                 case TiposFormateo.Decimal02:
                     return FormatearDecimal("02", pCampo);
 
+                case TiposFormateo.Decimal03:
+                    return FormatearDecimal("03", pCampo);
+
                 case TiposFormateo.HoraMinuto:
                     return FormatearHoraMinuto(pCampo);
+
+                case TiposFormateo.HoraMinutoSegundo:
+                    return FormatearHoraMinutoSegundo(pCampo);
                 default:
                     return pCampo;
             }
@@ -1583,6 +1592,11 @@ namespace App.ControlInsumos
                         return string.Empty;
                     }
 
+                case "12":
+                    fechaRetorno = Convert.ToDateTime($"{pCampo.Substring(0, 4)}/{pCampo.Substring(4, 2)}/{pCampo.Substring(6, 2)}").ToString("ddMMMyyyy").Replace(".", "");
+
+                    return FormatearCampos(TiposFormateo.LetraCapital, fechaRetorno);
+
                 default:
                     return pCampo;
             }
@@ -1628,8 +1642,25 @@ namespace App.ControlInsumos
                         return $"$ {transformado.Substring(0, transformado.LastIndexOf('.')).Replace(",", ".")},{transformado.Substring(transformado.LastIndexOf('.') + 1)}"; ;
                     }
 
-                case "2":
+                case "02":
                     transformado = pCampo.Trim().TrimStart('0');
+
+                    if (string.IsNullOrEmpty(transformado))
+                    {
+                        transformado = "00";
+                    }
+
+                    if (transformado.Length == 1)
+                    {
+                        transformado = transformado.PadLeft(2, '0');
+                    }
+
+                    transformado = $"{transformado.Substring(0, transformado.Length - 2)}.{transformado.Substring(transformado.Length - 2)}";
+
+                    return transformado;
+
+                case "03":
+                    transformado = pCampo.Trim().TrimStart('0').Replace("$", string.Empty).Replace(",", string.Empty).Replace(".", string.Empty);
 
                     if (string.IsNullOrEmpty(transformado))
                     {
@@ -1678,6 +1709,18 @@ namespace App.ControlInsumos
         {
             #region FormatearHoraMinuto
             return String.Format("{0}:{1}", pCampo.Substring(0, 2), pCampo.Substring(2, 2));
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pCampo"></param>
+        /// <returns></returns>
+        private static string FormatearHoraMinutoSegundo(string pCampo)
+        {
+            #region FormatearHoraMinuto
+            return String.Format("{0}:{1}:{2}", pCampo.Substring(0, 2), pCampo.Substring(2, 2), pCampo.Substring(4, 2));
             #endregion
         }
 
@@ -1839,7 +1882,7 @@ namespace App.ControlInsumos
 
         public static bool GetContieneLetras(string pCampo)
         {
-            if (Regex.IsMatch(pCampo.Replace(" ", string.Empty), @"^[a-zA-Z]+$"))
+            if (Regex.IsMatch(pCampo.Replace("_", string.Empty).Replace(" ", string.Empty), @"^[a-zA-Z]+$"))
             { return true; }
             else
             { return false; }
@@ -2359,9 +2402,12 @@ namespace App.ControlInsumos
         Fecha09,
         Fecha10,
         Fecha11,
+        Fecha12,
         LetraCapital,
         Decimal01,
         Decimal02,
-        HoraMinuto
+        Decimal03,
+        HoraMinuto,
+        HoraMinutoSegundo
     }
 }

@@ -284,6 +284,62 @@ namespace App.ControlLogicaProcesos
                 resultado.Add(resultadoFormateoLinea);
             }
 
+            resultadoFormateoLinea = FormateoCanalCONS(datosOriginales);
+
+            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            {
+                resultado.Add(resultadoFormateoLinea);
+            }
+
+            resultadoFormateoLinea = FormateoCanalCUFE(datosOriginales);
+
+            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            {
+                resultado.Add(resultadoFormateoLinea);
+            }
+
+            resultadoFormateoLinea = FormateoCanalNTC0(datosOriginales);
+
+            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            {
+                resultado.Add(resultadoFormateoLinea);
+            }
+
+            resultadoFormateoLinea = FormateoCanalNTC1(datosOriginales);
+
+            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            {
+                resultado.Add(resultadoFormateoLinea);
+            }
+
+            resultadoFormateoLinea = FormateoCanalNTC2(datosOriginales);
+
+            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            {
+                resultado.Add(resultadoFormateoLinea);
+            }
+
+            resultadoFormateoLinea = FormateoCanalNTC3(datosOriginales);
+
+            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            {
+                resultado.Add(resultadoFormateoLinea);
+            }
+
+            resultadoFormateoLinea = FormateoCanalNTC4(datosOriginales);
+
+            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            {
+                resultado.Add(resultadoFormateoLinea);
+            }
+
+            resultadoFormateoLinea = FormateoCanalNTC5(datosOriginales);
+
+            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            {
+                resultado.Add(resultadoFormateoLinea);
+            }
+
             resultadoFormateoLinea = FormateoCanal1CDP(datosOriginales);
 
             if (((IEnumerable<string>)resultadoFormateoLinea).Any())
@@ -370,6 +426,118 @@ namespace App.ControlLogicaProcesos
         private string FormateoCanal1KKK(List<string> datosOriginales)
         {
             #region FormateoCanal1KKK
+            string resultado = string.Empty;
+
+            return resultado;
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="datosOriginales"></param>
+        /// <returns></returns>
+        private string FormateoCanalCONS(List<string> datosOriginales)
+        {
+            #region FormateoCanalCONS
+            string resultado = string.Empty;
+
+            return resultado;
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="datosOriginales"></param>
+        /// <returns></returns>
+        private string FormateoCanalCUFE(List<string> datosOriginales)
+        {
+            #region FormateoCanalCUFE
+            string resultado = string.Empty;
+
+            return resultado;
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="datosOriginales"></param>
+        /// <returns></returns>
+        private string FormateoCanalNTC0(List<string> datosOriginales)
+        {
+            #region FormateoCanalNTC0
+            string resultado = string.Empty;
+
+            return resultado;
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="datosOriginales"></param>
+        /// <returns></returns>
+        private string FormateoCanalNTC1(List<string> datosOriginales)
+        {
+            #region FormateoCanalNTC1
+            string resultado = string.Empty;
+
+            return resultado;
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="datosOriginales"></param>
+        /// <returns></returns>
+        private string FormateoCanalNTC2(List<string> datosOriginales)
+        {
+            #region FormateoCanalNTC2
+            string resultado = string.Empty;
+
+            return resultado;
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="datosOriginales"></param>
+        /// <returns></returns>
+        private string FormateoCanalNTC3(List<string> datosOriginales)
+        {
+            #region FormateoCanalNTC3
+            string resultado = string.Empty;
+
+            return resultado;
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="datosOriginales"></param>
+        /// <returns></returns>
+        private string FormateoCanalNTC4(List<string> datosOriginales)
+        {
+            #region FormateoCanalNTC4
+            string resultado = string.Empty;
+
+            return resultado;
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="datosOriginales"></param>
+        /// <returns></returns>
+        private string FormateoCanalNTC5(List<string> datosOriginales)
+        {
+            #region FormateoCanalNTC5
             string resultado = string.Empty;
 
             return resultado;

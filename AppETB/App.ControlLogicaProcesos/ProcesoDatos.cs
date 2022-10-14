@@ -12,6 +12,7 @@ namespace App.ControlLogicaProcesos
 {
     public class ProcesoDatos : IProcess
     {
+        private string Cuenta { get; set; }
         public ProcesoDatos(string pArchivo)
         {
             #region ProcesoDatos
@@ -214,7 +215,14 @@ namespace App.ControlLogicaProcesos
                 resultado.AddRange(resultadoFormateoLinea);
             }
 
-            resultadoFormateoLinea = FormarPaqueteADNC(datosOriginales);
+            resultadoFormateoLinea = FormateoCanalADNC(datosOriginales);
+
+            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            {
+                resultado.Add(resultadoFormateoLinea);
+            }
+
+            resultadoFormateoLinea = FormarPaqueteADN1(datosOriginales);
 
             if (((IEnumerable<string>)resultadoFormateoLinea).Any())
             {
@@ -263,6 +271,62 @@ namespace App.ControlLogicaProcesos
                 resultado.Add(resultadoFormateoLinea);
             }
 
+            resultadoFormateoLinea = FormateoCanalCONS(datosOriginales);
+
+            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            {
+                resultado.Add(resultadoFormateoLinea);
+            }
+
+            resultadoFormateoLinea = FormateoCanalCUFE(datosOriginales);
+
+            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            {
+                resultado.Add(resultadoFormateoLinea);
+            }
+
+            resultadoFormateoLinea = FormateoCanalNTC0(datosOriginales);
+
+            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            {
+                resultado.Add(resultadoFormateoLinea);
+            }
+
+            resultadoFormateoLinea = FormateoCanalNTC1(datosOriginales);
+
+            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            {
+                resultado.Add(resultadoFormateoLinea);
+            }
+
+            resultadoFormateoLinea = FormateoCanalNTC2(datosOriginales);
+
+            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            {
+                resultado.Add(resultadoFormateoLinea);
+            }
+
+            resultadoFormateoLinea = FormateoCanalNTC3(datosOriginales);
+
+            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            {
+                resultado.Add(resultadoFormateoLinea);
+            }
+
+            resultadoFormateoLinea = FormateoCanalNTC4(datosOriginales);
+
+            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            {
+                resultado.Add(resultadoFormateoLinea);
+            }
+
+            resultadoFormateoLinea = FormateoCanalNTC5(datosOriginales);
+
+            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            {
+                resultado.Add(resultadoFormateoLinea);
+            }
+
             resultadoFormateoLinea = FormateoCanal1CDP(datosOriginales);
 
             if (((IEnumerable<string>)resultadoFormateoLinea).Any())
@@ -300,7 +364,7 @@ namespace App.ControlLogicaProcesos
 
             #endregion
 
-            return resultado; 
+            return resultado;
             #endregion
         }
 
@@ -356,6 +420,118 @@ namespace App.ControlLogicaProcesos
         private string FormateoCanal1KKK(List<string> datosOriginales)
         {
             #region FormateoCanal1KKK
+            string resultado = string.Empty;
+
+            return resultado;
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="datosOriginales"></param>
+        /// <returns></returns>
+        private string FormateoCanalCONS(List<string> datosOriginales)
+        {
+            #region FormateoCanalCONS
+            string resultado = string.Empty;
+
+            return resultado;
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="datosOriginales"></param>
+        /// <returns></returns>
+        private string FormateoCanalCUFE(List<string> datosOriginales)
+        {
+            #region FormateoCanalCUFE
+            string resultado = string.Empty;
+
+            return resultado;
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="datosOriginales"></param>
+        /// <returns></returns>
+        private string FormateoCanalNTC0(List<string> datosOriginales)
+        {
+            #region FormateoCanalNTC0
+            string resultado = string.Empty;
+
+            return resultado;
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="datosOriginales"></param>
+        /// <returns></returns>
+        private string FormateoCanalNTC1(List<string> datosOriginales)
+        {
+            #region FormateoCanalNTC1
+            string resultado = string.Empty;
+
+            return resultado;
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="datosOriginales"></param>
+        /// <returns></returns>
+        private string FormateoCanalNTC2(List<string> datosOriginales)
+        {
+            #region FormateoCanalNTC2
+            string resultado = string.Empty;
+
+            return resultado;
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="datosOriginales"></param>
+        /// <returns></returns>
+        private string FormateoCanalNTC3(List<string> datosOriginales)
+        {
+            #region FormateoCanalNTC3
+            string resultado = string.Empty;
+
+            return resultado;
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="datosOriginales"></param>
+        /// <returns></returns>
+        private string FormateoCanalNTC4(List<string> datosOriginales)
+        {
+            #region FormateoCanalNTC4
+            string resultado = string.Empty;
+
+            return resultado;
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="datosOriginales"></param>
+        /// <returns></returns>
+        private string FormateoCanalNTC5(List<string> datosOriginales)
+        {
+            #region FormateoCanalNTC5
             string resultado = string.Empty;
 
             return resultado;
@@ -465,14 +641,42 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        private IEnumerable<string> FormarPaqueteADNC(List<string> datosOriginales)
+        private string FormateoCanalADNC(List<string> datosOriginales)
         {
-            #region FormarPaqueteADNC
-            List<string> resultado = new List<string>();
+            #region FormateoCanalADNC
+            string resultado = string.Empty;
 
-            //TODO: ACA TOCA FORMAR UN PAQUETE de los canales ADNC - ADN1 - 1DDD - 1DDA
+            var linea010000 = from busqueda in datosOriginales
+                              where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("010000")
+                              select busqueda;
+
+            if (linea010000.Any())
+            {
+                resultado = Helpers.ValidarPipePipe($"ADNC|{linea010000.FirstOrDefault().Substring(6, 50).Trim()}");
+            }
+
+            return resultado;
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="datosOriginales"></param>
+        /// <returns></returns>
+        private IEnumerable<string> FormarPaqueteADN1(List<string> datosOriginales)
+        {
+            #region FormarPaqueteADN1
+            List<string> resultado = new List<string>();
+            Dictionary<string, List<string>> paquetesInformacion = new Dictionary<string, List<string>>();
+            bool banderaPaquete = false;
+            string cuentaConexion = string.Empty;
+            string busquedaPlanMinutos = string.Empty;
+            string planMinutos = string.Empty;
+            string llaveCruce = string.Empty;
+
+            //TODO: ACA TOCA FORMAR UN PAQUETE de los canales ADN1 - 1DDD - 1DDA
             //EJEMPLO
-            //ADNC|VETPLUS MEDICINA PREPAGADA VETERINARIA SAS
             //ADN1|6015556991|Conexion | CL 95 48 40 | | Mundo Automaticos y Asist20 | |
             //1DDA|6015556991|Telefonía Local |$ 400.00 |$ 76.00 |$ 476.00 |
             //1DDD|6015556991|Consumo del mes|$ 400.00 |$ 76.00 |$ 400.00 | | |
@@ -482,10 +686,92 @@ namespace App.ControlLogicaProcesos
             //1DDD|7337013891|Cargo fijo del mes |$ 297,860.00 |$ 56,775.44 |$ 298,818.12 |$ 958.12 | |
             //1DDD|7337013891|Dcto consumo pne e1 - RDSI no c| -$ 400.00 | -$ 76.00 | -$ 400.00 | | |
 
+            //Toda la info sale del paquete de canales que va desde el priemr 040000 hasta el siguiente 040000
+
+            #region Organizacion Paquetes de Informacion
+            foreach (var linea in datosOriginales)
+            {
+                if (linea.Substring(0, 6).Equals("040000"))
+                {
+                    banderaPaquete = true;
+                    cuentaConexion = linea.Substring(6, 20).Trim();
+                }
+
+                if (linea.Substring(0, 6).Equals("031111"))
+                {
+                    banderaPaquete = false;
+                }
+
+                if (banderaPaquete)
+                {
+                    if (paquetesInformacion.ContainsKey(cuentaConexion))
+                    {
+                        paquetesInformacion[cuentaConexion].Add(linea);
+                    }
+                    else
+                    {
+                        paquetesInformacion.Add(cuentaConexion, new List<string> { linea });
+                    }
+                }
+            }
+            #endregion
+
+            var linea06T112 = from busqueda in datosOriginales
+                              where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("06T112")
+                              select busqueda;
+
+            if (paquetesInformacion.Any())
+            {
+                foreach (var lineaDetalle in paquetesInformacion)
+                {
+                    #region Busqueda Informacion
+                    var linea040000 = from busqueda in lineaDetalle.Value
+                                      where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("040000")
+                                      select busqueda;
+
+                    var linea090000 = from busqueda in lineaDetalle.Value
+                                      where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("090000")
+                                      select busqueda;
+
+                    busquedaPlanMinutos = linea040000.FirstOrDefault().Substring(133, 10).Trim();
+
+                    if (!string.IsNullOrEmpty(busquedaPlanMinutos))
+                    {
+                        llaveCruce = $"PL{busquedaPlanMinutos}";
+                        planMinutos = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruce).FirstOrDefault()?.Substring(13).Trim() ?? string.Empty;
+                    } 
+                    #endregion
+
+                    //resultado.Add(Helpers.ValidarPipePipe($"ADN1|{lineaDetalle.Key}|{GetTipo(lineaDetalle.Key)}|{linea040000.FirstOrDefault().Substring(76, 30).Trim()}|" +
+                    //    $"{planMinutos}|{linea090000.FirstOrDefault().Substring(26, 27).Trim()}| | "));
+
+                    //resultado.Add(Helpers.ValidarPipePipe($"1DDA|{lineaDetalle.Key}|"));
+                }
+            }
+
 
             return resultado;
             #endregion
         }
+
+        private string GetTipo(string pConexion)
+        {
+            #region GetTipo
+            string resultado = string.Empty;
+
+            if (Cuenta == pConexion)
+            {
+                resultado = "Cuenta";
+            }
+            else
+            {
+                resultado = "Conexion";
+            }
+
+            return resultado;
+            #endregion
+        }
+
 
         /// <summary>
         /// 

@@ -69,6 +69,7 @@ namespace App.ControlLogicaProcesos
             List<string> DatosArchivo = File.ReadAllLines(pArchivo, Encoding.Default).ToList();
             List<string> datosExtractoFormateo = new List<string>();
             bool extractoCompleto = false;
+            bool cuentaErrorLte = false;
             string llaveCruce = string.Empty;
 
             foreach (var linea in DatosArchivo)
@@ -94,9 +95,33 @@ namespace App.ControlLogicaProcesos
                         }
                         else
                         {
-                            AgregarDiccionario(llaveCruce, FormatearArchivo(llaveCruce, datosExtractoFormateo));
+                            #region Verificar si son de error LTE
+                            if (IsLte || IsLteCorporativo)
+                            {
+                                if (!IsLteCorporativo)
+                                {
+                                    var linea040011 = from busqueda in datosExtractoFormateo
+                                                      where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("040011")
+                                                      select busqueda;
 
-                            datosExtractoFormateo.Clear();
+                                    if (!linea040011.Any())
+                                    {
+                                        if (!Variables.Variables.DatosInsumoProcuni.ContainsKey(llaveCruce))
+                                        {
+                                            Variables.Variables.DatosErrorLTE.Add(llaveCruce, FormatearArchivo(llaveCruce, datosExtractoFormateo));
+                                            cuentaErrorLte = true;
+                                        }
+                                    }
+                                }
+                            }
+                            #endregion
+
+                            if (!cuentaErrorLte)
+                            {
+                                AgregarDiccionario(llaveCruce, FormatearArchivo(llaveCruce, datosExtractoFormateo));
+
+                                datosExtractoFormateo.Clear();
+                            }
                         }
                     }
 
@@ -161,7 +186,11 @@ namespace App.ControlLogicaProcesos
             IEnumerable<string> linea1BBB = null;
             dynamic resultadoFormateoLinea = null;
 
-            if (pLLaveCruce == "12054317746")
+            if (pLLaveCruce == "" ||
+                pLLaveCruce == "" ||
+                pLLaveCruce == "" ||
+                pLLaveCruce == "" ||
+                pLLaveCruce == "")
             {
 
             }
@@ -176,19 +205,19 @@ namespace App.ControlLogicaProcesos
                 resultado.Add(resultadoFormateoLinea);
             }
 
-            resultadoFormateoLinea = linea1BBB = MapeoCanal1BBB(datosOriginales);
+            //resultadoFormateoLinea = linea1BBB = MapeoCanal1BBB(datosOriginales);
 
-            if (((IEnumerable<string>)resultadoFormateoLinea).Any())
-            {
-                resultado.AddRange(resultadoFormateoLinea);
-            }
+            //if (((IEnumerable<string>)resultadoFormateoLinea).Any())
+            //{
+            //    resultado.AddRange(resultadoFormateoLinea);
+            //}
 
-            resultadoFormateoLinea = MapeoCanal1BBA(datosOriginales, linea1BBB.ToList());
+            //resultadoFormateoLinea = MapeoCanal1BBA(datosOriginales, linea1BBB.ToList());
 
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
+            //if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            //{
+            //    resultado.Add(resultadoFormateoLinea);
+            //}
 
             resultadoFormateoLinea = MapeoAgrupacion1CCA(datosOriginales);
 
@@ -1772,7 +1801,7 @@ namespace App.ControlLogicaProcesos
         private IEnumerable<string> MapeoAgrupacion1CCA(List<string> datosOriginales)
         {
             #region MapeoCanal1CCA
-            IEnumerable<string> Linea1CCA = null;
+            IEnumerable<string> Linea1CCA = new List<string>();
             List<PosCortes> listaCortes = new List<PosCortes>();
 
             var resultPaquetes = from busqueda in datosOriginales
@@ -1830,7 +1859,7 @@ namespace App.ControlLogicaProcesos
             if (!validaroficinaPqr && IsDatos)
             {
                 oficinaPqr = GetOficinaPQR($"CZONA80000");
-                Linea1KKK = $"1KKK|{oficinaPqr} | \r\n";
+                Linea1KKK = $"1KKK|{oficinaPqr} | ";
             }
             else if (!validaroficinaPqr && (IsResidencial || IsGobierno || IsFibra || IsLte || IsLteCorporativo)) // en caso no encontrar la oficina pqr se enlista y trae todas las oficinas de los supercades y puntos de pago importantes
             {
@@ -1845,7 +1874,7 @@ namespace App.ControlLogicaProcesos
                 oficinaPqr = GetOficinaPQR($"CZONA37001");
                 Linea1KKK += $"{oficinaPqr} ";
                 oficinaPqr = GetOficinaPQR($"CZONA2001");
-                Linea1KKK += $" {oficinaPqr}| \r\n";
+                Linea1KKK += $" {oficinaPqr}| ";
             }
             else if (validaroficinaPqr)
             {
@@ -2314,10 +2343,6 @@ namespace App.ControlLogicaProcesos
             if (linea40000.Any())
             {
                 if (IsLte || IsLteCorporativo && GetTipo(linea40000.FirstOrDefault().Substring(6, 20).Trim()) != "Cuenta")
-                {
-                    resultado = $"ADNC|{linea40000.FirstOrDefault().Substring(26, 49).Trim()}";
-                }
-                else if (IsDatos || IsGobierno)
                 {
                     resultado = $"ADNC|{linea40000.FirstOrDefault().Substring(26, 49).Trim()}";
                 }
@@ -2938,7 +2963,205 @@ namespace App.ControlLogicaProcesos
         {
             #region FormarPaqueteEEE
             List<string> resultado = new List<string>();
-            //LLeva paquete 1EE1 - 1EE2 - 1EE3
+            string llaveConcepto = string.Empty;
+            string llaveBusquedaDescripcion = string.Empty;
+            string descripcionTitulo = string.Empty;
+            string llaveBusquedaNit = string.Empty;
+            string nit = string.Empty;
+            string descripcionSubtitulo = string.Empty;
+            string lineaNegocio = string.Empty;
+            string @base = string.Empty;
+            string iva = string.Empty;
+            string impuesto = "00";
+            string restaImpuesto = "-00";
+            //LLeva paquete ADN1- 1EE1 - 1EE2 - 1EE3
+
+            if (IsResidencial || IsFibra)
+            {
+                #region Anexos ETB
+                var lineasAnexosETB = from busqueda in datosOriginales
+                                      where busqueda.Length > 6 &&
+                                      busqueda.Substring(0, 6).Equals("11C123") ||
+                                      busqueda.Substring(0, 6).Equals("11C218") ||
+                                      busqueda.Substring(0, 6).Equals("11C208") ||
+                                      busqueda.Substring(0, 6).Equals("11C201") ||
+                                      busqueda.Substring(0, 6).Equals("11C116")
+                                      where !string.IsNullOrEmpty(busqueda.Substring(16, 14).Trim().TrimStart('0'))
+                                      select busqueda;
+
+                var lineas12MAnexosETB = from busqueda in datosOriginales
+                                         where busqueda.Length > 6 &&
+                                         busqueda.Substring(0, 6).Equals("12M123") ||
+                                         busqueda.Substring(0, 6).Equals("12M218") ||
+                                         busqueda.Substring(0, 6).Equals("12M208") ||
+                                         busqueda.Substring(0, 6).Equals("12M201") ||
+                                         busqueda.Substring(0, 6).Equals("12M116")
+                                         select busqueda;
+
+                if (lineasAnexosETB.Any() && lineas12MAnexosETB.Any())
+                {
+                    foreach (var linea in lineasAnexosETB)
+                    {
+                        resultado.Add($"ADN1|-|ANEXO ETB| | | | ");
+
+                        #region Datos 1EE1
+                        llaveConcepto = linea.Substring(6, 10);
+
+                        llaveBusquedaDescripcion = $"CODT{Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoConfiguracionLLavesDoc1, llaveConcepto).Split('|').ElementAt(13)}";
+
+                        descripcionTitulo = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveBusquedaDescripcion).FirstOrDefault()?.Substring(11).Trim() ?? "";
+
+                        @base = linea.Substring(16, 14).Trim().TrimStart('0');
+                        iva = linea.Substring(44, 14).Trim().TrimStart('0');
+
+                        resultado.Add(Helpers.ValidarPipePipe($"1EE1|-|{Helpers.FormatearCampos(TiposFormateo.LetraCapital, descripcionTitulo)}" +
+                            $"|{Helpers.FormatearCampos(TiposFormateo.Decimal01, @base)}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, iva)}|" +
+                            $"{Helpers.SumarCampos(new List<string> { @base, iva })}| | | "));
+                        #endregion
+
+                        #region Datos 1EE2
+                        llaveBusquedaDescripcion = $"CODT{Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoConfiguracionLLavesDoc1, llaveConcepto).Split('|').ElementAt(7)}";
+
+                        descripcionSubtitulo = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveBusquedaDescripcion).FirstOrDefault()?.Substring(11).Trim() ?? "";
+
+                        resultado.Add(Helpers.ValidarPipePipe($"1EE2|-|{Helpers.FormatearCampos(TiposFormateo.LetraCapital, descripcionSubtitulo)}|LD| "));
+                        #endregion
+
+                        #region Datos 1EE3
+
+                        var datosDetalles = from busqueda in lineas12MAnexosETB
+                                            where busqueda.Substring(3, 3) == linea.Substring(3, 3)
+                                            select busqueda;
+
+                        foreach (var lineaDet in datosDetalles)
+                        {
+                            resultado.Add(Helpers.ValidarPipePipe($"1EE3|-|{Helpers.FormatearCampos(TiposFormateo.Fecha12, lineaDet.Substring(6, 10))}|" +
+                                $"{Helpers.FormatearCampos(TiposFormateo.HoraMinutoSegundo, lineaDet.Substring(14, 6))}|{lineaDet.Substring(20, 10).Trim()}|" +
+                                $"{lineaDet.Substring(33, 10)}|{lineaDet.Substring(96, 11)}|{lineaDet.Substring(67, 1)}:00|{Helpers.FormatearCampos(TiposFormateo.Decimal01, lineaDet.Substring(47, 9)).Replace("$", "").Trim()}|" +
+                                $"{Helpers.FormatearCampos(TiposFormateo.Decimal01, lineaDet.Substring(56, 9)).Replace("$", "").Trim()}| "));
+                        }
+                        #endregion
+                    }
+                }
+                #endregion
+
+                #region Anexos Otros Operadores
+                var lineasAnexosOtrosOperadores = from busqueda in datosOriginales
+                                                  where busqueda.Length > 6 &&
+                                                  busqueda.Substring(0, 6).Equals("11C532") ||
+                                                  busqueda.Substring(0, 6).Equals("11C533") ||
+                                                  busqueda.Substring(0, 6).Equals("11C535") ||
+                                                  busqueda.Substring(0, 6).Equals("11C536") ||
+                                                  busqueda.Substring(0, 6).Equals("11C538") ||
+                                                  busqueda.Substring(0, 6).Equals("11C540") ||
+                                                  busqueda.Substring(0, 6).Equals("11C544") ||
+                                                  busqueda.Substring(0, 6).Equals("11C545") ||
+                                                  busqueda.Substring(0, 6).Equals("11C547") ||
+                                                  busqueda.Substring(0, 6).Equals("11C548") ||
+                                                  busqueda.Substring(0, 6).Equals("11C552") ||
+                                                  busqueda.Substring(0, 6).Equals("11C554") ||
+                                                  busqueda.Substring(0, 6).Equals("11C555") ||
+                                                  busqueda.Substring(0, 6).Equals("11C650") ||
+                                                  busqueda.Substring(0, 6).Equals("11C552") ||
+                                                  busqueda.Substring(0, 6).Equals("11C651") ||
+                                                  busqueda.Substring(0, 6).Equals("11C652") ||
+                                                  busqueda.Substring(0, 6).Equals("11C653") ||
+                                                  busqueda.Substring(0, 6).Equals("11C654") ||
+                                                  busqueda.Substring(0, 6).Equals("11C700") ||
+                                                  busqueda.Substring(0, 6).Equals("11C701") ||
+                                                  busqueda.Substring(0, 6).Equals("11C702") ||
+                                                  busqueda.Substring(0, 6).Equals("11C550") ||
+                                                  busqueda.Substring(0, 6).Equals("11C581")
+                                                  where !string.IsNullOrEmpty(busqueda.Substring(16, 14).Trim().TrimStart('0'))
+                                                  select busqueda;
+
+                var lineas12MAnexosOtrosOperadores = from busqueda in datosOriginales
+                                                     where busqueda.Length > 6 &&
+                                                     busqueda.Substring(0, 6).Equals("12M532") ||
+                                                     busqueda.Substring(0, 6).Equals("12M533") ||
+                                                     busqueda.Substring(0, 6).Equals("12M535") ||
+                                                     busqueda.Substring(0, 6).Equals("12M536") ||
+                                                     busqueda.Substring(0, 6).Equals("12M538") ||
+                                                     busqueda.Substring(0, 6).Equals("12M540") ||
+                                                     busqueda.Substring(0, 6).Equals("12M544") ||
+                                                     busqueda.Substring(0, 6).Equals("12M545") ||
+                                                     busqueda.Substring(0, 6).Equals("12M547") ||
+                                                     busqueda.Substring(0, 6).Equals("12M548") ||
+                                                     busqueda.Substring(0, 6).Equals("12M552") ||
+                                                     busqueda.Substring(0, 6).Equals("12M554") ||
+                                                     busqueda.Substring(0, 6).Equals("12M555") ||
+                                                     busqueda.Substring(0, 6).Equals("12M650") ||
+                                                     busqueda.Substring(0, 6).Equals("12M552") ||
+                                                     busqueda.Substring(0, 6).Equals("12M651") ||
+                                                     busqueda.Substring(0, 6).Equals("12M652") ||
+                                                     busqueda.Substring(0, 6).Equals("12M653") ||
+                                                     busqueda.Substring(0, 6).Equals("12M654") ||
+                                                     busqueda.Substring(0, 6).Equals("12M700") ||
+                                                     busqueda.Substring(0, 6).Equals("12M701") ||
+                                                     busqueda.Substring(0, 6).Equals("12M702") ||
+                                                     busqueda.Substring(0, 6).Equals("12M550") ||
+                                                     busqueda.Substring(0, 6).Equals("12M581")
+                                                     select busqueda;
+
+                var linea30004 = from busqueda in datosOriginales
+                                 where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("30004")
+                                 select busqueda;
+
+                if (lineasAnexosOtrosOperadores.Any() && lineas12MAnexosOtrosOperadores.Any())
+                {
+                    resultado.Add($"ADN1|-|ANEXO OTROS OPERADORES| | | | ");
+
+                    #region Datos 1EE1
+                    llaveConcepto = lineasAnexosOtrosOperadores.FirstOrDefault().Substring(6, 10);
+
+                    llaveBusquedaDescripcion = $"CODT{Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoConfiguracionLLavesDoc1, llaveConcepto).Split('|').ElementAt(13)}";
+
+                    descripcionTitulo = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveBusquedaDescripcion).FirstOrDefault()?.Substring(11).Trim() ?? "";
+
+                    llaveBusquedaNit = $"OPER{Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoConfiguracionLLavesDoc1, llaveConcepto).Split('|').ElementAt(8)}";
+
+                    nit = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveBusquedaNit).FirstOrDefault()?.Substring(11).Trim() ?? "";
+
+                    lineaNegocio = $"{descripcionTitulo} NIT: {nit}";
+
+                    @base = lineasAnexosOtrosOperadores.FirstOrDefault().Substring(16, 14).Trim().TrimStart('0');
+                    iva = lineasAnexosOtrosOperadores.FirstOrDefault().Substring(44, 14).Trim().TrimStart('0');
+
+                    if (linea30004.Any())
+                    {
+                        restaImpuesto = $"-{linea30004.FirstOrDefault().Substring(12, 20).Trim().TrimStart('0')}";
+                        impuesto = linea30004.FirstOrDefault().Substring(12, 20).Trim().TrimStart('0');
+
+                        if (Convert.ToDecimal(Helpers.FormatearCampos(TiposFormateo.Decimal03, impuesto)) > Convert.ToDecimal(Helpers.FormatearCampos(TiposFormateo.Decimal03, iva)))
+                        {
+                            restaImpuesto = "-00";
+                            impuesto = "00";
+                        }
+                    }
+
+                    resultado.Add(Helpers.ValidarPipePipe($"1EE1|-|{Helpers.FormatearCampos(TiposFormateo.LetraCapital, lineaNegocio)}" +
+                        $"|{Helpers.FormatearCampos(TiposFormateo.Decimal01, @base)}|{Helpers.SumarCampos(new List<string> { iva, restaImpuesto })}|" +
+                        $"{Helpers.SumarCampos(new List<string> { @base, iva, restaImpuesto, impuesto })}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, impuesto)}| | "));
+                    #endregion
+
+                    #region Datos 1EE2
+                    resultado.Add(Helpers.ValidarPipePipe($"1EE2|-| | "));
+                    #endregion
+
+                    #region Datos 1EE3
+
+                    foreach (var linea in lineas12MAnexosOtrosOperadores)
+                    {
+                        resultado.Add(Helpers.ValidarPipePipe($"1EE3|-|{Helpers.FormatearCampos(TiposFormateo.Fecha12, linea.Substring(6, 10))}|" +
+                            $"{Helpers.FormatearCampos(TiposFormateo.HoraMinutoSegundo, linea.Substring(14, 6))}|{linea.Substring(20, 10).Trim()}|" +
+                            $"{linea.Substring(33, 10).Trim()}|{linea.Substring(96, 11).Trim()}|{linea.Substring(67, 1)}:00|{Helpers.FormatearCampos(TiposFormateo.Decimal01, linea.Substring(47, 9)).Replace("$", "").Trim()}|" +
+                            $"{Helpers.FormatearCampos(TiposFormateo.Decimal01, linea.Substring(56, 9)).Replace("$", "").Trim()}| "));
+                    }
+                    #endregion
+                }
+
+                #endregion
+            }
 
             return resultado;
             #endregion
@@ -3281,23 +3504,23 @@ namespace App.ControlLogicaProcesos
 
             if (!IsResidencial && !IsFibra && MesMora > 1 && MesMora < 4)
             {
-                Lineas1LLL = "1LLL|Estimado  Cliente: Por favor cancele oportunamente esta factura, de lo contrario se suspenderá el servicio y se cobrará un cargo de reconexión de $5,950 incluádo IVA. Efectúe el pago únicamente en efectivo o cheque de gerencia.| \r\n"; //5.800
+                Lineas1LLL = "1LLL|Estimado  Cliente: Por favor cancele oportunamente esta factura, de lo contrario se suspenderá el servicio y se cobrará un cargo de reconexión de $5,950 incluádo IVA. Efectúe el pago únicamente en efectivo o cheque de gerencia.| "; //5.800
             }
             else if (!IsResidencial && !IsFibra && MesMora >= 4)
             {
-                Lineas1LLL = "1LLL|Estimado  Cliente: Su servicio se encuentra suspendido debido a que el sistema aún no registra su pago. Para que pueda continuar beneficiándose de nuestros servicios, le invitamos a efectuar el pago a la mayor brevedad únicamente en efectivo o cheque de gerencia. Si cancelá su factura anterior después de la fecha límite de pago y éste no fue aplicado en la presente factura, por favor acérquese a nuestro Centro de Servicios más cercano con el fin de expedirle un recibo con el valor real a pagar.| \r\n";
+                Lineas1LLL = "1LLL|Estimado  Cliente: Su servicio se encuentra suspendido debido a que el sistema aún no registra su pago. Para que pueda continuar beneficiándose de nuestros servicios, le invitamos a efectuar el pago a la mayor brevedad únicamente en efectivo o cheque de gerencia. Si cancelá su factura anterior después de la fecha límite de pago y éste no fue aplicado en la presente factura, por favor acérquese a nuestro Centro de Servicios más cercano con el fin de expedirle un recibo con el valor real a pagar.| ";
             }
             else if ((IsResidencial || IsFibra) && MesMora == 2)
             {
-                Lineas1LLL = "1LLL|Estimado Cliente: Por favor cancele oportunamente esta factura, de lo contrario se suspenderá el servicio y se cobrará un cargo de reconexión de $5,950 incluido IVA. Efectúe el pago por ventanilla en efectivo, cheque de gerencia o a través de medios electrónicos. Evite el reporte a centrales de riesgo.| \r\n";
+                Lineas1LLL = "1LLL|Estimado Cliente: Por favor cancele oportunamente esta factura, de lo contrario se suspenderá el servicio y se cobrará un cargo de reconexión de $5,950 incluido IVA. Efectúe el pago por ventanilla en efectivo, cheque de gerencia o a través de medios electrónicos. Evite el reporte a centrales de riesgo.| ";
             }
             else if ((IsResidencial || IsFibra) && MesMora == 3)
             {
-                Lineas1LLL = "1LLL|Estimado Cliente: Para continuar disfrutando de nuestros servicios, lo invitamos a efectuar el pago a la brevedad posible, por ventanilla en efectivo o cheque de gerencia y a través de medios electrónicos. Si la factura fue cancelada extemporáneamente y no se ve reflejado en esta factura, por favor visite nuestro centro de servicio más cercano para expedirle el recibo para el pago. Evite el reporte a centrales de riesgo.| \r\n";
+                Lineas1LLL = "1LLL|Estimado Cliente: Para continuar disfrutando de nuestros servicios, lo invitamos a efectuar el pago a la brevedad posible, por ventanilla en efectivo o cheque de gerencia y a través de medios electrónicos. Si la factura fue cancelada extemporáneamente y no se ve reflejado en esta factura, por favor visite nuestro centro de servicio más cercano para expedirle el recibo para el pago. Evite el reporte a centrales de riesgo.| ";
             }
             else if ((IsResidencial || IsFibra) && MesMora >= 4)
             {
-                Lineas1LLL = "1LLL|Ultima factura, evite el retiro definitivo de los servicios. Esta factura solo se recibe hasta la fecha límite de pago. Si no es cancelada se enviar a cobro prejudirico, incrementándose el valor en intereses y honorarios. Cancele por ventanilla, en efectivo o cheque de gerencia y por medios electrónicos. Evite el reporte a centrales de riesgo. Conforme lo dispone el decreto 2150 de 1995, la firma mecánica que aparece a continuación tiene plena validez para todos los efectos legales Saul Kattan Cohen Representante Legal ETB SA ESP. Esta factura presta mórito ejecutivo de acuerdo a las normas de derecho civil y comercial| \r\n";
+                Lineas1LLL = "1LLL|Ultima factura, evite el retiro definitivo de los servicios. Esta factura solo se recibe hasta la fecha límite de pago. Si no es cancelada se enviar a cobro prejudirico, incrementándose el valor en intereses y honorarios. Cancele por ventanilla, en efectivo o cheque de gerencia y por medios electrónicos. Evite el reporte a centrales de riesgo. Conforme lo dispone el decreto 2150 de 1995, la firma mecánica que aparece a continuación tiene plena validez para todos los efectos legales Saul Kattan Cohen Representante Legal ETB SA ESP. Esta factura presta mórito ejecutivo de acuerdo a las normas de derecho civil y comercial| ";
             }
 
             return Lineas1LLL;
@@ -3599,11 +3822,6 @@ namespace App.ControlLogicaProcesos
                              select busqueda;
 
             if (IsLte || IsLteCorporativo && GetTipo(linea40000.FirstOrDefault().Substring(6, 20).Trim()) != "Cuenta")
-            {
-                resultado.Add(Helpers.ValidarPipePipe($"ADN1|{linea40000.FirstOrDefault().Substring(6, 20).Trim()}|{GetTipo(linea40000.FirstOrDefault().Substring(6, 20).Trim())}|" +
-                    $"{Helpers.FormatearCampos(TiposFormateo.LetraCapital, linea40000.FirstOrDefault().Substring(76, 39).Trim())}| | | "));
-            }
-            else if (IsDatos || IsGobierno)
             {
                 resultado.Add(Helpers.ValidarPipePipe($"ADN1|{linea40000.FirstOrDefault().Substring(6, 20).Trim()}|{GetTipo(linea40000.FirstOrDefault().Substring(6, 20).Trim())}|" +
                     $"{Helpers.FormatearCampos(TiposFormateo.LetraCapital, linea40000.FirstOrDefault().Substring(76, 39).Trim())}| | | "));
