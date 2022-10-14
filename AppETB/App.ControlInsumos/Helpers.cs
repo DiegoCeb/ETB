@@ -1839,7 +1839,8 @@ namespace App.ControlInsumos
 
         public static bool GetContieneLetras(string pCampo)
         {
-            if (Regex.IsMatch(pCampo.Replace(" ", string.Empty), @"^[a-zA-Z]+$"))
+            //if (Regex.IsMatch(pCampo.Replace(" ", string.Empty), @"^[a-zA-Z]+$"))
+            if (!pCampo.Contains('-'))
             { return true; }
             else
             { return false; }

@@ -23,7 +23,6 @@ C:\Proyectos\ETB\AppETB\App.GestionProcesos\bin\Debug\SharpCompress.dll
 C:\Proyectos\ETB\AppETB\App.GestionProcesos\bin\Debug\App.ControlEjecucion.pdb
 C:\Proyectos\ETB\AppETB\App.GestionProcesos\bin\Debug\App.ControlInsumos.pdb
 C:\Proyectos\ETB\AppETB\App.GestionProcesos\bin\Debug\App.Variables.pdb
-C:\Proyectos\ETB\AppETB\App.GestionProcesos\bin\Debug\DLL_Utilidades.pdb
 C:\Proyectos\ETB\AppETB\App.GestionProcesos\obj\Debug\App.ControlProcesos.csproj.AssemblyReference.cache
 C:\Proyectos\ETB\AppETB\App.GestionProcesos\obj\Debug\App.ControlProcesos.csproj.CoreCompileInputs.cache
 C:\Proyectos\ETB\AppETB\App.GestionProcesos\obj\Debug\App.ControlProcesos.csproj.CopyComplete
