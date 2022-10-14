@@ -338,5 +338,59 @@ namespace App.Variables {
                 return ResourceManager.GetString("9_OFICINAS_ORDENAMIENTOS", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Estimado  Cliente: Por favor cancele oportunamente esta factura, de lo contrario se suspenderá el servicio y se cobrará un cargo de reconexión de $5,950 incluádo IVA. Efectúe el pago únicamente en efectivo o cheque de gerencia..
+        /// </summary>
+        public static string TextoMora_1 {
+            get {
+                return ResourceManager.GetString("TextoMora_1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Estimado  Cliente: Su servicio se encuentra suspendido debido a que el sistema aún no registra su pago. Para que pueda continuar beneficiándose de nuestros servicios, le invitamos a efectuar el pago a la mayor brevedad únicamente en efectivo o cheque de gerencia. Si cancelá su factura anterior después de la fecha límite de pago y éste no fue aplicado en la presente factura, por favor acérquese a nuestro Centro de Servicios más cercano con el fin de expedirle un recibo con el valor real a pagar..
+        /// </summary>
+        public static string TextoMora_2 {
+            get {
+                return ResourceManager.GetString("TextoMora_2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Estimado Cliente: Por favor cancele oportunamente esta factura, de lo contrario se suspenderá el servicio y se cobrará un cargo de reconexión de $5,950 incluido IVA. Efectúe el pago por ventanilla en efectivo, cheque de gerencia o a través de medios electrónicos. Evite el reporte a centrales de riesgo..
+        /// </summary>
+        public static string TextoMora_3 {
+            get {
+                return ResourceManager.GetString("TextoMora_3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Estimado Cliente: Para continuar disfrutando de nuestros servicios, lo invitamos a efectuar el pago a la brevedad posible, por ventanilla en efectivo o cheque de gerencia y a través de medios electrónicos. Si la factura fue cancelada extemporáneamente y no se ve reflejado en esta factura, por favor visite nuestro centro de servicio más cercano para expedirle el recibo para el pago. Evite el reporte a centrales de riesgo..
+        /// </summary>
+        public static string TextoMora_4 {
+            get {
+                return ResourceManager.GetString("TextoMora_4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Ultima factura, evite el retiro definitivo de los servicios. Esta factura solo se recibe hasta la fecha límite de pago. Si no es cancelada se enviar a cobro prejudirico, incrementándose el valor en intereses y honorarios. Cancele por ventanilla, en efectivo o cheque de gerencia y por medios electrónicos. Evite el reporte a centrales de riesgo. Conforme lo dispone el decreto 2150 de 1995, la firma mecánica que aparece a continuación tiene plena validez para todos los efectos legales Saul Kattan Cohen Represe [resto de la cadena truncado]&quot;;.
+        /// </summary>
+        public static string TextoMora_5 {
+            get {
+                return ResourceManager.GetString("TextoMora_5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a PRESENTA CHEQUE DEVUELTO. SU SERVICIO SERÁ SUSPENDIDO. SIRVASE CANCELAR ESTA FACTURA EN EFECTIVO O CHEQUE DE GERENCIA Y DOS DIAS DESPUES ACERCARSE A RECLAMAR EL CHEQUE A LA COORDINACION DE RECAUDO  Cra 8 No 20 - 00  Piso 8..
+        /// </summary>
+        public static string TextoTramites {
+            get {
+                return ResourceManager.GetString("TextoTramites", resourceCulture);
+            }
+        }
     }
 }
