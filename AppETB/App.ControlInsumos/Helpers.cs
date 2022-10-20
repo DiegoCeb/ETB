@@ -1178,6 +1178,10 @@ namespace App.ControlInsumos
 			#endregion
 		}
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pDatosInsumo"></param>
         public static void GetETBFacturaElectronica(List<string> pDatosInsumo)
         {
             #region GetETBFacturaElectronica
@@ -1191,6 +1195,171 @@ namespace App.ControlInsumos
                     Variables.Variables.DatosInsumoETBFacturaElectronica.Add(llaveCruce, datoLinea);
                 }
             }
+
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pDatosInsumo"></param>
+        public static void GetDualLlanos(List<string> pDatosInsumo)
+        {
+            #region GetDualLlanos
+
+            foreach (var datoLinea in pDatosInsumo)
+            {
+                string llaveCruce = datoLinea;
+
+                if (!Variables.Variables.DatosInsumoDualLlanos.ContainsKey(llaveCruce))
+                {
+                    Variables.Variables.DatosInsumoDualLlanos.Add(llaveCruce, datoLinea);
+                }
+            }
+
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pDatosInsumo"></param>
+        public static void GetDistribucionEmailLlanos(List<string> pDatosInsumo)
+        {
+            #region GetDistribucionEmailLlanos
+
+            foreach (var datoLinea in pDatosInsumo)
+            {
+                string llaveCruce = datoLinea.Split('|').ElementAt(0);
+
+                if (!Variables.Variables.DatosInsumoDistribucionEmailLlanos.ContainsKey(llaveCruce))
+                {
+                    Variables.Variables.DatosInsumoDistribucionEmailLlanos.Add(llaveCruce, datoLinea);
+                }
+            }
+
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pDatosInsumo"></param>
+        public static void GetLlanosEnvioSMS(List<string> pDatosInsumo)
+        {
+            #region GetLlanosEnvioSMS
+
+            foreach (var datoLinea in pDatosInsumo)
+            {
+                string llaveCruce = datoLinea;
+
+                if (!Variables.Variables.DatosInsumoLlanosEnvioSMS.ContainsKey(llaveCruce))
+                {
+                    Variables.Variables.DatosInsumoLlanosEnvioSMS.Add(llaveCruce, datoLinea);
+                }
+            }
+
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pDatosInsumo"></param>
+        public static void GetExtraerLlanos(List<string> pDatosInsumo)
+        {
+            #region GetExtraerLlanos
+
+            foreach (var datoLinea in pDatosInsumo)
+            {
+                string llaveCruce = datoLinea;
+
+                if (!Variables.Variables.DatosInsumoExtraerLlanos.ContainsKey(llaveCruce))
+                {
+                    Variables.Variables.DatosInsumoExtraerLlanos.Add(llaveCruce, datoLinea);
+                }
+            }
+
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pDatosInsumo"></param>
+        public static void GetLlanosMinPlan(List<string> pDatosInsumo)
+        {
+            #region GetLlanosMinPlan
+
+            foreach (var datoLinea in pDatosInsumo)
+            {
+                
+                string llaveCruce = $"{datoLinea.Split('|').ElementAt(0)}{datoLinea.Split('|').ElementAt(1)}";
+
+                if (!Variables.Variables.DatosInsumoLlanosMinPlan.ContainsKey(llaveCruce))
+                {
+                    Variables.Variables.DatosInsumoLlanosMinPlan.Add(llaveCruce, datoLinea);
+                }
+            }
+
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pDatosInsumo"></param>
+        public static void GetLlanosSuple(List<string> pDatosInsumo)
+        {
+            #region GetLlanosSuple
+
+            foreach (var datoLinea in pDatosInsumo)
+            {
+
+                string llaveCruce = $"{datoLinea.Split('|').ElementAt(0)}{datoLinea.Split('|').ElementAt(1)}";
+
+                if (Variables.Variables.DatosInsumoLlanosSuple.ContainsKey(llaveCruce))
+                {
+                    Variables.Variables.DatosInsumoLlanosSuple[llaveCruce].Add(datoLinea);
+                }
+                else
+                {
+                    Variables.Variables.DatosInsumoLlanosSuple.Add(llaveCruce, new List<string> { datoLinea });
+                }
+            }
+
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pDatosInsumo"></param>
+        public static void GetAuxAnexosVerdes(List<string> pArchivos)
+        {
+            #region GetAuxAnexosVerdes
+
+            foreach (var archivo in pArchivos)
+            {
+                List<string> datosInsumo = File.ReadAllLines(archivo, Encoding.Default).ToList();
+
+                foreach (var datoLinea in datosInsumo)
+                {
+
+                    string llaveCruce = $"{datoLinea.Substring(0, 7)}";
+
+                    if (Variables.Variables.DatosAuxAnexosVerdes.ContainsKey(llaveCruce))
+                    {
+                        Variables.Variables.DatosAuxAnexosVerdes[llaveCruce] = (datoLinea);
+                    }
+                    else
+                    {
+                        Variables.Variables.DatosAuxAnexosVerdes.Add(llaveCruce, datoLinea);
+                    }
+                }
+            }
+
+            
 
             #endregion
         }
@@ -1502,6 +1671,9 @@ namespace App.ControlInsumos
 
                 case TiposFormateo.HoraMinutoSegundo:
                     return FormatearHoraMinutoSegundo(pCampo);
+
+                case TiposFormateo.Cadena01:
+                    return FormatearCadena("01", pCampo);
                 default:
                     return pCampo;
             }
@@ -1622,11 +1794,26 @@ namespace App.ControlInsumos
                         transformado = "00";
                     }
 
+                    if (transformado.Contains("-"))
+                    {
+                        if (transformado.Replace("-", "").Length < 3)
+                        {
+                            transformado = transformado.Replace("-", "");
+                            transformado = $"-{transformado.PadLeft(3, '0')}";
+                        }
+                    }
+                    else
+                    {
+                        if (transformado.Length < 3)
+                        {
+                            transformado = $"{transformado.PadLeft(3, '0')}";
+                        }
+                    }
+
                     if (transformado.Length == 1)
                     {
                         transformado = transformado.PadLeft(2, '0');
                     }
-
                     transformado = $"{transformado.Substring(0, transformado.Length - 2)}.{transformado.Substring(transformado.Length - 2)}";
                     var temTransformado = Convert.ToDouble(transformado);
 
@@ -1717,7 +1904,35 @@ namespace App.ControlInsumos
         /// </summary>
         /// <param name="pCampo"></param>
         /// <returns></returns>
-        private static string FormatearHoraMinutoSegundo(string pCampo)
+        private static string FormatearCadena(string pFormatoCadenaTipo, string pCampo)
+        {
+            #region FormatearCadena
+            switch (pFormatoCadenaTipo)
+            {
+                case "01":
+                    #region FormatearCadena Tipo 01
+                    string campo = pCampo;
+                    while (campo.Contains("  "))
+                    {
+                        campo = campo.Replace("  ", " ");
+                    }
+                    return campo;
+                #endregion
+
+                default:
+                    return string.Empty;
+
+
+            }
+            #endregion
+        }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="pCampo"></param>
+            /// <returns></returns>
+            private static string FormatearHoraMinutoSegundo(string pCampo)
         {
             #region FormatearHoraMinuto
             return String.Format("{0}:{1}:{2}", pCampo.Substring(0, 2), pCampo.Substring(2, 2), pCampo.Substring(4, 2));
@@ -2341,6 +2556,78 @@ namespace App.ControlInsumos
             return ValorSumadoFormateado;
             #endregion
         }
+
+        /// <summary>
+        /// Obtienen los camposenviados en la lista de identificadores
+        /// </summary>
+        /// <param name="datosOriginales">Lista de datos del extracto</param>
+        /// <param name="pIdentificadores">Diccionario Int => caracteres del indentificador, String texto identificador</param>
+        public static string GetCamposLlanos(List<string> pDatosOriginales, List<CamposLLanos> pIdentificadores)
+        {
+            string resultado = string.Empty;
+            string campo = string.Empty;
+            foreach (CamposLLanos item in pIdentificadores)
+            {
+                campo = GetCampoLLanos(pDatosOriginales, item.CantCaracteres, item.Identificador, item.ValorDefault).Trim();
+
+                if (item.FormateoTipo != null)
+                {
+                    campo = FormatearCampos(item.FormateoTipo,campo);
+                }
+
+                if (string.IsNullOrEmpty(resultado))
+                {
+                    resultado += campo;
+                }
+                else
+                {
+                   
+                    resultado += $"|{campo}";
+                }
+            }
+
+
+            return ValidarPipePipe(resultado);
+        }
+
+        public static string GetCampoLLanos(List<string> datosOriginales, int pCantidadCaracteres, string pIdentificador, string pValorDefault = null)
+        {
+            string resultado = string.Empty;
+            var campo = from busqueda in datosOriginales
+                        where busqueda.Length > pCantidadCaracteres && busqueda.Substring(0, pCantidadCaracteres).Equals(pIdentificador)
+                        select busqueda;
+
+            if (campo.Any())
+            {
+                resultado = campo.FirstOrDefault()?.Substring(pCantidadCaracteres) ?? string.Empty;
+            }
+
+            if (string.IsNullOrEmpty(resultado.Trim()) && (!string.IsNullOrEmpty(pValorDefault)))
+            {
+                resultado = pValorDefault;
+            }
+
+            return resultado;
+        }
+
+        public static List<string> GetListaCampoLLanos(List<string> datosOriginales, int pCantidadCaracteres, string pIdentificador)
+        {
+            List<string> resultado = new List<string>();
+            var campos = from busqueda in datosOriginales
+                        where busqueda.Length > pCantidadCaracteres && busqueda.Substring(0, pCantidadCaracteres).Equals(pIdentificador)
+                        select busqueda;
+
+            if (campos.Any())
+            {
+                foreach (var item in campos.ToList())
+                {
+                    resultado.Add(item.Substring(pCantidadCaracteres));
+                }
+            }
+
+            return resultado;
+        }
+
     }
 
     public struct PosCortes
@@ -2378,6 +2665,38 @@ namespace App.ControlInsumos
         }
     }
 
+    public struct CamposLLanos
+    {
+        public Int32 CantCaracteres;
+        public string Identificador;
+        public string ValorDefault;
+        public TiposFormateo? FormateoTipo;
+
+        public CamposLLanos(Int32 pCantCaracteres, string pIdentificador)
+        {
+            this.CantCaracteres = pCantCaracteres;
+            this.Identificador = pIdentificador;
+            this.FormateoTipo = null;
+            this.ValorDefault = null;
+        }
+
+        public CamposLLanos(Int32 pCantCaracteres, string pIdentificador, TiposFormateo pFormateoTipo)
+        {
+            this.CantCaracteres = pCantCaracteres;
+            this.Identificador = pIdentificador;
+            this.FormateoTipo = pFormateoTipo;
+            this.ValorDefault = null;
+        }
+
+        public CamposLLanos(Int32 pCantCaracteres, string pIdentificador, string pValorDefault)
+        {
+            this.CantCaracteres = pCantCaracteres;
+            this.Identificador = pIdentificador;
+            this.FormateoTipo = null;
+            this.ValorDefault = pValorDefault;
+        }
+    }
+
     /// <summary>
     /// Structura de datos Error para las Exception
     /// </summary>
@@ -2408,6 +2727,7 @@ namespace App.ControlInsumos
         Decimal02,
         Decimal03,
         HoraMinuto,
-        HoraMinutoSegundo
+        HoraMinutoSegundo,
+        Cadena01
     }
 }

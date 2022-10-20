@@ -673,7 +673,7 @@ namespace App.ControlLogicaProcesos
                 ListaCanal1AAA.Add(string.Empty); //CampoVacio
             }
 
-            Linea1AAA = Helpers.ListaCamposToLinea(ListaCanal1AAA, '|');
+            Linea1AAA = Helpers.ValidarPipePipe(Helpers.ListaCamposToLinea(ListaCanal1AAA, '|'));
 
             return Linea1AAA;
             #endregion
@@ -1714,30 +1714,40 @@ namespace App.ControlLogicaProcesos
             string fechaInicio = string.Empty;
             string fechaFin = string.Empty;
 
-            var result11C = from busqueda in pDatosOriginales
-                            where busqueda.Length > 3 && busqueda.Substring(0, 3).Equals("11C")
-                            select busqueda;
-
-            if (result11C.Any())
+            if (IsFibra || IsResidencial)
             {
-                List<string> listaFechaInicio = new List<string>();
-                List<string> listaFechaFin = new List<string>();
-                foreach (string linea11C in result11C)
+
+                var result11C = from busqueda in pDatosOriginales
+                                where busqueda.Length > 3 && busqueda.Substring(0, 3).Equals("11C")
+                                select busqueda;
+
+                if (result11C.Any())
                 {
-                    if (!string.IsNullOrEmpty(linea11C.Substring(128, 20).Trim()) && !Helpers.GetContieneLetras(linea11C.Substring(128, 20).Trim()))
+                    List<string> listaFechaInicio = new List<string>();
+                    List<string> listaFechaFin = new List<string>();
+                    foreach (string linea11C in result11C)
                     {
-                        if (Convert.ToInt32(linea11C.Substring(132, 2)) != 0 && Convert.ToInt32(linea11C.Substring(134, 2)) != 0 && Convert.ToInt32(linea11C.Substring(143, 2)) != 0 && Convert.ToInt32(linea11C.Substring(145, 2)) != 0)
+                        if (!string.IsNullOrEmpty(linea11C.Substring(128, 20).Trim()) && !Helpers.GetContieneLetras(linea11C.Substring(128, 20).Trim()))
                         {
-                            listaFechaInicio.Add(linea11C.Substring(128, 8));
-                            listaFechaFin.Add(linea11C.Substring(139, 8));
+                            if (Convert.ToInt32(linea11C.Substring(132, 2)) != 0 && Convert.ToInt32(linea11C.Substring(134, 2)) != 0 && Convert.ToInt32(linea11C.Substring(143, 2)) != 0 && Convert.ToInt32(linea11C.Substring(145, 2)) != 0)
+                            {
+                                listaFechaInicio.Add(linea11C.Substring(128, 8));
+                                listaFechaFin.Add(linea11C.Substring(139, 8));
+                            }
                         }
                     }
-                }
 
-                if (listaFechaInicio.Count != 0 && listaFechaFin.Count != 0)
-                {
-                    fechaInicio = Helpers.GetFechaMaximaMinima(listaFechaInicio, 2);
-                    fechaFin = Helpers.GetFechaMaximaMinima(listaFechaFin, 1);
+                    if (listaFechaInicio.Count != 0 && listaFechaFin.Count != 0)
+                    {
+                        fechaInicio = Helpers.GetFechaMaximaMinima(listaFechaInicio, 2);
+                        fechaFin = Helpers.GetFechaMaximaMinima(listaFechaFin, 1);
+                    }
+                    else
+                    {
+                        fechaInicio = "99999999";
+                        fechaFin = "99999999";
+                    }
+
                 }
                 else
                 {
@@ -1745,27 +1755,21 @@ namespace App.ControlLogicaProcesos
                     fechaFin = "99999999";
                 }
 
-            }
-            else
-            {
-                fechaInicio = "99999999";
-                fechaFin = "99999999";
-            }
+                string cuentasLTE9697 = Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoCuentasLte, $"{Cuenta}") ?? string.Empty;
 
-            string cuentasLTE9697 = Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoCuentasLte, $"{Cuenta}") ?? string.Empty;
-
-            if (!string.IsNullOrEmpty(fechaInicio) && !string.IsNullOrEmpty(fechaFin))
-            {
-                periodoDesdeHasta = $"{fechaInicio} - {fechaFin}";
-
-                if (!string.IsNullOrEmpty(cuentasLTE9697))
+                if (!string.IsNullOrEmpty(fechaInicio) && !string.IsNullOrEmpty(fechaFin))
                 {
-                    periodoDesdeHastaLTE = $"PER LTE {periodoDesdeHasta}";
-                    periodoDesdeHasta = string.Empty;
+                    periodoDesdeHasta = $"{fechaInicio} - {fechaFin}";
+
+                    if (!string.IsNullOrEmpty(cuentasLTE9697))
+                    {
+                        periodoDesdeHastaLTE = $"PER LTE {periodoDesdeHasta}";
+                        periodoDesdeHasta = string.Empty;
+                    }
+
                 }
-
+  
             }
-
 
             periodos.Add(periodoDesdeHasta);
             periodos.Add(periodoDesdeHastaLTE);
@@ -3257,6 +3261,107 @@ namespace App.ControlLogicaProcesos
 
             return resultado;
 
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="datosOriginales"></param>
+        /// <returns></returns>
+        private List<string> FormateoCanal1III(List<string> datosOriginales)
+        {
+            #region FormateoCanal1III
+            List<string> resultado = new List<string>();
+
+            var linea20C = from busqueda in datosOriginales
+                           where busqueda.Length > 3 && busqueda.Substring(0, 3).Equals("20C")
+                           select busqueda;
+
+            if (linea20C.Any())
+            {
+                List<string> listalinea20C = linea20C.ToList();
+
+                string descripcion = string.Empty;
+                string lineaNegocio = string.Empty;
+                string[] camposFinanciacion;
+                string[] camposPlanPago;
+                Int64 valorFinanciado;
+                Int64 saldoRestante;
+                string cuota = string.Empty;
+                string interes = string.Empty;
+                string interesResidencial = string.Empty;
+
+                foreach (var item in listalinea20C)
+                {
+
+                    descripcion = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"CODF{item.Substring(6, 10).Trim()}")?.FirstOrDefault().Substring(14).Trim() ?? string.Empty;
+
+                    camposFinanciacion = item.Substring(136, 100).Split('&');
+                    camposPlanPago = camposFinanciacion[1].Split(',');
+
+                    if (camposFinanciacion.Length > 1 && camposFinanciacion[0] == "F" && item.Substring(123, 1).Trim() != "P")
+                    {
+                        camposPlanPago = camposFinanciacion[4].Split(',');
+                        valorFinanciado = Convert.ToInt64(camposFinanciacion[8].Replace(".", string.Empty));
+                        saldoRestante = Convert.ToInt64(item.Substring(16, 14).Replace(".", string.Empty));
+                        cuota = string.Empty;
+                        interes = camposFinanciacion[7];
+                    }
+                    else if (camposFinanciacion.Length > 1)
+                    {
+                        valorFinanciado = Convert.ToInt64(camposFinanciacion[6].Replace(".", string.Empty));
+                        saldoRestante = Convert.ToInt64(camposFinanciacion[7].Replace(".", string.Empty));
+                        cuota = $"{camposFinanciacion[4].Trim()} De {camposFinanciacion[5].Trim()}";
+                        interes = camposFinanciacion[2];
+                    }
+                    else
+                    {
+                        valorFinanciado = 0;
+                        saldoRestante = 0;
+                        cuota = "0";
+                    }
+                    string valorFinanciadoFormat = Helpers.FormatearCampos(TiposFormateo.Decimal01, valorFinanciado.ToString());
+                    string saldoRestanteFormat = Helpers.FormatearCampos(TiposFormateo.Decimal01, saldoRestante.ToString());
+                    Int64 valorXPagar = valorFinanciado - saldoRestante;
+                    string valorXPagarFormat = Helpers.FormatearCampos(TiposFormateo.Decimal01, valorXPagar.ToString());
+
+                    if (camposFinanciacion.Length > 1 && camposFinanciacion[0].Trim() == "B" && IsResidencial)
+                    {
+                        resultado.Add($"1IIB|{descripcion}|{camposPlanPago[0]}|{cuota}|{valorFinanciadoFormat}|{saldoRestanteFormat}|{valorXPagarFormat}|****interes_financiacion****|");
+                    }
+                    else if (camposFinanciacion.Length > 1 && camposFinanciacion[0].Trim() == "C" && IsResidencial )
+                    {
+                        interesResidencial = interesResidencial == "0" ? interes: interesResidencial;
+                    }
+                    else if (camposFinanciacion.Length > 1 && camposFinanciacion[0].Trim() == "F" && (IsResidencial || IsLteCorporativo))
+                    {
+                        resultado.Add($"1IIF|{descripcion}|{camposPlanPago[0]}|{cuota}|{valorFinanciadoFormat}|{saldoRestanteFormat}|{valorXPagarFormat}| ");
+                    }
+                    else if (IsResidencial)
+                    {
+                        resultado.Add($"1III|{descripcion}|{camposPlanPago[0]}|{cuota}|{valorFinanciadoFormat}|{saldoRestanteFormat}|{valorXPagarFormat}|{interes}| ");
+                    }
+                    else if (valorFinanciado > 0)
+                    {
+                        resultado.Add($"1III|{descripcion}|{valorFinanciadoFormat}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, item.Substring(16, 14))}|{saldoRestanteFormat}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, item.Substring(44, 14))}|{cuota}|{interes}| ");
+                    }
+
+                }
+
+                foreach (var item in resultado)
+                {
+                    if (item.Contains(""))
+                    {
+                        item.Replace("****interes_financiacion****", interes);
+                    }
+                }
+
+            }
+
+            
+
+            return resultado;
             #endregion
         }
 

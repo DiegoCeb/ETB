@@ -249,18 +249,18 @@ namespace App.ControlLogicaProcesos
                 resultado.AddRange(resultadoFormateoLinea);
             }
 
-            resultadoFormateoLinea = FormateoCanal1FFA(datosOriginales);
-
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
-
             resultadoFormateoLinea = FormarPaqueteSERV(datosOriginales);
 
             if (((IEnumerable<string>)resultadoFormateoLinea).Any())
             {
                 resultado.AddRange(resultadoFormateoLinea);
+            }
+
+            resultadoFormateoLinea = FormateoCanal1III(datosOriginales);
+
+            if (((IEnumerable<string>)resultadoFormateoLinea).Any())
+            {
+                resultado.Add(resultadoFormateoLinea);
             }
 
             resultadoFormateoLinea = FormateoCanal1JJK(datosOriginales);
@@ -271,13 +271,6 @@ namespace App.ControlLogicaProcesos
             }
 
             resultadoFormateoLinea = FormateoCanal1KKK(datosOriginales);
-
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
-
-            resultadoFormateoLinea = FormateoCanalCONS(datosOriginales);
 
             if (!string.IsNullOrEmpty(resultadoFormateoLinea))
             {
@@ -366,13 +359,6 @@ namespace App.ControlLogicaProcesos
             if (((IEnumerable<string>)resultadoFormateoLinea).Any())
             {
                 resultado.AddRange(resultadoFormateoLinea);
-            }
-
-            resultadoFormateoLinea = FormateoCanal1QQQ(datosOriginales);
-
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
             }
 
             #endregion
@@ -533,7 +519,7 @@ namespace App.ControlLogicaProcesos
                 ListaCanal1AAA.Add(string.Empty); //CampoVacio
             }
 
-            Linea1AAA = Helpers.ListaCamposToLinea(ListaCanal1AAA, '|');
+            Linea1AAA = Helpers.ValidarPipePipe(Helpers.ListaCamposToLinea(ListaCanal1AAA, '|'));
 
             return Linea1AAA;
             #endregion
@@ -902,7 +888,7 @@ namespace App.ControlLogicaProcesos
                     break;
 
                 default:
-                    throw new Exception($"Error: El ciclo:{ciclo}, no corresponde al proceso de DATOS.");
+                    throw new Exception($"Error: La cuenta {Cuenta} que corresponde al ciclo:{ciclo}, no corresponde al proceso de DATOS.");
 
             }
 
@@ -2189,70 +2175,65 @@ namespace App.ControlLogicaProcesos
         {
             #region FormateoCanal1FFF
             List<string> resultado = new List<string>();
+            string total13M311 = string.Empty;
+            string subtotal13M311 = string.Empty;
+            string total113M319 = string.Empty;
+            string subtotal113M319 = string.Empty;
 
-            var linea13M317 = from busqueda in datosOriginales
-                              where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("13M317")
+
+            var linea13M311 = from busqueda in datosOriginales
+                              where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("13M311") && string.IsNullOrEmpty(busqueda.Substring(6,16).Trim())
                               select busqueda;
 
-            if (linea13M317.Any())
+            if (linea13M311.Any())
             {
-                foreach (var item in linea13M317.ToList())
-                {
-                    string llaveCruce = $"CODF{item.Substring(32, 10).Trim()}";
-                    var concepto = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruce).FirstOrDefault().Substring(14).Trim();
+                string llaveCruce = $"CODF{linea13M311.FirstOrDefault().Substring(32, 10).Trim()}";
+                var concepto = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruce).FirstOrDefault().Substring(14).Trim();
 
-                    string total = item.Substring(42, 14).Trim();
-                    string subtotal = item.Substring(56, 14).Trim();
+                total13M311 = linea13M311.FirstOrDefault().Substring(42, 14).Trim();
+                subtotal13M311 = linea13M311.FirstOrDefault().Substring(56, 14).Trim();
 
-                    resultado.Add(Helpers.ValidarPipePipe($"1FFF|{concepto}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, total)}" +
-                        $"|{Helpers.FormatearCampos(TiposFormateo.Decimal01, subtotal)}|{Helpers.SumarCampos(new List<string> { total, subtotal })}| | "));
-
-                }
-                //string llaveCruce = $"CODF{linea13M317.FirstOrDefault().Substring(32, 10).Trim()}";
-                //var concepto = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruce).FirstOrDefault().Substring(14).Trim();
-
-                //string total = linea13M317.FirstOrDefault().Substring(42, 14).Trim();
-                //string subtotal = linea13M317.FirstOrDefault().Substring(56, 14).Trim();
-
-                //resultado.Add(Helpers.ValidarPipePipe($"1FFF|{concepto}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, total)}" +
-                //    $"|{Helpers.FormatearCampos(TiposFormateo.Decimal01, subtotal)}|{Helpers.SumarCampos(new List<string> { total, subtotal })}| | "));
-                if (resultado.Count % 2 != 0)
-                {
-                    resultado.Add("1FFF| | | | | | ");
-                }
+                resultado.Add(Helpers.ValidarPipePipe($"1FFF|{concepto}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, total13M311)}" +
+                    $"|{Helpers.FormatearCampos(TiposFormateo.Decimal01, subtotal13M311)}|{Helpers.SumarCampos(new List<string> { total13M311, subtotal13M311 })}| | "));
+                
                 
             }
 
-            return resultado;
-            #endregion
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="datosOriginales"></param>
-        /// <returns></returns>
-        private string FormateoCanal1FFA(List<string> datosOriginales)
-        {
-            #region Canal 1FFA
-            string resultado = string.Empty;
-
-            var linea13M317 = from busqueda in datosOriginales
-                              where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("13M317")
+            var linea113M319 = from busqueda in datosOriginales
+                              where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("13M319") && string.IsNullOrEmpty(busqueda.Substring(6, 16).Trim())
                               select busqueda;
 
-            if (linea13M317.Any())
+            if (linea113M319.Any())
             {
-                string total = linea13M317.FirstOrDefault().Substring(42, 14).Trim();
-                string subtotal = linea13M317.FirstOrDefault().Substring(56, 14).Trim();
+                string llaveCruce = $"CODF{linea113M319.FirstOrDefault().Substring(32, 10).Trim()}";
+                var concepto = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruce).FirstOrDefault().Substring(14).Trim();
 
-                resultado = Helpers.ValidarPipePipe($"1FFA|Total|{Helpers.FormatearCampos(TiposFormateo.Decimal01, total)}" +
-                    $"|{Helpers.FormatearCampos(TiposFormateo.Decimal01, subtotal)}|{Helpers.SumarCampos(new List<string> { total, subtotal })}| ");
+                total113M319 = linea113M319.FirstOrDefault().Substring(42, 14).Trim();
+                subtotal113M319 = linea113M319.FirstOrDefault().Substring(56, 14).Trim();
+
+                resultado.Add(Helpers.ValidarPipePipe($"1FFF|{concepto}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, total113M319)}" +
+                    $"|{Helpers.FormatearCampos(TiposFormateo.Decimal01, subtotal113M319)}|{Helpers.SumarCampos(new List<string> { total113M319, subtotal113M319 })}| | "));
+
+
             }
+
+            if (resultado.Count > 0 && resultado.Count % 2 != 0)
+            {
+                resultado.Add("1FFF| | | | | | ");
+            }
+            if(resultado.Count > 0)
+            {
+                resultado.Add(Helpers.ValidarPipePipe($"1FFA|Total|{Helpers.SumarCampos(new List<string> { total13M311, total113M319 })}" +
+                    $"|{Helpers.SumarCampos(new List<string> { subtotal13M311, subtotal113M319 })}" +
+                    $"|{Helpers.SumarCampos(new List<string> { total13M311, total113M319, subtotal13M311, subtotal113M319 })}| | "));
+            }
+            
 
             return resultado;
             #endregion
         }
+
+       
 
         /// <summary>
         /// 
@@ -2296,15 +2277,73 @@ namespace App.ControlLogicaProcesos
             #endregion
         }
 
+        
         /// <summary>
         /// 
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        private string FormateoCanal1QQQ(List<string> datosOriginales)
+        private List<string> FormateoCanal1III(List<string> datosOriginales)
         {
-            #region FormateoCanal1QQQ
-            string resultado = string.Empty;
+            #region FormateoCanal1III
+            List<string> resultado = new List<string>();
+
+            var linea20C = from busqueda in datosOriginales
+                           where busqueda.Length > 3 && busqueda.Substring(0, 3).Equals("20C")
+                           select busqueda;
+
+            if (linea20C.Any())
+            {
+                List<string> listalinea20C = linea20C.ToList();
+
+                string descripcion = string.Empty;
+                string lineaNegocio = string.Empty;
+                string[] camposFinanciacion;
+                string[] camposPlanPago;
+                Int64 valorFinanciado;
+                Int64 saldoRestante;
+                string cuota = string.Empty;
+                string interes = string.Empty;
+
+                foreach (var item in listalinea20C)
+                {
+
+                    descripcion = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"CODF{item.Substring(6, 10).Trim()}")?.FirstOrDefault().Substring(14).Trim() ?? string.Empty;
+
+                    camposFinanciacion = item.Substring(136, 100).Split('&');
+                    camposPlanPago = camposFinanciacion[1].Split(',');
+
+                    if (camposFinanciacion.Length > 1 && camposFinanciacion[0] == "F" && item.Substring(123, 1).Trim() != "P")
+                    {
+                        camposPlanPago = camposFinanciacion[4].Split(',');
+                        valorFinanciado = Convert.ToInt64(camposFinanciacion[8].Replace(".", string.Empty));
+                        saldoRestante = Convert.ToInt64(item.Substring(16, 14).Replace(".", string.Empty));
+                        cuota = string.Empty;
+                        interes = camposFinanciacion[7];
+                    }
+                    else if (camposFinanciacion.Length > 1)
+                    {
+                        valorFinanciado = Convert.ToInt64(camposFinanciacion[6].Replace(".", string.Empty));
+                        saldoRestante = Convert.ToInt64(camposFinanciacion[7].Replace(".", string.Empty));
+                        cuota = $"{camposFinanciacion[4].Trim()} De {camposFinanciacion[5].Trim()}";
+                        interes = camposFinanciacion[2];
+                    }
+                    else
+                    {
+                        valorFinanciado = 0;
+                        saldoRestante = 0;
+                        cuota = "0";
+                    }
+                    string valorFinanciadoFormat = Helpers.FormatearCampos(TiposFormateo.Decimal01, valorFinanciado.ToString());
+                    string saldoRestanteFormat = Helpers.FormatearCampos(TiposFormateo.Decimal01, saldoRestante.ToString());
+
+                    if (valorFinanciado > 0)
+                    {
+                        resultado.Add($"1III|{descripcion}|{valorFinanciadoFormat}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, item.Substring(16, 14))}|{saldoRestanteFormat}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, item.Substring(44, 14))}|{cuota}|{interes}| ");
+                    }
+
+                }
+            }
 
             return resultado;
             #endregion

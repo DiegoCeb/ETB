@@ -51,16 +51,16 @@ namespace App.ControlLogicaProcesos
             {
                 List<string> DatosArchivo = File.ReadAllLines(archivo, Encoding.Default).ToList();
 
-                if (Path.GetFileNameWithoutExtension(archivo).Contains("DBASI"))
-                {
-                    foreach (var lineaDatos in DatosArchivo)
-                    {
-                        llaveCruce = lineaDatos.Substring(7).Trim();
+                //if (Path.GetFileNameWithoutExtension(archivo).Contains("DBASI"))
+                //{
+                //    foreach (var lineaDatos in DatosArchivo)
+                //    {
+                //        llaveCruce = lineaDatos.Substring(7).Trim();
 
-                        AgregarDiccionario(llaveCruce, FormatearArchivo(llaveCruce, new List<string> { lineaDatos }));
-                    }
-                }
-                else if (Path.GetFileNameWithoutExtension(archivo).Contains("MOVTO"))
+                //        AgregarDiccionario(llaveCruce, FormatearArchivo(llaveCruce, new List<string> { lineaDatos }));
+                //    }
+                //}
+                if (Path.GetFileNameWithoutExtension(archivo).Contains("MOVTO"))
                 {
                     foreach (var lineaDatos in DatosArchivo)
                     {
@@ -147,6 +147,36 @@ namespace App.ControlLogicaProcesos
         {
             #region FormateoCanal1AAA
             string resultado = string.Empty;
+            List<string> ListaCanal1AAA = new List<string>();
+            List<PosCortes> listaCortes = new List<PosCortes>();
+
+            string linea = datosOriginales.FirstOrDefault();
+            string telefono =  linea.Substring(89, 7);
+
+           
+
+
+            ListaCanal1AAA.Add("1AAA");
+            ListaCanal1AAA.Add("KitXXXX");
+            ListaCanal1AAA.Add(telefono);
+
+            string datosAux = Helpers.GetValueInsumoCadena(Variables.Variables.DatosAuxAnexosVerdes, $"{telefono}") ?? string.Empty;
+
+            if (!string.IsNullOrEmpty(datosAux))
+            {
+                listaCortes.Clear();
+                listaCortes.Add(new PosCortes(7, 50));
+                listaCortes.Add(new PosCortes(57, 40));
+                listaCortes.Add(new PosCortes(97, 0));
+                ListaCanal1AAA.Add(Helpers.ExtraccionCamposSpool(listaCortes, datosAux));
+            }
+            else
+            {
+                ListaCanal1AAA.Add(string.Empty);
+                ListaCanal1AAA.Add(string.Empty);
+                ListaCanal1AAA.Add(string.Empty);
+            }
+
 
             return resultado;
             #endregion
