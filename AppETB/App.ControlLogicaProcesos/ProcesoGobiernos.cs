@@ -284,14 +284,7 @@ namespace App.ControlLogicaProcesos
             if (((IEnumerable<string>)resultadoFormateoLinea).Any())
             {
                 resultado.AddRange(resultadoFormateoLinea);
-            }
-
-            resultadoFormateoLinea = FormateoCanalCUFE(datosOriginales);
-
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
+            }            
 
             resultadoFormateoLinea = FormateoCanalNTC0(datosOriginales);
 
@@ -1605,21 +1598,7 @@ namespace App.ControlLogicaProcesos
 
             return lineaOficinaPQR;
             #endregion
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="datosOriginales"></param>
-        /// <returns></returns>
-        private string FormateoCanalCUFE(List<string> datosOriginales)
-        {
-            #region FormateoCanalCUFE
-            string resultado = string.Empty;
-
-            return resultado;
-            #endregion
-        }
+        }        
 
         /// <summary>
         /// 

@@ -183,8 +183,7 @@ namespace App.ControlLogicaProcesos
         public List<string> FormatearArchivo(string pLLaveCruce, List<string> datosOriginales)
         {
             #region FormatearArchivo
-            List<string> resultado = new List<string>();
-            IEnumerable<string> linea1BBB = null;
+            List<string> resultado = new List<string>();            
             dynamic resultadoFormateoLinea = null;
 
             if (pLLaveCruce == "" ||
@@ -2100,7 +2099,7 @@ namespace App.ControlLogicaProcesos
         private IEnumerable<string> MapeoAgrupacion1CCA(List<string> datosOriginales)
         {
             #region MapeoCanal1CCA
-            IEnumerable<string> Linea1CCA = new List<string>();
+            List<string> Linea1CCA = new List<string>();
             List<PosCortes> listaCortes = new List<PosCortes>();
             List<string> camposSumar = new List<string>();
             bool ban02T4 = false;
