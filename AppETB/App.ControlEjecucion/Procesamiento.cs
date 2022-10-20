@@ -201,6 +201,16 @@ namespace App.ControlEjecucion
         {
             #region EjecutarProcesoAnexosVerdes
 
+            var archivosAuxiliar = from busqueda in Directory.GetFiles(pRutaArchivosProcesar)
+                           where busqueda.Contains("COSTAT_DBASI_")
+                           select busqueda;
+
+            var archivos = from busqueda in Directory.GetFiles(pRutaArchivosProcesar)
+                                 where busqueda.Contains("COSTAT_MOVTO_")
+                                 select busqueda;
+
+            Helpers.GetAuxAnexosVerdes(archivosAuxiliar.ToList());
+
 #if DEBUG == false
             var result = Parallel.ForEach(archivos, archivo =>
     {
@@ -212,7 +222,10 @@ namespace App.ControlEjecucion
         hilo.Wait();
     }); 
 #endif
-            _ = new ProcesoAnexosVerdes(pRutaArchivosProcesar);
+            foreach (var archivo in archivos)
+            {
+                _ = new ProcesoAnexosVerdes(pRutaArchivosProcesar);
+            }
 
             //Escribir Diccionario Formateados llamando a un metodo de cracion de salidas donde se realice la segmentacion
             //TODO: Verificar
@@ -387,6 +400,30 @@ namespace App.ControlEjecucion
                             else if (EnumInsumo.ToString() == Variables.Insumos.ETB_Factura_Electronica.ToString())
                             {
                                 Helpers.GetETBFacturaElectronica(File.ReadAllLines(Archivo, Encoding.Default).ToList());
+                            }
+                            else if (EnumInsumo.ToString() == Variables.Insumos.Dual_Llanos.ToString())
+                            {
+                                Helpers.GetDualLlanos(File.ReadAllLines(Archivo, Encoding.Default).ToList());
+                            }
+                            else if (EnumInsumo.ToString() == Variables.Insumos.FA_DISTRIBUCION_EMAIL_LLANOS.ToString())
+                            {
+                                Helpers.GetDistribucionEmailLlanos(File.ReadAllLines(Archivo, Encoding.Default).ToList());
+                            }
+                            else if (EnumInsumo.ToString() == Variables.Insumos.LLANOS_Envio_SMS.ToString())
+                            {
+                                Helpers.GetLlanosEnvioSMS(File.ReadAllLines(Archivo, Encoding.Default).ToList());
+                            }
+                            else if (EnumInsumo.ToString() == Variables.Insumos.LLANOS_Extraer.ToString())
+                            {
+                                Helpers.GetExtraerLlanos(File.ReadAllLines(Archivo, Encoding.Default).ToList());
+                            }
+                            else if (EnumInsumo.ToString() == Variables.Insumos.Llanos_min_plan.ToString())
+                            {
+                                Helpers.GetLlanosMinPlan(File.ReadAllLines(Archivo, Encoding.Default).ToList());
+                            }
+                            else if (EnumInsumo.ToString() == Variables.Insumos.Llanos_suple.ToString())
+                            {
+                                Helpers.GetLlanosSuple(File.ReadAllLines(Archivo, Encoding.Default).ToList());
                             }
                             #endregion
 
