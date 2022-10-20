@@ -55,7 +55,20 @@ namespace App.Variables
         public static Dictionary<string, string> DatosInsumoConfiguracionLLavesDoc1 = new Dictionary<string, string>();
         public static Dictionary<string, List<string>> CuentasNoImprimir = new Dictionary<string, List<string>>();
         public static Dictionary<string, string> DatosInsumoETBFacturaElectronica = new Dictionary<string, string>();
+        public static Dictionary<string, List<string>> DatosErrorLTE = new Dictionary<string, List<string>>();
+        public static Dictionary<string, string> Diferencias = new Dictionary<string, string>();
         public static StreamReader Lector;
+
+        public static Dictionary<string, CiudadesLLanos> DicCiudadesLlanos = new Dictionary<string, CiudadesLLanos>();
+        public static Dictionary<string, string> DicActividadesLlanos = new Dictionary<string, string>();
+        public static Dictionary<string, string> DatosInsumoDualLlanos = new Dictionary<string, string>();
+        public static Dictionary<string, string> DatosInsumoDistribucionEmailLlanos = new Dictionary<string, string>();
+        public static Dictionary<string, string> DatosInsumoLlanosEnvioSMS = new Dictionary<string, string>();
+        public static Dictionary<string, string> DatosInsumoExtraerLlanos = new Dictionary<string, string>();
+        public static Dictionary<string, string> DatosInsumoLlanosMinPlan = new Dictionary<string, string>();
+        public static Dictionary<string, List<string>> DatosInsumoLlanosSuple = new Dictionary<string, List<string>>();
+
+        public static Dictionary<string, string> DatosAuxAnexosVerdes = new Dictionary<string, string>();
     }
 
     /// <summary>
@@ -150,7 +163,35 @@ namespace App.Variables
         [System.ComponentModel.Description("ETB_Horas_Exp")]
         ETB_Horas_Exp = 34,
         [System.ComponentModel.Description("ConfiguracionLlavesDoc1")]
-        ConfiguracionLlavesDoc1 = 35
+        ConfiguracionLlavesDoc1 = 35,
+        [System.ComponentModel.Description("Dual_Llanos")]
+        Dual_Llanos = 36,
+        [System.ComponentModel.Description("FA_DISTRIBUCION_EMAIL_LLANOS")]
+        FA_DISTRIBUCION_EMAIL_LLANOS = 37,
+        [System.ComponentModel.Description("LLANOS_Envio_SMS")]
+        LLANOS_Envio_SMS = 38,
+        [System.ComponentModel.Description("LLANOS_Extraer")]
+        LLANOS_Extraer = 39,
+        [System.ComponentModel.Description("Llanos_min_plan")]
+        Llanos_min_plan = 40,
+        [System.ComponentModel.Description("Llanos_suple")]
+        Llanos_suple = 41
+
+    }
+
+    /// <summary>
+    /// CiudadesLLanos
+    /// </summary>
+    public struct CiudadesLLanos
+    {
+        public string Ciudad;
+        public string Departamento;
+
+        public CiudadesLLanos(string pCiudad, string pDepartamento)
+        {
+            Ciudad = pCiudad;
+            Departamento = pDepartamento;
+        }
     }
 
 }

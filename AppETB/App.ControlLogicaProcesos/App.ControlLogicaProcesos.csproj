@@ -46,8 +46,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ProcesoAnexosVerdes.cs" />
+    <Compile Include="ProcesoCreditoHipotecario.cs" />
     <Compile Include="ProcesoDatos.cs" />
     <Compile Include="ProcesoGobiernos.cs" />
+    <Compile Include="ProcesoLlanos.cs" />
     <Compile Include="ProcesoMasivos.cs" />
     <Compile Include="IProcess.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

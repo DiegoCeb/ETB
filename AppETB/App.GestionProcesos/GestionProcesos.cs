@@ -28,6 +28,7 @@ namespace App.ControlProcesos
 
         public void Ejecutar(string pProceso)
         {
+            #region Ejecutar
             //Identificar Proceso para enviar a Procesamiento
             switch (pProceso)
             {
@@ -51,13 +52,35 @@ namespace App.ControlProcesos
                     //Inicio cargue archivos y proceso de formateo
                     _objProcesamiento.EjecutarProcesoGobiernos(Helpers.RutaOriginales);
                     break;
+
+                case "4": //LLanos
+                    //Se crea carpeta salida se mueven datos de entrada e insumos a originales
+                    _objProcesamiento.AdecuarTrabajoApp("LLanos");
+                    //Inicio cargue archivos y proceso de formateo
+                    _objProcesamiento.EjecutarProcesoLLanos(Helpers.RutaOriginales);
+                    break;
+
+                case "5": //Hipotecario
+                    //Se crea carpeta salida se mueven datos de entrada e insumos a originales
+                    _objProcesamiento.AdecuarTrabajoApp("Hipotecario");
+                    //Inicio cargue archivos y proceso de formateo
+                    _objProcesamiento.EjecutarProcesoCreditoHipotecario(Helpers.RutaOriginales);
+                    break;
+
+                case "6": //Anexos Verdes
+                    //Se crea carpeta salida se mueven datos de entrada e insumos a originales
+                    _objProcesamiento.AdecuarTrabajoApp("AnexosVerdes");
+                    //Inicio cargue archivos y proceso de formateo
+                    _objProcesamiento.EjecutarProcesoAnexosVerdes(Helpers.RutaOriginales);
+                    break;
             }
 
 
             Helpers.EscribirVentanaLog("Final Existoso del Proceso, revise la carpeta salidas !!!");
             Helpers.EscribirVentanaLog("Presione una tecla para cerrar...");
             Console.ReadKey();
-            Environment.Exit(1);
+            Environment.Exit(1); 
+            #endregion
         }
 
         /// <summary>
@@ -108,6 +131,12 @@ namespace App.ControlProcesos
             Console.WriteLine("");
             Console.WriteLine("3. Gobiernos");
             Console.WriteLine("");
+            Console.WriteLine("4. Llanos");
+            Console.WriteLine("");
+            Console.WriteLine("5. Credito Hipotecario");
+            Console.WriteLine("");
+            Console.WriteLine("6. Anexos Verdes");
+            Console.WriteLine("");
             Variables.Variables.Proceso = Console.ReadKey().KeyChar.ToString();
             Console.WriteLine("");
 
@@ -123,6 +152,18 @@ namespace App.ControlProcesos
 
                 case "3":
                     Ejecutar("3");
+                    break;
+
+                case "4":
+                    Ejecutar("4");
+                    break;
+
+                case "5":
+                    Ejecutar("5");
+                    break;
+
+                case "6":
+                    Ejecutar("6");
                     break;
 
                 default:
