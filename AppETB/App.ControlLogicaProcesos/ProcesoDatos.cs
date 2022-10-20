@@ -235,13 +235,6 @@ namespace App.ControlLogicaProcesos
                 resultado.AddRange(resultadoFormateoLinea);
             }
 
-            resultadoFormateoLinea = FormarPaqueteEEE(datosOriginales);
-
-            if (((IEnumerable<string>)resultadoFormateoLinea).Any())
-            {
-                resultado.AddRange(resultadoFormateoLinea);
-            }
-
             resultadoFormateoLinea = FormateoCanal1FFF(datosOriginales);
 
             if (((IEnumerable<string>)resultadoFormateoLinea).Any())
@@ -279,9 +272,9 @@ namespace App.ControlLogicaProcesos
 
             resultadoFormateoLinea = FormateoCanalCONS(datosOriginales);
 
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            if (((IEnumerable<string>)resultadoFormateoLinea).Any())
             {
-                resultado.Add(resultadoFormateoLinea);
+                resultado.AddRange(resultadoFormateoLinea);
             }
 
             resultadoFormateoLinea = FormateoCanalCUFE(datosOriginales);
@@ -469,9 +462,9 @@ namespace App.ControlLogicaProcesos
                 ListaCanal1AAA.Add(Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"FECL{Helpers.FormatearCampos(TiposFormateo.Fecha02, Linea010000.Substring(168, 8).Trim())}{Linea010000.Substring(151, 3).Trim().TrimStart('0')}").FirstOrDefault()?.Substring(12).Trim() ?? string.Empty);
                 ListaCanal1AAA.Add(GetFechaExpedicion(Linea010000));
 
-                ListaCanal1AAA.Add(GetNumeroReferencia(Linea010000.Substring(139, 12)));
+                ListaCanal1AAA.Add(GetNumeroReferencia(Linea010000.Substring(139, 12).Trim()));
                 ListaCanal1AAA.AddRange(GetCodigosBarras(Linea010000.Substring(139, 12), Linea010000, datosOriginales)); //TODO: Verificar valor a pagar
-                ListaCanal1AAA.Add(GetTipoEtapas(Linea010000.Substring(151, 3)));
+                //ListaCanal1AAA.Add(GetTipoEtapas(Linea010000.Substring(151, 3)));
                 ListaCanal1AAA.Add(GetTasaInteres(Linea040000));
                 listaCortes.Clear();
                 listaCortes.Add(new PosCortes(108, 5));
@@ -686,7 +679,7 @@ namespace App.ControlLogicaProcesos
             string numeroETB = Utilidades.LeerAppConfig("numeroETB");
             string totalPagar = pLinea010000.Substring(155, 11).PadLeft(10, '0');
             string fechaPago = Helpers.FormatearCampos(TiposFormateo.Fecha08, Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"FECL{Helpers.FormatearCampos(TiposFormateo.Fecha02, pLinea010000.Substring(168, 8).Trim())}{pLinea010000.Substring(151, 3).Trim().TrimStart('0')}").FirstOrDefault()?.Substring(12).Trim() ?? string.Empty);
-            string numReferencia = GetNumeroReferencia(pNumReferencia, false);
+            string numReferencia = GetNumeroReferencia(pNumReferencia.Trim(), false);
             List<decimal> valoresPago = GetValoresCodeBar(pDatosOriginales);
             string ValorPagarCB1 = valoresPago[0].ToString().Trim().PadLeft(12, '0');
             string ValorPagarCB2 = valoresPago[1].ToString().Trim().PadLeft(12, '0');
@@ -1038,7 +1031,7 @@ namespace App.ControlLogicaProcesos
         {
             #region GetValorPagarMes
             List<decimal> valoresPago = GetValoresCodeBar(pDatosOriginales);
-            string ValorPagar = Helpers.FormatearCampos(TiposFormateo.Decimal01, valoresPago[1].ToString()); 
+            string ValorPagar = Helpers.FormatearCampos(TiposFormateo.Decimal01, valoresPago[1].ToString());
 
             return ValorPagar ?? string.Empty;
             #endregion
@@ -1370,7 +1363,7 @@ namespace App.ControlLogicaProcesos
                 }
 
             }
-            
+
 
             string cuentasLTE9697 = Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoCuentasLte, $"{Cuenta}") ?? string.Empty;
 
@@ -1637,11 +1630,11 @@ namespace App.ControlLogicaProcesos
         {
             #region FormateoCanal1KKK
             string Linea1KKK = string.Empty;
-            string oficinaPqr = string.Empty;           
-            
+            string oficinaPqr = string.Empty;
+
             oficinaPqr = GetOficinaPQR($"CZONA80000");
             Linea1KKK = $"1KKK|{oficinaPqr} | ";
-           
+
 
             return Linea1KKK;
             #endregion
@@ -1687,6 +1680,15 @@ namespace App.ControlLogicaProcesos
             #region FormateoCanalNTC0
             string resultado = string.Empty;
 
+            var linea28000 = from busqueda in datosOriginales
+                             where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("28000")
+                             select busqueda;
+
+            if (linea28000.Any())
+            {
+                resultado = Helpers.ValidarPipePipe($"NTC0|{linea28000.FirstOrDefault().Substring(5, 12).Trim()}|{linea28000.FirstOrDefault().Substring(21, 15).Trim()}|{linea28000.FirstOrDefault().Substring(50).Trim()}| ");
+            }
+
             return resultado;
             #endregion
         }
@@ -1700,6 +1702,16 @@ namespace App.ControlLogicaProcesos
         {
             #region FormateoCanalNTC1
             string resultado = string.Empty;
+
+            var linea29000 = from busqueda in datosOriginales
+                             where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("29000")
+                             select busqueda;
+
+            if (linea29000.Any())
+            {
+                resultado = Helpers.ValidarPipePipe($"NTC1|{linea29000.FirstOrDefault().Substring(5, 12).Trim()}|{linea29000.FirstOrDefault().Substring(18, 10).Trim()}|" +
+                    $"{Helpers.FormatearCampos(TiposFormateo.Decimal01, linea29000.FirstOrDefault().Substring(29, 20).Trim())}|{linea29000.FirstOrDefault().Substring(49).Trim()}| ");
+            }
 
             return resultado;
             #endregion
@@ -1715,6 +1727,16 @@ namespace App.ControlLogicaProcesos
             #region FormateoCanalNTC2
             string resultado = string.Empty;
 
+            var linea30000 = from busqueda in datosOriginales
+                             where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("30000")
+                             select busqueda;
+
+            if (linea30000.Any())
+            {
+                resultado = Helpers.ValidarPipePipe($"NTC2|{linea30000.FirstOrDefault().Substring(5, 20).Trim()}|{linea30000.FirstOrDefault().Substring(25, 20).Trim()}|" +
+                    $"{linea30000.FirstOrDefault().Substring(45, 20).Trim()}|{linea30000.FirstOrDefault().Substring(65, 20).Trim()}|{linea30000.FirstOrDefault().Substring(85, 20).Trim()}| ");
+            }
+
             return resultado;
             #endregion
         }
@@ -1728,6 +1750,15 @@ namespace App.ControlLogicaProcesos
         {
             #region FormateoCanalNTC3
             string resultado = string.Empty;
+
+            var linea30001 = from busqueda in datosOriginales
+                             where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("30001")
+                             select busqueda;
+
+            if (linea30001.Any())
+            {
+                resultado = Helpers.ValidarPipePipe($"NTC3|{linea30001.FirstOrDefault().Substring(5, 20).Trim()}|{linea30001.FirstOrDefault().Substring(25, 10).Trim()}| ");
+            }
 
             return resultado;
             #endregion
@@ -1743,6 +1774,16 @@ namespace App.ControlLogicaProcesos
             #region FormateoCanalNTC4
             string resultado = string.Empty;
 
+            var linea30002 = from busqueda in datosOriginales
+                             where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("30002")
+                             select busqueda;
+
+            if (linea30002.Any())
+            {
+                resultado = Helpers.ValidarPipePipe($"NTC4|{linea30002.FirstOrDefault().Substring(5, 10).Trim()}|{linea30002.FirstOrDefault().Substring(15, 70).Trim()}|" +
+                    $"{linea30002.FirstOrDefault().Substring(85, 20).Trim()}| ");
+            }
+
             return resultado;
             #endregion
         }
@@ -1756,6 +1797,16 @@ namespace App.ControlLogicaProcesos
         {
             #region FormateoCanalNTC5
             string resultado = string.Empty;
+
+            var linea30003 = from busqueda in datosOriginales
+                             where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("30003")
+                             select busqueda;
+
+            if (linea30003.Any())
+            {
+                resultado = Helpers.ValidarPipePipe($"NTC5|{linea30003.FirstOrDefault().Substring(5, 2).Trim()}|{linea30003.FirstOrDefault().Substring(7, 5).Trim()}|" +
+                            $"{linea30003.FirstOrDefault().Substring(12, 20).Trim()}| ");
+            }
 
             return resultado;
             #endregion
@@ -1890,26 +1941,54 @@ namespace App.ControlLogicaProcesos
         private IEnumerable<string> FormarPaqueteADN1(List<string> datosOriginales)
         {
             #region FormarPaqueteADN1
+
+            #region Variables Proceso
             List<string> resultado = new List<string>();
+            List<string> sumaValoresBase = new List<string>();
+            List<string> sumaValoresIva = new List<string>();
             Dictionary<string, List<string>> paquetesInformacion = new Dictionary<string, List<string>>();
+            Dictionary<string, List<string>> llavesLineasNegocio = new Dictionary<string, List<string>>();
+            Dictionary<string, List<string>> llavesDatosEEE = new Dictionary<string, List<string>>();
             bool banderaPaquete = false;
             string cuentaConexion = string.Empty;
             string busquedaPlanMinutos = string.Empty;
             string planMinutos = string.Empty;
             string llaveCruce = string.Empty;
+            string lineaFacturaNegocio = string.Empty;
+            string llaveBusquedaDescripcion = string.Empty;
+            string descripcionTitulo = string.Empty;
+            string llaveBusquedaNit = string.Empty;
+            string nit = string.Empty;
+            string descripcionSubtitulo = string.Empty;
+            string lineaNegocio = string.Empty;
+            string @base = string.Empty;
+            string iva = string.Empty;
+            string impuesto = "00";
+            string restaImpuesto = "-00";
+            string canalTotales = string.Empty;
+            #endregion
 
-            //TODO: ACA TOCA FORMAR UN PAQUETE de los canales ADN1 - 1DDD - 1DDA
+            #region Informacion
+            //TODO: ACA TOCA FORMAR UN PAQUETE de los canales ADN1 - 1DDD - 1DDA - 1EE1 - 1EE2 - 1EE3
             //EJEMPLO
-            //ADN1|6015556991|Conexion | CL 95 48 40 | | Mundo Automaticos y Asist20 | |
-            //1DDA|6015556991|Telefonía Local |$ 400.00 |$ 76.00 |$ 476.00 |
-            //1DDD|6015556991|Consumo del mes|$ 400.00 |$ 76.00 |$ 400.00 | | |
-            //1DDD|6015556991| | | | | | |
-            //ADN1|7337013891|Cuenta | CL 95 48 40 | | Mundo Automaticos y Asist20 | |
-            //1DDA|7337013891|Telefonía Local |$ 298,418.12 |$ 56,699.44 |$ 355,117.56 |
-            //1DDD|7337013891|Cargo fijo del mes |$ 297,860.00 |$ 56,775.44 |$ 298,818.12 |$ 958.12 | |
-            //1DDD|7337013891|Dcto consumo pne e1 - RDSI no c| -$ 400.00 | -$ 76.00 | -$ 400.00 | | |
+            //ADN1 | 6013817000 | Conexion | AC 26 68D 35 | RDSI PRI Plan Básico - Valor Minuto Adicional $ 76.11 | Plan TUN 110 - 80 TOTAL Aut20| |
+            //1DDA | 6013817000 | Telefonía Local |$ 279,157.11 |$ 53,039.85 |$ 332,196.96 |
+            //1DDD | 6013817000 | Consumo plan básico RDSI pri|$ 279,157.11 |$ 53,039.85 |$ 279,157.11 | | |
+            //1DDD | 6013817000 | | | | | | |
+            //1EE1 | 6013817000 | Tigo NIT: 890.114.921 - 1 |$ 495,015.80 |$ 94,053.00 |$ 608,869.43 |$ 19,800.63 |
+            //1EE2 | 6013817000 | |
+            //1EE3 | 6013817000 | 28Jul2022 | 10:58:11 | TIGO | 3104030825 | | 22:00 | 50.98 | 1,121.56 |
+            //1EE3 | 6013817000 | 08Ago2022 | 14:08:51 | TIGO | 3008550167 | | 1:00 | 50.98 | 50.98 |
+            //1EE3 | 6013817000 | 09Ago2022 | 10:46:04 | TIGO | 3212493682 | | 1:00 | 50.98 | 50.98 |
+            //1EE3 | 6013817000 | 09Ago2022 | 11:26:45 | TIGO | 3102780338 | | 1:00 | 50.98 | 50.98 |
+            //1EE3 | 6013817000 | 18Ago2022 | 11:43:49 | TIGO | 3132344498 | | 2:00 | 50.98 | 101.96 |
+            //1EE3 | 6013817000 | 19Ago2022 | 09:13:43 | TIGO | 3132344498 | | 3:00 | 50.98 | 152.94 |
+            //1EE3 | 6013817000 | 25Ago2022 | 15:49:46 | TIGO | 3118657213 | | 1:00 | 50.98 | 50.98 |
+            //1EE3 | 6013817000 | | | | | | | | |
+            //1EE3 | 6013817000 | | | | | | | | |
 
-            //Toda la info sale del paquete de canales que va desde el priemr 040000 hasta el siguiente 040000
+            //Toda la info sale del paquete de canales que va desde el priemr 040000 hasta el siguiente 040000 
+            #endregion
 
             #region Organizacion Paquetes de Informacion
             foreach (var linea in datosOriginales)
@@ -1939,14 +2018,15 @@ namespace App.ControlLogicaProcesos
             }
             #endregion
 
-            var linea06T112 = from busqueda in datosOriginales
-                              where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("06T112")
-                              select busqueda;
-
             if (paquetesInformacion.Any())
             {
+                #region Logica
                 foreach (var lineaDetalle in paquetesInformacion)
                 {
+                    #region Logica por paquete
+
+                    llavesLineasNegocio = new Dictionary<string, List<string>>();
+
                     #region Busqueda Informacion
                     var linea040000 = from busqueda in lineaDetalle.Value
                                       where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("040000")
@@ -1962,16 +2042,276 @@ namespace App.ControlLogicaProcesos
                     {
                         llaveCruce = $"PL{busquedaPlanMinutos}";
                         planMinutos = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruce).FirstOrDefault()?.Substring(13).Trim() ?? string.Empty;
-                    } 
+
+                        llaveCruce = $"VMIN{busquedaPlanMinutos}";
+
+                        string valorminuto = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruce).FirstOrDefault()?.Substring(14).Trim() ?? string.Empty;
+
+                        if (!string.IsNullOrEmpty(valorminuto))
+                        {
+                            planMinutos += $" - Valor Minuto Adicional {Helpers.FormatearCampos(TiposFormateo.Decimal01, valorminuto.Substring(0, 10))}";
+                        }
+                    }
+
                     #endregion
 
-                    //resultado.Add(Helpers.ValidarPipePipe($"ADN1|{lineaDetalle.Key}|{GetTipo(lineaDetalle.Key)}|{linea040000.FirstOrDefault().Substring(76, 30).Trim()}|" +
-                    //    $"{planMinutos}|{linea090000.FirstOrDefault().Substring(26, 27).Trim()}| | "));
+                    resultado.Add(Helpers.ValidarPipePipe($"ADN1|{lineaDetalle.Key}|{GetTipo(lineaDetalle.Key)}|{linea040000.FirstOrDefault().Substring(76, 30).Trim()}|" +
+                        $"{planMinutos}|{linea090000.FirstOrDefault().Substring(26, 27).Trim()}| | "));
 
-                    //resultado.Add(Helpers.ValidarPipePipe($"1DDA|{lineaDetalle.Key}|"));
+                    #region ObtenerLineasNegocio
+                    var lineasNegocioFactura = from busqueda in lineaDetalle.Value
+                                               where busqueda.Length > 3 && busqueda.Substring(0, 3).Equals("11C")
+                                               select busqueda;
+
+                    if (lineasNegocioFactura.Any())
+                    {
+                        foreach (var linea in lineasNegocioFactura)
+                        {
+                            string llave = linea.Substring(3, 1);
+
+                            if (llavesLineasNegocio.ContainsKey(llave))
+                            {
+                                llavesLineasNegocio[llave].Add(linea);
+                            }
+                            else
+                            {
+                                llavesLineasNegocio.Add(llave, new List<string> { linea });
+                            }
+                        }
+
+                        foreach (var lineaNegocioInfo in llavesLineasNegocio)
+                        {
+                            if (lineaNegocioInfo.Key == "5")
+                            {
+                                continue;
+                            }
+
+                            #region Armar Canal 1DDA
+                            if (lineaNegocioInfo.Key == "1")
+                            {
+                                canalTotales = "06T112";
+                            }
+                            else if (lineaNegocioInfo.Key == "2")
+                            {
+                                canalTotales = "06T222";
+                            }
+                            else if (lineaNegocioInfo.Key == "3")
+                            {
+                                canalTotales = "06T309";
+                            }
+                            else if (lineaNegocioInfo.Key == "6")
+                            {
+                                canalTotales = "06T660";
+                            }
+                            else
+                            {
+                                //falta configurar
+                            }
+
+                            var lineaTotales = from busqueda in lineaDetalle.Value
+                                               where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals(canalTotales)
+                                               select busqueda;
+
+                            llaveCruce = $"FACLIN{lineaNegocioInfo.Key}";
+
+                            string DescripcionLineaNegocio = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruce).FirstOrDefault()?.Substring(8).Trim() ?? string.Empty;
+
+                            @base = lineaTotales.FirstOrDefault().Substring(6, 14).Trim().TrimStart('0');
+                            iva = lineaTotales.FirstOrDefault().Substring(34, 14).Trim().TrimStart('0');
+
+                            resultado.Add(Helpers.ValidarPipePipe($"1DDA|{lineaDetalle.Key}|{DescripcionLineaNegocio}|" +
+                                $"{Helpers.FormatearCampos(TiposFormateo.Decimal01, @base)}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, iva)}|" +
+                                $"{Helpers.SumarCampos(new List<string> { @base, iva })}| "));
+                            #endregion
+
+                            #region Armar Canal 1DDD
+
+                            IEnumerable<IGrouping<string, string>> lineadetalles = null;
+
+                            if (lineaNegocioInfo.Key == "1" || lineaNegocioInfo.Key == "3")
+                            {
+                                lineadetalles = from busqueda in lineaNegocioInfo.Value
+                                                where !string.IsNullOrEmpty(busqueda.Substring(16, 14).Trim().TrimStart('0'))
+                                                group busqueda by busqueda.Substring(274, 7).Trim() into busqueda
+                                                select busqueda;
+                            }
+                            else if (lineaNegocioInfo.Key == "2" || lineaNegocioInfo.Key == "6")
+                            {
+                                lineadetalles = from busqueda in lineaNegocioInfo.Value
+                                                where !string.IsNullOrEmpty(busqueda.Substring(16, 14).Trim().TrimStart('0'))
+                                                group busqueda by busqueda.Substring(0, 16).Trim() into busqueda
+                                                select busqueda;
+                            }
+                            else
+                            {
+                                //FALTA CONFIGURAR
+                            }
+
+                            foreach (var detalleAgrupado in lineadetalles.Select(x => x))
+                            {
+                                sumaValoresBase.Clear();
+                                sumaValoresIva.Clear();
+
+                                foreach (var lineadetalle in detalleAgrupado)
+                                {
+                                    sumaValoresBase.Add(lineadetalle.Substring(16, 14).Trim().TrimStart('0'));
+                                    sumaValoresIva.Add(lineadetalle.Substring(44, 14).Trim().TrimStart('0'));
+                                }
+
+                                llaveCruce = $"CODF{detalleAgrupado.FirstOrDefault().Substring(6, 10)}";
+
+                                string DescripcionCodigoFactura = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruce).FirstOrDefault()?.Substring(15).Trim() ?? string.Empty;
+
+                                resultado.Add(Helpers.ValidarPipePipe($"1DDD|{lineaDetalle.Key}|{DescripcionCodigoFactura}|" +
+                                $"{Helpers.SumarCampos(sumaValoresBase)}|{Helpers.SumarCampos(sumaValoresIva)}|" +
+                                $"{Helpers.SumarCampos(sumaValoresBase)}| | | "));
+                            }
+                            #endregion
+                        }
+                    }
+                    else
+                    {
+
+                    }
+                    #endregion    
+
+                    #region Datos paquete EEE
+                    var lineas11CAnexos = from busqueda in lineaDetalle.Value
+                                          where busqueda.Length > 4 &&
+                                          busqueda.Substring(0, 4).Equals("11C1") ||
+                                          busqueda.Substring(0, 4).Equals("11C2") ||
+                                          busqueda.Substring(0, 4).Equals("11C3") ||
+                                          busqueda.Substring(0, 4).Equals("11C5") ||
+                                          busqueda.Substring(0, 4).Equals("11C6") ||
+                                          busqueda.Substring(0, 4).Equals("11C9")
+                                          where !string.IsNullOrEmpty(busqueda.Substring(16, 14).Trim().TrimStart('0'))
+                                          select busqueda;
+
+                    var lineas12MAnexos = from busqueda in lineaDetalle.Value
+                                          where busqueda.Length > 4 &&
+                                          busqueda.Substring(0, 4).Equals("12M1") ||
+                                          busqueda.Substring(0, 4).Equals("12M2") ||
+                                          busqueda.Substring(0, 4).Equals("12M3") ||
+                                          busqueda.Substring(0, 4).Equals("12M5") ||
+                                          busqueda.Substring(0, 4).Equals("12M6") ||
+                                          busqueda.Substring(0, 4).Equals("12M9")
+                                          select busqueda;
+
+                    var linea30004 = from busqueda in datosOriginales
+                                     where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("30004")
+                                     select busqueda;
+                    #endregion
+
+                    if (lineas11CAnexos.Any() && lineas12MAnexos.Any())
+                    {
+                        llavesDatosEEE = new Dictionary<string, List<string>>();
+
+                        #region Ordenar Informacion
+                        foreach (var linea12M in lineas12MAnexos)
+                        {
+                            string llave = linea12M.Substring(0, 6);
+
+                            if (llavesDatosEEE.ContainsKey(llave))
+                            {
+                                llavesDatosEEE[llave].Add(linea12M);
+                            }
+                            else
+                            {
+                                var buscarEquivalente = from busqueda in lineas11CAnexos
+                                                        where busqueda.Substring(0, 6) == $"11C{llave.Substring(3, 3)}"
+                                                        select busqueda;
+
+                                llavesDatosEEE.Add(llave, new List<string> { buscarEquivalente.FirstOrDefault(), linea12M });
+                            }
+                        }
+                        #endregion
+
+                        foreach (var lineaDatos in llavesDatosEEE)
+                        {
+                            #region Datos 1EE1
+                            impuesto = "00";
+                            restaImpuesto = "-00";
+
+                            llaveCruce = lineaDatos.Value.FirstOrDefault().Substring(6, 10); //Se obtine del primer elemento ya que es el 11C
+
+                            llaveBusquedaDescripcion = $"CODT{Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoConfiguracionLLavesDoc1, llaveCruce).Split('|').ElementAt(13)}";
+
+                            descripcionTitulo = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveBusquedaDescripcion).FirstOrDefault()?.Substring(11).Trim() ?? "";
+
+                            llaveBusquedaNit = $"OPER{Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoConfiguracionLLavesDoc1, llaveCruce).Split('|').ElementAt(8)}";
+
+                            nit = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveBusquedaNit).FirstOrDefault()?.Substring(11).Trim() ?? "";
+
+                            if (!string.IsNullOrEmpty(nit))
+                            {
+                                lineaNegocio = $"{descripcionTitulo} NIT: {nit}";
+                            }
+                            else
+                            {
+                                lineaNegocio = $"{descripcionTitulo}";
+                            }
+
+                            canalTotales = Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoConfiguracionLLavesDoc1, llaveCruce).Split('|').ElementAt(12);
+
+                            var busquedaCanalTotales = from busqueda in lineaDetalle.Value
+                                                       where busqueda.Substring(0, 6) == canalTotales
+                                                       select busqueda;
+
+                            //Si se encuentra se toman los datos, si no se calculan de la linea directamente
+                            if (busquedaCanalTotales.Any())
+                            {
+                                @base = busquedaCanalTotales.FirstOrDefault().Substring(6, 14).Trim().TrimStart('0');
+                                iva = busquedaCanalTotales.FirstOrDefault().Substring(34, 14).Trim().TrimStart('0');
+
+                                if (!string.IsNullOrEmpty(busquedaCanalTotales.FirstOrDefault().Substring(20, 14).Trim().TrimStart('0')) || busquedaCanalTotales.FirstOrDefault().Substring(3, 1) == "5")//Si tiene recargo se calcula el impueso al consumo
+                                {
+                                    impuesto = (Convert.ToDecimal(Helpers.FormatearCampos(TiposFormateo.Decimal03, busquedaCanalTotales.FirstOrDefault().Substring(6, 14).Trim().TrimStart('0'))) * (decimal)0.04).ToString("N2").Replace(".", "").Replace(",", "");
+                                    restaImpuesto = $"-{impuesto.Replace(".", string.Empty)}";
+                                }
+                            }
+                            else
+                            {
+                                @base = lineaDatos.Value.FirstOrDefault().Substring(16, 14).Trim().TrimStart('0');
+                                iva = lineaDatos.Value.FirstOrDefault().Substring(44, 14).Trim().TrimStart('0');
+
+                                if (lineaDatos.Value.FirstOrDefault().Substring(3, 1) == "1" || lineaDatos.Value.FirstOrDefault().Substring(3, 1) == "6")
+                                {
+                                    impuesto = (Convert.ToDecimal(Helpers.FormatearCampos(TiposFormateo.Decimal03, lineaDatos.Value.FirstOrDefault().Substring(114, 14).Trim().TrimStart('0'))) * 2).ToString().Replace(".", string.Empty);
+                                    restaImpuesto = $"-{impuesto.Replace(".", string.Empty)}";
+                                }
+                            }
+
+                            resultado.Add(Helpers.ValidarPipePipe($"1EE1|{lineaDetalle.Key}|{Helpers.FormatearCampos(TiposFormateo.LetraCapital, lineaNegocio)}" +
+                                $"|{Helpers.FormatearCampos(TiposFormateo.Decimal01, @base)}|{Helpers.SumarCampos(new List<string> { iva, restaImpuesto })}|" +
+                                $"{Helpers.SumarCampos(new List<string> { @base, iva, restaImpuesto, impuesto })}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, impuesto)}| "));
+                            #endregion
+
+                            #region Datos 1EE2
+                            llaveBusquedaDescripcion = $"CODT{Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoConfiguracionLLavesDoc1, llaveCruce).Split('|').ElementAt(7)}";
+
+                            descripcionSubtitulo = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveBusquedaDescripcion).FirstOrDefault()?.Substring(11).Trim() ?? "";
+
+                            resultado.Add(Helpers.ValidarPipePipe($"1EE2|{lineaDetalle.Key}|{Helpers.FormatearCampos(TiposFormateo.LetraCapital, descripcionSubtitulo)}|LD| "));
+                            #endregion
+
+                            #region Datos 1EE3
+                            List<string> DatosDetallesEE3 = new List<string>(lineaDatos.Value);
+                            DatosDetallesEE3.RemoveAt(0); //Se elimina el primer elemento ya que es el 11C y nos e necesita
+
+                            foreach (var linea in DatosDetallesEE3)
+                            {
+                                resultado.Add(Helpers.ValidarPipePipe($"1EE3|{lineaDetalle.Key}|{Helpers.FormatearCampos(TiposFormateo.Fecha12, linea.Substring(6, 10))}|" +
+                                    $"{Helpers.FormatearCampos(TiposFormateo.HoraMinutoSegundo, linea.Substring(14, 6))}|{linea.Substring(20, 10).Trim()}|" +
+                                    $"{linea.Substring(33, 10).Trim()}|{linea.Substring(96, 11).Trim()}|{linea.Substring(67, 1)}:00|{Helpers.FormatearCampos(TiposFormateo.Decimal01, linea.Substring(47, 9)).Replace("$", "").Trim()}|" +
+                                    $"{Helpers.FormatearCampos(TiposFormateo.Decimal01, linea.Substring(56, 9)).Replace("$", "").Trim()}| "));
+                            }
+                            #endregion
+                        }
+                    }
+                    #endregion
                 }
+                #endregion
             }
-
 
             return resultado;
             #endregion
@@ -2220,7 +2560,7 @@ namespace App.ControlLogicaProcesos
                 {
                     resultado.Add("1FFF| | | | | | ");
                 }
-                
+
             }
 
             return resultado;

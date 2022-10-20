@@ -1693,6 +1693,15 @@ namespace App.ControlLogicaProcesos
             #region FormateoCanalNTC0
             string resultado = string.Empty;
 
+            var linea28000 = from busqueda in datosOriginales
+                             where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("28000")
+                             select busqueda;
+
+            if (linea28000.Any())
+            {
+                resultado = Helpers.ValidarPipePipe($"NTC0|{linea28000.FirstOrDefault().Substring(5, 12).Trim()}|{linea28000.FirstOrDefault().Substring(21, 15).Trim()}|{linea28000.FirstOrDefault().Substring(50).Trim()}| ");
+            }
+
             return resultado;
             #endregion
         }
@@ -1706,6 +1715,16 @@ namespace App.ControlLogicaProcesos
         {
             #region FormateoCanalNTC1
             string resultado = string.Empty;
+
+            var linea29000 = from busqueda in datosOriginales
+                             where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("29000")
+                             select busqueda;
+
+            if (linea29000.Any())
+            {
+                resultado = Helpers.ValidarPipePipe($"NTC1|{linea29000.FirstOrDefault().Substring(5, 12).Trim()}|{linea29000.FirstOrDefault().Substring(18, 10).Trim()}|" +
+                    $"{Helpers.FormatearCampos(TiposFormateo.Decimal01, linea29000.FirstOrDefault().Substring(29, 20).Trim())}|{linea29000.FirstOrDefault().Substring(49).Trim()}| ");
+            }
 
             return resultado;
             #endregion
@@ -1721,6 +1740,16 @@ namespace App.ControlLogicaProcesos
             #region FormateoCanalNTC2
             string resultado = string.Empty;
 
+            var linea30000 = from busqueda in datosOriginales
+                             where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("30000")
+                             select busqueda;
+
+            if (linea30000.Any())
+            {
+                resultado = Helpers.ValidarPipePipe($"NTC2|{linea30000.FirstOrDefault().Substring(5, 20).Trim()}|{linea30000.FirstOrDefault().Substring(25, 20).Trim()}|" +
+                    $"{linea30000.FirstOrDefault().Substring(45, 20).Trim()}|{linea30000.FirstOrDefault().Substring(65, 20).Trim()}|{linea30000.FirstOrDefault().Substring(85, 20).Trim()}| ");
+            }
+
             return resultado;
             #endregion
         }
@@ -1734,6 +1763,15 @@ namespace App.ControlLogicaProcesos
         {
             #region FormateoCanalNTC3
             string resultado = string.Empty;
+
+            var linea30001 = from busqueda in datosOriginales
+                             where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("30001")
+                             select busqueda;
+
+            if (linea30001.Any())
+            {
+                resultado = Helpers.ValidarPipePipe($"NTC3|{linea30001.FirstOrDefault().Substring(5, 20).Trim()}|{linea30001.FirstOrDefault().Substring(25, 10).Trim()}| ");
+            }
 
             return resultado;
             #endregion
@@ -1749,6 +1787,16 @@ namespace App.ControlLogicaProcesos
             #region FormateoCanalNTC4
             string resultado = string.Empty;
 
+            var linea30002 = from busqueda in datosOriginales
+                             where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("30002")
+                             select busqueda;
+
+            if (linea30002.Any())
+            {
+                resultado = Helpers.ValidarPipePipe($"NTC4|{linea30002.FirstOrDefault().Substring(5, 10).Trim()}|{linea30002.FirstOrDefault().Substring(15, 70).Trim()}|" +
+                    $"{linea30002.FirstOrDefault().Substring(85, 20).Trim()}| ");
+            }
+
             return resultado;
             #endregion
         }
@@ -1762,6 +1810,16 @@ namespace App.ControlLogicaProcesos
         {
             #region FormateoCanalNTC5
             string resultado = string.Empty;
+
+            var linea30003 = from busqueda in datosOriginales
+                             where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("30003")
+                             select busqueda;
+
+            if (linea30003.Any())
+            {
+                resultado = Helpers.ValidarPipePipe($"NTC5|{linea30003.FirstOrDefault().Substring(5, 2).Trim()}|{linea30003.FirstOrDefault().Substring(7, 5).Trim()}|" +
+                            $"{linea30003.FirstOrDefault().Substring(12, 20).Trim()}| ");
+            }
 
             return resultado;
             #endregion
