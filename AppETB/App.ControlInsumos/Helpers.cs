@@ -1491,6 +1491,9 @@ namespace App.ControlInsumos
                 case TiposFormateo.Decimal02:
                     return FormatearDecimal("02", pCampo);
 
+                case TiposFormateo.Decimal04:
+                    return FormatearDecimal("04", pCampo);
+
                 case TiposFormateo.HoraMinuto:
                     return FormatearHoraMinuto(pCampo);
                 default:
@@ -1597,10 +1600,12 @@ namespace App.ControlInsumos
         private static string FormatearDecimal(string pFormatoDecimalTipo, string pCampo)
         {
             string transformado = string.Empty;
+            double temTransformado = 0;         
 
             switch (pFormatoDecimalTipo)
             {
                 case "01":
+                case "03":
                     transformado = pCampo.Trim().TrimStart('0');
 
                     if (string.IsNullOrEmpty(transformado))
@@ -1614,7 +1619,8 @@ namespace App.ControlInsumos
                     }
 
                     transformado = $"{transformado.Substring(0, transformado.Length - 2)}.{transformado.Substring(transformado.Length - 2)}";
-                    var temTransformado = Convert.ToDouble(transformado);
+                    //var temTransformado = Convert.ToDouble(transformado);
+                    temTransformado = Convert.ToDouble(transformado);
 
                     if (temTransformado < 0)
                     {
@@ -1628,7 +1634,7 @@ namespace App.ControlInsumos
                         return $"$ {transformado.Substring(0, transformado.LastIndexOf('.')).Replace(",", ".")},{transformado.Substring(transformado.LastIndexOf('.') + 1)}"; ;
                     }
 
-                case "2":
+                case "02":
                     transformado = pCampo.Trim().TrimStart('0');
 
                     if (string.IsNullOrEmpty(transformado))
@@ -1644,6 +1650,36 @@ namespace App.ControlInsumos
                     transformado = $"{transformado.Substring(0, transformado.Length - 2)}.{transformado.Substring(transformado.Length - 2)}";
 
                     return transformado;
+
+                case "04":
+
+                    transformado = pCampo.Trim().TrimStart('0');
+
+                    if (string.IsNullOrEmpty(transformado))
+                    {
+                        transformado = "00";
+                    }
+
+                    if (transformado.Length == 1)
+                    {
+                        transformado = transformado.PadLeft(2, '0');
+                    }
+
+                    transformado = $"{transformado.Substring(0, transformado.Length - 2)}.{transformado.Substring(transformado.Length - 2)}";
+                    //var temTransformado = Convert.ToDouble(transformado);
+                    temTransformado = Convert.ToDouble(transformado);
+
+                    if (temTransformado < 0)
+                    {
+                        temTransformado = temTransformado * -1;
+                        transformado = temTransformado.ToString("N2");
+                        return $"- {transformado.Substring(0, transformado.LastIndexOf('.')).Replace(",", ".")},{transformado.Substring(transformado.LastIndexOf('.') + 1)}";
+                    }
+                    else
+                    {
+                        transformado = temTransformado.ToString("N2");
+                        return $"{transformado.Substring(0, transformado.LastIndexOf('.')).Replace(",", ".")},{transformado.Substring(transformado.LastIndexOf('.') + 1)}"; ;
+                    }
 
                 default:
                     return pCampo;
@@ -1740,7 +1776,7 @@ namespace App.ControlInsumos
 
             foreach (string registroActual in listaFechas)
             {
-                if (!string.IsNullOrEmpty(registroActual.Trim()) && registroActual.Contains("-"))
+                if (!string.IsNullOrEmpty(registroActual.Trim()))
                 {
                     fecha = Convert.ToDateTime(registroActual.Substring(0, 4) + "/" + registroActual.Substring(4, 2) + "/" + registroActual.Substring(6, 2));
 
@@ -2298,6 +2334,48 @@ namespace App.ControlInsumos
             return ValorSumadoFormateado;
             #endregion
         }
+
+        /// <summary>
+        /// Metodo para sumar varios numeros
+        /// </summary>
+        /// <param name="pCamposSumar">Lista de campos a Sumar</param>
+        /// <returns>string formateado con la suma d elos valores</returns>
+        public static string SumarCamposLinea(string pLineaSumar, char delimitador)
+        {
+            #region SumarCampos
+            string resultado = string.Empty;
+            double totalSuma = 0;
+            string numeroSuma = string.Empty;
+            List<string> camposSumar = new List<string>();
+
+            if (!string.IsNullOrEmpty(pLineaSumar))
+            {
+                camposSumar = pLineaSumar.Split(delimitador).ToList();
+
+                if (camposSumar.Count > 0)
+                {
+                    foreach (string numeroActual in camposSumar)
+                    {
+                        numeroSuma = numeroActual;
+
+                        if (string.IsNullOrEmpty(numeroSuma))
+                        {
+                            numeroSuma = "0";
+                        }
+
+                        string transformado = numeroSuma.Replace("$", "").Replace(" ", "");
+                        var temTransformado = Convert.ToDouble(transformado);
+                        totalSuma += temTransformado;
+                    }
+                }
+
+            }
+
+            resultado = FormatearCampos(TiposFormateo.Decimal01, totalSuma.ToString());            
+            
+            return resultado;
+            #endregion
+        }
     }
 
     public struct PosCortes
@@ -2362,6 +2440,7 @@ namespace App.ControlInsumos
         LetraCapital,
         Decimal01,
         Decimal02,
+        Decimal04,
         HoraMinuto
     }
 }

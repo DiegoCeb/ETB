@@ -12,6 +12,9 @@ namespace App.ControlLogicaProcesos
 {
     public class ProcesoGobiernos : IProcess
     {
+        private string Cuenta { get; set; }
+
+
         public ProcesoGobiernos(string pArchivo)
         {
             #region ProcesoGobiernos
@@ -256,25 +259,11 @@ namespace App.ControlLogicaProcesos
                 resultado.Add(resultadoFormateoLinea);
             }
 
-            resultadoFormateoLinea = FormateoCanalTPNC(datosOriginales);
-
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
-
-            resultadoFormateoLinea = FormateoCanal1JJJ(datosOriginales);
+            resultadoFormateoLinea = FormateoGrupoTPNC(datosOriginales);
 
             if (((IEnumerable<string>)resultadoFormateoLinea).Any())
             {
                 resultado.AddRange(resultadoFormateoLinea);
-            }
-
-            resultadoFormateoLinea = FormateoCanal1JJA(datosOriginales);
-
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
             }
 
             resultadoFormateoLinea = FormateoCanal1KKK(datosOriginales);
@@ -306,6 +295,13 @@ namespace App.ControlLogicaProcesos
             }
 
             resultadoFormateoLinea = FormateoCanal1QQQ(datosOriginales);
+
+            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            {
+                resultado.Add(resultadoFormateoLinea);
+            }
+
+            resultadoFormateoLinea = FormateoCanalCUFE(datosOriginales);
 
             if (!string.IsNullOrEmpty(resultadoFormateoLinea))
             {
@@ -386,7 +382,16 @@ namespace App.ControlLogicaProcesos
             #region FormateoCanal1CTF
             string resultado = string.Empty;
 
-            return resultado;
+            var result02S000 = from busqueda in datosOriginales
+                               where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("02S000")
+                               select busqueda;
+
+            if (result02S000.Any())
+            {
+                resultado = "1CTF|TOTAL FACTURADO|" + Helpers.FormatearCampos(TiposFormateo.Decimal01, result02S000.FirstOrDefault().Substring(48, 14)) + "| ";
+            }
+
+            return Helpers.ValidarPipePipe(resultado);
             #endregion
         }
 
@@ -655,10 +660,79 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        private string FormateoCanalTPNC(List<string> datosOriginales)
+        private IEnumerable<string> FormateoGrupoTPNC(List<string> datosOriginales)
         {
             #region FormateoCanalTPNC
-            string resultado = string.Empty;
+            List<string> resultado = new List<string>();
+            string lineaFormateada = string.Empty;
+
+            List<PosCortes> listaCortes = new List<PosCortes>();            
+            List<string> sumaCampo1 = new List<string>();
+            List<string> sumaCampo2 = new List<string>();
+            List<string> sumaCampo3 = new List<string>();
+            List<string> sumaCampo4 = new List<string>();
+            List<string> sumaCampo5 = new List<string>();
+            List<string> sumaCampo6 = new List<string>();
+
+
+
+            var result888888 = from busqueda in datosOriginales
+                               where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("888888")
+                               select busqueda;
+
+            if(result888888.Any())
+            {
+                #region Formatear TPCN
+                lineaFormateada = "TPNC|" + result888888.Count().ToString() + "| ";
+                resultado.Add(Helpers.ValidarPipePipe(lineaFormateada));
+                #endregion
+
+                #region Formatear 1JJJ
+
+                // Cortes Fijos
+                listaCortes.Add(new PosCortes(6, 20));
+                listaCortes.Add(new PosCortes(40, 14, TiposFormateo.Decimal04));
+                listaCortes.Add(new PosCortes(54, 14, TiposFormateo.Decimal04));
+                listaCortes.Add(new PosCortes(68, 14, TiposFormateo.Decimal04));
+                listaCortes.Add(new PosCortes(82, 14, TiposFormateo.Decimal04));
+                listaCortes.Add(new PosCortes(96, 14, TiposFormateo.Decimal04));
+                listaCortes.Add(new PosCortes(110, 14, TiposFormateo.Decimal04));
+
+                foreach (var lineaActual in result888888)
+                {                    
+                    sumaCampo1.Add(lineaActual.Substring(40,14));
+                    sumaCampo2.Add(lineaActual.Substring(54, 14));
+                    sumaCampo3.Add(lineaActual.Substring(68, 14));
+                    sumaCampo4.Add(lineaActual.Substring(83, 14));
+                    sumaCampo5.Add(lineaActual.Substring(96, 14));
+                    sumaCampo6.Add(lineaActual.Substring(110, 14));
+
+                    lineaFormateada = "1JJJ|";
+                    lineaFormateada += Helpers.ExtraccionCamposSpool(listaCortes,lineaActual) + "|| ";
+                    resultado.Add(Helpers.ValidarPipePipe(lineaFormateada));
+                }
+
+                if(result888888.Count() % 2 != 0)
+                {
+                    lineaFormateada = "1JJJ|||||||| ";
+                    resultado.Add(Helpers.ValidarPipePipe(lineaFormateada));
+                }
+
+                #endregion
+
+                #region Formatear 1JJA
+
+                lineaFormateada = "1JJA|Total|";
+                lineaFormateada += Helpers.SumarCampos(sumaCampo1) + "|";
+                lineaFormateada += Helpers.SumarCampos(sumaCampo2) + "|";
+                lineaFormateada += Helpers.SumarCampos(sumaCampo3) + "|";
+                lineaFormateada += Helpers.SumarCampos(sumaCampo4) + "|";
+                lineaFormateada += Helpers.SumarCampos(sumaCampo5) + "|";
+                lineaFormateada += Helpers.SumarCampos(sumaCampo6) + "| ";
+                resultado.Add(Helpers.ValidarPipePipe(lineaFormateada));
+
+                #endregion
+            }
 
             return resultado;
             #endregion
@@ -689,6 +763,30 @@ namespace App.ControlLogicaProcesos
             string resultado = string.Empty;
 
             return resultado;
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="datosOriginales"></param>
+        /// <returns></returns>
+        private string FormateoCanalCUFE(List<string> datosOriginales)
+        {
+            #region FormateoCanalCUFE
+            string resultado = string.Empty;
+            string valor = string.Empty;
+
+            resultado = "CUFE|";
+
+            if (Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey(Cuenta))
+            {
+                valor = Variables.Variables.DatosInsumoETBFacturaElectronica[Cuenta];
+            }
+
+            resultado += valor + "| ";
+
+            return Helpers.ValidarPipePipe(resultado);
             #endregion
         }
 

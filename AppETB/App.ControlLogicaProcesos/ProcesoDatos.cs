@@ -12,6 +12,9 @@ namespace App.ControlLogicaProcesos
 {
     public class ProcesoDatos : IProcess
     {
+        private string Cuenta { get; set; }
+        private int? MesMora { get; set; }
+
         public ProcesoDatos(string pArchivo)
         {
             #region ProcesoDatos
@@ -172,7 +175,7 @@ namespace App.ControlLogicaProcesos
                 resultado.Add(resultadoFormateoLinea);
             }
 
-            resultadoFormateoLinea = FormateoCanal1CRM(datosOriginales);
+            resultadoFormateoLinea = FormateoCanal1CRM(datosOriginales, "1CRM");
 
             if (!string.IsNullOrEmpty(resultadoFormateoLinea))
             {
@@ -281,7 +284,7 @@ namespace App.ControlLogicaProcesos
 
             if (!string.IsNullOrEmpty(resultadoFormateoLinea))
             {
-                resultado.Add(resultadoFormateoLinea);
+                resultado.AddRange(resultadoFormateoLinea);
             }
 
             resultadoFormateoLinea = FormateoCanal1MMM(datosOriginales);
@@ -292,6 +295,13 @@ namespace App.ControlLogicaProcesos
             }
 
             resultadoFormateoLinea = FormateoCanal1QQQ(datosOriginales);
+
+            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            {
+                resultado.Add(resultadoFormateoLinea);
+            }
+
+            resultadoFormateoLinea = FormateoCanalCUFE(datosOriginales);
 
             if (!string.IsNullOrEmpty(resultadoFormateoLinea))
             {
@@ -372,7 +382,16 @@ namespace App.ControlLogicaProcesos
             #region FormateoCanal1CTF
             string resultado = string.Empty;
 
-            return resultado;
+            var result02S000 = from busqueda in datosOriginales
+                               where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("02S000")
+                               select busqueda;
+
+            if(result02S000.Any())
+            {
+                resultado = "1CTF|TOTAL FACTURADO|" + Helpers.FormatearCampos(TiposFormateo.Decimal01, result02S000.FirstOrDefault().Substring(48, 14)) + "| ";
+            }
+
+            return Helpers.ValidarPipePipe(resultado);
             #endregion
         }
 
@@ -381,12 +400,159 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        private string FormateoCanal1CRM(List<string> datosOriginales)
+        private string FormateoCanal1CRM(List<string> datosOriginales, string canal)
         {
             #region FormateoCanal1CRM
             string resultado = string.Empty;
+            List<string> lisCamposSumar = new List<string>();
+            Dictionary<string,double> dicValores = new Dictionary<string,double>();
+            string llavePrincipal = string.Empty;
 
-            return resultado;
+            string identificadorCanal = string.Empty;
+            double recargo = 0;
+            double iva = 0;
+            double impuestoProducto = 0;
+            double iva_recargo = 0;
+
+            dicValores.Add("1", 0);    // Telefonia Local
+            dicValores.Add("2", 0);    // Larga Distancia
+            dicValores.Add("3", 0);    // Internet y Datos
+            dicValores.Add("4", 0);    // TV
+            dicValores.Add("5", 0);    // Otros Operadores
+            dicValores.Add("6", 0);    // Alianzas
+            dicValores.Add("7", 0);    // Otros Operadores
+            dicValores.Add("8", 0);    // Alianzas
+            dicValores.Add("9", 0);    // Movilidad
+            dicValores.Add("SUBTOTAL", 0);
+            dicValores.Add("IVA", 0);
+            dicValores.Add("IMPUESTOS", 0);
+            dicValores.Add("TOTAL", 0);
+
+            #region Busqueda            
+
+            var result02TX = from busqueda in datosOriginales
+                             where busqueda.Length > 4 && (busqueda.Substring(0, 4).Equals("02T1") ||
+                                                           busqueda.Substring(0, 4).Equals("02T2") ||
+                                                           busqueda.Substring(0, 4).Equals("02T3") ||
+                                                           busqueda.Substring(0, 4).Equals("02T4") ||
+                                                           busqueda.Substring(0, 4).Equals("02T5") ||
+                                                           busqueda.Substring(0, 4).Equals("02T6") ||
+                                                           busqueda.Substring(0, 4).Equals("02T7") ||
+                                                           busqueda.Substring(0, 4).Equals("02T8") ||
+                                                           busqueda.Substring(0, 4).Equals("02T9"))
+                             select busqueda; 
+            #endregion
+
+            if (result02TX.Any())
+            {
+                foreach (var lineaActual in result02TX)
+                {
+                    llavePrincipal = lineaActual.Substring(3, 1);
+                    identificadorCanal = lineaActual.Substring(0, 6);
+
+                    if(identificadorCanal == "02T112" || identificadorCanal == "02T222" || identificadorCanal == "02T309" || identificadorCanal == "02T409" || 
+                       identificadorCanal == "02T576" || identificadorCanal == "02T801" || identificadorCanal == "02T942")
+                    {
+                        if (dicValores.Keys.Contains(llavePrincipal))
+                        {
+                            switch (canal)
+                            {
+                                case "1CRM":
+                                    dicValores[llavePrincipal] += Convert.ToDouble(lineaActual.Substring(20, 14));
+                                    dicValores["SUBTOTAL"] += Convert.ToDouble(lineaActual.Substring(20, 14));
+                                    dicValores["IMPUESTOS"] = 0;
+                                    dicValores["TOTAL"] = dicValores["SUBTOTAL"] + dicValores["IVA"] + dicValores["IMPUESTOS"];
+                                    break;
+
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if(Convert.ToDouble(lineaActual.Substring(6,14)) != 0 || identificadorCanal == "02T317")
+                        {
+
+                            recargo =  Convert.ToDouble(lineaActual.Substring(20,14));
+                            iva = Convert.ToDouble(lineaActual.Substring(34, 14));
+                            dicValores["IVA"] += iva;
+
+                            if (recargo != 0 && dicValores["IVA"] > 0)
+                            {
+                                iva_recargo = recargo * Convert.ToDouble(Utilidades.LeerAppConfig("porcentajeIva"));
+
+                                switch (canal)
+                                {
+                                    case "1CRM":
+                                        dicValores["IVA"] += iva_recargo;                                        
+                                        dicValores["IMPUESTOS"] = 0;
+                                        dicValores["TOTAL"] = dicValores["SUBTOTAL"] + dicValores["IVA"] + dicValores["IMPUESTOS"];
+                                        break;
+
+                                    default:
+                                        break;
+                                }
+                            }
+                            
+                        }
+                        else if (Convert.ToDouble(lineaActual.Substring(20, 14)) != 0)
+                        {
+                            switch (canal)
+                            {
+                                case "1CRM":
+                                    dicValores["IVA"] += Convert.ToDouble(lineaActual.Substring(34, 14));                                    
+                                    dicValores["IMPUESTOS"] = 0;
+                                    dicValores["TOTAL"] = dicValores["SUBTOTAL"] + dicValores["IVA"] + dicValores["IMPUESTOS"];
+                                    break;
+
+                                default:
+                                    break;
+                            }
+
+                            if (identificadorCanal == "02T582" || identificadorCanal == "02T507" || identificadorCanal == "02T510" || identificadorCanal == "02T511" || 
+                                identificadorCanal == "02T517" || identificadorCanal == "02T502" || identificadorCanal == "02T504" || identificadorCanal == "02T505" || identificadorCanal == "02T118")
+                            {
+                                impuestoProducto = Convert.ToDouble(lineaActual.Substring(34, 14));
+                                impuestoProducto = impuestoProducto * Convert.ToDouble(Utilidades.LeerAppConfig("porcentajeImpuestoConsumo"));
+
+                                switch (canal)
+                                {
+                                    case "1CRM":                                        
+                                        dicValores["IMPUESTOS"] += impuestoProducto;
+                                        dicValores["IVA"] -= impuestoProducto;
+                                        break;
+
+                                    default:
+                                        break;
+                                }
+                            }
+
+                        }
+
+
+                    }
+
+                    
+                }
+
+                // Armar canal
+                resultado =  canal + "|";
+                resultado += "Concepto|";
+                resultado += Helpers.FormatearCampos(TiposFormateo.Decimal01, dicValores["1"].ToString()) + "|";
+                resultado += Helpers.FormatearCampos(TiposFormateo.Decimal01, dicValores["3"].ToString()) + "|";
+                resultado += Helpers.FormatearCampos(TiposFormateo.Decimal01, dicValores["2"].ToString()) + "|";
+                resultado += Helpers.FormatearCampos(TiposFormateo.Decimal01, dicValores["9"].ToString()) + "|";
+                resultado += Helpers.FormatearCampos(TiposFormateo.Decimal01, dicValores["4"].ToString()) + "|";
+                resultado += Helpers.SumarCamposLinea(dicValores["6"].ToString() + "," + dicValores["8"].ToString(), ',') + "|";
+                resultado += Helpers.SumarCamposLinea(dicValores["5"].ToString() + "," + dicValores["7"].ToString(), ',') + "|";
+                resultado += Helpers.FormatearCampos(TiposFormateo.Decimal01, dicValores["SUBTOTAL"].ToString()) + "|";
+                resultado += Helpers.FormatearCampos(TiposFormateo.Decimal01, dicValores["IVA"].ToString()) + "|";
+                resultado += Helpers.FormatearCampos(TiposFormateo.Decimal01, dicValores["IMPUESTOS"].ToString()) + "|";
+                resultado += Helpers.FormatearCampos(TiposFormateo.Decimal01, dicValores["TOTAL"].ToString()) + "| ";
+            }
+            
+            return Helpers.ValidarPipePipe(resultado);
             #endregion
         }
 
@@ -547,6 +713,43 @@ namespace App.ControlLogicaProcesos
         {
             #region FormateoCanal1JJK
             List<string> resultado = new List<string>();
+            List<string> listaValores = new List<string>();
+            string lineaTemp1JJK = string.Empty;
+
+            var result888888 = from busqueda in datosOriginales
+                                where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("888888")
+                                select busqueda;
+
+
+            if( result888888.Any())
+            {
+                foreach (var registroActual in result888888)
+                {
+                    listaValores.Add(registroActual.Substring(6,20).Trim());
+                }
+
+                for (int i = 0; i < listaValores.Count; i++)
+                {
+                    if(i % 3 == 0 && i != 0)
+                    {
+                        resultado.Add(Helpers.ValidarPipePipe(lineaTemp1JJK));
+                        lineaTemp1JJK = String.Empty;
+                    }
+
+                    if (i % 3 == 0 || i == 0)
+                    {
+                        lineaTemp1JJK = "1JJK|";
+                    }
+
+                    lineaTemp1JJK += listaValores[i] + "| ";
+                }
+
+                if(!string.IsNullOrEmpty(lineaTemp1JJK))
+                {
+                    resultado.Add(Helpers.ValidarPipePipe(lineaTemp1JJK));
+                }                
+            }
+
 
             return resultado;
             #endregion
@@ -562,6 +765,11 @@ namespace App.ControlLogicaProcesos
             #region FormateoCanal1LLL
             string resultado = string.Empty;
 
+            if(MesMora >= 4)
+            {
+                resultado = "1LLL|Estimado  Cliente: Su servicio se encuentra suspendido debido a que el sistema aún no registra su pago. Para que pueda continuar beneficiándose de nuestros servicios, le invitamos a efectuar el pago a la mayor brevedad únicamente en efectivo o cheque de gerencia. Si cancelá su factura anterior después de la fecha límite de pago y éste no fue aplicado en la presente factura, por favor acérquese a nuestro Centro de Servicios más cercano con el fin de expedirle un recibo con el valor real a pagar.| ";
+            }            
+
             return resultado;
             #endregion
         }
@@ -571,12 +779,22 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        private string FormateoCanalCART(List<string> datosOriginales)
+        private IEnumerable<string> FormateoCanalCART(List<string> datosOriginales)
         {
             #region FormateoCanalCART
-            string resultado = string.Empty;
+            string lineaTemCART = string.Empty;
+            List<string> listaCART = new List<string>();
 
-            return resultado;
+            if(Variables.Variables.DatosInsumoAsignacionCartas.ContainsKey(Cuenta))
+            {
+                foreach (var cartaActual in Variables.Variables.DatosInsumoAsignacionCartas[Cuenta])
+                {
+                    lineaTemCART = cartaActual.Replace(Cuenta + "|", "CART|").Trim();
+                    listaCART.Add(Helpers.ValidarPipePipe(lineaTemCART));
+                }                
+            }
+
+            return listaCART;
             #endregion
         }
 
@@ -647,6 +865,30 @@ namespace App.ControlLogicaProcesos
             string resultado = string.Empty;
 
             return resultado;
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="datosOriginales"></param>
+        /// <returns></returns>
+        private string FormateoCanalCUFE(List<string> datosOriginales)
+        {
+            #region FormateoCanalCUFE
+            string resultado = string.Empty;            
+            string valor = string.Empty;
+
+            resultado = "CUFE|";
+
+            if (Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey(Cuenta))
+            {
+                valor = Variables.Variables.DatosInsumoETBFacturaElectronica[Cuenta];
+            }
+
+            resultado += valor + "| ";
+
+            return Helpers.ValidarPipePipe(resultado);            
             #endregion
         }
 
