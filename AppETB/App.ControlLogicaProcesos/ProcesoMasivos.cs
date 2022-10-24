@@ -193,12 +193,12 @@ namespace App.ControlLogicaProcesos
             if (pLLaveCruce == "12051553008")
             {
 
-            }            
+            }
 
             FormatearPropiedadesExtracto();
 
             #region Formateo Canales
-resultadoFormateoLinea = MapeoCanal1AAA(datosOriginales);
+            resultadoFormateoLinea = MapeoCanal1AAA(datosOriginales);
 
             if (!string.IsNullOrEmpty(resultadoFormateoLinea))
             {
@@ -571,7 +571,7 @@ resultadoFormateoLinea = MapeoCanal1AAA(datosOriginales);
                 listaCortes.Add(new PosCortes(117, 20));
                 listaCortes.Add(new PosCortes(139, 12));
                 ListaCanal1AAA.Add(Helpers.ExtraccionCamposSpool(listaCortes, Linea010000));
-                
+
                 ListaCanal1AAA.Add(Ciclo);
 
                 listaCortes.Clear();
@@ -677,12 +677,11 @@ resultadoFormateoLinea = MapeoCanal1AAA(datosOriginales);
             int mesMora = Convert.ToInt32(pCampo);
             mesMora += 1;
             mesMora = mesMora > 4 ? 4 : mesMora;
-            
 
             #region Ajuste Morosidad
             var result02T002 = from busqueda in pDatosOriginales
-                              where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("02T002")
-                              select busqueda;
+                               where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("02T002")
+                               select busqueda;
 
             if (result02T002.Any())
             {
@@ -690,7 +689,6 @@ resultadoFormateoLinea = MapeoCanal1AAA(datosOriginales);
                 {
                     mesMora = 1;
                 }
-
             }
 
             #endregion
@@ -764,9 +762,8 @@ resultadoFormateoLinea = MapeoCanal1AAA(datosOriginales);
                         telefono = item.Substring(6, 20).Trim();
                         validarPlanActual = false;
                     }
-                    else if (IsFibra && validarPlanActual && item.Substring(124,2).Trim() != "")
+                    else if (IsFibra && validarPlanActual && item.Substring(124, 2).Trim() != "")
                     {
-                        string sss = item.Substring(124, 2);
                         telefono = item.Substring(6, 20).Trim();
                         validarPlanActual = false;
                     }
@@ -774,19 +771,17 @@ resultadoFormateoLinea = MapeoCanal1AAA(datosOriginales);
                 }
             }
 
-
             if (!string.IsNullOrEmpty(telefono))
             {
                 if (IsResidencial || IsFibra)
                 {
-                    if ((telefono.Length != 8 || telefono.Length != 10) || telefono.Substring(0,1) == "1")
+                    if ((telefono.Length != 8 || telefono.Length != 10) || telefono.Substring(0, 1) == "1")
                     {
                         telefono = string.Empty;
                     }
                 }
 
             }
-
 
             return telefono;
             #endregion
@@ -1368,7 +1363,7 @@ resultadoFormateoLinea = MapeoCanal1AAA(datosOriginales);
             {
                 List<string> camposlocBar = locBar.Split('|').ToList();
 
-                string llaveBarrio = ($"{camposlocBar[1].TrimStart('0')}{camposlocBar[2]}").PadLeft(8,'0');
+                string llaveBarrio = ($"{camposlocBar[1].TrimStart('0')}{camposlocBar[2]}").PadLeft(8, '0');
                 llaveBarrio = $"CODX{llaveBarrio}";
                 string llaveLocalidad = $"CODL{camposlocBar[1]}";
 
@@ -1391,12 +1386,12 @@ resultadoFormateoLinea = MapeoCanal1AAA(datosOriginales);
 
             if (result010002.Any())
             {
-                string linea010002 =result010002.FirstOrDefault();
+                string linea010002 = result010002.FirstOrDefault();
                 if (IsLte || IsLteCorporativo)
                 {
                     if (string.IsNullOrEmpty(barrio.Trim()))
                     {
-                        barrio = linea010002.Substring(6,30).Trim();
+                        barrio = linea010002.Substring(6, 30).Trim();
                     }
 
                     if (string.IsNullOrEmpty(localidad.Trim()))
@@ -1569,7 +1564,7 @@ resultadoFormateoLinea = MapeoCanal1AAA(datosOriginales);
                 { isDual = true; }
                 else
                 { isSoloMail = true; }
-            }        
+            }
 
             if (IsGobierno)
             {
@@ -2695,6 +2690,57 @@ resultadoFormateoLinea = MapeoCanal1AAA(datosOriginales);
             #endregion
         }
 
+        private string GetNombrePaquete(string letras)
+        {
+            #region GetNombrePaquete
+
+            string llave = string.Empty;
+            string valor = string.Empty;
+
+            if (letras.Contains("A") && letras.Contains("B") && letras.Contains("C"))
+            {
+                valor = Variables.Variables.DatosInsumoConformacionPaquetes["ABC"];
+                return valor.Split('|')[1];
+            }
+            else if (letras.Contains("A") && letras.Contains("B"))
+            {
+                valor = Variables.Variables.DatosInsumoConformacionPaquetes["AB"];
+                return valor.Split('|')[1];
+            }
+            else if (letras.Contains("A") && letras.Contains("C"))
+            {
+                valor = Variables.Variables.DatosInsumoConformacionPaquetes["AC"];
+                return valor.Split('|')[1];
+            }
+            else if (letras.Contains("B") && letras.Contains("C"))
+            {
+                valor = Variables.Variables.DatosInsumoConformacionPaquetes["BC"];
+                return valor.Split('|')[1];
+            }
+            else if (letras.Contains("F") && letras.Contains("G"))
+            {
+                valor = Variables.Variables.DatosInsumoConformacionPaquetes["FG"];
+                return valor.Split('|')[1];
+            }
+            else if (letras.Contains("A") && letras.Contains("G"))
+            {
+                valor = Variables.Variables.DatosInsumoConformacionPaquetes["AG"];
+                return valor.Split('|')[1];
+            }
+            else if (letras.Contains("B") && letras.Contains("F"))
+            {
+                valor = Variables.Variables.DatosInsumoConformacionPaquetes["BF"];
+                return valor.Split('|')[1];
+            }
+            else
+            {
+                return string.Empty;
+            }
+
+
+            #endregion
+        }
+
         private IEnumerable<string> MapeoGrupoAFI(List<string> datosOriginales)
         {
             #region MapeoGrupoAFI
@@ -2760,7 +2806,7 @@ resultadoFormateoLinea = MapeoCanal1AAA(datosOriginales);
                     //        periodoTemp = resultActual.Substring(128, 6);
                     //        lisPeriodoMax.Add(periodoTemp + "01");
                     //    }
-                        
+
                     //    // Llena Diccionario
                     //    if (dicOrdenado.ContainsKey(periodoTemp))
                     //    {
@@ -2774,7 +2820,6 @@ resultadoFormateoLinea = MapeoCanal1AAA(datosOriginales);
                 }
             }
             #endregion
-
 
             #region Se toma el nombre del plan y se separan 1BFI y 1CFI 
             foreach (string key in dicOrdenado.Keys)
@@ -2851,7 +2896,7 @@ resultadoFormateoLinea = MapeoCanal1AAA(datosOriginales);
                     if (string.IsNullOrEmpty(valorLetra))
                     {
                         listaRegi1CFI.Add(registro);
-                    } 
+                    }
                     #endregion
                 }
             }
@@ -2872,12 +2917,12 @@ resultadoFormateoLinea = MapeoCanal1AAA(datosOriginales);
                     #region Llena listas de fechas
                     if (registro1BFI.Substring(0, 6) == "11C304")
                     {
-                        if(registro1BFI.Substring(128, 19).Contains("-"))
+                        if (registro1BFI.Substring(128, 19).Contains("-"))
                         {
                             listaFechas11C304.Add(registro1BFI.Substring(128, 19));
                             listaFechasDesde.Add(registro1BFI.Substring(128, 8));
                             listaFechasHasta.Add(registro1BFI.Substring(139, 8));
-                        }                        
+                        }
                     }
                     #endregion
 
@@ -2933,8 +2978,7 @@ resultadoFormateoLinea = MapeoCanal1AAA(datosOriginales);
                     listaGrupo.AddRange(lisTemp1BF1);
 
                 #endregion
-            }            
-
+            }
 
             #region Se arma el canal 1CFI
             List<string> lisTemp1CF1 = Logica1CFI(listaRegi1CFI);
@@ -3031,7 +3075,7 @@ resultadoFormateoLinea = MapeoCanal1AAA(datosOriginales);
                             }
                         }
                     }
-                                      
+
                 }
             }
 
@@ -3101,7 +3145,7 @@ resultadoFormateoLinea = MapeoCanal1AAA(datosOriginales);
 
                 valorRecatgoMora = Helpers.SumarCampos(sumaRecargo);
 
-                if(valorRecatgoMora == "$ 0,00")
+                if (valorRecatgoMora == "$ 0,00")
                 {
                     resultadoRecargoMora = string.Empty;
                 }
@@ -3120,7 +3164,7 @@ resultadoFormateoLinea = MapeoCanal1AAA(datosOriginales);
                     resultadoRecargoMora += "| ";
                 }
 
-                
+
             }
 
             return Helpers.ValidarPipePipe(resultadoRecargoMora);
@@ -3275,7 +3319,7 @@ resultadoFormateoLinea = MapeoCanal1AAA(datosOriginales);
 
             return resultado;
             #endregion
-        }       
+        }
 
         /// Metodo que obtiene la linea formateada de Canal 1TFI
         /// </summary>

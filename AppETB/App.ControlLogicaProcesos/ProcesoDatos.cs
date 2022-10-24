@@ -315,9 +315,9 @@ namespace App.ControlLogicaProcesos
 
             resultadoFormateoLinea = FormateoCanalNTC4(datosOriginales);
 
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            if (((IEnumerable<string>)resultadoFormateoLinea).Any())
             {
-                resultado.Add(resultadoFormateoLinea);
+                resultado.AddRange(resultadoFormateoLinea);
             }
 
             resultadoFormateoLinea = FormateoCanalNTC5(datosOriginales);
@@ -1756,7 +1756,7 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        private string FormateoCanalNTC4(List<string> datosOriginales)
+        private IEnumerable<string> FormateoCanalNTC4(List<string> datosOriginales)
         {
             #region FormateoCanalNTC4
             List<string> resultado = new List<string>();
