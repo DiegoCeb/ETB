@@ -109,7 +109,7 @@ namespace App.ControlLogicaProcesos
                                     {
                                         if (!Variables.Variables.DatosInsumoProcuni.ContainsKey(llaveCruce))
                                         {
-                                            Variables.Variables.DatosErrorLTE.Add(llaveCruce, FormatearArchivo(llaveCruce, datosExtractoFormateo));
+                                            //Variables.Variables.DatosErrorLTE.Add(llaveCruce, FormatearArchivo(llaveCruce, datosExtractoFormateo));
                                             cuentaErrorLte = true;
                                         }
                                     }
@@ -186,11 +186,7 @@ namespace App.ControlLogicaProcesos
             List<string> resultado = new List<string>();            
             dynamic resultadoFormateoLinea = null;
 
-            if (pLLaveCruce == "" ||
-                pLLaveCruce == "" ||
-                pLLaveCruce == "" ||
-                pLLaveCruce == "" ||
-                pLLaveCruce == "")
+            if (pLLaveCruce == "12051553008")
             {
 
             }
@@ -205,301 +201,301 @@ namespace App.ControlLogicaProcesos
                 resultado.Add(resultadoFormateoLinea);
             }
 
-            //resultadoFormateoLinea = linea1BBB = MapeoCanal1BBB(datosOriginales);
+            resultadoFormateoLinea = MapeoCanal1BBB(datosOriginales);
 
-            //if (((IEnumerable<string>)resultadoFormateoLinea).Any())
-            //{
-            //    resultado.AddRange(resultadoFormateoLinea);
-            //}
-			
+            if (((IEnumerable<string>)resultadoFormateoLinea).Any())
+            {
+                resultado.AddRange(resultadoFormateoLinea);
+            }
+
             //resultadoFormateoLinea = MapeoCanal1BBA(datosOriginales, linea1BBB.ToList());
 
             //if (!string.IsNullOrEmpty(resultadoFormateoLinea))
             //{
             //    resultado.Add(resultadoFormateoLinea);
             //}
-			
-            resultadoFormateoLinea = MapeoAgrupacion1CCA(datosOriginales);
 
-            if (((IEnumerable<string>)resultadoFormateoLinea).Any())
-            {
-                resultado.AddRange(resultadoFormateoLinea);
-            }
+            //resultadoFormateoLinea = MapeoAgrupacion1CCA(datosOriginales);
 
-            resultadoFormateoLinea = MapeoCanalADNC(datosOriginales);
+            //if (((IEnumerable<string>)resultadoFormateoLinea).Any())
+            //{
+            //    resultado.AddRange(resultadoFormateoLinea);
+            //}
 
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
+            //resultadoFormateoLinea = MapeoCanalADNC(datosOriginales);
 
-            resultadoFormateoLinea = FormateoCanalADN1(datosOriginales);
+            //if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            //{
+            //    resultado.Add(resultadoFormateoLinea);
+            //}
 
-            if (((IEnumerable<string>)resultadoFormateoLinea).Any())
-            {
-                resultado.AddRange(resultadoFormateoLinea);
-            }
+            //resultadoFormateoLinea = FormateoCanalADN1(datosOriginales);
 
-            resultadoFormateoLinea = FormarPaqueteEEE(datosOriginales);
+            //if (((IEnumerable<string>)resultadoFormateoLinea).Any())
+            //{
+            //    resultado.AddRange(resultadoFormateoLinea);
+            //}
 
-            if (((IEnumerable<string>)resultadoFormateoLinea).Any())
-            {
-                resultado.AddRange(resultadoFormateoLinea);
-            }
+            //resultadoFormateoLinea = FormarPaqueteEEE(datosOriginales);
 
-            resultadoFormateoLinea = MapeoCanal1OOA(datosOriginales);
+            //if (((IEnumerable<string>)resultadoFormateoLinea).Any())
+            //{
+            //    resultado.AddRange(resultadoFormateoLinea);
+            //}
 
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-                Is1OOA = true;
-            }
+            //resultadoFormateoLinea = MapeoCanal1OOA(datosOriginales);
 
-            resultadoFormateoLinea = MapeoCanal1OPL(datosOriginales);
+            //if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            //{
+            //    resultado.Add(resultadoFormateoLinea);
+            //    Is1OOA = true;
+            //}
 
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
+            //resultadoFormateoLinea = MapeoCanal1OPL(datosOriginales);
 
-            resultadoFormateoLinea = MapeoCanal1OOB(datosOriginales);
+            //if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            //{
+            //    resultado.Add(resultadoFormateoLinea);
+            //}
 
-            if (((IEnumerable<string>)resultadoFormateoLinea).Any())
-            {
-                resultado.AddRange(resultadoFormateoLinea);
-            }
+            //resultadoFormateoLinea = MapeoCanal1OOB(datosOriginales);
 
-            resultadoFormateoLinea = FormateoCanal1ODC(datosOriginales);
+            //if (((IEnumerable<string>)resultadoFormateoLinea).Any())
+            //{
+            //    resultado.AddRange(resultadoFormateoLinea);
+            //}
 
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-                Is1ODC = true;
-            }
+            //resultadoFormateoLinea = FormateoCanal1ODC(datosOriginales);
 
-            resultadoFormateoLinea = FormateoCanal1ODD(datosOriginales);
+            //if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            //{
+            //    resultado.Add(resultadoFormateoLinea);
+            //    Is1ODC = true;
+            //}
 
-            if (((IEnumerable<string>)resultadoFormateoLinea).Any())
-            {
-                resultado.AddRange(resultadoFormateoLinea);
-            }
+            //resultadoFormateoLinea = FormateoCanal1ODD(datosOriginales);
 
-            resultadoFormateoLinea = MapeoCanal1HIS(datosOriginales);
+            //if (((IEnumerable<string>)resultadoFormateoLinea).Any())
+            //{
+            //    resultado.AddRange(resultadoFormateoLinea);
+            //}
 
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
+            //resultadoFormateoLinea = MapeoCanal1HIS(datosOriginales);
 
-            resultadoFormateoLinea = MapeoCanal1HDT(datosOriginales);
+            //if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            //{
+            //    resultado.Add(resultadoFormateoLinea);
+            //}
 
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
+            //resultadoFormateoLinea = MapeoCanal1HDT(datosOriginales);
 
-            resultadoFormateoLinea = FormateoCanal1OOO(datosOriginales);
+            //if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            //{
+            //    resultado.Add(resultadoFormateoLinea);
+            //}
 
-            if (((IEnumerable<string>)resultadoFormateoLinea).Any())
-            {
-                resultado.AddRange(resultadoFormateoLinea);
-            }
+            //resultadoFormateoLinea = FormateoCanal1OOO(datosOriginales);
 
-            resultadoFormateoLinea = FormateoCanal1OMT(datosOriginales);
+            //if (((IEnumerable<string>)resultadoFormateoLinea).Any())
+            //{
+            //    resultado.AddRange(resultadoFormateoLinea);
+            //}
 
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
+            //resultadoFormateoLinea = FormateoCanal1OMT(datosOriginales);
 
-            resultadoFormateoLinea = MapeoCanal1OMV(datosOriginales);
+            //if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            //{
+            //    resultado.Add(resultadoFormateoLinea);
+            //}
 
-            if (((IEnumerable<string>)resultadoFormateoLinea).Any())
-            {
-                resultado.AddRange(resultadoFormateoLinea);
-            }
+            //resultadoFormateoLinea = MapeoCanal1OMV(datosOriginales);
 
-            resultadoFormateoLinea = MapeoCanal1PLA(datosOriginales);
+            //if (((IEnumerable<string>)resultadoFormateoLinea).Any())
+            //{
+            //    resultado.AddRange(resultadoFormateoLinea);
+            //}
 
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
+            //resultadoFormateoLinea = MapeoCanal1PLA(datosOriginales);
 
-            resultadoFormateoLinea = MapeoCanal1DET(datosOriginales);
+            //if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            //{
+            //    resultado.Add(resultadoFormateoLinea);
+            //}
 
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
+            //resultadoFormateoLinea = MapeoCanal1DET(datosOriginales);
 
-            resultadoFormateoLinea = MapeoCanal1CPA(datosOriginales);
+            //if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            //{
+            //    resultado.Add(resultadoFormateoLinea);
+            //}
 
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
+            //resultadoFormateoLinea = MapeoCanal1CPA(datosOriginales);
 
-            resultadoFormateoLinea = FormateoCanal1CMP(datosOriginales);
+            //if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            //{
+            //    resultado.Add(resultadoFormateoLinea);
+            //}
 
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
+            //resultadoFormateoLinea = FormateoCanal1CMP(datosOriginales);
 
-            resultadoFormateoLinea = MapeoCanal1CCM(datosOriginales);
+            //if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            //{
+            //    resultado.Add(resultadoFormateoLinea);
+            //}
 
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
+            //resultadoFormateoLinea = MapeoCanal1CCM(datosOriginales);
 
-            resultadoFormateoLinea = MapeoGrupoAFI(datosOriginales);
+            //if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            //{
+            //    resultado.Add(resultadoFormateoLinea);
+            //}
 
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
+            //resultadoFormateoLinea = MapeoGrupoAFI(datosOriginales);
 
-            resultadoFormateoLinea = MapeoCanal1CFI(datosOriginales);
+            //if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            //{
+            //    resultado.Add(resultadoFormateoLinea);
+            //}
 
-            if (((IEnumerable<string>)resultadoFormateoLinea).Any())
-            {
-                resultado.AddRange(resultadoFormateoLinea);
-            }
+            //resultadoFormateoLinea = MapeoCanal1CFI(datosOriginales);
 
-            resultadoFormateoLinea = MapeoCanal1CIC(datosOriginales);
+            //if (((IEnumerable<string>)resultadoFormateoLinea).Any())
+            //{
+            //    resultado.AddRange(resultadoFormateoLinea);
+            //}
 
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
+            //resultadoFormateoLinea = MapeoCanal1CIC(datosOriginales);
 
-            resultadoFormateoLinea = FormateoCanal1PPP(datosOriginales);
+            //if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            //{
+            //    resultado.Add(resultadoFormateoLinea);
+            //}
 
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
+            //resultadoFormateoLinea = FormateoCanal1PPP(datosOriginales);
 
-            resultadoFormateoLinea = FormateoCanal1FFF(datosOriginales);
+            //if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            //{
+            //    resultado.Add(resultadoFormateoLinea);
+            //}
 
-            if (((IEnumerable<string>)resultadoFormateoLinea).Any())
-            {
-                resultado.AddRange(resultadoFormateoLinea);
-            }
+            //resultadoFormateoLinea = FormateoCanal1FFF(datosOriginales);
 
-            resultadoFormateoLinea = MapeoCanal1FFA(datosOriginales);
+            //if (((IEnumerable<string>)resultadoFormateoLinea).Any())
+            //{
+            //    resultado.AddRange(resultadoFormateoLinea);
+            //}
 
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
+            //resultadoFormateoLinea = MapeoCanal1FFA(datosOriginales);
 
-            resultadoFormateoLinea = MapeoCanal1KKK();
+            //if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            //{
+            //    resultado.Add(resultadoFormateoLinea);
+            //}
 
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
+            //resultadoFormateoLinea = MapeoCanal1KKK();
 
-            resultadoFormateoLinea = MapeoCanal1LLL();
+            //if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            //{
+            //    resultado.Add(resultadoFormateoLinea);
+            //}
 
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
+            //resultadoFormateoLinea = MapeoCanal1LLL();
 
-            resultadoFormateoLinea = MapeoCanal1RRT(datosOriginales);
+            //if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            //{
+            //    resultado.Add(resultadoFormateoLinea);
+            //}
 
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
+            //resultadoFormateoLinea = MapeoCanal1RRT(datosOriginales);
 
-            resultadoFormateoLinea = MapeoCanal1RRR(datosOriginales);
+            //if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            //{
+            //    resultado.Add(resultadoFormateoLinea);
+            //}
 
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
+            //resultadoFormateoLinea = MapeoCanal1RRR(datosOriginales);
 
-            resultadoFormateoLinea = MapeoCanalCONS(datosOriginales);
+            //if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            //{
+            //    resultado.Add(resultadoFormateoLinea);
+            //}
 
-            if (((IEnumerable<string>)resultadoFormateoLinea).Any())
-            {
-                resultado.AddRange(resultadoFormateoLinea);
-            }
+            //resultadoFormateoLinea = MapeoCanalCONS(datosOriginales);
 
-            resultadoFormateoLinea = MapeoCanal1CDP();
+            //if (((IEnumerable<string>)resultadoFormateoLinea).Any())
+            //{
+            //    resultado.AddRange(resultadoFormateoLinea);
+            //}
 
-            if (((IEnumerable<string>)resultadoFormateoLinea).Any())
-            {
-                resultado.AddRange(resultadoFormateoLinea);
-            }
+            //resultadoFormateoLinea = MapeoCanal1CDP();
 
-            resultadoFormateoLinea = MapeoCanal1MMM(datosOriginales);
+            //if (((IEnumerable<string>)resultadoFormateoLinea).Any())
+            //{
+            //    resultado.AddRange(resultadoFormateoLinea);
+            //}
 
-            if (((IEnumerable<string>)resultadoFormateoLinea).Any())
-            {
-                resultado.AddRange(resultadoFormateoLinea);
-            }
+            //resultadoFormateoLinea = MapeoCanal1MMM(datosOriginales);
 
-            resultadoFormateoLinea = MapeoCanalCART(datosOriginales);
+            //if (((IEnumerable<string>)resultadoFormateoLinea).Any())
+            //{
+            //    resultado.AddRange(resultadoFormateoLinea);
+            //}
 
-            if (((IEnumerable<string>)resultadoFormateoLinea).Any())
-            {
-                resultado.AddRange(resultadoFormateoLinea);
-            }
+            //resultadoFormateoLinea = MapeoCanalCART(datosOriginales);
 
-            resultadoFormateoLinea = MapeoCanalCUFE(datosOriginales);
+            //if (((IEnumerable<string>)resultadoFormateoLinea).Any())
+            //{
+            //    resultado.AddRange(resultadoFormateoLinea);
+            //}
 
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
+            //resultadoFormateoLinea = MapeoCanalCUFE(datosOriginales);
 
-            resultadoFormateoLinea = FormateoCanalNTC0(datosOriginales);
+            //if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            //{
+            //    resultado.Add(resultadoFormateoLinea);
+            //}
 
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
+            //resultadoFormateoLinea = FormateoCanalNTC0(datosOriginales);
 
-            resultadoFormateoLinea = FormateoCanalNTC1(datosOriginales);
+            //if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            //{
+            //    resultado.Add(resultadoFormateoLinea);
+            //}
 
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
+            //resultadoFormateoLinea = FormateoCanalNTC1(datosOriginales);
 
-            resultadoFormateoLinea = MapeoCanalNTC2(datosOriginales);
+            //if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            //{
+            //    resultado.Add(resultadoFormateoLinea);
+            //}
 
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
+            //resultadoFormateoLinea = MapeoCanalNTC2(datosOriginales);
 
-            resultadoFormateoLinea = MapeoCanalNTC3(datosOriginales);
+            //if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            //{
+            //    resultado.Add(resultadoFormateoLinea);
+            //}
 
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
+            //resultadoFormateoLinea = MapeoCanalNTC3(datosOriginales);
 
-            resultadoFormateoLinea = MapeoCanalNTC4(datosOriginales);
+            //if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            //{
+            //    resultado.Add(resultadoFormateoLinea);
+            //}
 
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
+            //resultadoFormateoLinea = MapeoCanalNTC4(datosOriginales);
 
-            resultadoFormateoLinea = MapeoCanalNTC5(datosOriginales);
+            //if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            //{
+            //    resultado.Add(resultadoFormateoLinea);
+            //}
 
-            if (((IEnumerable<string>)resultadoFormateoLinea).Any())
-            {
-                resultado.AddRange(resultadoFormateoLinea);
-            }
+            //resultadoFormateoLinea = MapeoCanalNTC5(datosOriginales);
+
+            //if (((IEnumerable<string>)resultadoFormateoLinea).Any())
+            //{
+            //    resultado.AddRange(resultadoFormateoLinea);
+            //}
             #endregion
 
             return resultado;
@@ -565,6 +561,11 @@ namespace App.ControlLogicaProcesos
                 Linea010000 = result.FirstOrDefault();
                 Linea040000 = result040000.FirstOrDefault();
 
+                // Se consulta antes de todo porque se requiere para validaciones
+                string etapas = GetTipoEtapas(Linea010000.Substring(151, 3));
+                Cuenta = Linea010000.Substring(117, 20).Trim();// Cuenta
+                Ciclo = Linea010000.Substring(151, 4).Trim().TrimStart('0'); // Asignamos Ciclo a variable Global
+
                 listaCortes.Add(new PosCortes(6, 50));
                 listaCortes.Add(new PosCortes(56, 12));
                 listaCortes.Add(new PosCortes(68, 40));
@@ -576,18 +577,16 @@ namespace App.ControlLogicaProcesos
 
                 listaCortes.Clear();
                 listaCortes.Add(new PosCortes(117, 20));
-                Cuenta = Linea010000.Substring(117, 20).Trim();// Cuenta
                 listaCortes.Add(new PosCortes(139, 12));
                 ListaCanal1AAA.Add(Helpers.ExtraccionCamposSpool(listaCortes, Linea010000));
-
-                Ciclo = Linea010000.Substring(151, 4).Trim().TrimStart('0'); // Asignamos Ciclo a variable Global
+                
                 ListaCanal1AAA.Add(Ciclo);
 
                 listaCortes.Clear();
                 listaCortes.Add(new PosCortes(155, 13, TiposFormateo.Decimal01));
                 listaCortes.Add(new PosCortes(168, 8, TiposFormateo.Fecha01));
                 ListaCanal1AAA.Add(Helpers.ExtraccionCamposSpool(listaCortes, Linea010000));
-                ListaCanal1AAA.Add(GetMesMora(Linea010000.Substring(176, 2).Trim()));
+                ListaCanal1AAA.Add(GetMesMora(Linea010000.Substring(176, 2).Trim(), datosOriginales));
 
                 listaCortes.Clear();
                 listaCortes.Add(new PosCortes(178, 8, TiposFormateo.Fecha01));
@@ -605,7 +604,7 @@ namespace App.ControlLogicaProcesos
 
                 ListaCanal1AAA.Add(GetNumeroReferencia(Linea010000.Substring(139, 12)));
                 ListaCanal1AAA.AddRange(GetCodigosBarras(Linea010000.Substring(139, 12), Linea010000, datosOriginales)); //TODO: Verificar valor a pagar
-                ListaCanal1AAA.Add(GetTipoEtapas(Linea010000.Substring(151, 3)));
+                ListaCanal1AAA.Add(etapas);
                 ListaCanal1AAA.Add(GetTasaInteres(Linea040000));
                 listaCortes.Clear();
                 listaCortes.Add(new PosCortes(108, 5));
@@ -613,13 +612,13 @@ namespace App.ControlLogicaProcesos
                 ListaCanal1AAA.Add(string.Empty); // TODO: Anexos Publicitarios - Verificar regla
                 ListaCanal1AAA.Add(GetActividad(Linea040000));
                 ListaCanal1AAA.Add(GetEstrato(Linea040000));
-                ListaCanal1AAA.AddRange(GetBarrioLocalidad());
+                ListaCanal1AAA.AddRange(GetBarrioLocalidad(datosOriginales));
                 ListaCanal1AAA.Add(string.Empty);
                 ListaCanal1AAA.Add(GetLogoInternet());
                 ListaCanal1AAA.Add(GetMarcaAnexosPublicidad());
                 ListaCanal1AAA.AddRange(GetEmailTipoEmal());
                 ListaCanal1AAA.AddRange(GetMarcaCupones());
-                ListaCanal1AAA.Add(string.Empty); // TODO: Numero de Hojas
+                ListaCanal1AAA.Add(GetMarcaNumHojas()); // TODO: Numero de Hojas
                 ListaCanal1AAA.Add(GetNivelReclamacion());
                 listaCortes.Clear();
                 listaCortes.Add(new PosCortes(108, 5));
@@ -634,7 +633,7 @@ namespace App.ControlLogicaProcesos
                 ListaCanal1AAA.AddRange(GetLocBar());
                 ListaCanal1AAA.AddRange(GetQR(Linea010000.Substring(6, 50)));
                 ListaCanal1AAA.Add(string.Empty); //CampoVacio
-                //ListaCanal1AAA.Add(GetFechaCorte(Linea010000));
+                ListaCanal1AAA.Add(GetFechaCorte(Linea010000));
                 ListaCanal1AAA.AddRange(GetPeriodoDesdeHasta(datosOriginales));
 
                 listaCortes.Clear();
@@ -680,13 +679,32 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="pCampo"></param>
         /// <returns></returns>
-        private string GetMesMora(string pCampo)
+        private string GetMesMora(string pCampo, List<string> pDatosOriginales)
         {
             #region GetMesMora
             int mesMora = Convert.ToInt32(pCampo);
             mesMora += 1;
             mesMora = mesMora > 4 ? 4 : mesMora;
+            
+
+            #region Ajuste Morosidad
+            var result02T002 = from busqueda in pDatosOriginales
+                              where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("02T002")
+                              select busqueda;
+
+            if (result02T002.Any())
+            {
+                if (mesMora > 1)
+                {
+                    mesMora = 1;
+                }
+
+            }
+
+            #endregion
+
             MesMora = mesMora;
+
             return mesMora.ToString();
             #endregion
         }
@@ -700,6 +718,8 @@ namespace App.ControlLogicaProcesos
         {
             #region GetTelefono
             string telefono = string.Empty;
+
+            bool validarPlanActual = IsResidencial || IsFibra || IsGobierno || IsLte || IsLteCorporativo;
 
             if (IsFibra)
             {
@@ -726,13 +746,14 @@ namespace App.ControlLogicaProcesos
                             //}
                         }
                     }
-                    else if (IsResidencial || IsFibra)
+
+                    if (IsResidencial || IsFibra)
                     {
                         if (string.IsNullOrEmpty(telefono) || (telefono.Substring(0, 3) != "601" && telefono.Substring(0, 3) != "608"))
                         {
                             if (Cuenta != item.Substring(6, 20).Trim() &&
-                                ((item.Substring(6, 20).Trim().Length == 10 && (item.Substring(6, 3) == "601" && item.Substring(6, 3) == "608")) ||
-                                (item.Substring(6, 20).Trim().Length == 8 && (item.Substring(6, 1) == "601"))))
+                                   ((item.Substring(6, 20).Trim().Length == 10 && (item.Substring(6, 3) == "601" || item.Substring(6, 3) == "608")) ||
+                                   (item.Substring(6, 20).Trim().Length == 8 && (item.Substring(6, 3) == "601"))))
                             {
                                 telefono = item.Substring(6, 20).Trim();
                             }
@@ -745,10 +766,35 @@ namespace App.ControlLogicaProcesos
                             telefono = item.Substring(6, 20).Trim();
                         }
                     }
+
+                    if ((IsResidencial || IsGobierno || IsLte || IsLteCorporativo) && validarPlanActual)
+                    {
+                        telefono = item.Substring(6, 20).Trim();
+                        validarPlanActual = false;
+                    }
+                    else if (IsFibra && validarPlanActual && item.Substring(124,2).Trim() != "")
+                    {
+                        string sss = item.Substring(124, 2);
+                        telefono = item.Substring(6, 20).Trim();
+                        validarPlanActual = false;
+                    }
+
+                }
+            }
+
+
+            if (!string.IsNullOrEmpty(telefono))
+            {
+                if (IsResidencial || IsFibra)
+                {
+                    if ((telefono.Length != 8 || telefono.Length != 10) || telefono.Substring(0,1) == "1")
+                    {
+                        telefono = string.Empty;
+                    }
                 }
 
-                telefono = result.FirstOrDefault().Substring(6, 20).Trim();
             }
+
 
             return telefono;
             #endregion
@@ -1040,7 +1086,7 @@ namespace App.ControlLogicaProcesos
 
             if (result02T933.Any())
             {
-                linea02T933 = result29000.FirstOrDefault() ?? string.Empty;
+                linea02T933 = result02T933.FirstOrDefault() ?? string.Empty;
                 total02T933 = Convert.ToInt32(linea02T933.Substring(6, 14)) + Convert.ToInt32(linea02T933.Substring(20, 14)) + Convert.ToInt32(linea02T933.Substring(34, 14)) + Convert.ToInt32(linea02T933.Substring(48, 14)) + Convert.ToInt32(linea02T933.Substring(62, 14));
             }
 
@@ -1315,7 +1361,7 @@ namespace App.ControlLogicaProcesos
         /// Metodo que Obtiene el Estrato
         /// </summary>
         /// <returns></returns>
-        private List<string> GetBarrioLocalidad()
+        private List<string> GetBarrioLocalidad(List<string> pDatosOriginales)
         {
             #region GetBarrioLocalidad
             List<string> resultado = new List<string>();
@@ -1330,7 +1376,8 @@ namespace App.ControlLogicaProcesos
             {
                 List<string> camposlocBar = locBar.Split('|').ToList();
 
-                string llaveBarrio = $"CODX{camposlocBar[1].TrimStart('0')}{camposlocBar[2]}";
+                string llaveBarrio = ($"{camposlocBar[1].TrimStart('0')}{camposlocBar[2]}").PadLeft(8,'0');
+                llaveBarrio = $"CODX{llaveBarrio}";
                 string llaveLocalidad = $"CODL{camposlocBar[1]}";
 
                 if (!string.IsNullOrEmpty(llaveBarrio))
@@ -1345,6 +1392,28 @@ namespace App.ControlLogicaProcesos
                 }
             }
 
+
+            var result010002 = from busqueda in pDatosOriginales
+                               where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("010002")
+                               select busqueda;
+
+            if (result010002.Any())
+            {
+                string linea010002 =result010002.FirstOrDefault();
+                if (IsLte || IsLteCorporativo)
+                {
+                    if (string.IsNullOrEmpty(barrio.Trim()))
+                    {
+                        barrio = linea010002.Substring(6,30).Trim();
+                    }
+
+                    if (string.IsNullOrEmpty(localidad.Trim()))
+                    {
+                        localidad = linea010002.Substring(36, 50).Trim();
+                    }
+                }
+
+            }
 
             resultado.Add(barrio);
             resultado.Add(localidad);
@@ -1442,6 +1511,14 @@ namespace App.ControlLogicaProcesos
                 { tipoEmail = "solo_email"; }
             }
 
+            string lineaSMS = Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoCuentasEnvioSms, $"{Cuenta}") ?? string.Empty;
+
+            if (!string.IsNullOrEmpty(lineaSMS))
+            {
+                tipoEmail = "ENVIO_SMS";
+            }
+
+
             emailTipoEmail.Add(email);
             emailTipoEmail.Add(tipoEmail);
 
@@ -1476,6 +1553,57 @@ namespace App.ControlLogicaProcesos
             marcaCupones.Add(cupones2);
 
             return marcaCupones;
+            #endregion
+        }
+
+        /// <summary>
+        /// Metodo que Obtiene Marca NumHojas
+        /// </summary>
+        /// <returns></returns>
+        private string GetMarcaNumHojas()
+        {
+            #region GetMarcaNumHojas
+            string MarcaNumHojas = string.Empty;
+            bool isDual = false;
+            bool isSoloMail = false;
+
+            string mail = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoDistribucionEmailRevchain, $"{Cuenta}").FirstOrDefault() ?? string.Empty;
+
+            if (!string.IsNullOrEmpty(mail))
+            {
+                string dual = Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoDistribucionDobleRevchain, $"{Cuenta}") ?? string.Empty;
+
+                if (!string.IsNullOrEmpty(dual))
+                { isDual = true; }
+                else
+                { isSoloMail = true; }
+            }        
+
+            if (IsGobierno)
+            {
+                if (isDual)
+                {
+                    MarcaNumHojas = "*";
+                }
+                else if (isSoloMail)
+                {
+                    MarcaNumHojas = "*";
+                }
+            }
+            else
+            {
+                if (isDual)
+                {
+                    MarcaNumHojas = "DISTRIBUCION_DUAL";
+                }
+                else if (isSoloMail)
+                {
+                    MarcaNumHojas = "FACTURA_SOLO_EMAIL";
+                }
+            }
+
+
+            return MarcaNumHojas;
             #endregion
         }
 
@@ -1516,18 +1644,20 @@ namespace App.ControlLogicaProcesos
             var result11C = from busqueda in pDatosOriginales
                             where busqueda.Length > 3 && busqueda.Substring(0, 3).Equals("11C")
                             select busqueda;
-
-            List<string> lista11C = result11C as List<string>;
-            string campoValidar = string.Empty;
-            if (lista11C != null && lista11C.Count > 0)
+            if (result11C.Any())
             {
-                foreach (var linea in lista11C)
+                List<string> lista11C = result11C as List<string>;
+                string campoValidar = string.Empty;
+                if (lista11C != null && lista11C.Count > 0)
                 {
-                    campoValidar = linea.Substring(6, 10);
-
-                    if (campoValidar == "3874040341" || campoValidar == "0164040342" || campoValidar == "3874041341" || campoValidar == "0164041342")
+                    foreach (var linea in lista11C)
                     {
-                        LogoCivico = "CIVICO";
+                        campoValidar = linea.Substring(6, 10);
+
+                        if (campoValidar == "3874040341" || campoValidar == "0164040342" || campoValidar == "3874041341" || campoValidar == "0164041342")
+                        {
+                            LogoCivico = "CIVICO";
+                        }
                     }
                 }
             }
@@ -1685,7 +1815,8 @@ namespace App.ControlLogicaProcesos
                         fecha = new DateTime(Convert.ToInt32(array_exp[2]), Convert.ToInt32(array_exp[1]) + 1, 25, 0, 0, 0);
                     }
 
-                    fechaCorte = fecha.ToString("MMMM dd de yyyy");
+                    fechaCorte = fecha.ToString("ddMMyyyy");
+                    fechaCorte = Helpers.FormatearCampos(TiposFormateo.Fecha16, fechaCorte);
                 }
             }
 
@@ -1790,6 +1921,7 @@ namespace App.ControlLogicaProcesos
             string lineaAjusteDecena = string.Empty;
             string lineaServiciosETBIVA = string.Empty;
             string lineaNotasCredito = string.Empty;
+            string lineaImpuestosDistriTales = string.Empty;
             decimal calculoAjusteDecena = decimal.Zero;
             decimal tempValorTotalIva = decimal.Zero;
             List<string> lineasFinanciacion = new List<string>();
@@ -1936,6 +2068,15 @@ namespace App.ControlLogicaProcesos
                                 SubTotal1BBB += calculoAjusteDecena;
                             }
                         }
+                        else if (llave == "02T030")
+                        {
+                            if (!string.IsNullOrEmpty(detalle.Substring(6, 14).Trim()) && Convert.ToInt32(detalle.Substring(6, 14)) != 0)
+                            {
+                                lineaImpuestosDistriTales = $"1BBB|{descripcion}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, detalle.Substring(6, 14).TrimStart('0'))}| ";
+                                SubTotal1BBB += Convert.ToInt32(detalle.Substring(6, 14)) + Convert.ToInt32(detalle.Substring(20, 14)) + Convert.ToInt32(detalle.Substring(34, 14)) + Convert.ToInt32(detalle.Substring(48, 14)) + Convert.ToInt32(detalle.Substring(62, 14));
+                                ValorPagarMes += Convert.ToInt32(detalle.Substring(6, 14)) + Convert.ToInt32(detalle.Substring(20, 14)) + Convert.ToInt32(detalle.Substring(34, 14)) + Convert.ToInt32(detalle.Substring(48, 14)) + Convert.ToInt32(detalle.Substring(62, 14));
+                            }
+                        }
                         else
                         {
                             int impuestoConsumo = 0;
@@ -1981,7 +2122,7 @@ namespace App.ControlLogicaProcesos
 
             if (result02T933.Any())
             {
-                linea02T933 = result29000.FirstOrDefault() ?? string.Empty;
+                linea02T933 = result02T933.FirstOrDefault() ?? string.Empty;
                 total02T933 = Convert.ToInt32(linea02T933.Substring(6, 14)) + Convert.ToInt32(linea02T933.Substring(20, 14)) + Convert.ToInt32(linea02T933.Substring(34, 14)) + Convert.ToInt32(linea02T933.Substring(48, 14)) + Convert.ToInt32(linea02T933.Substring(62, 14));
             }
 
@@ -2014,6 +2155,10 @@ namespace App.ControlLogicaProcesos
             if (!string.IsNullOrEmpty(lineaServiciosETBIVA))
             {
                 Lineas1BBB.Add($"{lineaServiciosETBIVA}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, tempValorTotalIva.ToString())}| ");
+            }
+            if (!string.IsNullOrEmpty(lineaImpuestosDistriTales))
+            {
+                Lineas1BBB.Add(lineaImpuestosDistriTales);
             }
             if (!string.IsNullOrEmpty(lineaNotasCredito))
             {

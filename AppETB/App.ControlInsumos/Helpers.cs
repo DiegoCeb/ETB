@@ -1657,6 +1657,18 @@ namespace App.ControlInsumos
                 case TiposFormateo.Fecha12:
                     return FormatearFecha("12", pCampo); // De yyyyMMdd a ddMMMyyyy
 
+                case TiposFormateo.Fecha13:
+                    return FormatearFecha("13", pCampo); // De yyyyMM a MMMM de yyyy
+
+                case TiposFormateo.Fecha14:
+                    return FormatearFecha("14", pCampo); // De yyyyMMdd a MMMM dd
+
+                case TiposFormateo.Fecha15:
+                    return FormatearFecha("15", pCampo); // De ddMMyyyy a ddMMMMyyyy
+
+                case TiposFormateo.Fecha16:
+                    return FormatearFecha("16", pCampo); // De ddMMyyyy a ddMMMMyyyy
+
                 case TiposFormateo.Decimal01:
                     return FormatearDecimal("01", pCampo);
 
@@ -1771,6 +1783,103 @@ namespace App.ControlInsumos
                     fechaRetorno = Convert.ToDateTime($"{pCampo.Substring(0, 4)}/{pCampo.Substring(4, 2)}/{pCampo.Substring(6, 2)}").ToString("ddMMMyyyy").Replace(".", "");
 
                     return FormatearCampos(TiposFormateo.LetraCapital, fechaRetorno);
+
+                case "13":
+
+                    Dictionary<string, string> dicMes = new Dictionary<string, string>();
+
+                    dicMes.Add("01", "Enero");
+                    dicMes.Add("02", "Febrero");
+                    dicMes.Add("03", "Marzo");
+                    dicMes.Add("04", "Abril");
+                    dicMes.Add("05", "Mayo");
+                    dicMes.Add("06", "Junio");
+                    dicMes.Add("07", "Julio");
+                    dicMes.Add("08", "Agosto");
+                    dicMes.Add("09", "Septembre");
+                    dicMes.Add("10", "Octubre");
+                    dicMes.Add("11", "Noviembre");
+                    dicMes.Add("12", "Diciembre");
+
+                    string año, mes = string.Empty;
+                    año = pCampo.Substring(0, 4);
+                    mes = dicMes[pCampo.Substring(4, 2)];
+
+                    return string.Format("{0} de {1}", mes, año);
+
+                case "14":
+
+                    dicMes = new Dictionary<string, string>();
+
+                    dicMes.Add("01", "Enero");
+                    dicMes.Add("02", "Febrero");
+                    dicMes.Add("03", "Marzo");
+                    dicMes.Add("04", "Abril");
+                    dicMes.Add("05", "Mayo");
+                    dicMes.Add("06", "Junio");
+                    dicMes.Add("07", "Julio");
+                    dicMes.Add("08", "Agosto");
+                    dicMes.Add("09", "Septembre");
+                    dicMes.Add("10", "Octubre");
+                    dicMes.Add("11", "Noviembre");
+                    dicMes.Add("12", "Diciembre");
+
+                    dia = string.Empty;
+                    mes = string.Empty;
+                    dia = pCampo.Substring(6, 2);
+                    mes = dicMes[pCampo.Substring(4, 2)];
+
+                    return string.Format("{0} {1}", mes, dia);
+
+                case "15":
+
+                    dicMes = new Dictionary<string, string>();
+
+                    dicMes.Add("01", "Enero");
+                    dicMes.Add("02", "Febrero");
+                    dicMes.Add("03", "Marzo");
+                    dicMes.Add("04", "Abril");
+                    dicMes.Add("05", "Mayo");
+                    dicMes.Add("06", "Junio");
+                    dicMes.Add("07", "Julio");
+                    dicMes.Add("08", "Agosto");
+                    dicMes.Add("09", "Septembre");
+                    dicMes.Add("10", "Octubre");
+                    dicMes.Add("11", "Noviembre");
+                    dicMes.Add("12", "Diciembre");
+
+                    dia = string.Empty;
+                    mes = string.Empty;
+                    año = string.Empty;
+                    dia = pCampo.Substring(0, 2);
+                    mes = dicMes[pCampo.Substring(2, 2)];
+                    año = pCampo.Substring(4, 4);
+                    return string.Format("{0}{1}{2}",dia, mes, año);
+
+                case "16":
+
+                    dicMes = new Dictionary<string, string>();
+
+                    dicMes.Add("01", "Enero");
+                    dicMes.Add("02", "Febrero");
+                    dicMes.Add("03", "Marzo");
+                    dicMes.Add("04", "Abril");
+                    dicMes.Add("05", "Mayo");
+                    dicMes.Add("06", "Junio");
+                    dicMes.Add("07", "Julio");
+                    dicMes.Add("08", "Agosto");
+                    dicMes.Add("09", "Septembre");
+                    dicMes.Add("10", "Octubre");
+                    dicMes.Add("11", "Noviembre");
+                    dicMes.Add("12", "Diciembre");
+
+                    dia = string.Empty;
+                    mes = string.Empty;
+                    año = string.Empty;
+                    dia = pCampo.Substring(0, 2);
+                    mes = dicMes[pCampo.Substring(2, 2).PadLeft(2,'0')];
+                    año = pCampo.Substring(4, 4);
+                    return string.Format("{0} {1} de {2}", mes, dia, año);
 
                 default:
                     return pCampo;
@@ -2797,6 +2906,10 @@ namespace App.ControlInsumos
         Fecha10,
         Fecha11,
         Fecha12,
+        Fecha13,
+        Fecha14,
+        Fecha15,
+        Fecha16,
         LetraCapital,
         Decimal01,
         Decimal02,                

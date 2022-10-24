@@ -12,6 +12,15 @@ namespace App.ControlLogicaProcesos
 {
     public class ProcesoAnexosVerdes : IProcess
     {
+        #region Variables del proceso
+        private string NombreArchivo { get; set; }
+        private string Descripcion { get; set; }
+        private string Telefono { get; set; }
+
+        //private Dictionary<string, Dictionary<string,List<string>>> dicOrdenExtractos = new Dictionary<string, Dictionary<string, List<string>>>();
+        private Dictionary<string, OrdenAnexosVerdes> dicOrdenExtractos = new Dictionary<string, OrdenAnexosVerdes>();
+
+        #endregion
         public ProcesoAnexosVerdes(string pRutaArchivo)
         {
             #region ProcesoAnexosVerdes
@@ -49,8 +58,8 @@ namespace App.ControlLogicaProcesos
 
             foreach (var archivo in archivos)
             {
-                List<string> DatosArchivo = File.ReadAllLines(archivo, Encoding.Default).ToList();
 
+                dicOrdenExtractos.Clear();
                 //if (Path.GetFileNameWithoutExtension(archivo).Contains("DBASI"))
                 //{
                 //    foreach (var lineaDatos in DatosArchivo)
@@ -62,12 +71,18 @@ namespace App.ControlLogicaProcesos
                 //}
                 if (Path.GetFileNameWithoutExtension(archivo).Contains("MOVTO"))
                 {
+                    NombreArchivo = Path.GetFileName(archivo);
+                    List<string> DatosArchivo = File.ReadAllLines(archivo, Encoding.Default).ToList();
+
                     foreach (var lineaDatos in DatosArchivo)
                     {
                         llaveCruce = lineaDatos.Substring(89, 7).Trim();
 
-                        AgregarDiccionario(llaveCruce, FormatearArchivo(llaveCruce, new List<string> { lineaDatos }));
+                        //AgregarDiccionario(llaveCruce, FormatearArchivo(llaveCruce, new List<string> { lineaDatos }));
+                        OrganizarDatos(llaveCruce, lineaDatos);
                     }
+
+                    ExtraerDatosOrganizados();
                 }
             }
             #endregion
@@ -101,39 +116,82 @@ namespace App.ControlLogicaProcesos
         {
             #region FormatearArchivo
             List<string> resultado = new List<string>();
-            dynamic resultadoFormateoLinea = null;
-
-            //Para Validaciones
-            if (pLLaveCruce == "")
-            {
-
-            }
-
+            //dynamic resultadoFormateoLinea = null;
             #region Formateo Canales
-            resultadoFormateoLinea = FormateoCanal1AAA(datosOriginales);
+            //resultadoFormateoLinea = FormateoCanal1AAA(datosOriginales);
 
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
+            //if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            //{
+            //    resultado.Add(resultadoFormateoLinea);
+            //}
 
-            resultadoFormateoLinea = FormateoCanal1EEA(datosOriginales);
+            //resultadoFormateoLinea = FormateoCanal1EEA(datosOriginales);
 
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
+            //if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            //{
+            //    resultado.Add(resultadoFormateoLinea);
+            //}
 
-            resultadoFormateoLinea = FormateoCanal1EEE(datosOriginales);
+            //resultadoFormateoLinea = FormateoCanal1EEE(datosOriginales);
 
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
+            //if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            //{
+            //    resultado.Add(resultadoFormateoLinea);
+            //}
             #endregion
 
             return resultado;
             #endregion
+        }
+
+        private void OrganizarDatos(string pLLaveCruce, string datosOriginales)
+        {
+
+            string linea1AAA = FormateoCanal1AAA(datosOriginales);        
+            string linea1EEE = FormateoCanal1EEE(datosOriginales);
+
+            if (dicOrdenExtractos.ContainsKey(Telefono))
+            {
+                if (dicOrdenExtractos[Telefono].Detalles.ContainsKey(Descripcion))
+                {
+                    dicOrdenExtractos[Telefono].Detalles[Descripcion].Add(linea1EEE);
+                }
+                else
+                {
+                    dicOrdenExtractos[Telefono].Detalles.Add(Descripcion, new List<string>() { linea1EEE });
+                }
+            }
+            else
+            {
+                Dictionary<string, List<string>> dicAux = new Dictionary<string, List<string>>();
+                dicAux.Add(Descripcion, new List<string>() { linea1EEE });
+                dicOrdenExtractos.Add(Telefono, new OrdenAnexosVerdes(linea1AAA, dicAux));
+            }
+        }
+
+        private void ExtraerDatosOrganizados()
+        {
+            List<string> listaExtracto = new List<string>();
+            List<string> lista1EEE;
+            OrdenAnexosVerdes ordenAnexosVerdes;
+            string Linea1EEA = string.Empty;
+            foreach (string extracto in dicOrdenExtractos.Keys)
+            {
+                listaExtracto.Clear();
+                ordenAnexosVerdes = dicOrdenExtractos [extracto];
+
+                listaExtracto.Add(ordenAnexosVerdes.Linea1AAA);
+
+                foreach (string descripcionPaquete in ordenAnexosVerdes.Detalles.Keys)
+                {
+                    lista1EEE = ordenAnexosVerdes.Detalles[descripcionPaquete];
+                    Linea1EEA = FormateoCanal1EEA(lista1EEE);
+                    listaExtracto.Add(Linea1EEA);
+                    listaExtracto.AddRange(lista1EEE);
+
+                }
+                AgregarDiccionario(extracto, listaExtracto);
+            }
         }
 
         #region Canales Logica
@@ -143,24 +201,23 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        private string FormateoCanal1AAA(List<string> datosOriginales)
+        private string FormateoCanal1AAA(string datosOriginales)
         {
             #region FormateoCanal1AAA
             string resultado = string.Empty;
             List<string> ListaCanal1AAA = new List<string>();
             List<PosCortes> listaCortes = new List<PosCortes>();
 
-            string linea = datosOriginales.FirstOrDefault();
-            string telefono =  linea.Substring(89, 7);
+            string linea = datosOriginales;
+            Telefono =  linea.Substring(89, 7);
 
-           
-
+            string[] fechasNombreArchivo = NombreArchivo.Split('_');
 
             ListaCanal1AAA.Add("1AAA");
             ListaCanal1AAA.Add("KitXXXX");
-            ListaCanal1AAA.Add(telefono);
+            ListaCanal1AAA.Add(Telefono);
 
-            string datosAux = Helpers.GetValueInsumoCadena(Variables.Variables.DatosAuxAnexosVerdes, $"{telefono}") ?? string.Empty;
+            string datosAux = Helpers.GetValueInsumoCadena(Variables.Variables.DatosAuxAnexosVerdes, $"{Telefono}") ?? string.Empty;
 
             if (!string.IsNullOrEmpty(datosAux))
             {
@@ -177,6 +234,18 @@ namespace App.ControlLogicaProcesos
                 ListaCanal1AAA.Add(string.Empty);
             }
 
+            ListaCanal1AAA.Add(string.Empty); // Ciudad
+            ListaCanal1AAA.Add(string.Empty); // Depto
+            ListaCanal1AAA.Add(Helpers.FormatearCampos(TiposFormateo.Fecha13, fechasNombreArchivo[2])); // Factura Mes
+            ListaCanal1AAA.Add($"{Helpers.FormatearCampos(TiposFormateo.Fecha14, fechasNombreArchivo[3])} al {fechasNombreArchivo[4].Substring(6,2)}"); // Periodo Consumo
+            ListaCanal1AAA.Add(string.Empty); // Vacio
+            ListaCanal1AAA.Add(string.Empty); // Vacio
+            ListaCanal1AAA.Add(string.Empty); // Vacio
+            ListaCanal1AAA.Add(fechasNombreArchivo[0]); // Nombre Archivo
+            ListaCanal1AAA.Add(string.Empty); // Ciclo Vacio
+            ListaCanal1AAA.Add(string.Empty); // Ruta Vacio
+
+            resultado = Helpers.ValidarPipePipe(Helpers.ListaCamposToLinea(ListaCanal1AAA, '|'));
 
             return resultado;
             #endregion
@@ -187,11 +256,29 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        private string FormateoCanal1EEE(List<string> datosOriginales)
+        private string FormateoCanal1EEE(string datosOriginales)
         {
             #region FormateoCanal1EEE
             string resultado = string.Empty;
 
+            string linea = datosOriginales;
+            string telefono = linea.Substring(89, 7);
+
+            Descripcion = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"CODT{linea.Substring(0,6)}").FirstOrDefault()?.Substring(10).Trim() ?? string.Empty;
+
+            List<string> ListaCanal1EEE = new List<string>();
+            ListaCanal1EEE.Add("1EEE");
+            ListaCanal1EEE.Add(Descripcion);
+            ListaCanal1EEE.Add(Helpers.FormatearCampos(TiposFormateo.Fecha15, linea.Substring(6, 8)));
+            ListaCanal1EEE.Add($"{linea.Substring(14, 2)}:{linea.Substring(16, 2)}:{linea.Substring(18, 2)}");
+            ListaCanal1EEE.Add($"{linea.Substring(33, 3).Trim()} {linea.Substring(36, 7).Trim()}");
+            ListaCanal1EEE.Add(linea.Substring(96, 30).Trim());
+            ListaCanal1EEE.Add($"{linea.Substring(43, 2).TrimStart('0')}:{linea.Substring(45, 2)}");
+            ListaCanal1EEE.Add(Helpers.FormatearCampos(TiposFormateo.Decimal01, linea.Substring(47, 9)));
+            ListaCanal1EEE.Add(Helpers.FormatearCampos(TiposFormateo.Decimal01, linea.Substring(56, 9)));
+            ListaCanal1EEE.Add(string.Empty); // Ultimo Vacio
+            resultado = Helpers.ValidarPipePipe(Helpers.ListaCamposToLinea(ListaCanal1EEE, '|'));
+
             return resultado;
             #endregion
         }
@@ -201,15 +288,49 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        private string FormateoCanal1EEA(List<string> datosOriginales)
+        private string FormateoCanal1EEA(List<string> pLista1EEE)
         {
             #region FormateoCanal1EEA
             string resultado = string.Empty;
+            decimal valor = decimal.Zero;
+            decimal total = decimal.Zero;
+            string[] campos1EEE;
+            foreach (string linea in pLista1EEE)
+            {
+                campos1EEE = linea.Split('|');
+                valor = Convert.ToDecimal(campos1EEE[8].Replace("$","").Replace(".","").Replace(",",""));
+                total += valor;
+            }
+
+            List<string> ListaCanal1EEE = new List<string>();
+            ListaCanal1EEE.Add("1EEA");
+            ListaCanal1EEE.Add($"Total {Descripcion}");
+            ListaCanal1EEE.Add(Helpers.FormatearCampos(TiposFormateo.Decimal01, total.ToString()));
+            ListaCanal1EEE.Add(string.Empty); // Ultimo Vacio
+
+            resultado = Helpers.ValidarPipePipe(Helpers.ListaCamposToLinea(ListaCanal1EEE, '|'));
 
             return resultado;
             #endregion
         }
 
+        
+
         #endregion
+    }
+
+    /// <summary>
+    /// Estructura de Datos extracto
+    /// </summary>
+    public struct OrdenAnexosVerdes
+    {
+        public Dictionary<string, List<string>> Detalles;
+        public string Linea1AAA;
+
+        public OrdenAnexosVerdes(string pLinea1AAA, Dictionary<string, List<string>> pDetalles)
+        {
+            Detalles = pDetalles;
+            Linea1AAA = pLinea1AAA;
+        }
     }
 }
