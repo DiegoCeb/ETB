@@ -75,7 +75,6 @@ namespace App.ControlProcesos
                     break;
             }
 
-
             Helpers.EscribirVentanaLog("Final Existoso del Proceso, revise la carpeta salidas !!!");
             Helpers.EscribirVentanaLog("Presione una tecla para cerrar...");
             Console.ReadKey();
