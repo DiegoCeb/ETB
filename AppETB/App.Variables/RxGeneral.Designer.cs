@@ -313,6 +313,15 @@ namespace App.Variables {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Dual_Llanos_SEP2022, ETB_Horas_Exp,FA_DISTRIBUCION_EMAIL_LLANOS_SEP2022,LLANOS_Envio_SMS_SEP2022, LLANOS_Extraer_SEP2022, Llanos_min_plan_Sep22,Llanos_suple_Sep22.
+        /// </summary>
+        public static string _53_InsumosLLanos {
+            get {
+                return ResourceManager.GetString("53_InsumosLLanos", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a 6_LLAVES_CODIGOS_FACTU.
         /// </summary>
         public static string _6_LLAVES_CODIGOS_FACTU {

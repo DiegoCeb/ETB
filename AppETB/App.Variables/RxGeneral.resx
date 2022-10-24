@@ -198,6 +198,9 @@
   <data name="51_PROCUNI" xml:space="preserve">
     <value>51_PROCUNI</value>
   </data>
+  <data name="53_InsumosLLanos" xml:space="preserve">
+    <value>Dual_Llanos_SEP2022, ETB_Horas_Exp,FA_DISTRIBUCION_EMAIL_LLANOS_SEP2022,LLANOS_Envio_SMS_SEP2022, LLANOS_Extraer_SEP2022, Llanos_min_plan_Sep22,Llanos_suple_Sep22</value>
+  </data>
   <data name="5_DOC1_PARTICIONES" xml:space="preserve">
     <value>5_DOC1_PARTICIONES</value>
   </data>
