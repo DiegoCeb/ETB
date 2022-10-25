@@ -70,6 +70,12 @@ namespace App.ControlLogicaProcesos
 
         public void CargueFormateoArchivo(string pArchivo)
         {
+
+            if(pArchivo.Contains("desktop.ini"))
+            {
+                return;
+            }
+
             #region CargueFormateoArchivo
             List<string> DatosArchivo = File.ReadAllLines(pArchivo, Encoding.Default).ToList();
             List<string> datosExtractoFormateo = new List<string>();
@@ -141,7 +147,7 @@ namespace App.ControlLogicaProcesos
             //Ultimo Extracto
             if (datosExtractoFormateo.Count > 1)
             {
-                llaveCruce = datosExtractoFormateo.ElementAt(1).Substring(117, 20).Trim();
+                 llaveCruce = datosExtractoFormateo.ElementAt(1).Substring(117, 20).Trim();
 
                 if (!string.IsNullOrEmpty(Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoCuentasExtraer, llaveCruce)))
                 {
@@ -2762,6 +2768,7 @@ namespace App.ControlLogicaProcesos
             List<string> LisSumaBase = new List<string>();
             List<string> LisSumaIva = new List<string>();
             List<string> LisSumaTotal = new List<string>();
+            bool isRetenida = false;
             #endregion
 
             #region Busqueda
@@ -2826,6 +2833,8 @@ namespace App.ControlLogicaProcesos
             {
                 foreach (var registro in dicOrdenado[key])
                 {
+                    isRetenida = false;
+
                     #region Toma de Letras Paquete
                     string llaveUno = $"{registro.Substring(6, 10)}";
                     string llaveDos = $"{registro.Substring(6, 6)}";
@@ -2843,6 +2852,11 @@ namespace App.ControlLogicaProcesos
                     if (!string.IsNullOrEmpty(valorLetra))
                     {
                         listaRegi1BFI.Add(registro);
+
+                        if (Convert.ToDouble(registro.Substring(16, 14)) == 0 )
+                        {
+                            continue;
+                        }
 
                         if (!letrasPaquetes.Contains(valorLetra.Split('|')[2]))
                         {
@@ -2865,6 +2879,7 @@ namespace App.ControlLogicaProcesos
                     if (Variables.Variables.DatosInsumoCodigosUniverSvas.ContainsKey(llave) && Variables.Variables.DatosInsumoCuentasSvasFueraBundle.ContainsKey(Cuenta))
                     {
                         listaRegi1CFI.Add(registro);
+                        isRetenida = true;
                         continue;
                     }
 
@@ -2872,6 +2887,7 @@ namespace App.ControlLogicaProcesos
                     if (Variables.Variables.DatosInsumoExcluirServiciosAdicionales.ContainsKey(llave.TrimStart('0')))
                     {
                         listaRegi1CFI.Add(registro);
+                        isRetenida = true;
                         continue;
                     }
 
@@ -2888,9 +2904,11 @@ namespace App.ControlLogicaProcesos
                     if (valorSus.Contains("SVA") && Convert.ToDouble(registro.Substring(16, 14)) != 0)
                     {
                         listaRegi1CFI.Add(registro);
+                        isRetenida = true;
                         continue;
                     }
                     #endregion
+                    
 
                     #region Se Agrega al canal 1CFI si valor letra es string.Emty
                     if (string.IsNullOrEmpty(valorLetra))
@@ -2906,7 +2924,7 @@ namespace App.ControlLogicaProcesos
 
             if (!string.IsNullOrEmpty(nombrePaquete))
             {
-                #region Se arma el 1AFi                
+                #region Se arma el 1AFi y 1BFI
 
                 string periodoMaximo = Helpers.GetFechaMaximaMinima(lisPeriodoMax, 1);
                 if (!string.IsNullOrEmpty(periodoMaximo))
@@ -2951,31 +2969,34 @@ namespace App.ControlLogicaProcesos
                 }
                 #endregion
 
-                if (IsFibra || IsResidencial)
+                if(Helpers.SumarCampos(LisSumaTotal) != "$ 0,00")
                 {
-                    resultado = "1AFI|";
-                    resultado += periodoMaximo + "|";
-                    resultado += nombrePaquete + "|";
-                    resultado += Helpers.SumarCampos(LisSumaBase) + "|";
-                    resultado += Helpers.SumarCampos(LisSumaIva) + "|";
-                    resultado += Helpers.SumarCampos(LisSumaTotal) + "|";
-                    resultado += subsidio + "|";
-                    resultado += periodoLargo + "||";
-                    resultado += Helpers.GetFechaMaximaOMinima(listaFechasDesde, 2) + "|";
-                    resultado += Helpers.GetFechaMaximaOMinima(listaFechasHasta, 1) + "| ";
+                    if (IsFibra || IsResidencial)
+                    {
+                        resultado = "1AFI|";
+                        resultado += periodoMaximo + "|";
+                        resultado += nombrePaquete + "|";
+                        resultado += Helpers.SumarCampos(LisSumaBase) + "|";
+                        resultado += Helpers.SumarCampos(LisSumaIva) + "|";
+                        resultado += Helpers.SumarCampos(LisSumaTotal) + "|";
+                        resultado += subsidio + "|";
+                        resultado += periodoLargo + "||";
+                        resultado += Helpers.GetFechaMaximaOMinima(listaFechasDesde, 2) + "|";
+                        resultado += Helpers.GetFechaMaximaOMinima(listaFechasHasta, 1) + "| ";
 
-                    // se agrega el canal 1AFI
-                    listaGrupo.Add(Helpers.ValidarPipePipe(resultado));
+                        // se agrega el canal 1AFI
+                        listaGrupo.Add(Helpers.ValidarPipePipe(resultado));
+                    }
+
+                    #region Se arma el 1BCI
+
+                    List<string> lisTemp1BF1 = Logica1BFI(listaRegi1BFI);
+
+                    if (lisTemp1BF1.Count > 0)
+                        listaGrupo.AddRange(lisTemp1BF1);
+
+                    #endregion
                 }
-
-                #endregion
-
-                #region Se arma el 1BCI
-
-                List<string> lisTemp1BF1 = Logica1BFI(listaRegi1BFI);
-
-                if (lisTemp1BF1.Count > 0)
-                    listaGrupo.AddRange(lisTemp1BF1);
 
                 #endregion
             }
@@ -2985,6 +3006,15 @@ namespace App.ControlLogicaProcesos
 
             if (lisTemp1CF1.Count > 0)
                 listaGrupo.AddRange(lisTemp1CF1);
+
+            // Se agrega para que proceso los registros que estan en la lista de 1BFI para que los pinte en el canal 1CFI
+            if(string.IsNullOrEmpty(nombrePaquete))
+            {
+                List<string> lisTemp1CF2 = Logica1CFI(listaRegi1BFI);
+
+                if (lisTemp1CF2.Count > 0)
+                    listaGrupo.AddRange(lisTemp1CF2);
+            }            
 
             string recargoMora = logicaRecargoMora1CFI(datosOriginales);
 
@@ -3062,10 +3092,10 @@ namespace App.ControlLogicaProcesos
                             {
                                 lineaResultado += valor + " ( " + Helpers.FormatearCampos(TiposFormateo.Fecha04, linea11C.Substring(132, 4)) + " - " + Helpers.FormatearCampos(TiposFormateo.Fecha04, linea11C.Substring(143, 4)) + " ) |";
                             }
-                            else
-                            {
-                                lineaResultado += valor + "|";
-                            }
+                            //else
+                            //{
+                            //    lineaResultado += valor + "|";
+                            //}
 
                             lineaResultado += " |||| ";
 
@@ -3163,8 +3193,6 @@ namespace App.ControlLogicaProcesos
                     resultadoRecargoMora += Helpers.SumarCampos(sumaCampos) + "|";
                     resultadoRecargoMora += "| ";
                 }
-
-
             }
 
             return Helpers.ValidarPipePipe(resultadoRecargoMora);
@@ -3204,7 +3232,7 @@ namespace App.ControlLogicaProcesos
                         List<string> camposSumar1 = new List<string>();
                         List<string> camposSumar2 = new List<string>();
                         List<string> camposSumar3 = new List<string>();
-                        string valor = string.Empty;
+                        string Descripcion = string.Empty;
                         string periodo = string.Empty;
 
                         foreach (var registro1CFI in valores)
@@ -3215,11 +3243,11 @@ namespace App.ControlLogicaProcesos
 
                                 if (Variables.Variables.DatosInsumoTablaSustitucion.ContainsKey(llave))
                                 {
-                                    valor = Variables.Variables.DatosInsumoTablaSustitucion[llave].FirstOrDefault().Substring(15).Trim();
+                                    Descripcion = Variables.Variables.DatosInsumoTablaSustitucion[llave].FirstOrDefault().Substring(15).Trim();
 
                                     if (registro1CFI.Substring(128, 19).Contains('-'))
                                     {
-                                        valor = valor + " ( " + Helpers.FormatearCampos(TiposFormateo.Fecha04, registro1CFI.Substring(132, 4)) + " - " + Helpers.FormatearCampos(TiposFormateo.Fecha04, registro1CFI.Substring(143, 4)) + " ) ";
+                                        Descripcion = Descripcion + " ( " + Helpers.FormatearCampos(TiposFormateo.Fecha04, registro1CFI.Substring(132, 4)) + " - " + Helpers.FormatearCampos(TiposFormateo.Fecha04, registro1CFI.Substring(143, 4)) + " ) ";
                                     }
                                 }
 
@@ -3233,20 +3261,23 @@ namespace App.ControlLogicaProcesos
                             }
                         }
 
-                        linea1CFI = string.Empty;
-                        linea1CFI = "1CFI|";
-                        linea1CFI += periodo + "|";
-                        linea1CFI += valor + "|";
-                        linea1CFI += Helpers.SumarCampos(camposSumar1) + "|";
-                        linea1CFI += Helpers.SumarCampos(camposSumar2) + "|";
-                        linea1CFI += Helpers.SumarCampos(camposSumar3) + "|";
-                        linea1CFI += "| ";
+                        if(!string.IsNullOrEmpty(Descripcion))
+                        {
+                            linea1CFI = string.Empty;
+                            linea1CFI = "1CFI|";
+                            linea1CFI += periodo.Trim() + "|";
+                            linea1CFI += Descripcion + "|";
+                            linea1CFI += Helpers.SumarCampos(camposSumar1) + "|";
+                            linea1CFI += Helpers.SumarCampos(camposSumar2) + "|";
+                            linea1CFI += Helpers.SumarCampos(camposSumar3) + "|";
+                            linea1CFI += "| ";
 
-                        camposSumar1.Clear();
-                        camposSumar2.Clear();
-                        camposSumar3.Clear();
+                            camposSumar1.Clear();
+                            camposSumar2.Clear();
+                            camposSumar3.Clear();
 
-                        resultado1CFI.Add(Helpers.ValidarPipePipe(linea1CFI));
+                            resultado1CFI.Add(Helpers.ValidarPipePipe(linea1CFI));
+                        }                        
                     }
                     else
                     {
@@ -3264,7 +3295,7 @@ namespace App.ControlLogicaProcesos
 
                             linea1CFI = string.Empty;
                             linea1CFI = "1CFI|";
-                            linea1CFI += registro1CFI.Substring(128, 6) + "|";
+                            linea1CFI += registro1CFI.Substring(128, 6).Trim() + "|";
 
                             if (registro1CFI.Substring(128, 19).Contains('-'))
                             {
