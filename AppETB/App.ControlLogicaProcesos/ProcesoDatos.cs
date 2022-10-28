@@ -447,7 +447,7 @@ namespace App.ControlLogicaProcesos
                 listaCortes.Add(new PosCortes(155, 13, TiposFormateo.Decimal01));
                 listaCortes.Add(new PosCortes(168, 8, TiposFormateo.Fecha01));
                 ListaCanal1AAA.Add(Helpers.ExtraccionCamposSpool(listaCortes, Linea010000));
-                ListaCanal1AAA.Add(GetMesMora(Linea010000.Substring(176, 2).Trim()));
+                ListaCanal1AAA.Add(GetMesMora(Linea010000.Substring(176, 2).Trim(), datosOriginales));
 
                 listaCortes.Clear();
                 listaCortes.Add(new PosCortes(178, 8, TiposFormateo.Fecha01));
@@ -456,7 +456,7 @@ namespace App.ControlLogicaProcesos
                 FechaHasta = Linea010000.Substring(186, 8).Trim();
                 ListaCanal1AAA.Add(Helpers.ExtraccionCamposSpool(listaCortes, Linea010000));
 
-                ListaCanal1AAA.Add(GetTelefono(datosOriginales)); //TODO: Verificar Reglas
+                ListaCanal1AAA.Add(GetTelefono(datosOriginales));
                 ListaCanal1AAA.Add((string.IsNullOrEmpty(Linea010000.Substring(218, 20).Trim()) ? " " : Linea010000.Substring(218, 20).Trim()));
 
                 ListaCanal1AAA.Add(Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"FECP{Helpers.FormatearCampos(TiposFormateo.Fecha02, Linea010000.Substring(168, 8).Trim())}{Linea010000.Substring(151, 3).Trim().TrimStart('0')}").FirstOrDefault()?.Substring(12).Trim() ?? string.Empty);
@@ -464,8 +464,8 @@ namespace App.ControlLogicaProcesos
                 ListaCanal1AAA.Add(GetFechaExpedicion(Linea010000));
 
                 ListaCanal1AAA.Add(GetNumeroReferencia(Linea010000.Substring(139, 12).Trim()));
-                ListaCanal1AAA.AddRange(GetCodigosBarras(Linea010000.Substring(139, 12), Linea010000, datosOriginales)); //TODO: Verificar valor a pagar
-                //ListaCanal1AAA.Add(GetTipoEtapas(Linea010000.Substring(151, 3)));
+                ListaCanal1AAA.AddRange(GetCodigosBarras(Linea010000.Substring(139, 12), Linea010000, datosOriginales)); 
+                ListaCanal1AAA.Add(GetTipoEtapas(Linea010000.Substring(151, 3)));
                 ListaCanal1AAA.Add(GetTasaInteres(Linea040000));
                 listaCortes.Clear();
                 listaCortes.Add(new PosCortes(108, 5));
@@ -479,7 +479,7 @@ namespace App.ControlLogicaProcesos
                 ListaCanal1AAA.Add(GetMarcaAnexosPublicidad());
                 ListaCanal1AAA.AddRange(GetEmailTipoEmal());
                 ListaCanal1AAA.AddRange(GetMarcaCupones());
-                ListaCanal1AAA.Add(string.Empty); // TODO: Numero de Hojas
+                ListaCanal1AAA.Add(GetMarcaNumHojas());
                 ListaCanal1AAA.Add(GetNivelReclamacion());
                 listaCortes.Clear();
                 listaCortes.Add(new PosCortes(108, 5));
@@ -494,7 +494,7 @@ namespace App.ControlLogicaProcesos
                 ListaCanal1AAA.AddRange(GetLocBar());
                 ListaCanal1AAA.AddRange(GetQR(Linea010000.Substring(6, 50)));
                 ListaCanal1AAA.Add(string.Empty); //CampoVacio
-                ListaCanal1AAA.Add(string.Empty); // Fecha Corte No Palica para Datos
+                ListaCanal1AAA.Add(string.Empty); // Fecha Corte No aplica para Datos
                 ListaCanal1AAA.AddRange(GetPeriodoDesdeHasta(datosOriginales));
 
                 listaCortes.Clear();
@@ -540,12 +540,28 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="pCampo"></param>
         /// <returns></returns>
-        private string GetMesMora(string pCampo)
+        private string GetMesMora(string pCampo, List<string> pDatosOriginales)
         {
             #region GetMesMora
             int mesMora = Convert.ToInt32(pCampo);
             mesMora += 1;
             mesMora = mesMora > 4 ? 4 : mesMora;
+
+            #region Ajuste Morosidad
+            var result02T002 = from busqueda in pDatosOriginales
+                               where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("02T002")
+                               select busqueda;
+
+            if (result02T002.Any())
+            {
+                if (mesMora > 1)
+                {
+                    mesMora = 1;
+                }
+            }
+
+            #endregion
+
             MesMora = mesMora;
             return mesMora.ToString();
             #endregion
@@ -569,11 +585,13 @@ namespace App.ControlLogicaProcesos
             {
                 foreach (var item in result.ToList())
                 {
-
+                   
+                    
                     if (Cuenta != item.Substring(6, 20).Trim() && item.Substring(6, 20).Trim().Length >= 8)
                     {
                         telefono = item.Substring(6, 20).Trim();
                     }
+                    
 
                 }
             }
@@ -1005,7 +1023,10 @@ namespace App.ControlLogicaProcesos
             {
                 List<string> camposlocBar = locBar.Split('|').ToList();
 
-                string llaveBarrio = $"CODX{camposlocBar[1].TrimStart('0')}{camposlocBar[2]}";
+                
+                string llaveBarrio = ($"{camposlocBar[1].TrimStart('0')}{camposlocBar[2]}").PadLeft(8, '0');
+                llaveBarrio = $"CODX{llaveBarrio}";
+
                 string llaveLocalidad = $"CODL{camposlocBar[1]}";
 
                 if (!string.IsNullOrEmpty(llaveBarrio))
@@ -1122,9 +1143,19 @@ namespace App.ControlLogicaProcesos
                 string lineaDistribucionDoble = Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoDistribucionDobleRevchain, $"{Cuenta}") ?? string.Empty;
 
                 if (!string.IsNullOrEmpty(lineaDistribucionDoble))
-                { tipoEmail = "dual"; }
+                {
+                    tipoEmail = "dual";
+                    Variables.Variables.DiccionarioDual.Add(Cuenta, Cuenta);
+                }
                 else
                 { tipoEmail = "solo_email"; }
+            }
+            
+            string lineaSMS = Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoCuentasEnvioSms, $"{Cuenta}") ?? string.Empty;
+
+            if (!string.IsNullOrEmpty(lineaSMS))
+            {
+                tipoEmail = "ENVIO_SMS";
             }
 
             emailTipoEmail.Add(email);
@@ -1161,6 +1192,44 @@ namespace App.ControlLogicaProcesos
             marcaCupones.Add(cupones2);
 
             return marcaCupones;
+            #endregion
+        }
+
+        /// <summary>
+        /// Metodo que Obtiene Marca NumHojas
+        /// </summary>
+        /// <returns></returns>
+        private string GetMarcaNumHojas()
+        {
+            #region GetMarcaNumHojas
+            string MarcaNumHojas = string.Empty;
+            bool isDual = false;
+            bool isSoloMail = false;
+
+            string mail = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoDistribucionEmailRevchain, $"{Cuenta}").FirstOrDefault() ?? string.Empty;
+
+            if (!string.IsNullOrEmpty(mail))
+            {
+                string dual = Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoDistribucionDobleRevchain, $"{Cuenta}") ?? string.Empty;
+
+                if (!string.IsNullOrEmpty(dual))
+                { isDual = true; }
+                else
+                { isSoloMail = true; }
+            }
+
+            if (isDual)
+            {
+                MarcaNumHojas = "DISTRIBUCION_DUAL";
+            }
+            else if (isSoloMail)
+            {
+                MarcaNumHojas = "FACTURA_SOLO_EMAIL";
+            }
+
+
+
+            return MarcaNumHojas;
             #endregion
         }
 

@@ -10,6 +10,7 @@ using DLL_Utilidades;
 using SharpCompress.Archives;
 using SharpCompress.Readers;
 using SharpCompress.Common;
+using Excel;
 
 namespace App.ControlInsumos
 {
@@ -1364,6 +1365,42 @@ namespace App.ControlInsumos
             #endregion
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pDatosInsumo"></param>
+        public static void GetCartasHipotecario(List<string> pArchivos)
+        {
+            #region GetAuxAnexosVerdes
+            string[] campos; 
+            foreach (var archivo in pArchivos)
+            {
+                List<string> datosInsumo = Helpers.ConvertirExcel(archivo);
+
+                foreach (var datoLinea in datosInsumo)
+                {
+                    campos = datoLinea.Split('|');
+                    if (campos.Length > 1)
+                    {
+                        string llaveCruce = campos[0];
+
+                        if (Variables.Variables.DatosCartasHipotecario.ContainsKey(llaveCruce))
+                        {
+                            Variables.Variables.DatosCartasHipotecario[llaveCruce] = (datoLinea);
+                        }
+                        else
+                        {
+                            Variables.Variables.DatosCartasHipotecario.Add(llaveCruce, datoLinea);
+                        }
+                    }
+                }
+            }
+
+
+
+            #endregion
+        }
+
         #endregion
 
         /// <summary>
@@ -1669,6 +1706,9 @@ namespace App.ControlInsumos
                 case TiposFormateo.Fecha16:
                     return FormatearFecha("16", pCampo); // De ddMMyyyy a ddMMMMyyyy
 
+                case TiposFormateo.Fecha17:
+                    return FormatearFecha("17", pCampo); // De dd/MM/yyyy a yyyyMMdd - con padleft en mes y año
+
                 case TiposFormateo.Decimal01:
                     return FormatearDecimal("01", pCampo);
 
@@ -1880,6 +1920,17 @@ namespace App.ControlInsumos
                     mes = dicMes[pCampo.Substring(2, 2).PadLeft(2,'0')];
                     año = pCampo.Substring(4, 4);
                     return string.Format("{0} {1} de {2}", mes, dia, año);
+
+                case "17":
+                    camposFecha = pCampo.Split('/');
+                    if (camposFecha.Length > 2)
+                    {
+                        return $"{camposFecha[2]}{camposFecha[1].PadLeft(2, '0')}{camposFecha[0].PadLeft(2, '0')}";
+                    }
+                    else
+                    {
+                        return string.Empty;
+                    }
 
                 default:
                     return pCampo;
@@ -2812,6 +2863,78 @@ namespace App.ControlInsumos
 
             return resultado;
         }
+
+        /// <summary>
+        /// Metodo para convertir Excel (.xlsx - .xls) en archivo plano
+        /// </summary>
+        /// <param name="archivo"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public static List<string> ConvertirExcel(string archivo)
+        {
+            #region ConvertirExcel
+            DataSet result = new DataSet();
+            try
+            {
+                #region Leer Excel
+                if (archivo.EndsWith(".xlsx"))
+                {
+                    //Reading from a binary Excel file(format; .xlsx)
+                    FileStream stream = File.Open(archivo, FileMode.Open, FileAccess.Read);
+                    IExcelDataReader excelReader = ExcelReaderFactory.CreateOpenXmlReader(stream);
+                    result = excelReader.AsDataSet();
+                    excelReader.Close();
+                }
+
+                if (archivo.EndsWith(".xls"))
+                {
+                    //Reading from a binary Excel file('97-2003 format; .xls)
+                    FileStream stream = File.Open(archivo, FileMode.Open, FileAccess.Read);
+                    IExcelDataReader excelReader = ExcelReaderFactory.CreateBinaryReader(stream);
+                    result = excelReader.AsDataSet();
+                    excelReader.Close();
+                }
+
+                #endregion
+
+                #region Pasar Excel a Plano
+                List<string> datosExcel = new List<string>();
+                int numHoja = Convert.ToInt32(0);
+                string a = "";
+
+                for (int j = 0; j < result.Tables[numHoja].Rows.Count; j++)
+                {
+                    for (int i = 0; i < result.Tables[numHoja].Columns.Count; i++)
+                    {
+                        if (result.Tables[numHoja].Rows[j][i].ToString() != "")
+                        {
+                            a += result.Tables[numHoja].Rows[j][i].ToString().Replace("\n", " ");
+                        }
+                        else
+                        {
+                            a += " ";
+                        }
+
+                        if (i < (result.Tables[numHoja].Columns.Count + 1))
+                        {
+                            a += "|";
+                        }
+                    }
+
+                    datosExcel.Add(a);
+                    a = "";
+
+                }
+                #endregion
+
+                return datosExcel;
+            }
+            catch (Exception mens)
+            {
+                throw new Exception("Error: " + mens.Message);
+            }
+            #endregion
+        }
     }
 
     public struct PosCortes
@@ -2910,6 +3033,7 @@ namespace App.ControlInsumos
         Fecha14,
         Fecha15,
         Fecha16,
+        Fecha17,
         LetraCapital,
         Decimal01,
         Decimal02,                

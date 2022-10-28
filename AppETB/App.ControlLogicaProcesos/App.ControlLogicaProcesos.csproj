@@ -54,6 +54,7 @@
     <Compile Include="ProcesoMasivos.cs" />
     <Compile Include="IProcess.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReportesMasivos.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\App.ControlInsumos\App.ControlInsumos.csproj">

@@ -587,7 +587,7 @@ namespace App.ControlLogicaProcesos
                 FechaHasta = Linea010000.Substring(186, 8).Trim();
                 ListaCanal1AAA.Add(Helpers.ExtraccionCamposSpool(listaCortes, Linea010000));
 
-                ListaCanal1AAA.Add(GetTelefono(datosOriginales, Linea010000)); //TODO: Verificar Reglas
+                ListaCanal1AAA.Add(GetTelefono(datosOriginales, Linea010000));
                 ListaCanal1AAA.Add(IsFibra ? (string.IsNullOrEmpty(Linea010000.Substring(218, 20).Trim()) ? " " : Linea010000.Substring(218, 20).Trim()) : " ");
 
                 ListaCanal1AAA.Add(Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"FECP{Helpers.FormatearCampos(TiposFormateo.Fecha02, Linea010000.Substring(168, 8).Trim())}{Linea010000.Substring(151, 3).Trim().TrimStart('0')}").FirstOrDefault()?.Substring(12).Trim() ?? string.Empty);
@@ -595,7 +595,7 @@ namespace App.ControlLogicaProcesos
                 ListaCanal1AAA.Add(GetFechaExpedicion(Linea010000));
 
                 ListaCanal1AAA.Add(GetNumeroReferencia(Linea010000.Substring(139, 12)));
-                ListaCanal1AAA.AddRange(GetCodigosBarras(Linea010000.Substring(139, 12), Linea010000, datosOriginales)); //TODO: Verificar valor a pagar
+                ListaCanal1AAA.AddRange(GetCodigosBarras(Linea010000.Substring(139, 12), Linea010000, datosOriginales));
                 ListaCanal1AAA.Add(etapas);
                 ListaCanal1AAA.Add(GetTasaInteres(Linea040000));
                 listaCortes.Clear();
@@ -610,7 +610,7 @@ namespace App.ControlLogicaProcesos
                 ListaCanal1AAA.Add(GetMarcaAnexosPublicidad());
                 ListaCanal1AAA.AddRange(GetEmailTipoEmal());
                 ListaCanal1AAA.AddRange(GetMarcaCupones());
-                ListaCanal1AAA.Add(GetMarcaNumHojas()); // TODO: Numero de Hojas
+                ListaCanal1AAA.Add(GetMarcaNumHojas());
                 ListaCanal1AAA.Add(GetNivelReclamacion());
                 listaCortes.Clear();
                 listaCortes.Add(new PosCortes(108, 5));
@@ -1493,7 +1493,10 @@ namespace App.ControlLogicaProcesos
                 string lineaDistribucionDoble = Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoDistribucionDobleRevchain, $"{Cuenta}") ?? string.Empty;
 
                 if (!string.IsNullOrEmpty(lineaDistribucionDoble))
-                { tipoEmail = "dual"; }
+                {
+                    tipoEmail = "dual";
+                    Variables.Variables.DiccionarioDual.Add(Cuenta, Cuenta);
+                }
                 else
                 { tipoEmail = "solo_email"; }
             }

@@ -70,6 +70,9 @@ namespace App.Variables
         public static Dictionary<string, List<string>> DatosInsumoLlanosSuple = new Dictionary<string, List<string>>();
 
         public static Dictionary<string, string> DatosAuxAnexosVerdes = new Dictionary<string, string>();
+        public static Dictionary<string, string> DatosCartasHipotecario = new Dictionary<string, string>();
+
+        public static Dictionary<string, string> DiccionarioDual = new Dictionary<string, string>();
     }
 
     /// <summary>

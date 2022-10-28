@@ -64,3 +64,5 @@ C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\bin\Debug\App.Con
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\bin\Debug\DLL_Utilidades.pdb
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\bin\Debug\DLL_Utilidades.pdb
 C:\Proyectos\ETB\AppETB\AppETB\bin\Debug\DLL_Utilidades.pdb
+C:\Proyectos\ETB\AppETB\AppETB\bin\Debug\Excel.dll
+C:\Proyectos\ETB\AppETB\AppETB\bin\Debug\ICSharpCode.SharpZipLib.dll

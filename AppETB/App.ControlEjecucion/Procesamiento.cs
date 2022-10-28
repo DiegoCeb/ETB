@@ -32,12 +32,22 @@ namespace App.ControlEjecucion
             Helpers.RutaOriginales = Directory.CreateDirectory($"{Utilidades.LeerAppConfig("RutaOriginales")}\\{pIdentificadorProceso}Originales{DateTime.Now:yyyyMMddhhmmss}").FullName;
             Helpers.MoverArchivos(Utilidades.LeerAppConfig("RutaEntrada"), Helpers.RutaOriginales);
 
-            //Mover archivos de entrada a original y la carpeta completa de insumos
-            Helpers.RutaInsumos = $"{Helpers.RutaOriginales}\\Insumos";
-            Helpers.CopiarCarpetaCompleta(Utilidades.LeerAppConfig("RutaInsumos"), Helpers.RutaInsumos, true);
+            switch (pIdentificadorProceso)
+            {
+                case "Hipotecario":
+                    break;
 
-            //Cargue Lista Insumos para despues usar en el formateo desde originales
-            CargueGeneralInsumos(Helpers.RutaInsumos);
+                default:
+                    //Mover archivos de entrada a original y la carpeta completa de insumos
+                    Helpers.RutaInsumos = $"{Helpers.RutaOriginales}\\Insumos";
+                    Helpers.CopiarCarpetaCompleta(Utilidades.LeerAppConfig("RutaInsumos"), Helpers.RutaInsumos, true);
+
+                    //Cargue Lista Insumos para despues usar en el formateo desde originales
+                    CargueGeneralInsumos(Helpers.RutaInsumos);
+                    break;
+            }
+
+            
             #endregion
         }
 
@@ -139,6 +149,11 @@ namespace App.ControlEjecucion
             var archivos = from busqueda in Directory.GetFiles(pRutaArchivosProcesar)
                            where Path.GetExtension(busqueda).ToLower().Equals(".csv")
                            select busqueda;
+
+            var archivosExcel = from busqueda in Directory.GetFiles(pRutaArchivosProcesar)
+                           where Path.GetExtension(busqueda).ToLower().Equals(".xlsx")
+                           select busqueda;
+            Helpers.GetCartasHipotecario(archivosExcel.ToList());
 
             foreach (var archivo in archivos)
             {
@@ -437,11 +452,11 @@ namespace App.ControlEjecucion
                     break;
 
                 case "5": //Hipotecario
-                    
+                    EscribirDatosSalidaCompleto(pDatosImprimir, $"{pRutaSalida}", $"COMPLETO.sal");
                     break;
 
                 case "6": //Anexos Verdes
-
+                    EscribirDatosSalidaCompleto(pDatosImprimir, $"{pRutaSalida}", $"COMPLETO.sal");
                     break;
             }
             #endregion
