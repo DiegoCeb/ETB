@@ -33,10 +33,6 @@ namespace App.ControlLogicaProcesos
         private bool Is1ODC { get; set; }
         private bool Is1AFI { get; set; }
 
-        private List<string> listaRegi1BFI { get; set; }
-        private List<string> listaRegi1CFI { get; set; }
-
-        private List<string> listaRegi1TFI { get; set; }
         #endregion
 
         public ProcesoMasivos(string pArchivo, string pPeridoFacturacion)
@@ -71,7 +67,7 @@ namespace App.ControlLogicaProcesos
         public void CargueFormateoArchivo(string pArchivo)
         {
 
-            if(pArchivo.Contains("desktop.ini"))
+            if (pArchivo.Contains("desktop.ini"))
             {
                 return;
             }
@@ -147,7 +143,7 @@ namespace App.ControlLogicaProcesos
             //Ultimo Extracto
             if (datosExtractoFormateo.Count > 1)
             {
-                 llaveCruce = datosExtractoFormateo.ElementAt(1).Substring(117, 20).Trim();
+                llaveCruce = datosExtractoFormateo.ElementAt(1).Substring(117, 20).Trim();
 
                 if (!string.IsNullOrEmpty(Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoCuentasExtraer, llaveCruce)))
                 {
@@ -196,7 +192,7 @@ namespace App.ControlLogicaProcesos
             List<string> resultado = new List<string>();
             dynamic resultadoFormateoLinea = null;
 
-            if (pLLaveCruce == "12051553008")
+            if (pLLaveCruce == "")
             {
 
             }
@@ -519,9 +515,6 @@ namespace App.ControlLogicaProcesos
             Is1OOA = false;
             Is1ODC = false;
             Is1AFI = false;
-            listaRegi1BFI = new List<string>();
-            listaRegi1CFI = new List<string>();
-            listaRegi1TFI = new List<string>();
             #endregion
         }
 
@@ -2751,578 +2744,596 @@ namespace App.ControlLogicaProcesos
         {
             #region MapeoGrupoAFI
 
-            #region Variable
-            List<string> listaGrupo = new List<string>();
-            string resultado = string.Empty;
-            Dictionary<string, List<string>> dicOrdenado = new Dictionary<string, List<string>>();
-            List<string> lisPeriodoMax = new List<string>();
+            #region Variables
+            List<string> resultado = new List<string>();
+            Dictionary<int, List<string>> ordenSalidaInformacion = new Dictionary<int, List<string>>();
+            List<string> datosBFI = new List<string>();
+            List<string> datosCFI = new List<string>();
+            List<string> totales = new List<string>();
+            List<string> totalesAfi = new List<string>();
+            List<string> sumaValoresBase = new List<string>();
+            List<string> sumaValoresIva = new List<string>();
+            List<string> sumaValoresImpuestos = new List<string>();
+            List<string> sumaValoresTotal = new List<string>();
             string letrasPaquetes = string.Empty;
-            string valorBase = string.Empty;
-            string valorIva = string.Empty;
-            string valorTotal = string.Empty;
-            string subsidio = " ";
-            string periodoLargo = string.Empty;
-            List<string> listaFechas11C304 = new List<string>();
-            List<string> listaFechasDesde = new List<string>();
-            List<string> listaFechasHasta = new List<string>();
-            List<string> LisSumaBase = new List<string>();
-            List<string> LisSumaIva = new List<string>();
-            List<string> LisSumaTotal = new List<string>();
-            bool isRetenida = false;
+            string llaveCruce = string.Empty;
+            string descripcionConcepto = string.Empty;
+            string ajusteDecena = "000";
+            string baseRecargoMora = "000";
+            string ivaRecargoMora = "000";
+            string periodo = string.Empty;
+            string nombrePaquete = string.Empty;
+            bool banderaRecargoMora = false;
+            bool banderaAjusteDecena = false;
+            bool banderaExclusion = true;
+            bool banderaAFI = false;
             #endregion
 
-            #region Busqueda
-            var result11C = from busqueda in datosOriginales
-                            where busqueda.Length > 3 && busqueda.Substring(0, 3).Equals("11C")
-                            select busqueda;
-
-            #endregion
-
-            #region Llenar Diccionario Ordenado            
-            if (result11C.Any())
+            if (IsResidencial || IsFibra)
             {
-                foreach (var resultActual in result11C)
+                var lineas11CCompletos = from busqueda in datosOriginales
+                                         where busqueda.Length > 3 && busqueda.Substring(0, 3).Equals("11C")
+                                         group busqueda by busqueda.Substring(128, 6) into busqueda
+                                         select busqueda;
+
+                var lineas11C = from busqueda in datosOriginales
+                                where busqueda.Length > 3 && busqueda.Substring(0, 3).Equals("11C")
+                                select busqueda;
+
+                if (lineas11CCompletos.Any())
                 {
-                    // llena totales
-                    listaRegi1TFI.Add(resultActual);
-
-                    string periodoTemp = string.Empty;
-
-                    if (resultActual.Substring(128, 19).Contains("-"))
+                    foreach (var datosPaqueteAgrupado in lineas11CCompletos.Select(x => x))
                     {
-                        periodoTemp = resultActual.Substring(128, 6);
-                        lisPeriodoMax.Add(periodoTemp + "01");
-                    }
+                        #region Logica
 
-                    // Llena Diccionario
-                    if (dicOrdenado.ContainsKey(periodoTemp))
-                    {
-                        dicOrdenado[periodoTemp].Add(resultActual);
-                    }
-                    else
-                    {
-                        dicOrdenado.Add(periodoTemp, new List<string>() { resultActual });
-                    }
+                        #region Limpieza Variables
+                        letrasPaquetes = string.Empty;
+                        nombrePaquete = string.Empty;
+                        banderaExclusion = true;
+                        banderaAFI = false;
+                        datosBFI.Clear();
+                        datosCFI.Clear();
+                        totalesAfi.Clear();
+                        ordenSalidaInformacion.Clear();
+                        #endregion
 
-                    //if (Convert.ToDouble(resultActual.Substring(16, 14)) != 0)
-                    //{                        
-                    //    string periodoTemp = string.Empty;
-
-                    //    if (resultActual.Substring(128, 19).Contains("-"))
-                    //    {
-                    //        periodoTemp = resultActual.Substring(128, 6);
-                    //        lisPeriodoMax.Add(periodoTemp + "01");
-                    //    }
-
-                    //    // Llena Diccionario
-                    //    if (dicOrdenado.ContainsKey(periodoTemp))
-                    //    {
-                    //        dicOrdenado[periodoTemp].Add(resultActual);
-                    //    }
-                    //    else
-                    //    {
-                    //        dicOrdenado.Add(periodoTemp, new List<string>() { resultActual });
-                    //    }
-                    //}
-                }
-            }
-            #endregion
-
-            #region Se toma el nombre del plan y se separan 1BFI y 1CFI 
-            foreach (string key in dicOrdenado.Keys)
-            {
-                foreach (var registro in dicOrdenado[key])
-                {
-                    isRetenida = false;
-
-                    #region Toma de Letras Paquete
-                    string llaveUno = $"{registro.Substring(6, 10)}";
-                    string llaveDos = $"{registro.Substring(6, 6)}";
-                    string valorLetra = string.Empty;
-
-                    if (Variables.Variables.DatosInsumoParametrizacionPaquetesFibra.ContainsKey(llaveUno))
-                    {
-                        valorLetra = Variables.Variables.DatosInsumoParametrizacionPaquetesFibra[llaveUno];
-                    }
-                    else if (Variables.Variables.DatosInsumoParametrizacionPaquetesFibra.ContainsKey(llaveDos))
-                    {
-                        valorLetra = Variables.Variables.DatosInsumoParametrizacionPaquetesFibra[llaveDos];
-                    }
-
-                    if (!string.IsNullOrEmpty(valorLetra))
-                    {
-                        listaRegi1BFI.Add(registro);
-
-                        if (Convert.ToDouble(registro.Substring(16, 14)) == 0 )
+                        foreach (var lineaDetalle in datosPaqueteAgrupado)
                         {
-                            continue;
+                            #region OrganizacionInformacion 1BFI - 1CFI
+                            if (!string.IsNullOrEmpty(lineaDetalle.Substring(16, 14).Trim().TrimStart('0')))
+                            {
+                                string llaveUno = $"{lineaDetalle.Substring(6, 10)}";
+                                string llaveDos = $"{lineaDetalle.Substring(6, 6)}";
+                                string valorLetra = string.Empty;
+
+                                valorLetra = Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoParametrizacionPaquetesFibra, llaveUno);
+
+                                if (string.IsNullOrEmpty(valorLetra))
+                                {
+                                    valorLetra = Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoParametrizacionPaquetesFibra, llaveDos);
+                                }
+
+                                if (string.IsNullOrEmpty(valorLetra))
+                                {
+                                    //No da informacion para el paquete por tanto se excluye 1CFI
+                                    datosCFI.Add(lineaDetalle);
+                                }
+                                else
+                                {
+                                    //Informacion para el paquete 1BFI
+
+                                    #region Reglas Exclusion del paquete
+
+                                    llaveCruce = lineaDetalle.Substring(6, 10);
+
+                                    descripcionConcepto = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"CODF{lineaDetalle.Substring(6, 10)}").FirstOrDefault()?.Substring(14).Trim() ?? string.Empty;
+
+                                    if (descripcionConcepto.ToLower().Contains("empaquetado"))
+                                    {
+                                        banderaExclusion = false;
+                                    }
+
+                                    if (banderaExclusion)
+                                    {
+                                        // Buscar en el insumo Codigos_Univer_SASV y Cuentas Svas FueraBundle si se encuentra se omite este registro
+                                        if (Variables.Variables.DatosInsumoCodigosUniverSvas.ContainsKey(llaveCruce) && Variables.Variables.DatosInsumoCuentasSvasFueraBundle.ContainsKey(Cuenta))
+                                        {
+                                            //CFI
+                                            if (!string.IsNullOrEmpty(valorLetra.Trim()))
+                                            {
+                                                letrasPaquetes += valorLetra.Split('|')[2];
+                                            }
+                                            datosCFI.Add(lineaDetalle);
+                                            continue;
+                                        }
+
+                                        // Buscar en el insumo ExcluirServiciosAdicionales
+                                        if (Variables.Variables.DatosInsumoExcluirServiciosAdicionales.ContainsKey(llaveCruce.TrimStart('0')))
+                                        {
+                                            if (descripcionConcepto.ToLower().Contains("soporte pc"))
+                                            {
+                                                datosCFI.Add(lineaDetalle);
+                                                continue;
+                                            }
+
+                                            if (!string.IsNullOrEmpty(valorLetra.Trim()))
+                                            {
+                                                letrasPaquetes += valorLetra.Split('|')[2];
+                                            }
+
+                                            datosBFI.Add(lineaDetalle);
+                                            continue;
+                                        }
+
+                                        if (!string.IsNullOrEmpty(descripcionConcepto))
+                                        {
+                                            // validar el concepto trae la palabra SVA se omite
+                                            if (descripcionConcepto.Contains("SVA"))
+                                            {
+                                                //CFI
+                                                if (!string.IsNullOrEmpty(valorLetra.Trim()))
+                                                {
+                                                    letrasPaquetes += valorLetra.Split('|')[2];
+                                                }
+                                                datosCFI.Add(lineaDetalle);
+                                                continue;
+                                            }
+                                        }
+                                    }
+
+                                    #endregion
+
+                                    if (!letrasPaquetes.Contains(valorLetra.Split('|')[2]))
+                                    {
+                                        letrasPaquetes += valorLetra.Split('|')[2];
+                                    }
+
+                                    datosBFI.Add(lineaDetalle);
+                                }
+                            }
+                            #endregion
                         }
 
-                        if (!letrasPaquetes.Contains(valorLetra.Split('|')[2]))
+                        nombrePaquete = GetNombrePaquete(letrasPaquetes);
+
+                        if (string.IsNullOrEmpty(nombrePaquete) && datosBFI.Any())
                         {
-                            letrasPaquetes += valorLetra.Split('|')[2];
+                            datosCFI.AddRange(datosBFI);
+                            datosBFI.Clear();
                         }
 
-                        continue;
-                    }
-                    #endregion
+                        var buscarAFI = from busqueda in resultado
+                                        where busqueda.Substring(0, 4) == "1AFI"
+                                        select busqueda;
 
-                    #region Validar exclusiones
-                    // Se valida que la linea no este en el las bases de exclusion y reglas para ser 1CFI
-                    string llave = string.Empty;
-                    string valorSus = string.Empty;
-
-                    // Llave con los 10 digitos 
-                    llave = registro.Substring(6, 10);
-
-                    // Buscar en el insumo Codigos_Univer_SASV y Cuentas Svas FueraBundle si se encuentra se omite este registro
-                    if (Variables.Variables.DatosInsumoCodigosUniverSvas.ContainsKey(llave) && Variables.Variables.DatosInsumoCuentasSvasFueraBundle.ContainsKey(Cuenta))
-                    {
-                        listaRegi1CFI.Add(registro);
-                        isRetenida = true;
-                        continue;
-                    }
-
-                    // Buscar en el insumo ExcluirServiciosAdicionales
-                    if (Variables.Variables.DatosInsumoExcluirServiciosAdicionales.ContainsKey(llave.TrimStart('0')))
-                    {
-                        listaRegi1CFI.Add(registro);
-                        isRetenida = true;
-                        continue;
-                    }
-
-                    #region Busqueda concepto en tabla Sustitución
-                    llave = $"CODF{registro.Substring(6, 10)}";
-
-                    if (Variables.Variables.DatosInsumoTablaSustitucion.ContainsKey(llave))
-                    {
-                        valorSus = Variables.Variables.DatosInsumoTablaSustitucion[llave].FirstOrDefault().Substring(14).Trim();
-                    }
-                    #endregion
-
-                    // validar lel concepto trae la palabra SVA se omite
-                    if (valorSus.Contains("SVA") && Convert.ToDouble(registro.Substring(16, 14)) != 0)
-                    {
-                        listaRegi1CFI.Add(registro);
-                        isRetenida = true;
-                        continue;
-                    }
-                    #endregion
-                    
-
-                    #region Se Agrega al canal 1CFI si valor letra es string.Emty
-                    if (string.IsNullOrEmpty(valorLetra))
-                    {
-                        listaRegi1CFI.Add(registro);
-                    }
-                    #endregion
-                }
-            }
-
-            string nombrePaquete = GetNombrePaquete(letrasPaquetes);
-            #endregion
-
-            if (!string.IsNullOrEmpty(nombrePaquete))
-            {
-                #region Se arma el 1AFi y 1BFI
-
-                string periodoMaximo = Helpers.GetFechaMaximaMinima(lisPeriodoMax, 1);
-                if (!string.IsNullOrEmpty(periodoMaximo))
-                    periodoMaximo = periodoMaximo.Substring(0, 6);
-
-                foreach (string registro1BFI in listaRegi1BFI)
-                {
-                    #region Llena listas de fechas
-                    if (registro1BFI.Substring(0, 6) == "11C304")
-                    {
-                        if (registro1BFI.Substring(128, 19).Contains("-"))
+                        if (!string.IsNullOrEmpty(nombrePaquete) && buscarAFI.Any())
                         {
-                            listaFechas11C304.Add(registro1BFI.Substring(128, 19));
-                            listaFechasDesde.Add(registro1BFI.Substring(128, 8));
-                            listaFechasHasta.Add(registro1BFI.Substring(139, 8));
+                            if (datosCFI.Any() && !datosBFI.Any())
+                            {
+                                datosBFI.AddRange(datosCFI);
+                                datosCFI.Clear();
+                            }
                         }
-                    }
-                    #endregion
 
-                    #region Captura Totales
-                    if (Convert.ToDouble(registro1BFI.Substring(16, 14)) != 0)
-                    {
-                        LisSumaBase.Add(registro1BFI.Substring(16, 14));
-                        LisSumaIva.Add(registro1BFI.Substring(44, 14));
-
-                        LisSumaTotal.Add(registro1BFI.Substring(16, 14));
-                        LisSumaTotal.Add(registro1BFI.Substring(44, 14));
-                    }
-                    #endregion
-                }
-
-                #region Se captura fecha mas reciente
-                string fechaReciente = Helpers.GetFechaMasReciente(listaFechas11C304);
-
-                if (!string.IsNullOrEmpty(fechaReciente))
-                {
-                    periodoLargo = "(" + Helpers.FormatearCampos(TiposFormateo.Fecha04, fechaReciente.Substring(4, 4)) + " - " + Helpers.FormatearCampos(TiposFormateo.Fecha04, fechaReciente.Substring(13, 4)) + ")";
-                }
-                else
-                {
-                    periodoLargo = " ";
-                }
-                #endregion
-
-                if(Helpers.SumarCampos(LisSumaTotal) != "$ 0,00")
-                {
-                    if (IsFibra || IsResidencial)
-                    {
-                        resultado = "1AFI|";
-                        resultado += periodoMaximo + "|";
-                        resultado += nombrePaquete + "|";
-                        resultado += Helpers.SumarCampos(LisSumaBase) + "|";
-                        resultado += Helpers.SumarCampos(LisSumaIva) + "|";
-                        resultado += Helpers.SumarCampos(LisSumaTotal) + "|";
-                        resultado += subsidio + "|";
-                        resultado += periodoLargo + "||";
-                        resultado += Helpers.GetFechaMaximaOMinima(listaFechasDesde, 2) + "|";
-                        resultado += Helpers.GetFechaMaximaOMinima(listaFechasHasta, 1) + "| ";
-
-                        // se agrega el canal 1AFI
-                        listaGrupo.Add(Helpers.ValidarPipePipe(resultado));
-                    }
-
-                    #region Se arma el 1BCI
-
-                    List<string> lisTemp1BF1 = Logica1BFI(listaRegi1BFI);
-
-                    if (lisTemp1BF1.Count > 0)
-                        listaGrupo.AddRange(lisTemp1BF1);
-
-                    #endregion
-                }
-
-                #endregion
-            }
-
-            #region Se arma el canal 1CFI
-            List<string> lisTemp1CF1 = Logica1CFI(listaRegi1CFI);
-
-            if (lisTemp1CF1.Count > 0)
-                listaGrupo.AddRange(lisTemp1CF1);
-
-            // Se agrega para que proceso los registros que estan en la lista de 1BFI para que los pinte en el canal 1CFI
-            if(string.IsNullOrEmpty(nombrePaquete))
-            {
-                List<string> lisTemp1CF2 = Logica1CFI(listaRegi1BFI);
-
-                if (lisTemp1CF2.Count > 0)
-                    listaGrupo.AddRange(lisTemp1CF2);
-            }            
-
-            string recargoMora = logicaRecargoMora1CFI(datosOriginales);
-
-            if (!string.IsNullOrEmpty(recargoMora))
-                listaGrupo.Add(recargoMora);
-
-            string ajusteDecena = logicaAjusteDecena1CFI(datosOriginales);
-
-            if (!string.IsNullOrEmpty(ajusteDecena))
-                listaGrupo.Add(ajusteDecena);
-
-            #endregion
-
-            #region Se arma el canal 1TFI
-            string canal1TFI = Logica1TFI(datosOriginales);
-
-            if (!string.IsNullOrEmpty(canal1TFI))
-            {
-                listaGrupo.Add(canal1TFI);
-            }
-
-            #endregion
-
-            return listaGrupo;
-            #endregion
-        }
-
-        private List<string> Logica1BFI(List<string> listaProcesar)
-        {
-            #region Logica1BFI
-            string lineaResultado = string.Empty;
-            List<string> listaResultado = new List<string>();
-            Dictionary<string, List<string>> dicAgrupado = new Dictionary<string, List<string>>();
-
-            if (listaProcesar.Count > 0)
-            {
-                foreach (string registro1CFI in listaProcesar)
-                {
-                    string agrupacion = registro1CFI.Substring(274, 7);
-                    // Llena Diccionario
-                    if (dicAgrupado.ContainsKey(agrupacion))
-                    {
-                        dicAgrupado[agrupacion].Add(registro1CFI);
-                    }
-                    else
-                    {
-                        dicAgrupado.Add(agrupacion, new List<string>() { registro1CFI });
-                    }
-                }
-
-                foreach (var valores in dicAgrupado.Values)
-                {
-                    foreach (var linea11C in valores)
-                    {
-                        string llave = string.Empty;
-                        string valor = string.Empty;
-
-                        #region Busqueda concepto en tabla Sustitución
-                        llave = $"CODF{linea11C.Substring(6, 10)}";
-
-                        if (Variables.Variables.DatosInsumoTablaSustitucion.ContainsKey(llave))
+                        if (datosBFI.Any())
                         {
-                            valor = Variables.Variables.DatosInsumoTablaSustitucion[llave].FirstOrDefault().Substring(14).Trim();
+                            #region Logica BFI
+                            var lineasDetallePaqueteAgrupadoPeriodo = from busqueda in datosBFI
+                                                                      group busqueda by busqueda.Substring(128, 19).Trim() into busqueda
+                                                                      select busqueda;
+
+
+                            string mesAnterior = string.Empty;
+                            bool banderaSIguEnPaquete = true;
+
+                            foreach (var periodos in lineasDetallePaqueteAgrupadoPeriodo.Select(x => x))
+                            {
+                                if (periodos.Key.Contains("-"))
+                                {
+                                    string mesPeriodo = periodos.Key.Split('-').ElementAt(0).Substring(4, 2);
+
+                                    if (string.IsNullOrEmpty(mesAnterior))
+                                    {
+                                        mesAnterior = mesPeriodo;
+                                    }
+
+                                    if (mesPeriodo != mesAnterior)
+                                    {
+                                        mesAnterior = mesPeriodo;
+                                        banderaSIguEnPaquete = false;
+                                    }
+                                }
+                            }
+
+                            if (!banderaSIguEnPaquete)
+                            {
+                                //Si el periodo no es el mismo se excluye
+                                #region Validacion Exclusion Periodo
+                                for (int i = 1; i < lineasDetallePaqueteAgrupadoPeriodo.Count(); i++)
+                                {
+                                    var dato = lineasDetallePaqueteAgrupadoPeriodo.ElementAt(i);
+
+                                    foreach (var linea in dato)
+                                    {
+                                        datosCFI.Add(linea);
+
+                                        if (datosBFI.Contains(linea))
+                                        {
+                                            datosBFI.Remove(linea);
+                                        }
+                                    }
+                                }
+                                #endregion
+                            }
+
+                            lineasDetallePaqueteAgrupadoPeriodo = from busqueda in datosBFI
+                                                                  group busqueda by busqueda.Substring(128, 19).Trim() into busqueda
+                                                                  select busqueda;
+
+                            foreach (var lineaDetalleAgrupPeriodo in lineasDetallePaqueteAgrupadoPeriodo.Select(x => x))
+                            {
+                                var lineasDetallePaqueteAgrupado = from busqueda in lineaDetalleAgrupPeriodo
+                                                                   group busqueda by busqueda.Substring(274, 15).Trim() into busqueda
+                                                                   select busqueda;
+
+                                foreach (var lineasDetalleFinal in lineasDetallePaqueteAgrupado.SelectMany(lineasDetalleFinal => lineasDetalleFinal))
+                                {
+                                    llaveCruce = $"CODF{lineasDetalleFinal.Substring(6, 10)}";
+
+                                    descripcionConcepto = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruce).FirstOrDefault()?.Substring(14).Trim() ?? string.Empty;
+
+                                    string lineaBfi = string.Empty;
+
+                                    if (string.IsNullOrEmpty(lineasDetalleFinal.Substring(132, 4).Trim()) || !lineasDetalleFinal.Substring(128, 19).Trim().Contains("-"))
+                                    {
+                                        lineaBfi = Helpers.ValidarPipePipe($"1BFI| |{descripcionConcepto}| | | | | ");
+                                    }
+                                    else
+                                    {
+                                        lineaBfi = Helpers.ValidarPipePipe($"1BFI| |{descripcionConcepto} ({Helpers.FormatearCampos(TiposFormateo.Fecha04, lineasDetalleFinal.Substring(132, 4))} - {Helpers.FormatearCampos(TiposFormateo.Fecha04, lineasDetalleFinal.Substring(143, 4))})| | | | | ");
+                                    }
+
+                                    if (ordenSalidaInformacion.ContainsKey(2))
+                                    {
+                                        if (!ordenSalidaInformacion[2].Contains(lineaBfi))
+                                        {
+                                            ordenSalidaInformacion[2].Add(lineaBfi);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        ordenSalidaInformacion.Add(2, new List<string> { lineaBfi });
+                                    }
+                                }
+                            }
+                            #endregion
+                        }
+
+                        if (datosCFI.Any())
+                        {
+                            #region Logica CFI
+                            var lineasDetallePaqueteAgrupadoPeriodo = from busqueda in datosCFI
+                                                                      group busqueda by busqueda.Substring(128, 19).Trim() into busqueda
+                                                                      select busqueda;
+
+                            foreach (var lineaDetalleAgrupPeriodo in lineasDetallePaqueteAgrupadoPeriodo.Select(x => x))
+                            {
+                                var lineasDetallePaqueteAgrupado = from busqueda in lineaDetalleAgrupPeriodo
+                                                                   group busqueda by busqueda.Substring(274, 15).Trim() into busqueda
+                                                                   select busqueda;
+
+                                foreach (var lineaDetalleAgrupado in lineasDetallePaqueteAgrupado.Select(lineaDetalleAgrupado => lineaDetalleAgrupado))
+                                {
+                                    sumaValoresBase.Clear();
+                                    sumaValoresIva.Clear();
+                                    sumaValoresImpuestos.Clear();
+                                    sumaValoresTotal.Clear();
+
+                                    foreach (var lineadetalle in lineaDetalleAgrupado)
+                                    {
+                                        sumaValoresBase.Add(lineadetalle.Substring(16, 14).Trim());
+                                        sumaValoresIva.Add(lineadetalle.Substring(44, 14).Trim());
+                                        sumaValoresImpuestos.Add(lineadetalle.Substring(172, 14).Trim());
+                                    }
+
+                                    sumaValoresTotal.AddRange(sumaValoresBase);
+                                    sumaValoresTotal.AddRange(sumaValoresIva);
+                                    sumaValoresTotal.AddRange(sumaValoresImpuestos);
+
+                                    llaveCruce = $"CODF{lineaDetalleAgrupado.FirstOrDefault().Substring(6, 10)}";
+
+                                    descripcionConcepto = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruce).FirstOrDefault()?.Substring(14).Trim() ?? string.Empty;
+
+                                    string lineaCfi = string.Empty;
+
+                                    if (string.IsNullOrEmpty(lineaDetalleAgrupado.FirstOrDefault().Substring(132, 4).Trim()) || !lineaDetalleAgrupado.FirstOrDefault().Substring(128, 19).Trim().Contains("-"))
+                                    {
+                                        lineaCfi = Helpers.ValidarPipePipe($"1CFI| |{descripcionConcepto}|{Helpers.SumarCampos(sumaValoresBase)}|{Helpers.SumarCampos(sumaValoresIva)}|" +
+                                            $"{Helpers.SumarCampos(sumaValoresTotal)}|{Helpers.SumarCampos(sumaValoresImpuestos)}| ");
+                                    }
+                                    else
+                                    {
+                                        lineaCfi = Helpers.ValidarPipePipe($"1CFI|{lineaDetalleAgrupado.FirstOrDefault().Substring(128, 6)}|{descripcionConcepto} ({Helpers.FormatearCampos(TiposFormateo.Fecha04, lineaDetalleAgrupado.FirstOrDefault().Substring(132, 4))} - {Helpers.FormatearCampos(TiposFormateo.Fecha04, lineaDetalleAgrupado.FirstOrDefault().Substring(143, 4))})" +
+                                        $"|{Helpers.SumarCampos(sumaValoresBase)}|{Helpers.SumarCampos(sumaValoresIva)}|{Helpers.SumarCampos(sumaValoresTotal)}|{Helpers.SumarCampos(sumaValoresImpuestos)}| ");
+                                    }
+
+                                    if (ordenSalidaInformacion.ContainsKey(3))
+                                    {
+                                        ordenSalidaInformacion[3].Add(lineaCfi);
+                                    }
+                                    else
+                                    {
+                                        ordenSalidaInformacion.Add(3, new List<string> { lineaCfi });
+                                    }
+                                }
+                            }
+                            #endregion
+                        }
+
+                        #region Validar para recargo de mora
+                        var lineas11CRecargoMora = from busqueda in lineas11C
+                                                   where busqueda.Length > 3 && busqueda.Substring(0, 3).Equals("11C") && !string.IsNullOrEmpty(busqueda.Substring(30, 14).Trim().TrimStart('0'))
+                                                   select busqueda;
+
+                        if (lineas11CRecargoMora.Any())
+                        {
+                            if (!banderaRecargoMora)
+                            {
+                                string lineaRecargo = GetRecargoMora(lineas11CRecargoMora.ToList(), string.Empty, string.Empty, ref banderaRecargoMora, "2");
+
+                                baseRecargoMora = Helpers.FormatearCampos(TiposFormateo.Decimal03, lineaRecargo.Split('|').ElementAt(3)).Trim().Replace(".", string.Empty);
+                                ivaRecargoMora = Helpers.FormatearCampos(TiposFormateo.Decimal03, lineaRecargo.Split('|').ElementAt(4)).Trim().Replace(".", string.Empty);
+
+                                if (ordenSalidaInformacion.ContainsKey(3))
+                                {
+                                    ordenSalidaInformacion[3].Add(lineaRecargo);
+                                }
+                                else
+                                {
+                                    ordenSalidaInformacion.Add(3, new List<string> { lineaRecargo });
+                                }
+                            }
                         }
                         #endregion
 
-                        if (Convert.ToDouble(linea11C.Substring(16, 14)) != 0 ||
-                                Convert.ToDouble(linea11C.Substring(44, 14)) != 0 ||
-                                (Convert.ToDouble(linea11C.Substring(16, 14)) + Convert.ToDouble(linea11C.Substring(44, 14)) != 0))
+                        #region Validar para Ajuste Decena
+                        var lineaAjusteDecena = from busqueda in datosOriginales
+                                                where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("02T003") && !string.IsNullOrEmpty(busqueda.Substring(6, 14).Trim().TrimStart('0'))
+                                                select busqueda;
+
+                        if (lineaAjusteDecena.Any())
                         {
-
-                            lineaResultado = "1BFI||";
-
-                            if (valores.FirstOrDefault().Substring(128, 19).Contains('-'))
+                            if (!banderaAjusteDecena)
                             {
-                                lineaResultado += valor + " ( " + Helpers.FormatearCampos(TiposFormateo.Fecha04, linea11C.Substring(132, 4)) + " - " + Helpers.FormatearCampos(TiposFormateo.Fecha04, linea11C.Substring(143, 4)) + " ) |";
-                            }
-                            //else
-                            //{
-                            //    lineaResultado += valor + "|";
-                            //}
+                                string lineaRecargo = GetAjusteDecena(lineaAjusteDecena.FirstOrDefault(), ref banderaAjusteDecena);
 
-                            lineaResultado += " |||| ";
+                                ajusteDecena = lineaAjusteDecena.FirstOrDefault().Substring(6, 14);
 
-                            if (!listaResultado.Contains(Helpers.ValidarPipePipe(lineaResultado)))
-                            {
-                                listaResultado.Add(Helpers.ValidarPipePipe(lineaResultado));
-                            }
-                        }
-                    }
-
-                }
-            }
-
-            return listaResultado;
-            #endregion
-        }
-        private string logicaAjusteDecena1CFI(List<string> datosOriginales)
-        {
-            #region logicaAjusteDecena1CFI
-            string reultadoAjusteDecena = string.Empty;
-            List<PosCortes> listaCortes = new List<PosCortes>();
-
-
-            // Llenar el canal con el ajuste a la decena si lo tiene
-            var resultAjusteDecena = from busqueda in datosOriginales
-                                     where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("02T003")
-                                     select busqueda;
-
-            // Validar que tenga Ajuste a la decena
-            if (resultAjusteDecena.Any())
-            {
-                if (Convert.ToDouble(resultAjusteDecena.FirstOrDefault().Substring(6, 14)) != 0)
-                {
-                    listaCortes.Add(new PosCortes(6, 14, TiposFormateo.Decimal01));
-
-                    reultadoAjusteDecena = string.Empty;
-                    reultadoAjusteDecena = "1CFI||Ajuste Decena|";
-                    reultadoAjusteDecena += Helpers.ExtraccionCamposSpool(listaCortes, resultAjusteDecena.FirstOrDefault());
-                    reultadoAjusteDecena += "||";
-                    reultadoAjusteDecena += Helpers.ExtraccionCamposSpool(listaCortes, resultAjusteDecena.FirstOrDefault());
-                    reultadoAjusteDecena += "|| ";
-                }
-
-            }
-
-            return Helpers.ValidarPipePipe(reultadoAjusteDecena);
-
-            #endregion
-        }
-
-        private string logicaRecargoMora1CFI(List<string> datosOriginales)
-        {
-            #region logicaRecargoMora1CFI
-            string resultadoRecargoMora = string.Empty;
-            List<PosCortes> listaCortes = new List<PosCortes>();
-            List<string> sumaRecargo = new List<string>();
-            List<string> sumaValor2 = new List<string>();
-            List<string> sumaCampos = new List<string>();
-            string valorRecatgoMora = string.Empty;
-
-            // Llenar el canal con el ajuste a la decena si lo tiene
-            var resultRecargoMora = from busqueda in datosOriginales
-                                    where busqueda.Length > 3 && busqueda.Substring(0, 3).Equals("11C")
-                                    select busqueda;
-
-
-            if (resultRecargoMora.Any())
-            {
-                foreach (string registroActual in resultRecargoMora)
-                {
-                    if (Convert.ToDouble(registroActual.Substring(30, 14)) != 0)
-                    {
-                        sumaRecargo.Add(registroActual.Substring(30, 14));
-                        sumaValor2.Add(registroActual.Substring(44, 14));
-                    }
-                }
-
-                valorRecatgoMora = Helpers.SumarCampos(sumaRecargo);
-
-                if (valorRecatgoMora == "$ 0,00")
-                {
-                    resultadoRecargoMora = string.Empty;
-                }
-                else
-                {
-                    sumaCampos.AddRange(sumaRecargo);
-                    sumaCampos.AddRange(sumaValor2);
-
-
-                    resultadoRecargoMora = string.Empty;
-                    resultadoRecargoMora = "1CFI||Recargo Mora|";
-                    resultadoRecargoMora += valorRecatgoMora + "|";
-                    resultadoRecargoMora += Helpers.SumarCampos(sumaValor2) + "|";
-
-                    resultadoRecargoMora += Helpers.SumarCampos(sumaCampos) + "|";
-                    resultadoRecargoMora += "| ";
-                }
-            }
-
-            return Helpers.ValidarPipePipe(resultadoRecargoMora);
-
-            #endregion
-        }
-
-        private List<string> Logica1CFI(List<string> listaProcesar)
-        {
-            #region Logica1CFI
-            List<string> resultado1CFI = new List<string>();
-            List<PosCortes> listaCortes = new List<PosCortes>();
-            List<string> camposSumar = new List<string>();
-            string linea1CFI = string.Empty;
-            Dictionary<string, List<string>> dicAgrupado = new Dictionary<string, List<string>>();
-
-            if (listaProcesar.Count > 0)
-            {
-                foreach (string registro1CFI in listaProcesar)
-                {
-                    string agrupacion = registro1CFI.Substring(274, 7);
-                    // Llena Diccionario
-                    if (dicAgrupado.ContainsKey(agrupacion))
-                    {
-                        dicAgrupado[agrupacion].Add(registro1CFI);
-                    }
-                    else
-                    {
-                        dicAgrupado.Add(agrupacion, new List<string>() { registro1CFI });
-                    }
-                }
-
-                foreach (var valores in dicAgrupado.Values)
-                {
-                    if (valores.Count > 1)
-                    {
-                        List<string> camposSumar1 = new List<string>();
-                        List<string> camposSumar2 = new List<string>();
-                        List<string> camposSumar3 = new List<string>();
-                        string Descripcion = string.Empty;
-                        string periodo = string.Empty;
-
-                        foreach (var registro1CFI in valores)
-                        {
-                            if (Convert.ToInt32(registro1CFI.Substring(16, 14).Trim()) > 0)
-                            {
-                                string llave = $"CODF{registro1CFI.Substring(6, 10)}";
-
-                                if (Variables.Variables.DatosInsumoTablaSustitucion.ContainsKey(llave))
+                                if (ordenSalidaInformacion.ContainsKey(3))
                                 {
-                                    Descripcion = Variables.Variables.DatosInsumoTablaSustitucion[llave].FirstOrDefault().Substring(15).Trim();
-
-                                    if (registro1CFI.Substring(128, 19).Contains('-'))
-                                    {
-                                        Descripcion = Descripcion + " ( " + Helpers.FormatearCampos(TiposFormateo.Fecha04, registro1CFI.Substring(132, 4)) + " - " + Helpers.FormatearCampos(TiposFormateo.Fecha04, registro1CFI.Substring(143, 4)) + " ) ";
-                                    }
+                                    ordenSalidaInformacion[3].Add(lineaRecargo);
                                 }
-
-                                camposSumar1.Add(registro1CFI.Substring(16, 14));
-                                camposSumar2.Add(registro1CFI.Substring(44, 14));
-
-                                camposSumar3.Add(registro1CFI.Substring(16, 14));
-                                camposSumar3.Add(registro1CFI.Substring(44, 14));
-
-                                periodo = registro1CFI.Substring(128, 6);
+                                else
+                                {
+                                    ordenSalidaInformacion.Add(3, new List<string> { lineaRecargo });
+                                }
                             }
                         }
+                        #endregion
 
-                        if(!string.IsNullOrEmpty(Descripcion))
+                        totales.AddRange(datosBFI);
+                        totales.AddRange(datosCFI);
+                        totalesAfi.AddRange(datosBFI);
+
+                        if (!string.IsNullOrEmpty(nombrePaquete))
                         {
-                            linea1CFI = string.Empty;
-                            linea1CFI = "1CFI|";
-                            linea1CFI += periodo.Trim() + "|";
-                            linea1CFI += Descripcion + "|";
-                            linea1CFI += Helpers.SumarCampos(camposSumar1) + "|";
-                            linea1CFI += Helpers.SumarCampos(camposSumar2) + "|";
-                            linea1CFI += Helpers.SumarCampos(camposSumar3) + "|";
-                            linea1CFI += "| ";
-
-                            camposSumar1.Clear();
-                            camposSumar2.Clear();
-                            camposSumar3.Clear();
-
-                            resultado1CFI.Add(Helpers.ValidarPipePipe(linea1CFI));
-                        }                        
-                    }
-                    else
-                    {
-                        string registro1CFI = valores.FirstOrDefault();
-
-                        if (Convert.ToInt32(registro1CFI.Substring(16, 14).Trim()) > 0)
-                        {
-                            string llave = $"CODF{registro1CFI.Substring(6, 10)}";
-                            string valor = string.Empty;
-
-                            if (Variables.Variables.DatosInsumoTablaSustitucion.ContainsKey(llave))
+                            if (buscarAFI.Any())
                             {
-                                valor = Variables.Variables.DatosInsumoTablaSustitucion[llave].FirstOrDefault().Substring(15).Trim();
-                            }
-
-                            linea1CFI = string.Empty;
-                            linea1CFI = "1CFI|";
-                            linea1CFI += registro1CFI.Substring(128, 6).Trim() + "|";
-
-                            if (registro1CFI.Substring(128, 19).Contains('-'))
-                            {
-                                linea1CFI += valor + " ( " + Helpers.FormatearCampos(TiposFormateo.Fecha04, registro1CFI.Substring(132, 4)) + " - " + Helpers.FormatearCampos(TiposFormateo.Fecha04, registro1CFI.Substring(143, 4)) + " ) |";
+                                if (buscarAFI.FirstOrDefault().Split('|').ElementAt(1) != datosPaqueteAgrupado.Key.Substring(0, 6))
+                                {
+                                    banderaAFI = true;
+                                }
                             }
                             else
                             {
-                                linea1CFI += valor + "|";
+                                banderaAFI = true;
                             }
 
-                            linea1CFI += Helpers.FormatearCampos(TiposFormateo.Decimal01, registro1CFI.Substring(16, 14)) + "|";
-                            linea1CFI += Helpers.FormatearCampos(TiposFormateo.Decimal01, registro1CFI.Substring(44, 14)) + "|";
+                            if (banderaAFI)
+                            {
+                                #region Logica AFI
 
-                            camposSumar.Add(registro1CFI.Substring(16, 14));
-                            camposSumar.Add(registro1CFI.Substring(44, 14));
-                            linea1CFI += Helpers.SumarCampos(camposSumar) + "|";
-                            linea1CFI += "| ";
+                                sumaValoresBase.Clear();
+                                sumaValoresIva.Clear();
+                                sumaValoresImpuestos.Clear();
+                                sumaValoresTotal.Clear();
 
-                            camposSumar.Clear();
+                                foreach (var lineadetalle in totalesAfi)
+                                {
+                                    sumaValoresBase.Add(lineadetalle.Substring(16, 14).Trim());
+                                    sumaValoresIva.Add(lineadetalle.Substring(44, 14).Trim());
+                                }
 
-                            resultado1CFI.Add(Helpers.ValidarPipePipe(linea1CFI));
+                                sumaValoresTotal.AddRange(sumaValoresBase);
+                                sumaValoresTotal.AddRange(sumaValoresIva);
+
+                                var fechas = from busqueda in datosPaqueteAgrupado
+                                             select busqueda.Substring(128, 19);
+
+                                periodo = Helpers.GetFechaMasReciente(fechas.ToList());
+
+                                if (string.IsNullOrEmpty(periodo))
+                                {
+                                    periodo = "99999999-99999999";
+                                }
+
+                                string Corte = string.IsNullOrEmpty(datosPaqueteAgrupado.Key.Trim()) ? "       " : datosPaqueteAgrupado.Key;
+
+                                string lineaAfi = Helpers.ValidarPipePipe($"1AFI|{Corte.Substring(0, 6).Trim()}|{nombrePaquete}|{Helpers.SumarCampos(sumaValoresBase)}|" +
+                                    $"{Helpers.SumarCampos(sumaValoresIva)}|{Helpers.SumarCampos(sumaValoresTotal)}| |" +
+                                    $"({Helpers.FormatearCampos(TiposFormateo.Fecha04, periodo.Split('-').ElementAt(0).Trim().Substring(4, 4))} - {Helpers.FormatearCampos(TiposFormateo.Fecha04, periodo.Split('-').ElementAt(1).Trim().Substring(4, 4))})" +
+                                    $"| |{periodo.Split('-').ElementAt(0).Trim()}|{periodo.Split('-').ElementAt(1).Trim()}| ");
+
+                                if (ordenSalidaInformacion.ContainsKey(1))
+                                {
+                                    ordenSalidaInformacion[1].Add(lineaAfi);
+                                }
+                                else
+                                {
+                                    ordenSalidaInformacion.Add(1, new List<string> { lineaAfi });
+                                }
+                                #endregion
+                            }
                         }
+
+                        var resultadosOrdenados = from busqueda in ordenSalidaInformacion
+                                                  orderby busqueda.Key ascending
+                                                  select busqueda;
+
+                        foreach (var lineaFinal in resultadosOrdenados.SelectMany(x => x.Value))
+                        {
+                            resultado.Add(lineaFinal);
+                        }
+                        #endregion
                     }
+
+                    #region Logica TFI
+
+                    sumaValoresBase.Clear();
+                    sumaValoresIva.Clear();
+                    sumaValoresImpuestos.Clear();
+                    sumaValoresTotal.Clear();
+
+                    sumaValoresBase.Add(baseRecargoMora);
+                    sumaValoresIva.Add(ivaRecargoMora);
+                    sumaValoresBase.Add(ajusteDecena);
+
+                    foreach (var lineadetalle in totales)
+                    {
+                        sumaValoresBase.Add(lineadetalle.Substring(16, 14).Trim());
+                        sumaValoresIva.Add(lineadetalle.Substring(44, 14).Trim());
+                    }
+
+                    sumaValoresTotal.AddRange(sumaValoresBase);
+                    sumaValoresTotal.AddRange(sumaValoresIva);
+
+                    if (sumaValoresTotal.Any())
+                    {
+                        string lineaTfi = Helpers.ValidarPipePipe($"1TFI| |TOTAL|{Helpers.SumarCampos(sumaValoresBase)}|" +
+                            $"{Helpers.SumarCampos(sumaValoresIva)}|{Helpers.FormatearCampos(TiposFormateo.Redondear, Helpers.SumarCampos(sumaValoresTotal))}| | ");
+
+                        resultado.Add(lineaTfi);
+                    }
+
+                    #endregion
                 }
             }
 
-            return resultado1CFI;
+            var resultadoOrdenado = from busqueda in resultado
+                                    orderby busqueda.Split('|').ElementAt(0) ascending
+                                    select busqueda;
+
+            if (resultadoOrdenado.Count() == 2)
+            {
+                if (resultadoOrdenado.FirstOrDefault().Contains("Ajuste Decena"))
+                {
+                    return new List<string>();
+                }
+            }
+
+            if (resultadoOrdenado.Where(x => x.Contains("1CFI")).Any() &&
+                resultadoOrdenado.Where(x => x.Contains("1TFI")).Any() &&
+                !resultadoOrdenado.Where(x => x.Contains("1BFI")).Any())
+            {
+                #region Logica Desagrupados
+                var lineasCFI = from busqueda in resultadoOrdenado
+                                where busqueda.Substring(0, 4).Equals("1CFI")
+                                select busqueda;
+
+                var lineaTFI = from busqueda in resultadoOrdenado
+                               where busqueda.Substring(0, 4).Equals("1TFI")
+                               select busqueda;
+
+                Dictionary<string, List<string>> validarDuplicados = new Dictionary<string, List<string>>();
+                List<string> resultadoFinalOrdenado = new List<string>();
+                bool banderaDuplicados = false;
+
+                foreach (var linea in lineasCFI)
+                {
+                    string llave = linea.Split('|').ElementAt(2);
+
+                    if (validarDuplicados.ContainsKey(llave))
+                    {
+                        banderaDuplicados = true;
+                        validarDuplicados[llave].Add(linea);
+                    }
+                    else
+                    {
+                        validarDuplicados.Add(llave, new List<string> { linea });
+                    }
+                }
+
+                if (banderaDuplicados)
+                {
+                    #region Desagrupados
+                    foreach (var detallesDuplicados in validarDuplicados)
+                    {
+                        if (detallesDuplicados.Value.Count > 1)
+                        {
+                            sumaValoresBase.Clear();
+                            sumaValoresIva.Clear();
+                            sumaValoresImpuestos.Clear();
+                            sumaValoresTotal.Clear();
+
+                            foreach (var lineadetalle in detallesDuplicados.Value)
+                            {
+                                sumaValoresBase.Add(Helpers.FormatearCampos(TiposFormateo.Decimal03, lineadetalle.Split('|').ElementAt(3)).Replace(".", string.Empty));
+                                sumaValoresIva.Add(Helpers.FormatearCampos(TiposFormateo.Decimal03, lineadetalle.Split('|').ElementAt(4)).Replace(".", string.Empty));
+                                sumaValoresImpuestos.Add(Helpers.FormatearCampos(TiposFormateo.Decimal03, lineadetalle.Split('|').ElementAt(6)).Replace(".", string.Empty));
+                            }
+
+                            sumaValoresTotal.AddRange(sumaValoresBase);
+                            sumaValoresTotal.AddRange(sumaValoresIva);
+                            sumaValoresTotal.AddRange(sumaValoresImpuestos);
+
+                            resultadoFinalOrdenado.Add(Helpers.ValidarPipePipe($"{detallesDuplicados.Value.FirstOrDefault().Split('|').ElementAt(0)}|" +
+                                $"{detallesDuplicados.Value.FirstOrDefault().Split('|').ElementAt(1)}|" +
+                                $"{detallesDuplicados.Value.FirstOrDefault().Split('|').ElementAt(2)}|" +
+                                $"{Helpers.SumarCampos(sumaValoresBase)}|" +
+                                $"{Helpers.SumarCampos(sumaValoresIva)}|" +
+                                $"{Helpers.SumarCampos(sumaValoresTotal)}|" +
+                                $"{Helpers.SumarCampos(sumaValoresImpuestos)}| "));
+                        }
+                        else
+                        {
+                            resultadoFinalOrdenado.Add(detallesDuplicados.Value.FirstOrDefault());
+                        }
+                    }
+
+                    resultadoFinalOrdenado.Add(lineaTFI.FirstOrDefault());
+
+                    return resultadoFinalOrdenado;
+                    #endregion
+                }
+
+                #endregion
+            }
+
+            return resultadoOrdenado.ToList();
+            #endregion
+        }
+
+        private string GetAjusteDecena(string pDato, ref bool pBandera)
+        {
+            #region GetAjusteDecena
+            string resultado = string.Empty;
+
+            resultado = $"1CFI| |Ajuste Decena|{Helpers.FormatearCampos(TiposFormateo.Decimal01, pDato.Substring(6, 14))}| |{Helpers.FormatearCampos(TiposFormateo.Decimal01, pDato.Substring(6, 14))}| | ";
+
+            pBandera = true;
+
+            return resultado;
+
             #endregion
         }
 
@@ -3349,65 +3360,6 @@ namespace App.ControlLogicaProcesos
             }
 
             return resultado;
-            #endregion
-        }
-
-        /// Metodo que obtiene la linea formateada de Canal 1TFI
-        /// </summary>
-        /// <param name="datosOriginales"></param>
-        /// <returns></returns>
-        private string Logica1TFI(List<string> datosOriginales)
-        {
-            #region MapeoCanal1TFI
-            string Linea1TFI = string.Empty;
-            List<PosCortes> listaCortes = new List<PosCortes>();
-            string valorTotal = string.Empty;
-            string Subsidio = " ";
-            string reultadoAjusteDecena = string.Empty;
-            List<string> sumaBase = new List<string>();
-            List<string> sumaIva = new List<string>();
-            List<string> sumaTotal = new List<string>();
-            List<string> sumaRecargoMora = new List<string>();
-
-            if (IsResidencial || IsFibra)
-            {
-                var resultAjusteDecena = from busqueda in datosOriginales
-                                         where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("02T003")
-                                         select busqueda;
-
-                // Validar que tenga Ajuste a la decena
-                if (resultAjusteDecena.Any())
-                {
-                    reultadoAjusteDecena = resultAjusteDecena.FirstOrDefault().Substring(6, 14);
-                }
-
-                if (listaRegi1TFI.Count() > 0)
-                {
-                    foreach (string registroActual in listaRegi1TFI)
-                    {
-                        sumaBase.Add(registroActual.Substring(16, 14));
-                        sumaIva.Add(registroActual.Substring(44, 14));
-                        sumaRecargoMora.Add(registroActual.Substring(30, 14));
-                    }
-                    // Se agrega a la base Ajuste a la decena
-
-                    sumaBase.Add(reultadoAjusteDecena);
-                    sumaBase.AddRange(sumaRecargoMora);
-
-                    sumaTotal.AddRange(sumaBase);
-                    sumaTotal.AddRange(sumaIva);
-
-
-                    Linea1TFI = "1TFI| |TOTAL|";
-                    Linea1TFI += Helpers.SumarCampos(sumaBase) + "|";
-                    Linea1TFI += Helpers.SumarCampos(sumaIva) + "|";
-                    Linea1TFI += Helpers.SumarCampos(sumaTotal) + "|";
-                    Linea1TFI += Subsidio + "| ";
-                }
-            }
-
-            return Helpers.ValidarPipePipe(Linea1TFI);
-
             #endregion
         }
 
@@ -5299,7 +5251,7 @@ namespace App.ControlLogicaProcesos
                         {
                             if (!banderaRecargoMora)
                             {
-                                resultado.Add(GetRecargoMora(lineas11CRecargoMora.ToList(), periodo, cuentaConexion, ref banderaRecargoMora));
+                                resultado.Add(GetRecargoMora(lineas11CRecargoMora.ToList(), periodo, cuentaConexion, ref banderaRecargoMora, "1"));
                             }
                         }
                         #endregion
@@ -5315,7 +5267,7 @@ namespace App.ControlLogicaProcesos
                         {
                             if (!banderaRecargoMora)
                             {
-                                resultado.Add(GetRecargoMora(lineas11CRecargoMora.ToList(), periodo, cuentaConexion, ref banderaRecargoMora));
+                                resultado.Add(GetRecargoMora(lineas11CRecargoMora.ToList(), periodo, cuentaConexion, ref banderaRecargoMora, "1"));
                             }
                         }
                         #endregion
@@ -5328,7 +5280,7 @@ namespace App.ControlLogicaProcesos
             #endregion
         }
 
-        private string GetRecargoMora(List<string> pLineas, string pPeriodo, string pNumeroConexion, ref bool pBanderaRecargoMora)
+        private string GetRecargoMora(List<string> pLineas, string pPeriodo, string pNumeroConexion, ref bool pBanderaRecargoMora, string pTipo)
         {
             #region GetRecargoMora
             string resultado = string.Empty;
@@ -5348,10 +5300,19 @@ namespace App.ControlLogicaProcesos
             sumaValoresTotal.AddRange(sumaValoresIva);
             sumaValoresTotal.AddRange(sumaValoresImpuestos);
 
-            resultado = $"1ODD|{Helpers.FormatearCampos(TiposFormateo.Fecha06, pPeriodo.Split('-').ElementAt(0).Trim())} a {Helpers.FormatearCampos(TiposFormateo.Fecha06, pPeriodo.Split('-').ElementAt(1).Trim())}|" +
-                $"Recargo de Mora ({Helpers.FormatearCampos(TiposFormateo.Fecha07, pPeriodo.Split('-').ElementAt(0).Trim())} - {Helpers.FormatearCampos(TiposFormateo.Fecha07, pPeriodo.Split('-').ElementAt(1).Trim())})|" +
-                $"{Helpers.SumarCampos(sumaValoresBase)}|{Helpers.SumarCampos(sumaValoresIva)}|{Helpers.SumarCampos(sumaValoresImpuestos)}|{Helpers.SumarCampos(sumaValoresTotal)}|{Helpers.FormatearCampos(TiposFormateo.Fecha05, PeriodoFacturacion)}|{Helpers.FormatearCampos(TiposFormateo.Fecha05, PeriodoFacturacion)}|" +
-                $"{pNumeroConexion}| ";
+            switch (pTipo)
+            {
+                case "1":
+                    resultado = $"1ODD|{Helpers.FormatearCampos(TiposFormateo.Fecha06, pPeriodo.Split('-').ElementAt(0).Trim())} a {Helpers.FormatearCampos(TiposFormateo.Fecha06, pPeriodo.Split('-').ElementAt(1).Trim())}|" +
+                        $"Recargo de Mora ({Helpers.FormatearCampos(TiposFormateo.Fecha07, pPeriodo.Split('-').ElementAt(0).Trim())} - {Helpers.FormatearCampos(TiposFormateo.Fecha07, pPeriodo.Split('-').ElementAt(1).Trim())})|" +
+                        $"{Helpers.SumarCampos(sumaValoresBase)}|{Helpers.SumarCampos(sumaValoresIva)}|{Helpers.SumarCampos(sumaValoresImpuestos)}|{Helpers.SumarCampos(sumaValoresTotal)}|{Helpers.FormatearCampos(TiposFormateo.Fecha05, PeriodoFacturacion)}|{Helpers.FormatearCampos(TiposFormateo.Fecha05, PeriodoFacturacion)}|" +
+                        $"{pNumeroConexion}| ";
+                    break;
+
+                case "2":
+                    resultado = $"1CFI| |Recargo Mora|{Helpers.SumarCampos(sumaValoresBase)}|{Helpers.SumarCampos(sumaValoresIva)}|{Helpers.SumarCampos(sumaValoresTotal)}| | ";
+                    break;
+            }
 
             pBanderaRecargoMora = true;
 
