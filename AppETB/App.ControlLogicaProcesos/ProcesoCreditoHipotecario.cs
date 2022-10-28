@@ -132,8 +132,80 @@ namespace App.ControlLogicaProcesos
         {
             #region FormateoCanal1AAA
             string resultado = string.Empty;
+            List<string> linea1AAA = new List<string>();
 
+            string[] campos = datosOriginales[0].Split(';');
+
+            linea1AAA.Add("1AAA");
+            linea1AAA.Add("KitXXXXX");
+
+            foreach (string campo in campos)
+            {
+                linea1AAA.Add(campo);
+            }
+
+            linea1AAA.Add(GetCodigoBarras(campos[0], campos[16], campos[17]));
+            linea1AAA.Add(GetCartas(campos[2].Trim())); //TODO: Cruzar con insumo Cartas
+
+            if (campos.Length > 20 && (!string.IsNullOrEmpty(campos[21].Trim())))
+            {
+                linea1AAA.Add("email1_2");
+            }
+            else
+            {
+                linea1AAA.Add(string.Empty);
+            }
+
+            linea1AAA.Add(string.Empty); // Vacio
+
+
+            resultado = Helpers.ValidarPipePipe(Helpers.ListaCamposToLinea(linea1AAA, '|'));
             return resultado;
+            #endregion
+        }
+
+        /// <summary>
+        /// Metodo que realiza el cruce de archivo de cartas
+        /// </summary>
+        /// <param name="pNumIdentificacion"></param>
+        /// <returns></returns>
+        private string GetCartas(string pNumIdentificacion)
+        {
+            #region GetCartas
+            string Resultado = string.Empty;
+            string carta = Helpers.GetValueInsumoCadena(Variables.Variables.DatosCartasHipotecario, $"{pNumIdentificacion}") ?? string.Empty;
+
+            if (!string.IsNullOrEmpty(carta))
+            {
+                Resultado = "CART";
+            }
+
+
+            return Resultado; 
+            #endregion
+        }
+
+        /// <summary>
+        /// Metodo que obtiene el codigo de barras
+        /// </summary>
+        /// <param name="pNumReferencia"></param>
+        /// <param name="pTotalPagar"></param>
+        /// <param name="pFechaPago"></param>
+        /// <returns></returns>
+        private string GetCodigoBarras(string pNumReferencia, string pTotalPagar, string pFechaPago)
+        {
+            #region GetCodigoBarras
+            string CodeBar = string.Empty;
+
+            string numeroETB = Utilidades.LeerAppConfig("numeroETB");
+            string totalPagar = pTotalPagar.Split(',')[0];
+            totalPagar = totalPagar.Replace(".", "");
+            totalPagar = totalPagar.PadLeft(10, '0');
+            string fechaPago = Helpers.FormatearCampos(TiposFormateo.Fecha17, pFechaPago);
+
+            CodeBar = $"(415){numeroETB}(8020){pNumReferencia}(3900){totalPagar}(96){fechaPago}";
+
+            return CodeBar; 
             #endregion
         }
 
@@ -146,6 +218,13 @@ namespace App.ControlLogicaProcesos
         {
             #region FormateoCanal1BBB
             List<string> resultado = new List<string>();
+            string linea1BBB = string.Empty;
+            for (int i = 1; i < datosOriginales.Count; i++)
+            {
+                linea1BBB = datosOriginales[i].Replace(";","|");
+                resultado.Add($"1BBB|{linea1BBB}");
+            }
+
 
             return resultado;
             #endregion

@@ -35,6 +35,10 @@
     <Reference Include="DLL_Utilidades">
       <HintPath>..\..\..\..\..\Desktop\Trabajo\ProyectoCoomeva\FASE1\ARCHIVOS_COOMEVA_APPS_LIBRERIAS\Utilidades\Utilidades_Net\DLL_Utilidades.dll</HintPath>
     </Reference>
+    <Reference Include="Excel, Version=2.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Coomeva\AppMultiextracto\App.Controlnsumos\bin\Debug\Excel.dll</HintPath>
+    </Reference>
     <Reference Include="SharpCompress">
       <HintPath>..\..\..\..\..\Desktop\Trabajo\ProyectoCoomeva\FASE1\ARCHIVOS_COOMEVA_APPS_LIBRERIAS\Utilidades\Comprimir_Descomprimir\SharpCompress.dll</HintPath>
     </Reference>

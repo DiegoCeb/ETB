@@ -16,6 +16,7 @@ namespace App.ControlLogicaProcesos
         private string Cuenta { get; set; }
         private string Telefono { get; set; }
         private string NombreArchivo { get; set; }
+        private string MesConsumo { get; set; }
         #endregion
 
         public ProcesoLlanos(string pArchivo)
@@ -196,9 +197,9 @@ namespace App.ControlLogicaProcesos
 
             resultadoFormateoLinea = FormateoCanal1DDD(datosOriginales);
 
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            if (((IEnumerable<string>)resultadoFormateoLinea).Any())
             {
-                resultado.Add(resultadoFormateoLinea);
+                resultado.AddRange(resultadoFormateoLinea);
             }
 
             resultadoFormateoLinea = FormateoCanal1EEE(datosOriginales);
@@ -336,8 +337,10 @@ namespace App.ControlLogicaProcesos
             #endregion
         }
 
+        #region Metodos 1AAA
         private string GetCuentaSinLetras(string pCampo)
         {
+            #region GetCuentaSinLetras
             string result = pCampo;
             if (!string.IsNullOrEmpty(pCampo))
             {
@@ -346,6 +349,7 @@ namespace App.ControlLogicaProcesos
             }
 
             return result.Trim();
+            #endregion
         }
 
         private string GetZonaPostal(string pZonaPostal, bool separado)
@@ -370,7 +374,7 @@ namespace App.ControlLogicaProcesos
 
             }
 
-            return resultado; 
+            return resultado;
             #endregion
         }
 
@@ -401,7 +405,7 @@ namespace App.ControlLogicaProcesos
 
             }
 
-            return lisCiudadDepto; 
+            return lisCiudadDepto;
             #endregion
         }
 
@@ -422,7 +426,7 @@ namespace App.ControlLogicaProcesos
 
             }
 
-            return resultado; 
+            return resultado;
             #endregion
         }
 
@@ -464,7 +468,8 @@ namespace App.ControlLogicaProcesos
 
             return resultado;
             #endregion
-        }
+        } 
+        #endregion
 
         /// <summary>
         /// 
@@ -494,10 +499,12 @@ namespace App.ControlLogicaProcesos
             //camposllanos.Add(new CamposLLanos(11, "*p1130x475Y", "0.00")); // vlr_min_adic
             //camposllanos.Add(new CamposLLanos(11, "*p1250x550Y")); // ciclo
             camposllanos.Add(new CamposLLanos(10, "*p920x170Y")); // zona_sector_manzana
-            //camposllanos.Add(new CamposLLanos(10, "*p1100x290Y")); // mes_consumo
             ListaCanal1BBA.Add(Helpers.GetCamposLlanos(datosOriginales, camposllanos));
 
             resultado = Helpers.ValidarPipePipe(Helpers.ListaCamposToLinea(ListaCanal1BBA, '|'));
+
+            MesConsumo = Helpers.GetCampoLLanos(datosOriginales,11, "*p1100x290Y");
+
             return resultado;
             #endregion
         }
@@ -597,8 +604,86 @@ namespace App.ControlLogicaProcesos
             #region FormateoCanal1CCC
             List<string> resultado = new List<string>();
 
+            Dictionary<string, List<string>> diccionario1CCC = new Dictionary<string, List<string>>();
+            List<string> lineas1CCC;
+
+            #region Detalles
+            lineas1CCC = Helpers.GetListaCampoLLanos(datosOriginales, 5, "*p22x"); // concepto
+            LlenarDiccionario1CCC(diccionario1CCC, lineas1CCC);
+
+            lineas1CCC = Helpers.GetListaCampoLLanos(datosOriginales, 6, "*p580x"); // descripcion
+            LlenarDiccionario1CCC(diccionario1CCC, lineas1CCC);
+
+            string concepto = string.Empty;
+            foreach (var detalles in diccionario1CCC.Values)
+            {
+                if (detalles.Count == 2)
+                {
+                    concepto = detalles[0].Trim().Replace("]", $" {MesConsumo}]");
+                    resultado.Add($"1CCC|{concepto}|{detalles[1].Trim()}");
+                }
+
+            }
+            #endregion
+
+            #region Detalle IVA
+            bool conceptoIva = false;
+            string lineaIva = string.Empty;
+
+            lineas1CCC = Helpers.GetListaCampoLLanos(datosOriginales, 10, "*p22x1074Y"); // concepto_iva
+            if (lineas1CCC.Count > 0)
+            {
+                lineaIva += $"1CCC|{lineas1CCC[0].Trim()}|";
+                conceptoIva = true;
+            }
+
+            lineas1CCC = Helpers.GetListaCampoLLanos(datosOriginales, 11, "*p580x1074Y"); // valor_iva
+            if (lineas1CCC.Count > 0 && conceptoIva)
+            {
+                lineaIva += $"{lineas1CCC[0].Trim()}";
+            }
+            if (conceptoIva)
+            {
+                resultado.Add(lineaIva);
+            }
+            #endregion
+
+            #region Total
+            string valorTotal = "0.00";
+            lineas1CCC = Helpers.GetListaCampoLLanos(datosOriginales, 11, "*p580x1138Y"); // valor_cargos_etb
+            if (lineas1CCC.Count > 0)
+            {
+                valorTotal = lineas1CCC[0].Trim();
+            }
+
+            resultado.Add($"1CCC|VALOR CARGOS ETB|{valorTotal}"); 
+            #endregion
+
             return resultado;
             #endregion
+        }
+
+        private void LlenarDiccionario1CCC(Dictionary<string, List<string>> pDiccionario1CCC, List<string> plinea1CCC)
+        {
+            string llave = string.Empty;
+            string datos = string.Empty;
+            foreach (string linea in plinea1CCC)
+            {
+                llave = linea.Substring(0, linea.IndexOf("Y")).Trim();
+                datos = linea.Substring(linea.IndexOf("Y")+1).Trim();
+
+                if (llave != "1074" && llave != "1138")
+                {
+                    if (pDiccionario1CCC.ContainsKey(llave))
+                    {
+                        pDiccionario1CCC[llave].Add(datos);
+                    }
+                    else
+                    {
+                        pDiccionario1CCC.Add(llave, new List<string>() { datos });
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -606,10 +691,66 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        private string FormateoCanal1DDD(List<string> datosOriginales)
+        private IEnumerable<string> FormateoCanal1DDD(List<string> datosOriginales)
         {
             #region FormateoCanal1DDD
-            string resultado = string.Empty;
+            List<string> resultado = new List<string>();
+
+            Dictionary<string, List<string>> diccionario1CCC = new Dictionary<string, List<string>>();
+            List<string> lineas1DDD;
+
+            #region Detalles
+            lineas1DDD = Helpers.GetListaCampoLLanos(datosOriginales, 6, "*p832x"); // concepto
+            LlenarDiccionario1CCC(diccionario1CCC, lineas1DDD);
+
+            lineas1DDD = Helpers.GetListaCampoLLanos(datosOriginales, 7, "*p1390x"); // valor
+            LlenarDiccionario1CCC(diccionario1CCC, lineas1DDD);
+
+            string concepto = string.Empty;
+            foreach (var detalles in diccionario1CCC.Values)
+            {
+                if (detalles.Count == 2)
+                {
+                    concepto = detalles[0].Trim();
+                    resultado.Add($"1DDD|{concepto}|{detalles[1].Trim()}");
+                }
+
+            }
+            #endregion
+
+            #region Detalle IVA
+            bool conceptoIva = false;
+            string lineaIva = string.Empty;
+
+            lineas1DDD = Helpers.GetListaCampoLLanos(datosOriginales, 11, "*p832x1074Y"); // concepto_iva
+            if (lineas1DDD.Count > 0)
+            {
+                lineaIva += $"1DDD|{lineas1DDD[0].Trim()}|";
+                conceptoIva = true;
+            }
+
+            lineas1DDD = Helpers.GetListaCampoLLanos(datosOriginales, 12, "*p1390x1074Y"); // valor_iva
+            if (lineas1DDD.Count > 0 && conceptoIva)
+            {
+                
+                lineaIva += $"{lineas1DDD[0].Trim()}";
+            }
+            if (conceptoIva)
+            {
+                resultado.Add(lineaIva);
+            }
+            #endregion
+
+            #region Total
+            string valorTotal = "0.00";
+            lineas1DDD = Helpers.GetListaCampoLLanos(datosOriginales, 12, "*p1390x1138Y"); // valor_ld_movil
+            if (lineas1DDD.Count > 0)
+            {
+                valorTotal = lineas1DDD[0].Trim();
+            }
+            
+            resultado.Add($"1DDD|PAGAR EMPRESAS LD Y MÓVIL|{valorTotal}");
+            #endregion
 
             return resultado;
             #endregion
@@ -625,6 +766,40 @@ namespace App.ControlLogicaProcesos
             #region FormateoCanal1EEE
             List<string> resultado = new List<string>();
 
+            Dictionary<string, List<string>> diccionario1EEE = new Dictionary<string, List<string>>();
+            List<string> lineas1EEE;
+
+            #region Detalles
+            lineas1EEE = Helpers.GetListaCampoLLanos(datosOriginales, 7, "*p1592x"); // concepto
+            LlenarDiccionario1CCC(diccionario1EEE, lineas1EEE);
+
+            lineas1EEE = Helpers.GetListaCampoLLanos(datosOriginales, 7, "*p2150x"); // valor
+            LlenarDiccionario1CCC(diccionario1EEE, lineas1EEE);
+
+            diccionario1EEE = diccionario1EEE.Reverse().ToDictionary(x=>x.Key, x=>x.Value);
+            string concepto = string.Empty;
+            foreach (var detalles in diccionario1EEE.Values)
+            {
+                if (detalles.Count == 2)
+                {
+                    concepto = detalles[0].Trim();
+                    resultado.Add($"1EEE|{concepto}|{detalles[1].Trim()}");
+                }
+
+            }
+            #endregion
+
+            #region Total
+            string valorTotal = "0.00";
+            lineas1EEE = Helpers.GetListaCampoLLanos(datosOriginales, 12, "*p2150x1138Y"); // valor_ld_movil
+            if (lineas1EEE.Count > 0)
+            {
+                valorTotal = lineas1EEE[0].Trim();
+            }
+
+            resultado.Add($"1EEE|TOTAL FACTURAS VENCIDAS|{valorTotal}");
+            #endregion
+
             return resultado;
             #endregion
         }
@@ -638,6 +813,202 @@ namespace App.ControlLogicaProcesos
         {
             #region FormateoCanal1FFF
             List<string> resultado = new List<string>();
+
+            Dictionary<string, List<string>> diccionario1FFF = new Dictionary<string, List<string>>();
+            Dictionary<string, List<string>> diccionario1FFF2 = new Dictionary<string, List<string>>();
+            Dictionary<string, List<string>> diccionario1FFF3 = new Dictionary<string, List<string>>();
+            List<string> lineas1FFF;
+
+
+            #region Fecha
+            lineas1FFF = Helpers.GetListaCampoLLanos(datosOriginales, 5, "*p30x"); // fecha
+            LlenarDiccionario1CCC(diccionario1FFF, lineas1FFF);
+
+            lineas1FFF = Helpers.GetListaCampoLLanos(datosOriginales, 7, "*p1227x"); // fecha
+            LlenarDiccionario1CCC(diccionario1FFF2, lineas1FFF);
+
+
+            lineas1FFF = Helpers.GetListaCampoLLanos(datosOriginales, 7, "*p1240x"); // fecha
+            LlenarDiccionario1CCC(diccionario1FFF3, lineas1FFF);
+
+            #endregion
+
+            #region Hora
+            lineas1FFF = Helpers.GetListaCampoLLanos(datosOriginales, 6, "*p140x"); // Hora
+            LlenarDiccionario1CCC(diccionario1FFF, lineas1FFF);
+
+            lineas1FFF = Helpers.GetListaCampoLLanos(datosOriginales, 7, "*p1337x"); // Hora
+            LlenarDiccionario1CCC(diccionario1FFF2, lineas1FFF);
+
+            lineas1FFF = Helpers.GetListaCampoLLanos(datosOriginales, 7, "*p1350x"); // Hora
+            LlenarDiccionario1CCC(diccionario1FFF3, lineas1FFF);
+            #endregion
+
+            #region CL
+            lineas1FFF = Helpers.GetListaCampoLLanos(datosOriginales, 6, "*p250x"); // CL
+            LlenarDiccionario1CCC(diccionario1FFF, lineas1FFF);
+
+            lineas1FFF = Helpers.GetListaCampoLLanos(datosOriginales, 7, "*p1447x"); // CL
+            LlenarDiccionario1CCC(diccionario1FFF2, lineas1FFF);
+
+            lineas1FFF = Helpers.GetListaCampoLLanos(datosOriginales, 7, "*p1460x"); // CL
+            LlenarDiccionario1CCC(diccionario1FFF3, lineas1FFF);
+            #endregion
+
+            #region Destino
+            lineas1FFF = Helpers.GetListaCampoLLanos(datosOriginales, 6, "*p310x"); // Destino
+            LlenarDiccionario1CCC(diccionario1FFF, lineas1FFF);
+
+            lineas1FFF = Helpers.GetListaCampoLLanos(datosOriginales, 7, "*p1507x"); // Destino
+            LlenarDiccionario1CCC(diccionario1FFF2, lineas1FFF);
+
+            lineas1FFF = Helpers.GetListaCampoLLanos(datosOriginales, 7, "*p1520x"); // Destino
+            LlenarDiccionario1CCC(diccionario1FFF3, lineas1FFF);
+            #endregion
+
+            #region Telefono
+            lineas1FFF = Helpers.GetListaCampoLLanos(datosOriginales, 6, "*p490x"); // Telefono
+            LlenarDiccionario1CCC(diccionario1FFF, lineas1FFF);
+
+            lineas1FFF = Helpers.GetListaCampoLLanos(datosOriginales, 7, "*p1687x"); // Telefono
+            LlenarDiccionario1CCC(diccionario1FFF2, lineas1FFF);
+
+            lineas1FFF = Helpers.GetListaCampoLLanos(datosOriginales, 7, "*p1700x"); // Telefono
+            LlenarDiccionario1CCC(diccionario1FFF3, lineas1FFF);
+            #endregion
+
+            #region Valor Minutos
+            lineas1FFF = Helpers.GetListaCampoLLanos(datosOriginales, 6, "*p720x"); // Minutos
+            LlenarDiccionario1CCC(diccionario1FFF, lineas1FFF);
+
+            lineas1FFF = Helpers.GetListaCampoLLanos(datosOriginales, 7, "*p1917x"); // Minutos
+            LlenarDiccionario1CCC(diccionario1FFF2, lineas1FFF);
+
+            lineas1FFF = Helpers.GetListaCampoLLanos(datosOriginales, 7, "*p1930x"); // Minutos
+            LlenarDiccionario1CCC(diccionario1FFF3, lineas1FFF);
+            #endregion
+
+            #region Valor Minuto
+            lineas1FFF = Helpers.GetListaCampoLLanos(datosOriginales, 6, "*p840x"); // Valor Minuto
+            LlenarDiccionario1CCC(diccionario1FFF, lineas1FFF);
+
+            lineas1FFF = Helpers.GetListaCampoLLanos(datosOriginales, 7, "*p2037x"); // Valor Minuto
+            LlenarDiccionario1CCC(diccionario1FFF2, lineas1FFF);
+
+            lineas1FFF = Helpers.GetListaCampoLLanos(datosOriginales, 7, "*p2050x"); // Valor Minuto
+            LlenarDiccionario1CCC(diccionario1FFF3, lineas1FFF);
+            #endregion
+
+            #region Valor Total
+            lineas1FFF = Helpers.GetListaCampoLLanos(datosOriginales, 7, "*p1020x"); // Valor Total
+            LlenarDiccionario1CCC(diccionario1FFF, lineas1FFF);
+
+            lineas1FFF = Helpers.GetListaCampoLLanos(datosOriginales, 7, "*p2217x"); // Valor Total
+            LlenarDiccionario1CCC(diccionario1FFF2, lineas1FFF);
+
+            lineas1FFF = Helpers.GetListaCampoLLanos(datosOriginales, 7, "*p2230x"); // Valor Total
+            LlenarDiccionario1CCC(diccionario1FFF3, lineas1FFF);
+            #endregion
+
+            #region Recorrer Diccionarios y Ordenar Detalles
+            string lineaDetalle = string.Empty;
+            SortedDictionary<DateTime, List<string>> detallesOrdenados = new SortedDictionary<DateTime, List<string>>();
+            DateTime dateTime;
+            foreach (var detalles in diccionario1FFF.Values)
+            {
+                if (detalles.Count == 8)
+                {
+                    dateTime = Convert.ToDateTime($"{DateTime.Now.Year.ToString()}/{detalles[0]} {detalles[1]}");
+                    lineaDetalle = String.Empty;
+
+                    foreach (var campo in detalles)
+                    {
+                        lineaDetalle += $"|{campo.Trim()}";
+                    }
+
+                    if (!detallesOrdenados.ContainsKey(dateTime))
+                    {
+                        detallesOrdenados.Add(dateTime, new List<string>() { lineaDetalle });
+                    }
+                    else
+                    {
+                        detallesOrdenados[dateTime].Add(lineaDetalle);
+                    }
+
+                    
+                }
+
+            }
+
+            foreach (var detalles in diccionario1FFF2.Values)
+            {
+                if (detalles.Count == 8)
+                {
+                    dateTime = Convert.ToDateTime($"{DateTime.Now.Year.ToString()}/{detalles[0]} {detalles[1]}");
+                    lineaDetalle = String.Empty;
+
+                    foreach (var campo in detalles)
+                    {
+                        lineaDetalle += $"|{campo.Trim()}";
+                    }
+
+                    if (!detallesOrdenados.ContainsKey(dateTime))
+                    {
+                        detallesOrdenados.Add(dateTime, new List<string>() { lineaDetalle });
+                    }
+                    else
+                    {
+                        detallesOrdenados[dateTime].Add(lineaDetalle);
+                    }
+                }
+
+            }
+
+            foreach (var detalles in diccionario1FFF3.Values)
+            {
+                if (detalles.Count == 8)
+                {
+                    dateTime = Convert.ToDateTime($"{DateTime.Now.Year.ToString()}/{detalles[0]} {detalles[1]}");
+                    lineaDetalle = String.Empty;
+
+                    foreach (var campo in detalles)
+                    {
+                        lineaDetalle += $"|{campo.Trim()}";
+                    }
+
+                    if (!detallesOrdenados.ContainsKey(dateTime))
+                    {
+                        detallesOrdenados.Add(dateTime, new List<string>() { lineaDetalle });
+                    }
+                    else
+                    {
+                        detallesOrdenados[dateTime].Add(lineaDetalle);
+                    }
+                }
+            }
+
+            int contadorDetalles = 0;
+            foreach (List<string> listaDetalles in detallesOrdenados.Values)
+            {
+                foreach (string detalle in listaDetalles)
+                {
+                    contadorDetalles++;
+                    if (contadorDetalles < 37)
+                    {
+                        resultado.Add($"1FFF|{detalle}");
+                    }
+                    else if (contadorDetalles < 74)
+                    {
+                        resultado.Add($"1FFA|{detalle}");
+                    }
+                    else
+                    {
+                        resultado.Add($"1FFB|{detalle}");
+                    }
+                    
+                }
+            }
+            #endregion
 
             return resultado;
             #endregion
@@ -683,7 +1054,22 @@ namespace App.ControlLogicaProcesos
 
             string actividad = Helpers.GetCampoLLanos(datosOriginales, 10, "*p230x330Y").Trim(); // actividad
 
-            if (/*stristr($extracto["1CCC"], "XDSL") &&*/ actividad.Trim() == "3")
+            List<string> lineas1CCC = Helpers.GetListaCampoLLanos(datosOriginales, 5, "*p22x"); // concepto
+            string datos;
+            bool isXDSL = false;
+
+            foreach (string linea in lineas1CCC)
+            {
+                datos = linea.Substring(linea.IndexOf("Y") + 1).Trim();
+
+                if (datos.Contains("XDSL"))
+                {
+                    isXDSL = true;
+                    break;
+                }
+            }
+
+            if (isXDSL && actividad.Trim() == "3")
             {
                 resultado = $"1HHH|logo internet|true";
             }
