@@ -1174,10 +1174,10 @@ namespace App.ControlInsumos
                 if (!Variables.Variables.DatosInsumoConfiguracionLLavesDoc1.ContainsKey(llaveCruce))
                 {
                     Variables.Variables.DatosInsumoConfiguracionLLavesDoc1.Add(llaveCruce, datoLinea);
-				}
-			}
-			#endregion
-		}
+                }
+            }
+            #endregion
+        }
 
         /// <summary>
         /// 
@@ -1294,7 +1294,7 @@ namespace App.ControlInsumos
 
             foreach (var datoLinea in pDatosInsumo)
             {
-                
+
                 string llaveCruce = $"{datoLinea.Split('|').ElementAt(0)}{datoLinea.Split('|').ElementAt(1)}";
 
                 if (!Variables.Variables.DatosInsumoLlanosMinPlan.ContainsKey(llaveCruce))
@@ -1360,7 +1360,7 @@ namespace App.ControlInsumos
                 }
             }
 
-            
+
 
             #endregion
         }
@@ -1715,11 +1715,11 @@ namespace App.ControlInsumos
                 case TiposFormateo.Decimal02:
                     return FormatearDecimal("02", pCampo);
 
-				case TiposFormateo.Decimal03:
+                case TiposFormateo.Decimal03:
                     return FormatearDecimal("03", pCampo);
-                
-				case TiposFormateo.Decimal04:
-                    return FormatearDecimal("04", pCampo);                
+
+                case TiposFormateo.Decimal04:
+                    return FormatearDecimal("04", pCampo);
 
                 case TiposFormateo.HoraMinuto:
                     return FormatearHoraMinuto(pCampo);
@@ -1729,6 +1729,9 @@ namespace App.ControlInsumos
 
                 case TiposFormateo.Cadena01:
                     return FormatearCadena("01", pCampo);
+
+                case TiposFormateo.Redondear:
+                    return FormatearRedondeo("01", pCampo);
                 default:
                     return pCampo;
             }
@@ -1757,6 +1760,16 @@ namespace App.ControlInsumos
                 case "04":
 
                     Dictionary<string, string> dicMeses = new Dictionary<string, string>();
+
+                    if (string.IsNullOrEmpty(pCampo.Trim()))
+                    {
+                        return string.Empty;
+                    }
+
+                    if (pCampo == "9999")
+                    {
+                        return "99";
+                    }
 
                     dicMeses.Add("01", "Ene");
                     dicMeses.Add("02", "Feb");
@@ -1802,8 +1815,8 @@ namespace App.ControlInsumos
                     }
                 case "10":
 
-                    return $"{pCampo.Substring(0, 4)}/{pCampo.Substring(4, 2)}/{pCampo.Substring(6, 2)}";               
-                
+                    return $"{pCampo.Substring(0, 4)}/{pCampo.Substring(4, 2)}/{pCampo.Substring(6, 2)}";
+
 
                 case "09":
                     return string.Format("{0}/{1}/{2}", pCampo.Substring(0, 4), pCampo.Substring(4, 2), pCampo.Substring(6, 2));
@@ -1894,7 +1907,7 @@ namespace App.ControlInsumos
                     dia = pCampo.Substring(0, 2);
                     mes = dicMes[pCampo.Substring(2, 2)];
                     año = pCampo.Substring(4, 4);
-                    return string.Format("{0}{1}{2}",dia, mes, año);
+                    return string.Format("{0}{1}{2}", dia, mes, año);
 
                 case "16":
 
@@ -1917,7 +1930,7 @@ namespace App.ControlInsumos
                     mes = string.Empty;
                     año = string.Empty;
                     dia = pCampo.Substring(0, 2);
-                    mes = dicMes[pCampo.Substring(2, 2).PadLeft(2,'0')];
+                    mes = dicMes[pCampo.Substring(2, 2).PadLeft(2, '0')];
                     año = pCampo.Substring(4, 4);
                     return string.Format("{0} {1} de {2}", mes, dia, año);
 
@@ -1946,7 +1959,7 @@ namespace App.ControlInsumos
         private static string FormatearDecimal(string pFormatoDecimalTipo, string pCampo)
         {
             string transformado = string.Empty;
-            double temTransformado = 0;         
+            double temTransformado = 0;
 
             switch (pFormatoDecimalTipo)
             {
@@ -2010,8 +2023,8 @@ namespace App.ControlInsumos
                     transformado = $"{transformado.Substring(0, transformado.Length - 2)}.{transformado.Substring(transformado.Length - 2)}";
 
                     return transformado;
-					
-				case "03":
+
+                case "03":
                     transformado = pCampo.Trim().TrimStart('0').Replace("$", string.Empty).Replace(",", string.Empty).Replace(".", string.Empty);
 
                     if (string.IsNullOrEmpty(transformado))
@@ -2028,7 +2041,7 @@ namespace App.ControlInsumos
 
                     return transformado;
 
-				case "04":
+                case "04":
 
                     transformado = pCampo.Trim().TrimStart('0');
 
@@ -2087,6 +2100,40 @@ namespace App.ControlInsumos
         /// </summary>
         /// <param name="pCampo"></param>
         /// <returns></returns>
+        private static string FormatearRedondeo(string pFormatoRedondeoTipo, string pCampo)
+        {
+            #region FormatearRedondeo
+            string resultado = string.Empty;
+
+            switch (pFormatoRedondeoTipo)
+            {
+                case "01":
+
+                    if (pCampo.Substring(0, 1) == "-")
+                    {
+                        return string.Empty;
+                    }
+
+                    string temp = pCampo.Replace("$", string.Empty).Trim().Replace(".", string.Empty).Replace(",", ".");
+
+                    decimal transformado = Convert.ToDecimal(temp) + 0.01m;
+
+                    resultado = $"$ {Math.Round(transformado).ToString("N0")}".Replace(",", ".");
+                    resultado += ",00";
+
+                    break;
+            }
+
+            return resultado;
+            #endregion
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pCampo"></param>
+        /// <returns></returns>
         private static string FormatearHoraMinuto(string pCampo)
         {
             #region FormatearHoraMinuto
@@ -2122,12 +2169,12 @@ namespace App.ControlInsumos
             #endregion
         }
 
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <param name="pCampo"></param>
-            /// <returns></returns>
-            private static string FormatearHoraMinutoSegundo(string pCampo)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pCampo"></param>
+        /// <returns></returns>
+        private static string FormatearHoraMinutoSegundo(string pCampo)
         {
             #region FormatearHoraMinuto
             return String.Format("{0}:{1}:{2}", pCampo.Substring(0, 2), pCampo.Substring(2, 2), pCampo.Substring(4, 2));
@@ -2788,8 +2835,8 @@ namespace App.ControlInsumos
 
             }
 
-            resultado = FormatearCampos(TiposFormateo.Decimal01, totalSuma.ToString());            
-            
+            resultado = FormatearCampos(TiposFormateo.Decimal01, totalSuma.ToString());
+
             return resultado;
             #endregion
         }
@@ -2808,7 +2855,7 @@ namespace App.ControlInsumos
 
                 if (item.FormateoTipo != null)
                 {
-                    campo = FormatearCampos(item.FormateoTipo,campo);
+                    campo = FormatearCampos(item.FormateoTipo, campo);
                 }
 
                 if (string.IsNullOrEmpty(resultado))
@@ -2817,7 +2864,7 @@ namespace App.ControlInsumos
                 }
                 else
                 {
-                   
+
                     resultado += $"|{campo}";
                 }
             }
@@ -2850,8 +2897,8 @@ namespace App.ControlInsumos
         {
             List<string> resultado = new List<string>();
             var campos = from busqueda in datosOriginales
-                        where busqueda.Length > pCantidadCaracteres && busqueda.Substring(0, pCantidadCaracteres).Equals(pIdentificador)
-                        select busqueda;
+                         where busqueda.Length > pCantidadCaracteres && busqueda.Substring(0, pCantidadCaracteres).Equals(pIdentificador)
+                         select busqueda;
 
             if (campos.Any())
             {
@@ -3036,11 +3083,12 @@ namespace App.ControlInsumos
         Fecha17,
         LetraCapital,
         Decimal01,
-        Decimal02,                
+        Decimal02,
         Decimal03,
-		Decimal04,
+        Decimal04,
         HoraMinuto,
         HoraMinutoSegundo,
-        Cadena01
+        Cadena01,
+        Redondear
     }
 }
