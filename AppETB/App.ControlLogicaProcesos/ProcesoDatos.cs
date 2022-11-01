@@ -2196,6 +2196,10 @@ namespace App.ControlLogicaProcesos
 
                                 if (ivaRecargo.ToString().Contains("."))
                                 {
+                                    if (impuestoProducto == 0)
+                                    {
+                                        impuestoProducto = 0.00m;
+                                    }
                                     ivaFormateado = ivaRecargo.ToString().Split('.')[0] + impuestoProducto.ToString().Split('.')[1].Substring(0, 2);
                                 }
                                 else
@@ -2606,6 +2610,10 @@ namespace App.ControlLogicaProcesos
 
                                 if (ivaRecargo.ToString().Contains("."))
                                 {
+                                    if (impuestoProducto == 0)
+                                    {
+                                        impuestoProducto = 0.00m;
+                                    }
                                     ivaFormateado = ivaRecargo.ToString().Split('.')[0] + impuestoProducto.ToString().Split('.')[1].Substring(0, 2);
                                 }
                                 else

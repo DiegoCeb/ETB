@@ -32,3 +32,5 @@ C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.ControlInsumos\bin\D
 C:\Proyectos\ETB\AppETB\App.ControlInsumos\bin\Debug\DLL_Utilidades.pdb
 C:\Proyectos\ETB\AppETB\App.ControlInsumos\bin\Debug\Excel.dll
 C:\Proyectos\ETB\AppETB\App.ControlInsumos\bin\Debug\ICSharpCode.SharpZipLib.dll
+C:\Users\adieg\Documents\GitHub\ETB\AppETB\App.ControlInsumos\bin\Debug\Excel.dll
+C:\Users\adieg\Documents\GitHub\ETB\AppETB\App.ControlInsumos\bin\Debug\ICSharpCode.SharpZipLib.dll

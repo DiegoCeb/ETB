@@ -47,7 +47,7 @@ namespace App.ControlEjecucion
                     break;
             }
 
-            
+
             #endregion
         }
 
@@ -151,8 +151,8 @@ namespace App.ControlEjecucion
                            select busqueda;
 
             var archivosExcel = from busqueda in Directory.GetFiles(pRutaArchivosProcesar)
-                           where Path.GetExtension(busqueda).ToLower().Equals(".xlsx")
-                           select busqueda;
+                                where Path.GetExtension(busqueda).ToLower().Equals(".xlsx")
+                                select busqueda;
             Helpers.GetCartasHipotecario(archivosExcel.ToList());
 
             foreach (var archivo in archivos)
@@ -411,7 +411,7 @@ namespace App.ControlEjecucion
             switch (pIdentificadorProceso)
             {
                 case "1": //Masivos
-                    EscribirDatosSalidaCompleto(pDatosImprimir, $"{pRutaSalida}", $"COMPLETO.sal");
+                    EscribirDatosSalidaCompleto(pDatosImprimir, $"{pRutaSalida}", $"COMPLETO.sal", pLote);
                     EscribirDatosSalidaNoImprimir($"{pRutaSalida}", $"I_NO_IMPRIMIR.sal");
                     EscribirDatosSalidaSms(pDatosImprimir, $"{pRutaSalida}", $"I_ENVIO_SMS.sal");
                     EscribirDatosSalidaErrorLte(pDatosImprimir, $"{pRutaSalida}", $"I_ERROR_FACTURA_LTE.sal");
@@ -423,7 +423,7 @@ namespace App.ControlEjecucion
                     break;
 
                 case "2": //Datos
-                    EscribirDatosSalidaCompleto(pDatosImprimir, $"{pRutaSalida}", $"COMPLETO.sal");
+                    EscribirDatosSalidaCompleto(pDatosImprimir, $"{pRutaSalida}", $"COMPLETO.sal", pLote);
                     EscribirDatosSalidaNoImprimir($"{pRutaSalida}", $"I_NO_IMPRIMIR.sal");
                     EscribirDatosSalidaNumHojas(pDatosImprimir, $"{pRutaSalida}", $"I_NUMHOJAS.sal");
                     EscribirDatosSalidaClientesEsepeciales(pDatosImprimir, $"{pRutaSalida}", $"INS_CLIENTES_ESPECIALES.sal");
@@ -434,7 +434,7 @@ namespace App.ControlEjecucion
                     break;
 
                 case "3": //Gobiernos
-                    EscribirDatosSalidaCompleto(pDatosImprimir, $"{pRutaSalida}", $"COMPLETO.sal");
+                    EscribirDatosSalidaCompleto(pDatosImprimir, $"{pRutaSalida}", $"COMPLETO.sal", pLote);
                     EscribirDatosSalidaNoImprimir($"{pRutaSalida}", $"I_NO_IMPRIMIR.sal");
                     EscribirDatosSalidaNumHojas(pDatosImprimir, $"{pRutaSalida}", $"I_NUMHOJAS.sal");
                     EscribirDatosSalidaEmail(pDatosImprimir, $"{pRutaSalida}", $"I_FACTURA_SOLO_EMAIL.sal");
@@ -444,7 +444,7 @@ namespace App.ControlEjecucion
                     break;
 
                 case "4": //Llanos
-                    EscribirDatosSalidaCompleto(pDatosImprimir, $"{pRutaSalida}", $"COMPLETO.sal");
+                    EscribirDatosSalidaCompleto(pDatosImprimir, $"{pRutaSalida}", $"COMPLETO.sal", pLote);
                     EscribirDatosSalidaSms(pDatosImprimir, $"{pRutaSalida}", $"I_ENVIO_SMS.sal");
                     EscribirDatosSalidaNoImprimir($"{pRutaSalida}", $"I_NO_IMPRIMIR.sal");
                     EscribirDatosSalidaEmail(pDatosImprimir, $"{pRutaSalida}", $"I_FACTURA_SOLO_EMAIL.sal");
@@ -452,11 +452,11 @@ namespace App.ControlEjecucion
                     break;
 
                 case "5": //Hipotecario
-                    EscribirDatosSalidaCompleto(pDatosImprimir, $"{pRutaSalida}", $"COMPLETO.sal");
+                    EscribirDatosSalidaImpresionNormal(pDatosImprimir, $"{pRutaSalida}", $"Courier00000000I.sal");
                     break;
 
                 case "6": //Anexos Verdes
-                    EscribirDatosSalidaCompleto(pDatosImprimir, $"{pRutaSalida}", $"COMPLETO.sal");
+                    EscribirDatosSalidaImpresionNormal(pDatosImprimir, $"{pRutaSalida}", $"Courier00000000I.sal");
                     break;
             }
             #endregion
@@ -468,14 +468,33 @@ namespace App.ControlEjecucion
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRuta"></param>
         /// <param name="pNombreArchivo"></param>
-        private void EscribirDatosSalidaCompleto(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo)
+        private void EscribirDatosSalidaCompleto(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo, string pLote)
         {
             #region EscribirDatosSalidaCompleto
             List<string> resultado = new List<string>();
+            int consecutivo = 1;
 
-            foreach (var datoLinea in pDatosImprimir.SelectMany(x => x.Value))
+            var datosImprimirFinal = new Dictionary<string, List<string>>(pDatosImprimir);
+
+            foreach (var datoLinea in datosImprimirFinal)
             {
-                resultado.Add(datoLinea);
+                string nuevoConsecutivo = $"{pLote}_{consecutivo.ToString().PadLeft(8, '0')}";
+
+                var nuevo1AAA = from n in datoLinea.Value
+                                where n.Substring(0, 4) == "1AAA"
+                                select n.Replace("KitXXXX", nuevoConsecutivo);
+
+                string nuevo1AAAFinal = nuevo1AAA.FirstOrDefault();
+
+                resultado.Add(nuevo1AAAFinal);
+
+                datoLinea.Value.RemoveAt(0);
+
+                resultado.AddRange(datoLinea.Value);
+
+                datoLinea.Value.Insert(0, nuevo1AAAFinal.Replace(nuevoConsecutivo, "KitXXXX"));
+
+                consecutivo++;
             }
 
             Helpers.EscribirEnArchivo($"{pRuta}\\{pNombreArchivo}", resultado);
@@ -885,6 +904,48 @@ namespace App.ControlEjecucion
             if (datosFinales.Any())
             {
                 Helpers.EscribirEnArchivo($"{pRuta}\\{pNombreArchivo}", datosFinales);
+            }
+
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pDatosImprimir"></param>
+        /// <param name="pRuta"></param>
+        /// <param name="pNombreArchivo"></param>
+        private void EscribirDatosSalidaImpresionNormal(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo)
+        {
+            #region EscribirDatosSalidaImpresionNormal
+            List<string> resultado = new List<string>();
+            int consecutivo = 1;
+
+            var busquedaCuentasImpresion = (from busqueda in pDatosImprimir
+                                            select busqueda).ToDictionary(x => x.Key).Values;
+
+            if (busquedaCuentasImpresion.Any())
+            {
+                foreach (var datoCuenta in busquedaCuentasImpresion)
+                {
+                    string nuevoConsecutivo = $"KIT{consecutivo.ToString().PadLeft(8, '0')}";
+
+                    var nuevo1AAA = from n in datoCuenta.Value
+                                    where n.Substring(0, 4) == "1AAA"
+                                    select n.Replace("KitXXXXX", nuevoConsecutivo);
+
+                    resultado.Add(nuevo1AAA.FirstOrDefault());
+
+                    datoCuenta.Value.RemoveAt(0);
+
+                    resultado.AddRange(datoCuenta.Value);
+
+                    consecutivo++;
+                }
+
+                Helpers.EscribirEnArchivo($"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}.sal", resultado);
+
+                resultado.Clear();
             }
 
             #endregion

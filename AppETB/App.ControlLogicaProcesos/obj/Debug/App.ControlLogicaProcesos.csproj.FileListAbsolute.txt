@@ -38,3 +38,5 @@ C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.ControlLogicaProceso
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaProcesos.csproj.CopyComplete
 C:\Proyectos\ETB\AppETB\App.ControlLogicaProcesos\bin\Debug\Excel.dll
 C:\Proyectos\ETB\AppETB\App.ControlLogicaProcesos\bin\Debug\ICSharpCode.SharpZipLib.dll
+C:\Users\adieg\Documents\GitHub\ETB\AppETB\App.ControlLogicaProcesos\bin\Debug\Excel.dll
+C:\Users\adieg\Documents\GitHub\ETB\AppETB\App.ControlLogicaProcesos\bin\Debug\ICSharpCode.SharpZipLib.dll

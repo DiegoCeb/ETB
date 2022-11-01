@@ -214,7 +214,7 @@ namespace App.ControlLogicaProcesos
             string[] fechasNombreArchivo = NombreArchivo.Split('_');
 
             ListaCanal1AAA.Add("1AAA");
-            ListaCanal1AAA.Add("KitXXXX");
+            ListaCanal1AAA.Add("KitXXXXX");
             ListaCanal1AAA.Add(Telefono);
 
             string datosAux = Helpers.GetValueInsumoCadena(Variables.Variables.DatosAuxAnexosVerdes, $"{Telefono}") ?? string.Empty;
