@@ -573,8 +573,8 @@ namespace App.ControlLogicaProcesos
 
                 ListaCanal1AAA.Add(Ciclo);
                 ListaCanal1AAA.Add(GetTotalPagar(datosOriginales));
+
                 listaCortes.Clear();
-                //listaCortes.Add(new PosCortes(155, 13, TiposFormateo.Decimal01));
                 listaCortes.Add(new PosCortes(168, 8, TiposFormateo.Fecha01));
                 ListaCanal1AAA.Add(Helpers.ExtraccionCamposSpool(listaCortes, Linea010000));
                 ListaCanal1AAA.Add(GetMesMora(Linea010000.Substring(176, 2).Trim(), datosOriginales));
@@ -971,7 +971,7 @@ namespace App.ControlLogicaProcesos
                             SubTotal1BBB += Convert.ToInt32(detalle.Substring(20, 14));
                         }
 
-                        if (!string.IsNullOrEmpty(detalle.Substring(6, 14).Trim()) && Convert.ToInt32(detalle.Substring(6, 14)) != 0 /*&& trim($valores_temp["DOC1_SALDO_GRACIAS"]) == "X"*/)
+                        if (!string.IsNullOrEmpty(detalle.Substring(6, 14).Trim()) && Convert.ToInt32(detalle.Substring(6, 14)) != 0)
                         {
                             if (string.IsNullOrEmpty(linea150001) || (!string.IsNullOrEmpty(linea150001) && linea150001.Substring(6, 1) != "N")) // Regla No sumar saldo anterior
                             {
@@ -979,7 +979,7 @@ namespace App.ControlLogicaProcesos
                             }
                         }
 
-                        if (!string.IsNullOrEmpty(detalle.Substring(34, 14).Trim()) && Convert.ToInt32(detalle.Substring(34, 14)) != 0 /*&& trim($valores_temp["DOC1_SALDO_GRACIAS"]) == "X"*/)
+                        if (!string.IsNullOrEmpty(detalle.Substring(34, 14).Trim()) && Convert.ToInt32(detalle.Substring(34, 14)) != 0)
                         {
                             SubTotal1BBB += Convert.ToInt32(detalle.Substring(34, 14));
                         }
@@ -993,9 +993,6 @@ namespace App.ControlLogicaProcesos
 
                         if (llave == "02T019")
                         {
-                            //if (trim($valores_temp["estampilla"]) == "X") TODO: Validar Regla
-                            //    return false;
-
                             if (!string.IsNullOrEmpty(detalle.Substring(6, 14).Trim()) && Convert.ToInt32(detalle.Substring(6, 14)) != 0)
                             {
                                 SubTotal1BBB += Convert.ToInt32(detalle.Substring(6, 14)) + Convert.ToInt32(detalle.Substring(20, 14)) + Convert.ToInt32(detalle.Substring(34, 14)) + Convert.ToInt32(detalle.Substring(48, 14)) + Convert.ToInt32(detalle.Substring(62, 14));
@@ -1003,9 +1000,6 @@ namespace App.ControlLogicaProcesos
                         }
                         else if (llave == "02T016")
                         {
-                            //if (trim($valores_temp["revercion_pago"]) == "X") TODO: Validar Regla
-                            //    return false;
-
                             if (!string.IsNullOrEmpty(detalle.Substring(6, 14).Trim()) && Convert.ToInt32(detalle.Substring(6, 14)) != 0)
                             {
                                 SubTotal1BBB += Convert.ToInt32(detalle.Substring(6, 14)) + Convert.ToInt32(detalle.Substring(20, 14)) + Convert.ToInt32(detalle.Substring(34, 14)) + Convert.ToInt32(detalle.Substring(48, 14)) + Convert.ToInt32(detalle.Substring(62, 14));
@@ -1013,9 +1007,6 @@ namespace App.ControlLogicaProcesos
                         }
                         else if (llave == "02T002")
                         {
-                            //if (trim($valores_temp["DOC1_SALDO_GRACIAS"]) == "X") TODO: Validar Regla
-                            //    return false;
-
                             if (!string.IsNullOrEmpty(detalle.Substring(6, 14).Trim()) && Convert.ToInt32(detalle.Substring(6, 14)) != 0)
                             {
                                 SubTotal1BBB += Convert.ToInt32(detalle.Substring(6, 14)) + Convert.ToInt32(detalle.Substring(20, 14)) + Convert.ToInt32(detalle.Substring(34, 14)) + Convert.ToInt32(detalle.Substring(48, 14)) + Convert.ToInt32(detalle.Substring(62, 14));
@@ -1023,11 +1014,8 @@ namespace App.ControlLogicaProcesos
                         }
                         else if (llave == "02T003")
                         {
-                            //if (trim($valores_temp["DOC1_SALDO_GRACIAS"]) == "X") TODO: Validar Regla
-                            //    return false;
-
                             calculoAjusteDecena += Convert.ToInt32(detalle.Substring(6, 14)) + Convert.ToInt32(detalle.Substring(20, 14)) + Convert.ToInt32(detalle.Substring(34, 14)) + Convert.ToInt32(detalle.Substring(48, 14)) + Convert.ToInt32(detalle.Substring(62, 14));
-                            if (/*valores_temp["EXCLUSION_AJUSTE_DECENA"] && */ IsDatos)
+                            if (IsDatos)
                             {
                                 SubTotal1BBB += calculoAjusteDecena;
                                 ValorPagarMes += calculoAjusteDecena;
@@ -2012,9 +2000,6 @@ namespace App.ControlLogicaProcesos
 
                         if (llave == "02T019")
                         {
-                            //if (trim($valores_temp["estampilla"]) == "X") TODO: Validar Regla
-                            //    return false;
-
                             if (!string.IsNullOrEmpty(detalle.Substring(6, 14).Trim()) && Convert.ToInt32(detalle.Substring(6, 14)) != 0)
                             {
                                 Lineas1BBB.Add($"1BBB|{descripcion}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, detalle.Substring(6, 14).TrimStart('0'))}| ");
@@ -2144,10 +2129,6 @@ namespace App.ControlLogicaProcesos
                     }
                 }
 
-            }
-            if (!string.IsNullOrEmpty(lineaImpuestosDistriTales))
-            {
-                Lineas1BBB.Add(lineaImpuestosDistriTales);
             }
             if (!string.IsNullOrEmpty(lineaNotasCredito))
             {

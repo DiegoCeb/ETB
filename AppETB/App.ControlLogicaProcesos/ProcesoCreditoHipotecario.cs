@@ -59,8 +59,10 @@ namespace App.ControlLogicaProcesos
                     encabezado = false;
                     continue;
                 }
-
-                AgregarDiccionario(lineaDatos.Key, FormatearArchivo(lineaDatos.Key, lineaDatos.ToList()));
+                if (!string.IsNullOrEmpty(lineaDatos.Key.Trim()))
+                {
+                    AgregarDiccionario(lineaDatos.Key, FormatearArchivo(lineaDatos.Key, lineaDatos.ToList()));
+                }
             }
             #endregion
         }
@@ -102,6 +104,7 @@ namespace App.ControlLogicaProcesos
             }
 
             #region Formateo Canales
+
             resultadoFormateoLinea = FormateoCanal1AAA(datosOriginales);
 
             if (!string.IsNullOrEmpty(resultadoFormateoLinea))
@@ -115,6 +118,7 @@ namespace App.ControlLogicaProcesos
             {
                 resultado.AddRange(resultadoFormateoLinea);
             }
+
             #endregion
 
             return resultado;
@@ -181,7 +185,7 @@ namespace App.ControlLogicaProcesos
             }
 
 
-            return Resultado; 
+            return Resultado;
             #endregion
         }
 
@@ -205,7 +209,7 @@ namespace App.ControlLogicaProcesos
 
             CodeBar = $"(415){numeroETB}(8020){pNumReferencia}(3900){totalPagar}(96){fechaPago}";
 
-            return CodeBar; 
+            return CodeBar;
             #endregion
         }
 
@@ -221,7 +225,7 @@ namespace App.ControlLogicaProcesos
             string linea1BBB = string.Empty;
             for (int i = 1; i < datosOriginales.Count; i++)
             {
-                linea1BBB = datosOriginales[i].Replace(";","|");
+                linea1BBB = datosOriginales[i].Replace(";", "|");
                 resultado.Add($"1BBB|{linea1BBB}");
             }
 
