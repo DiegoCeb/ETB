@@ -923,7 +923,14 @@ namespace App.ControlLogicaProcesos
 
                     foreach (var campo in detalles)
                     {
-                        lineaDetalle += $"|{campo.Trim()}";
+                        if (string.IsNullOrEmpty(lineaDetalle.Trim()))
+                        {
+                            lineaDetalle += $"{campo.Trim()}";
+                        }
+                        else
+                        {
+                            lineaDetalle += $"|{campo.Trim()}";
+                        }
                     }
 
                     if (!detallesOrdenados.ContainsKey(dateTime))
@@ -949,7 +956,14 @@ namespace App.ControlLogicaProcesos
 
                     foreach (var campo in detalles)
                     {
-                        lineaDetalle += $"|{campo.Trim()}";
+                        if (string.IsNullOrEmpty(lineaDetalle.Trim()))
+                        {
+                            lineaDetalle += $"{campo.Trim()}";
+                        }
+                        else
+                        {
+                            lineaDetalle += $"|{campo.Trim()}";
+                        }
                     }
 
                     if (!detallesOrdenados.ContainsKey(dateTime))
@@ -973,7 +987,14 @@ namespace App.ControlLogicaProcesos
 
                     foreach (var campo in detalles)
                     {
-                        lineaDetalle += $"|{campo.Trim()}";
+                        if (string.IsNullOrEmpty(lineaDetalle.Trim()))
+                        {
+                            lineaDetalle += $"{campo.Trim()}";
+                        }
+                        else
+                        {
+                            lineaDetalle += $"|{campo.Trim()}";
+                        }
                     }
 
                     if (!detallesOrdenados.ContainsKey(dateTime))
