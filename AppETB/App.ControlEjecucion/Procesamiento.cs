@@ -399,6 +399,8 @@ namespace App.ControlEjecucion
             #endregion
         }
 
+        #region Logica y Escritura de Salidas del proceso
+
         /// <summary>
         /// 
         /// </summary>
@@ -411,44 +413,44 @@ namespace App.ControlEjecucion
             switch (pIdentificadorProceso)
             {
                 case "1": //Masivos
-                    EscribirDatosSalidaCompleto(pDatosImprimir, $"{pRutaSalida}", $"COMPLETO.sal", pLote);
-                    EscribirDatosSalidaNoImprimir($"{pRutaSalida}", $"I_NO_IMPRIMIR.sal");
-                    EscribirDatosSalidaSms(pDatosImprimir, $"{pRutaSalida}", $"I_ENVIO_SMS.sal");
+                    EscribirDatosSalidaCompleto(pDatosImprimir, $"{pRutaSalida}", $"COMPLETO.sal", pLote, "1");
+                    EscribirDatosSalidaNoImprimir(pDatosImprimir, $"{pRutaSalida}", $"I_NO_IMPRIMIR.sal", "1");
+                    EscribirDatosSalidaSms(pDatosImprimir, $"{pRutaSalida}", $"I_ENVIO_SMS.sal", "1");
                     EscribirDatosSalidaErrorLte(pDatosImprimir, $"{pRutaSalida}", $"I_ERROR_FACTURA_LTE.sal");
                     EscribirDatosSalidaDiferencias(pDatosImprimir, $"{pRutaSalida}", $"I_DIFERENCIAS.sal");
-                    EscribirDatosSalidaEmail(pDatosImprimir, $"{pRutaSalida}", $"I_FACTURA_SOLO_EMAIL.sal");
-                    EscribirDatosSalidaDistribucionEspecial(pDatosImprimir, $"{pRutaSalida}", $"I_DISTRIBUCION_ESPECIAL.sal");
-                    EscribirDatosSalidaImpresion(pDatosImprimir, $"{pRutaSalida}", $"Courier00000000I.sal", pLote);
-                    EscribirDatosSalidaOtros(pDatosImprimir, $"{pRutaSalida}", $"I_OTROS.sal");
+                    EscribirDatosSalidaDistribucionEspecial(pDatosImprimir, $"{pRutaSalida}", $"I_DISTRIBUCION_ESPECIAL.sal", "1");
+                    EscribirDatosSalidaEmail(pDatosImprimir, $"{pRutaSalida}", $"I_FACTURA_SOLO_EMAIL.sal", "1");
+                    EscribirDatosSalidaImpresion(pDatosImprimir, $"{pRutaSalida}", $"Courier00000000I.sal", pLote, "1");
+                    EscribirDatosSalidaOtros(pDatosImprimir, $"{pRutaSalida}", $"I_OTROS.sal", "1");
                     break;
 
                 case "2": //Datos
-                    EscribirDatosSalidaCompleto(pDatosImprimir, $"{pRutaSalida}", $"COMPLETO.sal", pLote);
-                    EscribirDatosSalidaNoImprimir($"{pRutaSalida}", $"I_NO_IMPRIMIR.sal");
+                    EscribirDatosSalidaCompleto(pDatosImprimir, $"{pRutaSalida}", $"COMPLETO.sal", pLote, "2");
+                    EscribirDatosSalidaNoImprimir(pDatosImprimir, $"{pRutaSalida}", $"I_NO_IMPRIMIR.sal", "2");
                     EscribirDatosSalidaNumHojas(pDatosImprimir, $"{pRutaSalida}", $"I_NUMHOJAS.sal");
                     EscribirDatosSalidaClientesEsepeciales(pDatosImprimir, $"{pRutaSalida}", $"INS_CLIENTES_ESPECIALES.sal");
-                    EscribirDatosSalidaEmail(pDatosImprimir, $"{pRutaSalida}", $"I_FACTURA_SOLO_EMAIL.sal");
-                    EscribirDatosSalidaDistribucionEspecial(pDatosImprimir, $"{pRutaSalida}", $"I_DISTRIBUCION_ESPECIAL.sal");
-                    EscribirDatosSalidaImpresion(pDatosImprimir, $"{pRutaSalida}", $"Courier00000000I.sal", pLote);
-                    EscribirDatosSalidaOtros(pDatosImprimir, $"{pRutaSalida}", $"I_OTROS.sal");
+                    EscribirDatosSalidaDistribucionEspecial(pDatosImprimir, $"{pRutaSalida}", $"I_DISTRIBUCION_ESPECIAL.sal", "2");
+                    EscribirDatosSalidaEmail(pDatosImprimir, $"{pRutaSalida}", $"I_FACTURA_SOLO_EMAIL.sal", "2");
+                    EscribirDatosSalidaImpresion(pDatosImprimir, $"{pRutaSalida}", $"Courier00000000I.sal", pLote, "2");
+                    EscribirDatosSalidaOtros(pDatosImprimir, $"{pRutaSalida}", $"I_OTROS.sal", "2");
                     break;
 
                 case "3": //Gobiernos
-                    EscribirDatosSalidaCompleto(pDatosImprimir, $"{pRutaSalida}", $"COMPLETO.sal", pLote);
-                    EscribirDatosSalidaNoImprimir($"{pRutaSalida}", $"I_NO_IMPRIMIR.sal");
+                    EscribirDatosSalidaCompleto(pDatosImprimir, $"{pRutaSalida}", $"COMPLETO.sal", pLote, "3");
+                    EscribirDatosSalidaNoImprimir(pDatosImprimir, $"{pRutaSalida}", $"I_NO_IMPRIMIR.sal", "3");
                     EscribirDatosSalidaNumHojas(pDatosImprimir, $"{pRutaSalida}", $"I_NUMHOJAS.sal");
-                    EscribirDatosSalidaEmail(pDatosImprimir, $"{pRutaSalida}", $"I_FACTURA_SOLO_EMAIL.sal");
-                    EscribirDatosSalidaDistribucionEspecial(pDatosImprimir, $"{pRutaSalida}", $"I_DISTRIBUCION_ESPECIAL.sal");
-                    EscribirDatosSalidaImpresion(pDatosImprimir, $"{pRutaSalida}", $"Courier00000000I.sal", pLote);
-                    EscribirDatosSalidaOtros(pDatosImprimir, $"{pRutaSalida}", $"I_OTROS.sal");
+                    EscribirDatosSalidaDistribucionEspecial(pDatosImprimir, $"{pRutaSalida}", $"I_DISTRIBUCION_ESPECIAL.sal", "3");
+                    EscribirDatosSalidaEmail(pDatosImprimir, $"{pRutaSalida}", $"I_FACTURA_SOLO_EMAIL.sal", "3");
+                    EscribirDatosSalidaImpresion(pDatosImprimir, $"{pRutaSalida}", $"Courier00000000I.sal", pLote, "3");
+                    EscribirDatosSalidaOtros(pDatosImprimir, $"{pRutaSalida}", $"I_OTROS.sal", "3");
                     break;
 
                 case "4": //Llanos
-                    EscribirDatosSalidaCompleto(pDatosImprimir, $"{pRutaSalida}", $"COMPLETO.sal", pLote);
-                    EscribirDatosSalidaSms(pDatosImprimir, $"{pRutaSalida}", $"I_ENVIO_SMS.sal");
-                    EscribirDatosSalidaNoImprimir($"{pRutaSalida}", $"I_NO_IMPRIMIR.sal");
-                    EscribirDatosSalidaEmail(pDatosImprimir, $"{pRutaSalida}", $"I_FACTURA_SOLO_EMAIL.sal");
-                    EscribirDatosSalidaImpresion(pDatosImprimir, $"{pRutaSalida}", $"Courier00000000I.sal", pLote);
+                    EscribirDatosSalidaCompleto(pDatosImprimir, $"{pRutaSalida}", $"COMPLETO.sal", pLote, "4");
+                    EscribirDatosSalidaSms(pDatosImprimir, $"{pRutaSalida}", $"I_ENVIO_SMS.sal", "4");
+                    EscribirDatosSalidaNoImprimir(pDatosImprimir, $"{pRutaSalida}", $"I_NO_IMPRIMIR.sal", "4");
+                    EscribirDatosSalidaEmail(pDatosImprimir, $"{pRutaSalida}", $"I_FACTURA_SOLO_EMAIL.sal", "4");
+                    EscribirDatosSalidaImpresion(pDatosImprimir, $"{pRutaSalida}", $"Courier00000000I.sal", pLote, "4");
                     break;
 
                 case "5": //Hipotecario
@@ -462,13 +464,14 @@ namespace App.ControlEjecucion
             #endregion
         }
 
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRuta"></param>
         /// <param name="pNombreArchivo"></param>
-        private void EscribirDatosSalidaCompleto(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo, string pLote)
+        private void EscribirDatosSalidaCompleto(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo, string pLote, string pTipoProceso)
         {
             #region EscribirDatosSalidaCompleto
             List<string> resultado = new List<string>();
@@ -476,28 +479,37 @@ namespace App.ControlEjecucion
 
             var datosImprimirFinal = new Dictionary<string, List<string>>(pDatosImprimir);
 
-            foreach (var datoLinea in datosImprimirFinal)
+            switch (pTipoProceso)
             {
-                string nuevoConsecutivo = $"{pLote}_{consecutivo.ToString().PadLeft(8, '0')}";
+                case "1":
+                case "2":
+                case "3":
+                case "4":
+                    foreach (var datoLinea in datosImprimirFinal)
+                    {
+                        string nuevoConsecutivo = $"{pLote}_{consecutivo.ToString().PadLeft(8, '0')}";
 
-                var nuevo1AAA = from n in datoLinea.Value
-                                where n.Substring(0, 4) == "1AAA"
-                                select n.Replace("KitXXXX", nuevoConsecutivo);
+                        var nuevo1AAA = from n in datoLinea.Value
+                                        where n.Substring(0, 4) == "1AAA"
+                                        select n.Replace("KitXXXX", nuevoConsecutivo);
 
-                string nuevo1AAAFinal = nuevo1AAA.FirstOrDefault();
+                        string nuevo1AAAFinal = nuevo1AAA.FirstOrDefault();
 
-                resultado.Add(nuevo1AAAFinal);
+                        resultado.Add(nuevo1AAAFinal);
 
-                datoLinea.Value.RemoveAt(0);
+                        datoLinea.Value.RemoveAt(0);
 
-                resultado.AddRange(datoLinea.Value);
+                        resultado.AddRange(datoLinea.Value);
 
-                datoLinea.Value.Insert(0, nuevo1AAAFinal.Replace(nuevoConsecutivo, "KitXXXX"));
+                        datoLinea.Value.Insert(0, nuevo1AAAFinal.Replace(nuevoConsecutivo, "KitXXXX"));
 
-                consecutivo++;
+                        consecutivo++;
+                    }
+
+                    Helpers.EscribirEnArchivo($"{pRuta}\\{pNombreArchivo}", resultado);
+                    break;
             }
 
-            Helpers.EscribirEnArchivo($"{pRuta}\\{pNombreArchivo}", resultado);
 
             resultado.Clear();
             #endregion
@@ -508,37 +520,93 @@ namespace App.ControlEjecucion
         /// </summary>
         /// <param name="pRuta"></param>
         /// <param name="pNombreArchivo"></param>
-        private void EscribirDatosSalidaNoImprimir(string pRuta, string pNombreArchivo)
+        private void EscribirDatosSalidaNoImprimir(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo, string pTipoProceso)
         {
             #region EscribirDatosSalidaNoImprimir
             List<string> resultado = new List<string>();
             int consecutivoInternoDivision = 0;
             int consecutivoInternoArchivo = 1;
 
-            if (Variables.Variables.CuentasNoImprimir.Any())
+            switch (pTipoProceso)
             {
-                foreach (var linea in Variables.Variables.CuentasNoImprimir.SelectMany(x => x.Value))
-                {
-                    if (linea.Substring(0, 4) == "1AAA")
-                    {
-                        consecutivoInternoDivision++;
+                case "1":
+                case "2":
+                case "3":
 
-                        if (consecutivoInternoDivision == 8001)
+                    if (Variables.Variables.CuentasNoImprimir.Any())
+                    {
+                        foreach (var linea in Variables.Variables.CuentasNoImprimir.SelectMany(x => x.Value))
                         {
-                            Helpers.EscribirEnArchivo($"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}_{consecutivoInternoArchivo.ToString().PadLeft(3, '0')}.sal", resultado);
-                            consecutivoInternoArchivo++;
-                            consecutivoInternoDivision = 1;
-                            resultado.Clear();
+                            if (linea.Substring(0, 4) == "1AAA")
+                            {
+                                consecutivoInternoDivision++;
+
+                                if (consecutivoInternoDivision == 8001)
+                                {
+                                    Helpers.EscribirEnArchivo($"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}_{consecutivoInternoArchivo.ToString().PadLeft(3, '0')}.sal", resultado);
+                                    consecutivoInternoArchivo++;
+                                    consecutivoInternoDivision = 1;
+                                    resultado.Clear();
+                                }
+                            }
+
+                            resultado.Add(linea);
+                        }
+
+                        Helpers.EscribirEnArchivo($"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}_{consecutivoInternoArchivo.ToString().PadLeft(3, '0')}.sal", resultado);
+                    }
+
+                    break;
+
+                case "4":
+
+                    Dictionary<string, List<string>> datosOrdenadosTelefono = new Dictionary<string, List<string>>();
+
+                    foreach (var DatoExtracto in pDatosImprimir)
+                    {
+                        if (!datosOrdenadosTelefono.ContainsKey(DatoExtracto.Key))
+                        {
+                            string llave = DatoExtracto.Value.FirstOrDefault().Split('|').ElementAt(6).Trim();
+
+                            if (llave == "PRIVADO")
+                            {
+                                continue;
+                            }
+
+                            datosOrdenadosTelefono.Add(llave, DatoExtracto.Value);
                         }
                     }
 
-                    resultado.Add(linea);
-                }
+                    var objDatos = from busqueda in datosOrdenadosTelefono
+                                   where Variables.Variables.DatosInsumoExtraerLlanos.ContainsKey(busqueda.Key)
+                                   select busqueda;
 
-                Helpers.EscribirEnArchivo($"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}_{consecutivoInternoArchivo.ToString().PadLeft(3, '0')}.sal", resultado);
+                    if (objDatos.Any())
+                    {
+                        foreach (var linea in objDatos.SelectMany(x => x.Value))
+                        {
+                            if (linea.Substring(0, 4) == "1AAA")
+                            {
+                                consecutivoInternoDivision++;
 
-                resultado.Clear();
+                                if (consecutivoInternoDivision == 8001)
+                                {
+                                    Helpers.EscribirEnArchivo($"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}_{consecutivoInternoArchivo.ToString().PadLeft(3, '0')}.sal", resultado);
+                                    consecutivoInternoArchivo++;
+                                    consecutivoInternoDivision = 1;
+                                    resultado.Clear();
+                                }
+                            }
+
+                            resultado.Add(linea);
+                        }
+
+                        Helpers.EscribirEnArchivo($"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}_{consecutivoInternoArchivo.ToString().PadLeft(3, '0')}.sal", resultado);
+                    }
+                    break;
             }
+
+            resultado.Clear();
             #endregion
         }
 
@@ -548,41 +616,55 @@ namespace App.ControlEjecucion
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRuta"></param>
         /// <param name="pNombreArchivo"></param>
-        private void EscribirDatosSalidaSms(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo)
+        private void EscribirDatosSalidaSms(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo, string pTipoProceso)
         {
             #region EscribirDatosSalidaSms
-            List<string> resultado = new List<string>();
-            int consecutivoInternoDivision = 0;
-            int consecutivoInternoArchivo = 1;
+            IEnumerable<KeyValuePair<string, List<string>>> objDatos = null;
 
-            var busquedaCuentas = from busqueda in pDatosImprimir
-                                  where Variables.Variables.DatosInsumoCuentasEnvioSms.ContainsKey(busqueda.Key) &&
-                                   !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key)
-                                  select busqueda;
-
-            if (busquedaCuentas.Any())
+            switch (pTipoProceso)
             {
-                foreach (var linea in busquedaCuentas.SelectMany(x => x.Value))
-                {
-                    if (linea.Substring(0, 4) == "1AAA")
-                    {
-                        consecutivoInternoDivision++;
+                case "1":
 
-                        if (consecutivoInternoDivision == 8001)
+                    objDatos = from busqueda in pDatosImprimir
+                               where Variables.Variables.DatosInsumoCuentasEnvioSms.ContainsKey(busqueda.Key) &&
+                               !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key)
+                               select busqueda;
+
+                    if (objDatos.Any())
+                    {
+                        ProcesarSalidas(objDatos, pRuta, pNombreArchivo);
+                    }
+                    break;
+
+                case "4":
+
+                    Dictionary<string, List<string>> datosOrdenadosTelefono = new Dictionary<string, List<string>>();
+
+                    foreach (var DatoExtracto in pDatosImprimir)
+                    {
+                        if (!datosOrdenadosTelefono.ContainsKey(DatoExtracto.Key))
                         {
-                            Helpers.EscribirEnArchivo($"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}_{consecutivoInternoArchivo.ToString().PadLeft(3, '0')}.sal", resultado);
-                            consecutivoInternoArchivo++;
-                            consecutivoInternoDivision = 1;
-                            resultado.Clear();
+                            string llave = DatoExtracto.Value.FirstOrDefault().Split('|').ElementAt(6).Trim();
+
+                            if (llave == "PRIVADO")
+                            {
+                                continue;
+                            }
+
+                            datosOrdenadosTelefono.Add(llave, DatoExtracto.Value);
                         }
                     }
 
-                    resultado.Add(linea);
-                }
+                    objDatos = from busqueda in datosOrdenadosTelefono
+                               where Variables.Variables.DatosInsumoLlanosEnvioSMS.ContainsKey(busqueda.Key) &&
+                               !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key)
+                               select busqueda;
 
-                Helpers.EscribirEnArchivo($"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}_{consecutivoInternoArchivo.ToString().PadLeft(3, '0')}.sal", resultado);
-
-                resultado.Clear();
+                    if (objDatos.Any())
+                    {
+                        ProcesarSalidas(objDatos, pRuta, pNombreArchivo);
+                    }
+                    break;
             }
             #endregion
         }
@@ -593,47 +675,127 @@ namespace App.ControlEjecucion
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRuta"></param>
         /// <param name="pNombreArchivo"></param>
-        private void EscribirDatosSalidaEmail(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo)
+        private void EscribirDatosSalidaEmail(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo, string pTipoProceso)
         {
             #region EscribirDatosSalidaEmail
+
+            IEnumerable<KeyValuePair<string, List<string>>> objDatos = null;
+
+            switch (pTipoProceso)
+            {
+                case "1":
+                    objDatos = from busqueda in pDatosImprimir
+                               where Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key) &&
+                               !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
+                               !Variables.Variables.DatosErrorLTE.ContainsKey(busqueda.Key) &&
+                               !Variables.Variables.Diferencias.ContainsKey(busqueda.Key) &&
+                               !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key)
+                               select busqueda;
+
+                    if (objDatos.Any())
+                    {
+                        ProcesarSalidas(objDatos, pRuta, pNombreArchivo);
+                    }
+                    break;
+
+                case "2":
+                    objDatos = from busqueda in pDatosImprimir
+                               where Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key) &&
+                               !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
+                               !Variables.Variables.NumHojas.ContainsKey(busqueda.Key) &&
+                               !Variables.Variables.DatosInsumoClientesEspecialesDatos.ContainsKey(busqueda.Key) &&
+                               !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key)
+                               select busqueda;
+
+                    if (objDatos.Any())
+                    {
+                        ProcesarSalidas(objDatos, pRuta, pNombreArchivo);
+                    }
+                    break;
+
+                case "3":
+                    objDatos = from busqueda in pDatosImprimir
+                               where Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key) &&
+                               !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
+                               !Variables.Variables.NumHojas.ContainsKey(busqueda.Key) &&
+                               !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key)
+                               select busqueda;
+
+                    if (objDatos.Any())
+                    {
+                        ProcesarSalidas(objDatos, pRuta, pNombreArchivo);
+                    }
+                    break;
+
+                case "4":
+
+                    Dictionary<string, List<string>> datosOrdenadosTelefono = new Dictionary<string, List<string>>();
+
+                    foreach (var DatoExtracto in pDatosImprimir)
+                    {
+                        if (!datosOrdenadosTelefono.ContainsKey(DatoExtracto.Key))
+                        {
+                            string llave = DatoExtracto.Value.FirstOrDefault().Split('|').ElementAt(6).Trim();
+
+                            if (llave == "PRIVADO")
+                            {
+                                continue;
+                            }
+
+                            datosOrdenadosTelefono.Add(llave, DatoExtracto.Value);
+                        }
+                    }
+
+                    objDatos = from busqueda in datosOrdenadosTelefono
+                               where Variables.Variables.DatosInsumoDistribucionEmailLlanos.ContainsKey(busqueda.Key) &&
+                               !Variables.Variables.DatosInsumoExtraerLlanos.ContainsKey(busqueda.Key) &&
+                               !Variables.Variables.DatosInsumoLlanosEnvioSMS.ContainsKey(busqueda.Key)
+                               select busqueda;
+
+                    if (objDatos.Any())
+                    {
+                        ProcesarSalidas(objDatos, pRuta, pNombreArchivo);
+                    }
+                    break;
+            }
+
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pDatos"></param>
+        /// <param name="pRuta"></param>
+        /// <param name="pNombreArchivo"></param>
+        private void ProcesarSalidas(IEnumerable<KeyValuePair<string, List<string>>> pDatos, string pRuta, string pNombreArchivo)
+        {
+            #region ProcesarSalidas
             List<string> resultado = new List<string>();
             int consecutivoInternoDivision = 0;
             int consecutivoInternoArchivo = 1;
 
-            var busquedaCuentas = from busqueda in pDatosImprimir
-                                  where Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key) &&
-                                  !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
-                                  !Variables.Variables.DatosErrorLTE.ContainsKey(busqueda.Key) &&
-                                  !Variables.Variables.Diferencias.ContainsKey(busqueda.Key) &&
-                                  !Variables.Variables.NumHojas.ContainsKey(busqueda.Key) &&
-                                  !Variables.Variables.DatosInsumoClientesEspecialesDatos.ContainsKey(busqueda.Key)
-                                  select busqueda;
-
-            if (busquedaCuentas.Any())
+            foreach (var linea in pDatos.SelectMany(x => x.Value))
             {
-                foreach (var linea in busquedaCuentas.SelectMany(x => x.Value))
+                if (linea.Substring(0, 4) == "1AAA")
                 {
-                    if (linea.Substring(0, 4) == "1AAA")
+                    consecutivoInternoDivision++;
+
+                    if (consecutivoInternoDivision == 8001)
                     {
-                        consecutivoInternoDivision++;
-
-                        if (consecutivoInternoDivision == 8001)
-                        {
-                            Helpers.EscribirEnArchivo($"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}_{consecutivoInternoArchivo.ToString().PadLeft(3, '0')}.sal", resultado);
-                            consecutivoInternoArchivo++;
-                            consecutivoInternoDivision = 1;
-                            resultado.Clear();
-                        }
+                        Helpers.EscribirEnArchivo($"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}_{consecutivoInternoArchivo.ToString().PadLeft(3, '0')}.sal", resultado);
+                        consecutivoInternoArchivo++;
+                        consecutivoInternoDivision = 1;
+                        resultado.Clear();
                     }
-
-                    resultado.Add(linea);
                 }
 
-                Helpers.EscribirEnArchivo($"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}_{consecutivoInternoArchivo.ToString().PadLeft(3, '0')}.sal", resultado);
-
-                resultado.Clear();
+                resultado.Add(linea);
             }
 
+            Helpers.EscribirEnArchivo($"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}_{consecutivoInternoArchivo.ToString().PadLeft(3, '0')}.sal", resultado);
+
+            resultado.Clear();
             #endregion
         }
 
@@ -643,18 +805,76 @@ namespace App.ControlEjecucion
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRuta"></param>
         /// <param name="pNombreArchivo"></param>
-        private void EscribirDatosSalidaDistribucionEspecial(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo)
+        private void EscribirDatosSalidaDistribucionEspecial(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo, string pTipoProceso)
         {
             #region EscribirDatosSalidaDistribucionEspecial
+            IEnumerable<KeyValuePair<string, List<string>>> objDatos = null;
+
+            switch (pTipoProceso)
+            {
+                case "1":
+                    objDatos = (from busqueda in pDatosImprimir
+                                where Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DatosInsumoCuentasEnvioSms.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DatosErrorLTE.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.Diferencias.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key)
+                                select busqueda).ToDictionary(x => x.Key).Values;
+
+                    if (objDatos.Any())
+                    {
+                        ProcesarSalidasDistribucionEspecial(objDatos, pDatosImprimir, pRuta, pNombreArchivo);
+                    }
+                    break;
+
+                case "2":
+                    objDatos = (from busqueda in pDatosImprimir
+                                where Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.NumHojas.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DatosInsumoClientesEspecialesDatos.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DatosInsumoDistribucionEmailLlanos.ContainsKey(busqueda.Key)
+                                select busqueda).ToDictionary(x => x.Key).Values;
+
+                    if (objDatos.Any())
+                    {
+                        ProcesarSalidasDistribucionEspecial(objDatos, pDatosImprimir, pRuta, pNombreArchivo);
+                    }
+                    break;
+
+                case "3":
+                    objDatos = (from busqueda in pDatosImprimir
+                                where Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.NumHojas.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DatosInsumoDistribucionEmailLlanos.ContainsKey(busqueda.Key)
+                                select busqueda).ToDictionary(x => x.Key).Values;
+
+                    if (objDatos.Any())
+                    {
+                        ProcesarSalidasDistribucionEspecial(objDatos, pDatosImprimir, pRuta, pNombreArchivo);
+                    }
+                    break;
+
+            }
+
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pDatos"></param>
+        /// <param name="pDatosImprimir"></param>
+        /// <param name="pRuta"></param>
+        /// <param name="pNombreArchivo"></param>
+        private void ProcesarSalidasDistribucionEspecial(IEnumerable<KeyValuePair<string, List<string>>> pDatos, Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo)
+        {
+            #region ProcesarSalidasDistribucionEspecial
             List<string> datosFinales = new List<string>();
 
-            var busquedaCuentas = (from busqueda in pDatosImprimir
-                                   where Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
-                                   !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
-                                   !Variables.Variables.NumHojas.ContainsKey(busqueda.Key)
-                                   select busqueda).ToDictionary(x => x.Key).Values;
-
-            foreach (var dato in busquedaCuentas)
+            foreach (var dato in pDatos)
             {
                 if (pDatosImprimir.ContainsKey(dato.Key))
                 {
@@ -672,7 +892,6 @@ namespace App.ControlEjecucion
             {
                 Helpers.EscribirEnArchivo($"{pRuta}\\{pNombreArchivo}", datosFinales);
             }
-
             #endregion
         }
 
@@ -742,33 +961,82 @@ namespace App.ControlEjecucion
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRuta"></param>
         /// <param name="pNombreArchivo"></param>
-        private void EscribirDatosSalidaOtros(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo)
+        private void EscribirDatosSalidaOtros(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo, string pTipoProceso)
         {
             #region EscribirDatosSalidaOtros
+            IEnumerable<KeyValuePair<string, List<string>>> objDatos = null;
+
+            switch (pTipoProceso)
+            {
+                case "1":
+                    objDatos = (from busqueda in pDatosImprimir
+                                where !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DatosInsumoCuentasEnvioSms.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DatosErrorLTE.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.Diferencias.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key) &&
+                                (!Variables.Variables.DatosInsumoProcuni.ContainsKey(busqueda.Key) || !Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key))
+                                select busqueda).ToDictionary(x => x.Key).Values;
+
+                    if (objDatos.Any())
+                    {
+                        ProcesarSalidasOtrosProcesos(objDatos, pRuta, pNombreArchivo);
+                    }
+                    break;
+
+                case "2":
+                    objDatos = (from busqueda in pDatosImprimir
+                                where !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.NumHojas.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DatosInsumoClientesEspecialesDatos.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key) &&
+                                (!Variables.Variables.DatosInsumoProcuni.ContainsKey(busqueda.Key) || !Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key))
+                                select busqueda).ToDictionary(x => x.Key).Values;
+
+                    if (objDatos.Any())
+                    {
+                        ProcesarSalidasOtrosProcesos(objDatos, pRuta, pNombreArchivo);
+                    }
+                    break;
+
+                case "3":
+                    objDatos = (from busqueda in pDatosImprimir
+                                where !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.NumHojas.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key) &&
+                                (!Variables.Variables.DatosInsumoProcuni.ContainsKey(busqueda.Key) || !Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key))
+                                select busqueda).ToDictionary(x => x.Key).Values;
+
+                    if (objDatos.Any())
+                    {
+                        ProcesarSalidasOtrosProcesos(objDatos, pRuta, pNombreArchivo);
+                    }
+                    break;
+
+            }
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pDatos"></param>
+        /// <param name="pRuta"></param>
+        /// <param name="pNombreArchivo"></param>
+        private void ProcesarSalidasOtrosProcesos(IEnumerable<KeyValuePair<string, List<string>>> pDatos, string pRuta, string pNombreArchivo)
+        {
+            #region ProcesarSalidasOtrosProcesos
             List<string> resultado = new List<string>();
 
-            var busquedaCuentasImpresion = (from busqueda in pDatosImprimir
-                                            where !Variables.Variables.DatosInsumoProcuni.ContainsKey(busqueda.Key) &&
-                                            !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
-                                            !Variables.Variables.DatosErrorLTE.ContainsKey(busqueda.Key) &&
-                                            !Variables.Variables.Diferencias.ContainsKey(busqueda.Key) &&
-                                            !Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key) &&
-                                            !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
-                                            !Variables.Variables.DatosInsumoCuentasEnvioSms.ContainsKey(busqueda.Key) &&
-                                            !Variables.Variables.NumHojas.ContainsKey(busqueda.Key) &&
-                                            !Variables.Variables.DatosInsumoClientesEspecialesDatos.ContainsKey(busqueda.Key)
-                                            select busqueda).ToDictionary(x => x.Key).Values;
-
-            if (busquedaCuentasImpresion.Any())
+            foreach (var datoCuenta in pDatos)
             {
-                foreach (var datoCuenta in busquedaCuentasImpresion)
-                {
-                    resultado.AddRange(datoCuenta.Value);
-                }
-
-                Helpers.EscribirEnArchivo($"{pRuta}\\{pNombreArchivo}", resultado);
+                resultado.AddRange(datoCuenta.Value);
             }
 
+            Helpers.EscribirEnArchivo($"{pRuta}\\{pNombreArchivo}", resultado);
             #endregion
         }
 
@@ -778,61 +1046,148 @@ namespace App.ControlEjecucion
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRuta"></param>
         /// <param name="pNombreArchivo"></param>
-        private void EscribirDatosSalidaImpresion(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo, string pLote)
+        private void EscribirDatosSalidaImpresion(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo, string pLote, string pTipoProceso)
         {
             #region EscribirDatosSalidaImpresion
+            IEnumerable<KeyValuePair<string, List<string>>> objDatos = null;
+
+            switch (pTipoProceso)
+            {
+                case "1":
+                    objDatos = (from busqueda in pDatosImprimir
+                                where Variables.Variables.DatosInsumoProcuni.ContainsKey(busqueda.Key) ||
+                                Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key) &&
+                                (!Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DatosInsumoCuentasEnvioSms.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DatosErrorLTE.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.Diferencias.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key))
+                                select busqueda).ToDictionary(x => x.Key).Values;
+
+                    if (objDatos.Any())
+                    {
+                        ProcesoSalidasImpresion(objDatos, pRuta, pNombreArchivo, pLote);
+                    }
+                    break;
+
+                case "2":
+                    objDatos = (from busqueda in pDatosImprimir
+                                where Variables.Variables.DatosInsumoProcuni.ContainsKey(busqueda.Key) ||
+                                Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key) &&
+                                (!Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.NumHojas.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DatosInsumoClientesEspecialesDatos.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key))
+                                select busqueda).ToDictionary(x => x.Key).Values;
+
+                    if (objDatos.Any())
+                    {
+                        ProcesoSalidasImpresion(objDatos, pRuta, pNombreArchivo, pLote);
+                    }
+                    break;
+
+                case "3":
+                    objDatos = (from busqueda in pDatosImprimir
+                                where Variables.Variables.DatosInsumoProcuni.ContainsKey(busqueda.Key) ||
+                                Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key) &&
+                                (!Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.NumHojas.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key))
+                                select busqueda).ToDictionary(x => x.Key).Values;
+
+                    if (objDatos.Any())
+                    {
+                        ProcesoSalidasImpresion(objDatos, pRuta, pNombreArchivo, pLote);
+                    }
+                    break;
+
+                case "4":
+
+                    Dictionary<string, List<string>> datosOrdenadosTelefono = new Dictionary<string, List<string>>();
+
+                    foreach (var DatoExtracto in pDatosImprimir)
+                    {
+                        if (!datosOrdenadosTelefono.ContainsKey(DatoExtracto.Key))
+                        {
+                            string llave = DatoExtracto.Value.FirstOrDefault().Split('|').ElementAt(6).Trim();
+
+                            if (llave == "PRIVADO")
+                            {
+                                continue;
+                            }
+
+                            datosOrdenadosTelefono.Add(llave, DatoExtracto.Value);
+                        }
+                    }
+
+                    objDatos = (from busqueda in datosOrdenadosTelefono
+                                where Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key) ||
+                                !Variables.Variables.DatosInsumoExtraerLlanos.ContainsKey(busqueda.Key) ||
+                                !Variables.Variables.DatosInsumoLlanosEnvioSMS.ContainsKey(busqueda.Key) ||
+                                !Variables.Variables.DatosInsumoDistribucionEmailLlanos.ContainsKey(busqueda.Key)
+                                select busqueda).ToDictionary(x => x.Key).Values;
+
+                    if (objDatos.Any())
+                    {
+                        ProcesoSalidasImpresion(objDatos, pRuta, pNombreArchivo, pLote);
+                    }
+                    break;
+
+            }
+
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pDatos"></param>
+        /// <param name="pRuta"></param>
+        /// <param name="pNombreArchivo"></param>
+        /// <param name="pLote"></param>
+        private void ProcesoSalidasImpresion(IEnumerable<KeyValuePair<string, List<string>>> pDatos, string pRuta, string pNombreArchivo, string pLote)
+        {
+            #region ProcesoSalidasImpresion
             List<string> resultado = new List<string>();
             int consecutivo = 1;
             int consecutivoInternoDivision = 0;
             int consecutivoInternoArchivo = 1;
 
-            var busquedaCuentasImpresion = (from busqueda in pDatosImprimir
-                                            where Variables.Variables.DatosInsumoProcuni.ContainsKey(busqueda.Key) &&
-                                            !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
-                                            !Variables.Variables.DatosErrorLTE.ContainsKey(busqueda.Key) &&
-                                            !Variables.Variables.Diferencias.ContainsKey(busqueda.Key) &&
-                                            !Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key) &&
-                                            !Variables.Variables.NumHojas.ContainsKey(busqueda.Key) &&
-                                            !Variables.Variables.DatosInsumoClientesEspecialesDatos.ContainsKey(busqueda.Key)
-                                            select busqueda).ToDictionary(x => x.Key).Values;
-
-            if (busquedaCuentasImpresion.Any())
+            foreach (var datoCuenta in pDatos)
             {
-                foreach (var datoCuenta in busquedaCuentasImpresion)
+                string nuevoConsecutivo = $"{pLote}_{consecutivo.ToString().PadLeft(8, '0')}";
+
+                var nuevo1AAA = from n in datoCuenta.Value
+                                where n.Substring(0, 4) == "1AAA"
+                                select n.Replace("KitXXXX", nuevoConsecutivo);
+
+                if (datoCuenta.Value.FirstOrDefault().Substring(0, 4) == "1AAA")
                 {
-                    string nuevoConsecutivo = $"{pLote}_{consecutivo.ToString().PadLeft(8, '0')}";
+                    consecutivoInternoDivision++;
 
-                    var nuevo1AAA = from n in datoCuenta.Value
-                                    where n.Substring(0, 4) == "1AAA"
-                                    select n.Replace("KitXXXX", nuevoConsecutivo);
-
-                    if (datoCuenta.Value.FirstOrDefault().Substring(0, 4) == "1AAA")
+                    if (consecutivoInternoDivision == 8001)
                     {
-                        consecutivoInternoDivision++;
-
-                        if (consecutivoInternoDivision == 8001)
-                        {
-                            Helpers.EscribirEnArchivo($"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}_{consecutivoInternoArchivo.ToString().PadLeft(3, '0')}.sal", resultado);
-                            consecutivoInternoArchivo++;
-                            consecutivoInternoDivision = 1;
-                            resultado.Clear();
-                        }
+                        Helpers.EscribirEnArchivo($"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}_{consecutivoInternoArchivo.ToString().PadLeft(3, '0')}.sal", resultado);
+                        consecutivoInternoArchivo++;
+                        consecutivoInternoDivision = 1;
+                        resultado.Clear();
                     }
-
-                    resultado.Add(nuevo1AAA.FirstOrDefault());
-
-                    datoCuenta.Value.RemoveAt(0);
-
-                    resultado.AddRange(datoCuenta.Value);
-
-                    consecutivo++;
                 }
 
-                Helpers.EscribirEnArchivo($"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}_{consecutivoInternoArchivo.ToString().PadLeft(3, '0')}.sal", resultado);
+                resultado.Add(nuevo1AAA.FirstOrDefault());
 
-                resultado.Clear();
+                datoCuenta.Value.RemoveAt(0);
+
+                resultado.AddRange(datoCuenta.Value);
+
+                consecutivo++;
             }
 
+            Helpers.EscribirEnArchivo($"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}_{consecutivoInternoArchivo.ToString().PadLeft(3, '0')}.sal", resultado);
+
+            resultado.Clear();
             #endregion
         }
 
@@ -950,6 +1305,6 @@ namespace App.ControlEjecucion
 
             #endregion
         }
-
+        #endregion
     }
 }
