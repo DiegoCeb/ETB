@@ -148,6 +148,7 @@ namespace App.ControlLogicaProcesos
                 if (!string.IsNullOrEmpty(Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoCuentasExtraer, llaveCruce)))
                 {
                     //Cuenta Retenida
+                    Variables.Variables.CuentasNoImprimir.Add(llaveCruce, FormatearArchivo(llaveCruce, datosExtractoFormateo));
                     datosExtractoFormateo.Clear();
                 }
                 else
@@ -556,6 +557,11 @@ namespace App.ControlLogicaProcesos
                 string etapas = GetTipoEtapas(Linea010000.Substring(151, 3));
                 Cuenta = Linea010000.Substring(117, 20).Trim();// Cuenta
                 Ciclo = Linea010000.Substring(151, 4).Trim().TrimStart('0'); // Asignamos Ciclo a variable Global
+
+                if (Cuenta == "7798926091")
+                {
+
+                }
 
                 listaCortes.Add(new PosCortes(6, 50));
                 listaCortes.Add(new PosCortes(56, 12));
@@ -4394,7 +4400,10 @@ namespace App.ControlLogicaProcesos
                 }
                 else
                 {
-                    resultado = Helpers.ValidarPipePipe($"1HIS|{numeroConexion}|Mes Actual: 0|{ArmarMesesHistograma(Helpers.FormatearCampos(TiposFormateo.Fecha01, linea10000.FirstOrDefault().Substring(168, 8)))}|0|0|0|0|0|0|Promedio: 0| ");
+                    if (!string.IsNullOrEmpty(numeroConexion))
+                    {
+                        resultado = Helpers.ValidarPipePipe($"1HIS|{numeroConexion}|Mes Actual: 0|{ArmarMesesHistograma(Helpers.FormatearCampos(TiposFormateo.Fecha01, linea10000.FirstOrDefault().Substring(168, 8)))}|0|0|0|0|0|0|Promedio: 0| ");
+                    }
                 }
             }
 
@@ -5187,9 +5196,9 @@ namespace App.ControlLogicaProcesos
                         {
                             resultado = Helpers.ValidarPipePipe($"1ODC|{cuentaConexion}|Total|$ 0,00|$ 0,00|$ 0,00|$ 0,00| | ");
                         }
-                    }                    
+                    }
                 }
-            }            
+            }
 
             return resultado;
             #endregion

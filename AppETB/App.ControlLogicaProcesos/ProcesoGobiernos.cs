@@ -107,6 +107,7 @@ namespace App.ControlLogicaProcesos
                 if (!string.IsNullOrEmpty(Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoCuentasExtraer, llaveCruce)))
                 {
                     //Cuenta Retenida
+                    Variables.Variables.CuentasNoImprimir.Add(llaveCruce, FormatearArchivo(llaveCruce, datosExtractoFormateo));
                     datosExtractoFormateo.Clear();
                 }
                 else
@@ -1547,7 +1548,7 @@ namespace App.ControlLogicaProcesos
 
                             if (llave == "02T004")
                             {
-                                lineaServiciosETBIVA = $"1BBB|{descripcion}";
+                                lineaServiciosETBIVA = $"1BBB|{descripcion}|***";
                                 tempValorTotalIva += sumatoria;
                                 lineasFinales1BBB.Add(lineaServiciosETBIVA);
                             }

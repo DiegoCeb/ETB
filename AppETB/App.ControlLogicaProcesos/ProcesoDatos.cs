@@ -113,6 +113,7 @@ namespace App.ControlLogicaProcesos
                 if (!string.IsNullOrEmpty(Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoCuentasExtraer, llaveCruce)))
                 {
                     //Cuenta Retenida
+                    Variables.Variables.CuentasNoImprimir.Add(llaveCruce, FormatearArchivo(llaveCruce, datosExtractoFormateo));
                     datosExtractoFormateo.Clear();
                 }
                 else
@@ -1636,14 +1637,14 @@ namespace App.ControlLogicaProcesos
                         }
                         else if (llave == "02T003")
                         {
-                            if (!string.IsNullOrEmpty(cE.AjusteDecena.Trim()))
-                            {
-                                calculoAjusteDecena = Convert.ToDecimal(cE.AjusteDecena.Replace(".",""));
-                            }
-                            else
-                            {
+                            //if (!string.IsNullOrEmpty(cE.AjusteDecena.Trim()))
+                            //{
+                            //    calculoAjusteDecena = Convert.ToDecimal(cE.AjusteDecena.Replace(".",""));
+                            //}
+                            //else
+                            //{
                                 calculoAjusteDecena += Convert.ToInt64(detalle.Substring(6, 14)) + Convert.ToInt64(detalle.Substring(20, 14)) + Convert.ToInt64(detalle.Substring(34, 14)) + Convert.ToInt64(detalle.Substring(48, 14)) + Convert.ToInt64(detalle.Substring(62, 14));
-                            }
+                            //}
                             if (/*valores_temp["EXCLUSION_AJUSTE_DECENA"] && */ IsDatos)
                             {
                                 SubTotal1BBB += calculoAjusteDecena;
@@ -1663,7 +1664,7 @@ namespace App.ControlLogicaProcesos
 
                             if (llave == "02T004")
                             {
-                                lineaServiciosETBIVA = $"1BBB|{descripcion}";
+                                lineaServiciosETBIVA = $"1BBB|{descripcion}|***";
                                 tempValorTotalIva += sumatoria;
                                 lineasFinales1BBB.Add(lineaServiciosETBIVA);
 
@@ -1698,7 +1699,7 @@ namespace App.ControlLogicaProcesos
                 {
                     campos = linea.Split('|');
 
-                    if (campos[2] == "***")
+                    if (campos[2] == "***" || campos.Length == 2)
                     {
                         Lineas1BBB.Add(linea.Replace("***", $"{Helpers.FormatearCampos(TiposFormateo.Decimal01, tempValorTotalIva.ToString())}"));
                     }
@@ -3620,7 +3621,12 @@ namespace App.ControlLogicaProcesos
                             where busqueda.Length > 3 && busqueda.Substring(0, 3).Equals("13M")
                             select busqueda;
 
-            if (lineas13M.Any())
+            var lineas11C = from busqueda in datosOriginales
+                            where busqueda.Length > 4 && busqueda.Substring(0, 4).Equals("11C8") &&
+                            !string.IsNullOrEmpty(busqueda.Substring(16, 14).Trim().TrimStart('0'))
+                            select busqueda;
+
+            if (lineas13M.Any() || lineas11C.Any())
             {
                 #region Organizacion Paquetes de Informacion
                 foreach (var linea in datosOriginales)
@@ -3710,7 +3716,8 @@ namespace App.ControlLogicaProcesos
                         {
                             #region Armar Canal 1GGG
                             lineas13M = from busqueda in lineaDetalle.Value
-                                        where busqueda.Length > 3 && busqueda.Substring(0, 3).Equals("13M")
+                                        where busqueda.Length > 3 && busqueda.Substring(0, 3).Equals("13M") &&
+                                        !string.IsNullOrEmpty(busqueda.Substring(7, 16).Trim())
                                         select busqueda;
 
                             var linea040001 = from busqueda in lineaDetalle.Value
@@ -4209,8 +4216,8 @@ namespace App.ControlLogicaProcesos
                 cE.FechaPago = camposInsumo[13].Trim();
                 cE.FechaEmisionFactura = camposInsumo[14].Trim();
                 cE.ObservacionesFactura = camposInsumo[15].Trim();
-                cE.Estampilla = camposInsumo[17].Trim();
-                cE.ReversionPago = camposInsumo[18].Trim();
+                cE.Estampilla = camposInsumo[16].Trim();
+                cE.ReversionPago = camposInsumo[17].Trim();
             }
 
             return cE;

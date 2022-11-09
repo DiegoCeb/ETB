@@ -420,8 +420,8 @@ namespace App.ControlEjecucion
                     EscribirDatosSalidaDiferencias(pDatosImprimir, $"{pRutaSalida}", $"I_DIFERENCIAS.sal");
                     EscribirDatosSalidaDistribucionEspecial(pDatosImprimir, $"{pRutaSalida}", $"I_DISTRIBUCION_ESPECIAL.sal", "1");
                     EscribirDatosSalidaEmail(pDatosImprimir, $"{pRutaSalida}", $"I_FACTURA_SOLO_EMAIL.sal", "1");
-                    EscribirDatosSalidaImpresion(pDatosImprimir, $"{pRutaSalida}", $"Courier00000000I.sal", pLote, "1");
                     EscribirDatosSalidaOtros(pDatosImprimir, $"{pRutaSalida}", $"I_OTROS.sal", "1");
+                    EscribirDatosSalidaImpresion(pDatosImprimir, $"{pRutaSalida}", $"Courier00000000I.sal", pLote, "1");
                     break;
 
                 case "2": //Datos
@@ -431,8 +431,8 @@ namespace App.ControlEjecucion
                     EscribirDatosSalidaClientesEsepeciales(pDatosImprimir, $"{pRutaSalida}", $"INS_CLIENTES_ESPECIALES.sal");
                     EscribirDatosSalidaDistribucionEspecial(pDatosImprimir, $"{pRutaSalida}", $"I_DISTRIBUCION_ESPECIAL.sal", "2");
                     EscribirDatosSalidaEmail(pDatosImprimir, $"{pRutaSalida}", $"I_FACTURA_SOLO_EMAIL.sal", "2");
-                    EscribirDatosSalidaImpresion(pDatosImprimir, $"{pRutaSalida}", $"Courier00000000I.sal", pLote, "2");
                     EscribirDatosSalidaOtros(pDatosImprimir, $"{pRutaSalida}", $"I_OTROS.sal", "2");
+                    EscribirDatosSalidaImpresion(pDatosImprimir, $"{pRutaSalida}", $"Courier00000000I.sal", pLote, "2");
                     break;
 
                 case "3": //Gobiernos
@@ -441,8 +441,8 @@ namespace App.ControlEjecucion
                     EscribirDatosSalidaNumHojas(pDatosImprimir, $"{pRutaSalida}", $"I_NUMHOJAS.sal");
                     EscribirDatosSalidaDistribucionEspecial(pDatosImprimir, $"{pRutaSalida}", $"I_DISTRIBUCION_ESPECIAL.sal", "3");
                     EscribirDatosSalidaEmail(pDatosImprimir, $"{pRutaSalida}", $"I_FACTURA_SOLO_EMAIL.sal", "3");
-                    EscribirDatosSalidaImpresion(pDatosImprimir, $"{pRutaSalida}", $"Courier00000000I.sal", pLote, "3");
                     EscribirDatosSalidaOtros(pDatosImprimir, $"{pRutaSalida}", $"I_OTROS.sal", "3");
+                    EscribirDatosSalidaImpresion(pDatosImprimir, $"{pRutaSalida}", $"Courier00000000I.sal", pLote, "3");
                     break;
 
                 case "4": //Llanos
@@ -487,7 +487,7 @@ namespace App.ControlEjecucion
                 case "4":
                     foreach (var datoLinea in datosImprimirFinal)
                     {
-                        string nuevoConsecutivo = $"{pLote}_{consecutivo.ToString().PadLeft(8, '0')}";
+                        string nuevoConsecutivo = $"{pLote}_{consecutivo.ToString().PadLeft(6, '0')}";
 
                         var nuevo1AAA = from n in datoLinea.Value
                                         where n.Substring(0, 4) == "1AAA"
@@ -564,15 +564,10 @@ namespace App.ControlEjecucion
 
                     foreach (var DatoExtracto in pDatosImprimir)
                     {
-                        if (!datosOrdenadosTelefono.ContainsKey(DatoExtracto.Key))
+                        string llave = DatoExtracto.Value.FirstOrDefault().Split('|').ElementAt(6).Trim();
+
+                        if (!datosOrdenadosTelefono.ContainsKey(llave))
                         {
-                            string llave = DatoExtracto.Value.FirstOrDefault().Split('|').ElementAt(6).Trim();
-
-                            if (llave == "PRIVADO")
-                            {
-                                continue;
-                            }
-
                             datosOrdenadosTelefono.Add(llave, DatoExtracto.Value);
                         }
                     }
@@ -596,6 +591,9 @@ namespace App.ControlEjecucion
                                     consecutivoInternoDivision = 1;
                                     resultado.Clear();
                                 }
+
+                                resultado.Add(linea.Replace("****tipo_salida****", "_EXTRAER*"));
+                                continue;
                             }
 
                             resultado.Add(linea);
@@ -642,27 +640,22 @@ namespace App.ControlEjecucion
 
                     foreach (var DatoExtracto in pDatosImprimir)
                     {
-                        if (!datosOrdenadosTelefono.ContainsKey(DatoExtracto.Key))
+                        string llave = DatoExtracto.Value.FirstOrDefault().Split('|').ElementAt(6).Trim();
+
+                        if (!datosOrdenadosTelefono.ContainsKey(llave))
                         {
-                            string llave = DatoExtracto.Value.FirstOrDefault().Split('|').ElementAt(6).Trim();
-
-                            if (llave == "PRIVADO")
-                            {
-                                continue;
-                            }
-
                             datosOrdenadosTelefono.Add(llave, DatoExtracto.Value);
                         }
                     }
 
                     objDatos = from busqueda in datosOrdenadosTelefono
                                where Variables.Variables.DatosInsumoLlanosEnvioSMS.ContainsKey(busqueda.Key) &&
-                               !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key)
+                               !Variables.Variables.DatosInsumoExtraerLlanos.ContainsKey(busqueda.Key)
                                select busqueda;
 
                     if (objDatos.Any())
                     {
-                        ProcesarSalidas(objDatos, pRuta, pNombreArchivo);
+                        ProcesarSalidas(objDatos, pRuta, pNombreArchivo, true, "_SMS*");
                     }
                     break;
             }
@@ -687,6 +680,7 @@ namespace App.ControlEjecucion
                     objDatos = from busqueda in pDatosImprimir
                                where Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key) &&
                                !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
+                               !Variables.Variables.DatosInsumoCuentasEnvioSms.ContainsKey(busqueda.Key) &&
                                !Variables.Variables.DatosErrorLTE.ContainsKey(busqueda.Key) &&
                                !Variables.Variables.Diferencias.ContainsKey(busqueda.Key) &&
                                !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key)
@@ -703,7 +697,7 @@ namespace App.ControlEjecucion
                                where Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key) &&
                                !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
                                !Variables.Variables.NumHojas.ContainsKey(busqueda.Key) &&
-                               !Variables.Variables.DatosInsumoClientesEspecialesDatos.ContainsKey(busqueda.Key) &&
+                               !Variables.Variables.DatosInsumoClientesEspecialesDatos.ContainsKey($"{busqueda.Key}-{busqueda.Value.FirstOrDefault().Split('|').ElementAt(9)}") &&
                                !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key)
                                select busqueda;
 
@@ -733,15 +727,10 @@ namespace App.ControlEjecucion
 
                     foreach (var DatoExtracto in pDatosImprimir)
                     {
-                        if (!datosOrdenadosTelefono.ContainsKey(DatoExtracto.Key))
+                        string llave = DatoExtracto.Value.FirstOrDefault().Split('|').ElementAt(6).Trim();
+
+                        if (!datosOrdenadosTelefono.ContainsKey(llave))
                         {
-                            string llave = DatoExtracto.Value.FirstOrDefault().Split('|').ElementAt(6).Trim();
-
-                            if (llave == "PRIVADO")
-                            {
-                                continue;
-                            }
-
                             datosOrdenadosTelefono.Add(llave, DatoExtracto.Value);
                         }
                     }
@@ -768,7 +757,7 @@ namespace App.ControlEjecucion
         /// <param name="pDatos"></param>
         /// <param name="pRuta"></param>
         /// <param name="pNombreArchivo"></param>
-        private void ProcesarSalidas(IEnumerable<KeyValuePair<string, List<string>>> pDatos, string pRuta, string pNombreArchivo)
+        private void ProcesarSalidas(IEnumerable<KeyValuePair<string, List<string>>> pDatos, string pRuta, string pNombreArchivo, bool pReemplazarMarcaSalida = false, string pMarcaReemplazo = "")
         {
             #region ProcesarSalidas
             List<string> resultado = new List<string>();
@@ -787,6 +776,12 @@ namespace App.ControlEjecucion
                         consecutivoInternoArchivo++;
                         consecutivoInternoDivision = 1;
                         resultado.Clear();
+                    }
+
+                    if (pReemplazarMarcaSalida)
+                    {
+                        resultado.Add(linea.Replace("****tipo_salida****", pMarcaReemplazo));
+                        continue;
                     }
                 }
 
@@ -833,7 +828,7 @@ namespace App.ControlEjecucion
                                 where Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.NumHojas.ContainsKey(busqueda.Key) &&
-                                !Variables.Variables.DatosInsumoClientesEspecialesDatos.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DatosInsumoClientesEspecialesDatos.ContainsKey($"{busqueda.Key}-{busqueda.Value.FirstOrDefault().Split('|').ElementAt(9)}") &&
                                 !Variables.Variables.DatosInsumoDistribucionEmailLlanos.ContainsKey(busqueda.Key)
                                 select busqueda).ToDictionary(x => x.Key).Values;
 
@@ -933,7 +928,10 @@ namespace App.ControlEjecucion
 
             var busquedaCuentas = (from busqueda in pDatosImprimir
                                    let canal1BBA = busqueda.Value.Find(x => x.Substring(0, 4).Equals("1BBA"))
-                                   where !string.IsNullOrEmpty(canal1BBA) && (Convert.ToDecimal(Helpers.FormatearCampos(TiposFormateo.Decimal03, busqueda.Value.FirstOrDefault().Split('|').ElementAt(10))) - Convert.ToDecimal(Helpers.FormatearCampos(TiposFormateo.Decimal03, canal1BBA.Split('|').ElementAt(2)))) > 5 &&
+                                   let total1AAA = busqueda.Value.FirstOrDefault().Split('|').ElementAt(10)
+                                   let total1BBA = canal1BBA.Split('|').ElementAt(2)
+                                   where total1AAA.Substring(0, 1) != "-" && total1BBA.Substring(0, 1) != "-"
+                                   where !string.IsNullOrEmpty(canal1BBA) && (Convert.ToDecimal(Helpers.FormatearCampos(TiposFormateo.Decimal03, total1AAA)) - Convert.ToDecimal(Helpers.FormatearCampos(TiposFormateo.Decimal03, total1BBA))) > 5 &&
                                    !Variables.Variables.DatosErrorLTE.ContainsKey(busqueda.Key)
                                    select busqueda).ToDictionary(x => x.Key).Values;
 
@@ -976,7 +974,8 @@ namespace App.ControlEjecucion
                                 !Variables.Variables.Diferencias.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key) &&
-                                (!Variables.Variables.DatosInsumoProcuni.ContainsKey(busqueda.Key) || !Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key))
+                                !Variables.Variables.DatosInsumoProcuni.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key)
                                 select busqueda).ToDictionary(x => x.Key).Values;
 
                     if (objDatos.Any())
@@ -989,10 +988,11 @@ namespace App.ControlEjecucion
                     objDatos = (from busqueda in pDatosImprimir
                                 where !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.NumHojas.ContainsKey(busqueda.Key) &&
-                                !Variables.Variables.DatosInsumoClientesEspecialesDatos.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DatosInsumoClientesEspecialesDatos.ContainsKey($"{busqueda.Key}-{busqueda.Value.FirstOrDefault().Split('|').ElementAt(9)}") &&
                                 !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key) &&
-                                (!Variables.Variables.DatosInsumoProcuni.ContainsKey(busqueda.Key) || !Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key))
+                                !Variables.Variables.DatosInsumoProcuni.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key)
                                 select busqueda).ToDictionary(x => x.Key).Values;
 
                     if (objDatos.Any())
@@ -1007,7 +1007,8 @@ namespace App.ControlEjecucion
                                 !Variables.Variables.NumHojas.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key) &&
-                                (!Variables.Variables.DatosInsumoProcuni.ContainsKey(busqueda.Key) || !Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key))
+                                !Variables.Variables.DatosInsumoProcuni.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key)
                                 select busqueda).ToDictionary(x => x.Key).Values;
 
                     if (objDatos.Any())
@@ -1050,56 +1051,114 @@ namespace App.ControlEjecucion
         {
             #region EscribirDatosSalidaImpresion
             IEnumerable<KeyValuePair<string, List<string>>> objDatos = null;
+            List<KeyValuePair<string, List<string>>> objDatosFinal = new List<KeyValuePair<string, List<string>>>();
 
             switch (pTipoProceso)
             {
                 case "1":
+                    //Se buscan las de la procuni
                     objDatos = (from busqueda in pDatosImprimir
-                                where Variables.Variables.DatosInsumoProcuni.ContainsKey(busqueda.Key) ||
-                                Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key) &&
-                                (!Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
+                                where Variables.Variables.DatosInsumoProcuni.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.DatosInsumoCuentasEnvioSms.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.DatosErrorLTE.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.Diferencias.ContainsKey(busqueda.Key) &&
-                                !Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key))
+                                !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key)
                                 select busqueda).ToDictionary(x => x.Key).Values;
 
-                    if (objDatos.Any())
+                    foreach (var item in objDatos)
                     {
-                        ProcesoSalidasImpresion(objDatos, pRuta, pNombreArchivo, pLote);
+                        objDatosFinal.Add(new KeyValuePair<string, List<string>>(item.Key, item.Value));
+                    }
+
+                    //Buscar las duales
+                    objDatos = (from busqueda in pDatosImprimir
+                                where Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DatosInsumoCuentasEnvioSms.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DatosErrorLTE.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.Diferencias.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key)
+                                select busqueda).ToDictionary(x => x.Key).Values;
+
+                    foreach (var item in objDatos)
+                    {
+                        objDatosFinal.Add(new KeyValuePair<string, List<string>>(item.Key, item.Value));
+                    }
+
+                    if (objDatosFinal.Any())
+                    {
+                        ProcesoSalidasImpresion(objDatosFinal, pRuta, pNombreArchivo, pLote);
                     }
                     break;
 
                 case "2":
+
                     objDatos = (from busqueda in pDatosImprimir
-                                where Variables.Variables.DatosInsumoProcuni.ContainsKey(busqueda.Key) ||
-                                Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key) &&
+                                where Variables.Variables.DatosInsumoProcuni.ContainsKey(busqueda.Key) &&
                                 (!Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.NumHojas.ContainsKey(busqueda.Key) &&
-                                !Variables.Variables.DatosInsumoClientesEspecialesDatos.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DatosInsumoClientesEspecialesDatos.ContainsKey($"{busqueda.Key}-{busqueda.Value.FirstOrDefault().Split('|').ElementAt(9)}") &&
                                 !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key))
                                 select busqueda).ToDictionary(x => x.Key).Values;
 
-                    if (objDatos.Any())
+                    foreach (var item in objDatos)
                     {
-                        ProcesoSalidasImpresion(objDatos, pRuta, pNombreArchivo, pLote);
+                        objDatosFinal.Add(new KeyValuePair<string, List<string>>(item.Key, item.Value));
+                    }
+
+                    //Buscar las duales
+                    objDatos = (from busqueda in pDatosImprimir
+                                where Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.NumHojas.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DatosInsumoClientesEspecialesDatos.ContainsKey($"{busqueda.Key}-{busqueda.Value.FirstOrDefault().Split('|').ElementAt(9)}") &&
+                                !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key)
+                                select busqueda).ToDictionary(x => x.Key).Values;
+
+                    foreach (var item in objDatos)
+                    {
+                        objDatosFinal.Add(new KeyValuePair<string, List<string>>(item.Key, item.Value));
+                    }
+
+                    if (objDatosFinal.Any())
+                    {
+                        ProcesoSalidasImpresion(objDatosFinal, pRuta, pNombreArchivo, pLote);
                     }
                     break;
 
                 case "3":
                     objDatos = (from busqueda in pDatosImprimir
-                                where Variables.Variables.DatosInsumoProcuni.ContainsKey(busqueda.Key) ||
-                                Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key) &&
-                                (!Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
+                                where Variables.Variables.DatosInsumoProcuni.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.NumHojas.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
-                                !Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key))
+                                !Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key)
                                 select busqueda).ToDictionary(x => x.Key).Values;
 
-                    if (objDatos.Any())
+                    foreach (var item in objDatos)
                     {
-                        ProcesoSalidasImpresion(objDatos, pRuta, pNombreArchivo, pLote);
+                        objDatosFinal.Add(new KeyValuePair<string, List<string>>(item.Key, item.Value));
+                    }
+
+                    //Buscar las duales
+                    objDatos = (from busqueda in pDatosImprimir
+                                where Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.NumHojas.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key)
+                                select busqueda).ToDictionary(x => x.Key).Values;
+
+                    foreach (var item in objDatos)
+                    {
+                        objDatosFinal.Add(new KeyValuePair<string, List<string>>(item.Key, item.Value));
+                    }
+
+                    if (objDatosFinal.Any())
+                    {
+                        ProcesoSalidasImpresion(objDatosFinal, pRuta, pNombreArchivo, pLote);
                     }
                     break;
 
@@ -1109,23 +1168,18 @@ namespace App.ControlEjecucion
 
                     foreach (var DatoExtracto in pDatosImprimir)
                     {
-                        if (!datosOrdenadosTelefono.ContainsKey(DatoExtracto.Key))
+                        string llave = DatoExtracto.Value.FirstOrDefault().Split('|').ElementAt(6).Trim();
+
+                        if (!datosOrdenadosTelefono.ContainsKey(llave))
                         {
-                            string llave = DatoExtracto.Value.FirstOrDefault().Split('|').ElementAt(6).Trim();
-
-                            if (llave == "PRIVADO")
-                            {
-                                continue;
-                            }
-
                             datosOrdenadosTelefono.Add(llave, DatoExtracto.Value);
                         }
                     }
 
                     objDatos = (from busqueda in datosOrdenadosTelefono
-                                where Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key) ||
-                                !Variables.Variables.DatosInsumoExtraerLlanos.ContainsKey(busqueda.Key) ||
-                                !Variables.Variables.DatosInsumoLlanosEnvioSMS.ContainsKey(busqueda.Key) ||
+                                where Variables.Variables.DatosInsumoDualLlanos.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DatosInsumoExtraerLlanos.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DatosInsumoLlanosEnvioSMS.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.DatosInsumoDistribucionEmailLlanos.ContainsKey(busqueda.Key)
                                 select busqueda).ToDictionary(x => x.Key).Values;
 
@@ -1157,7 +1211,7 @@ namespace App.ControlEjecucion
 
             foreach (var datoCuenta in pDatos)
             {
-                string nuevoConsecutivo = $"{pLote}_{consecutivo.ToString().PadLeft(8, '0')}";
+                string nuevoConsecutivo = $"{pLote}_{consecutivo.ToString().PadLeft(6, '0')}";
 
                 var nuevo1AAA = from n in datoCuenta.Value
                                 where n.Substring(0, 4) == "1AAA"
@@ -1236,7 +1290,7 @@ namespace App.ControlEjecucion
             List<string> datosFinales = new List<string>();
 
             var busquedaCuentas = (from busqueda in pDatosImprimir
-                                   where Variables.Variables.DatosInsumoClientesEspecialesDatos.ContainsKey(busqueda.Key)
+                                   where Variables.Variables.DatosInsumoClientesEspecialesDatos.ContainsKey($"{busqueda.Key}-{busqueda.Value.FirstOrDefault().Split('|').ElementAt(9)}")
                                    select busqueda).ToDictionary(x => x.Key).Values;
 
             foreach (var dato in busquedaCuentas)
@@ -1244,10 +1298,10 @@ namespace App.ControlEjecucion
                 if (pDatosImprimir.ContainsKey(dato.Key))
                 {
                     string fechaPeriodoProceso = pDatosImprimir[dato.Key].FirstOrDefault().Split('|').ElementAt(11).Substring(3).Replace("/", "");
-                    string fechaPeriodoInsumo = Variables.Variables.DatosInsumoClientesEspecialesDatos[dato.Key].Split('|').ElementAt(9);
+                    string fechaPeriodoInsumo = Variables.Variables.DatosInsumoClientesEspecialesDatos[$"{dato.Key}-{dato.Value.FirstOrDefault().Split('|').ElementAt(9)}"].Split('|').ElementAt(9);
 
                     string cicloProceso = pDatosImprimir[dato.Key].FirstOrDefault().Split('|').ElementAt(9);
-                    string cicloInsumo = Variables.Variables.DatosInsumoClientesEspecialesDatos[dato.Key].Split('|').ElementAt(2);
+                    string cicloInsumo = Variables.Variables.DatosInsumoClientesEspecialesDatos[$"{dato.Key}-{dato.Value.FirstOrDefault().Split('|').ElementAt(9)}"].Split('|').ElementAt(2);
 
                     if (fechaPeriodoProceso == fechaPeriodoInsumo && cicloProceso == cicloInsumo)
                     {
@@ -1283,7 +1337,7 @@ namespace App.ControlEjecucion
             {
                 foreach (var datoCuenta in busquedaCuentasImpresion)
                 {
-                    string nuevoConsecutivo = $"KIT{consecutivo.ToString().PadLeft(8, '0')}";
+                    string nuevoConsecutivo = $"KIT{consecutivo.ToString().PadLeft(6, '0')}";
 
                     var nuevo1AAA = from n in datoCuenta.Value
                                     where n.Substring(0, 4) == "1AAA"

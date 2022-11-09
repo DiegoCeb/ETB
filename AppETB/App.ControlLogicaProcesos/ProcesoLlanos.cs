@@ -81,7 +81,7 @@ namespace App.ControlLogicaProcesos
 
                     if (extractoCompleto)
                     {
-                        llaveCruce = datosExtractoFormateo.Find(x => x.Contains("*p30x170Y")).Substring(17).Trim();
+                        llaveCruce = datosExtractoFormateo.Find(x => x.Contains("*p2000x190Y")).Substring(11).Trim();
 
                         if (!string.IsNullOrEmpty(Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoCuentasExtraer, llaveCruce)))
                         {
@@ -108,11 +108,12 @@ namespace App.ControlLogicaProcesos
             //Ultimo Extracto
             if (datosExtractoFormateo.Count > 1)
             {
-                llaveCruce = datosExtractoFormateo.Find(x => x.Contains("*p30x170Y")).Substring(17).Trim();
+                llaveCruce = datosExtractoFormateo.Find(x => x.Contains("*p2000x190Y")).Substring(11).Trim();
 
                 if (!string.IsNullOrEmpty(Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoCuentasExtraer, llaveCruce)))
                 {
                     //Cuenta Retenida
+                    Variables.Variables.CuentasNoImprimir.Add(llaveCruce, FormatearArchivo(llaveCruce, datosExtractoFormateo));
                     datosExtractoFormateo.Clear();
                 }
                 else
