@@ -295,13 +295,6 @@ namespace App.ControlLogicaProcesos
                 resultado.AddRange(resultadoFormateoLinea);
             }
 
-            resultadoFormateoLinea = FormateoCanalCUFE(datosOriginales);
-
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
-
             resultadoFormateoLinea = FormateoCanalNTC0(datosOriginales);
 
             if (!string.IsNullOrEmpty(resultadoFormateoLinea))
@@ -4068,20 +4061,27 @@ namespace App.ControlLogicaProcesos
         /// <returns></returns>
         private string FormateoCanalCUFE(List<string> datosOriginales)
         {
-            #region FormateoCanalCUFE
-            string resultado = string.Empty;
+            #region Canal 1CUFE
+            string LineaCUFE = string.Empty;
             string valor = string.Empty;
 
-            resultado = "CUFE|";
+            LineaCUFE = "CUFE|";
 
             if (Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey(Cuenta))
             {
                 valor = Variables.Variables.DatosInsumoETBFacturaElectronica[Cuenta];
             }
 
-            resultado += valor + "| ";
+            if (string.IsNullOrEmpty(valor))
+            {
+                LineaCUFE = string.Empty;
+            }
+            else
+            {
+                LineaCUFE += valor + "| ";
+            }
 
-            return Helpers.ValidarPipePipe(resultado);
+            return Helpers.ValidarPipePipe(LineaCUFE);
             #endregion
         }
 

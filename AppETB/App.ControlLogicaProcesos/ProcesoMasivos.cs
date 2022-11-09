@@ -2538,7 +2538,14 @@ namespace App.ControlLogicaProcesos
                 valor = Variables.Variables.DatosInsumoETBFacturaElectronica[Cuenta];
             }
 
-            LineaCUFE += valor + "| ";
+            if (string.IsNullOrEmpty(valor))
+            {
+                LineaCUFE = string.Empty;
+            }
+            else
+            {
+                LineaCUFE += valor + "| ";
+            }
 
             return Helpers.ValidarPipePipe(LineaCUFE);
             #endregion
@@ -3915,7 +3922,7 @@ namespace App.ControlLogicaProcesos
                         @base = linea.Substring(16, 14).Trim().TrimStart('0');
                         iva = linea.Substring(44, 14).Trim().TrimStart('0');
 
-                        resultado.Add(Helpers.ValidarPipePipe($"1EE1|-|{Helpers.FormatearCampos(TiposFormateo.LetraCapital, descripcionTitulo)}" +
+                        resultado.Add(Helpers.ValidarPipePipe($"1EE1|-|{descripcionTitulo}" +
                             $"|{Helpers.FormatearCampos(TiposFormateo.Decimal01, @base)}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, iva)}|" +
                             $"{Helpers.SumarCampos(new List<string> { @base, iva })}| | | "));
                         #endregion
@@ -4088,7 +4095,7 @@ namespace App.ControlLogicaProcesos
                     @base = "000";
                     iva = "000";
 
-                    resultado.Add(Helpers.ValidarPipePipe($"1EE1|-|{Helpers.FormatearCampos(TiposFormateo.LetraCapital, descripcionTitulo)}" +
+                    resultado.Add(Helpers.ValidarPipePipe($"1EE1|-|{descripcionTitulo}" +
                         $"|{Helpers.FormatearCampos(TiposFormateo.Decimal01, @base)}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, iva)}|" +
                         $"{Helpers.SumarCampos(new List<string> { @base, iva })}| | | "));
                     #endregion
@@ -5028,7 +5035,32 @@ namespace App.ControlLogicaProcesos
                     resultado = Helpers.ValidarPipePipe($"1ODC|{cuentaConexion}|Total|{Helpers.SumarCampos(sumaValoresBase)}|" +
                         $"{iva}|{impuesto}|{Helpers.SumarCampos(sumaValoresTotal)}|{Helpers.FormatearCampos(TiposFormateo.Fecha05, PeriodoFacturacion)}| ");
                 }
-            }
+                else
+                {
+                    var linea040000 = from busqueda in datosOriginales
+                                      where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("040000")
+                                      select busqueda;
+
+                    #region Busqueda Numero Conexion
+                    foreach (var lineaDatos in linea040000)
+                    {
+                        if (lineaDatos.Substring(6, 20).Trim() != Cuenta)
+                        {
+                            cuentaConexion = lineaDatos.Substring(6, 20).Trim();
+                            break;
+                        }
+                    }
+                    #endregion
+
+                    if (!string.IsNullOrEmpty(cuentaConexion))
+                    {
+                        if (GetTipo(cuentaConexion) != "Cuenta")
+                        {
+                            resultado = Helpers.ValidarPipePipe($"1ODC|{cuentaConexion}|Total|$ 0,00|$ 0,00|$ 0,00|$ 0,00| | ");
+                        }
+                    }                    
+                }
+            }            
 
             return resultado;
             #endregion
