@@ -620,7 +620,7 @@ namespace App.ControlLogicaProcesos
                 ListaCanal1AAA.Add(GetMarcaCourier());
                 ListaCanal1AAA.Add(GetCuentaVencidaAnticipada()); // TODO: Validar que sea el insumo correcto
                 ListaCanal1AAA.Add(string.Empty); //TODO: Tipo Email Prevalidador Verificar
-                ListaCanal1AAA.Add(string.Empty); //TODO: Verificar Insumo Parafiscales
+                ListaCanal1AAA.Add(GetMarcaParafiscales()); //Parafiscales
                 ListaCanal1AAA.AddRange(GetLocBar());
                 ListaCanal1AAA.AddRange(GetQR(Linea010000.Substring(6, 50)));
                 ListaCanal1AAA.Add(string.Empty); //CampoVacio
@@ -675,7 +675,7 @@ namespace App.ControlLogicaProcesos
         {
             #region GetTotalPagar
             string resultado = string.Empty;
-            List<decimal> valoresPago = GetValoresCodeBar(pDatosOriginales);
+            List<string> valoresPago = ObtenerDatosCanal1BBB(pDatosOriginales, true).ToList();
             string totalPagar = valoresPago[0].ToString().Trim().PadLeft(12, '0');
 
             resultado = Helpers.FormatearCampos(TiposFormateo.Decimal01, totalPagar);
@@ -885,12 +885,12 @@ namespace App.ControlLogicaProcesos
             string totalPagar = pLinea010000.Substring(155, 11).PadLeft(10, '0');
             string fechaPago = Helpers.FormatearCampos(TiposFormateo.Fecha08, Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"FECL{Helpers.FormatearCampos(TiposFormateo.Fecha02, pLinea010000.Substring(168, 8).Trim())}{pLinea010000.Substring(151, 3).Trim().TrimStart('0')}").FirstOrDefault()?.Substring(12).Trim() ?? string.Empty);
             string numReferencia = GetNumeroReferencia(pNumReferencia, false);
-            List<decimal> valoresPago = GetValoresCodeBar(pDatosOriginales);
+            List<string> valoresPago = ObtenerDatosCanal1BBB(pDatosOriginales, true).ToList();
             string ValorPagarCB1 = valoresPago[0].ToString().Trim().PadLeft(12, '0');
             string ValorPagarCB2 = valoresPago[1].ToString().Trim().PadLeft(12, '0');
 
             string CodeBar1 = String.Empty;
-            if (valoresPago[1] >= 0)
+            if (Convert.ToInt64(valoresPago[1]) >= 0)
             {
                 CodeBar1 = $"(415){numeroETB}(8020){numReferencia}(3900){ValorPagarCB1.Substring(0, 10)}(96){fechaPago}";
             }
@@ -906,191 +906,6 @@ namespace App.ControlLogicaProcesos
             result.Add(CodeBar2);
             return result;
             #endregion
-        }
-
-        private List<decimal> GetValoresCodeBar(List<string> datosOriginales)
-        {
-            #region MapeoCanal1BBB
-            List<decimal> ValoresCodeBar = new List<decimal>();
-            string llave = string.Empty;
-            decimal SubTotal1BBB = 0;
-            decimal ValorPagarMes = 0;
-            decimal calculoAjusteDecena = decimal.Zero;
-
-            #region Notas Crédito
-            var result29000 = from busqueda in datosOriginales
-                              where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("29000")
-                              select busqueda;
-
-            if (result29000.Any())
-            {
-                string linea29000 = result29000.FirstOrDefault() ?? string.Empty;
-
-                if (!string.IsNullOrEmpty(linea29000))
-                {
-                    SubTotal1BBB += Convert.ToInt32(linea29000.Substring(29, 20));
-                }
-
-            }
-            #endregion
-
-            #region Detalles resumen Facturacion ETB
-
-
-            var result150001 = from busqueda in datosOriginales
-                               where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("150001")
-                               select busqueda;
-
-            string linea150001 = string.Empty;
-
-            if (result150001.Any())
-            {
-                linea150001 = result29000.FirstOrDefault() ?? string.Empty;
-            }
-
-            var resultDetalles = from busqueda in datosOriginales
-                                 where busqueda.Length > 4
-                                 let comp4 = busqueda.Substring(0, 4).Trim()
-                                 where
-                                 comp4 == "02T0" ||
-                                 comp4 == "02S0"
-                                 select busqueda;
-
-            if (resultDetalles.Any())
-            {
-                List<string> listaDetalles = resultDetalles.ToList();
-
-                foreach (string detalle in listaDetalles)
-                {
-                    llave = detalle.Substring(0, 6).Trim();
-
-                    if (llave == "02S000")
-                    {
-                        if (!string.IsNullOrEmpty(detalle.Substring(20, 14).Trim()) && Convert.ToInt32(detalle.Substring(20, 14)) != 0)
-                        {
-                            SubTotal1BBB += Convert.ToInt32(detalle.Substring(20, 14));
-                        }
-
-                        if (!string.IsNullOrEmpty(detalle.Substring(6, 14).Trim()) && Convert.ToInt32(detalle.Substring(6, 14)) != 0)
-                        {
-                            if (string.IsNullOrEmpty(linea150001) || (!string.IsNullOrEmpty(linea150001) && linea150001.Substring(6, 1) != "N")) // Regla No sumar saldo anterior
-                            {
-                                SubTotal1BBB += Convert.ToInt32(detalle.Substring(6, 14));
-                            }
-                        }
-
-                        if (!string.IsNullOrEmpty(detalle.Substring(34, 14).Trim()) && Convert.ToInt32(detalle.Substring(34, 14)) != 0)
-                        {
-                            SubTotal1BBB += Convert.ToInt32(detalle.Substring(34, 14));
-                        }
-                    }
-                    else
-                    {
-                        if (Convert.ToInt32(detalle.Substring(6, 14)) == 0 && Convert.ToInt32(detalle.Substring(20, 14)) == 0 &&
-                        Convert.ToInt32(detalle.Substring(34, 14)) == 0 && Convert.ToInt32(detalle.Substring(48, 14)) == 0 &&
-                        Convert.ToInt32(detalle.Substring(62, 14)) == 0 && Convert.ToInt32(detalle.Substring(118, 14)) == 0)
-                        { continue; }
-
-                        if (llave == "02T019")
-                        {
-                            if (!string.IsNullOrEmpty(detalle.Substring(6, 14).Trim()) && Convert.ToInt32(detalle.Substring(6, 14)) != 0)
-                            {
-                                SubTotal1BBB += Convert.ToInt32(detalle.Substring(6, 14)) + Convert.ToInt32(detalle.Substring(20, 14)) + Convert.ToInt32(detalle.Substring(34, 14)) + Convert.ToInt32(detalle.Substring(48, 14)) + Convert.ToInt32(detalle.Substring(62, 14));
-                            }
-                        }
-                        else if (llave == "02T016")
-                        {
-                            if (!string.IsNullOrEmpty(detalle.Substring(6, 14).Trim()) && Convert.ToInt32(detalle.Substring(6, 14)) != 0)
-                            {
-                                SubTotal1BBB += Convert.ToInt32(detalle.Substring(6, 14)) + Convert.ToInt32(detalle.Substring(20, 14)) + Convert.ToInt32(detalle.Substring(34, 14)) + Convert.ToInt32(detalle.Substring(48, 14)) + Convert.ToInt32(detalle.Substring(62, 14));
-                            }
-                        }
-                        else if (llave == "02T002")
-                        {
-                            if (!string.IsNullOrEmpty(detalle.Substring(6, 14).Trim()) && Convert.ToInt32(detalle.Substring(6, 14)) != 0)
-                            {
-                                SubTotal1BBB += Convert.ToInt32(detalle.Substring(6, 14)) + Convert.ToInt32(detalle.Substring(20, 14)) + Convert.ToInt32(detalle.Substring(34, 14)) + Convert.ToInt32(detalle.Substring(48, 14)) + Convert.ToInt32(detalle.Substring(62, 14));
-                            }
-                        }
-                        else if (llave == "02T003")
-                        {
-                            calculoAjusteDecena += Convert.ToInt32(detalle.Substring(6, 14)) + Convert.ToInt32(detalle.Substring(20, 14)) + Convert.ToInt32(detalle.Substring(34, 14)) + Convert.ToInt32(detalle.Substring(48, 14)) + Convert.ToInt32(detalle.Substring(62, 14));
-                            if (IsDatos)
-                            {
-                                SubTotal1BBB += calculoAjusteDecena;
-                                ValorPagarMes += calculoAjusteDecena;
-                            }
-                            else
-                            {
-                                SubTotal1BBB += calculoAjusteDecena;
-                            }
-                        }
-                        else
-                        {
-                            int impuestoConsumo = 0;
-                            if (IsFibra || IsDatos || IsGobierno || IsLte || IsLteCorporativo)
-                            { impuestoConsumo = Convert.ToInt32(detalle.Substring(118, 14)); }
-
-                            decimal sumatoria = Convert.ToInt32(detalle.Substring(6, 14)) + Convert.ToInt32(detalle.Substring(20, 14)) + Convert.ToInt32(detalle.Substring(34, 14)) + Convert.ToInt32(detalle.Substring(48, 14)) + Convert.ToInt32(detalle.Substring(62, 14)) + impuestoConsumo;
-
-                            if (llave == "02T020" || llave == "02T050")
-                            { // Req 11052015 Campo Financiacion Mes
-                                continue;
-                            }
-
-                            SubTotal1BBB += sumatoria;
-                            ValorPagarMes += sumatoria;
-
-                        }
-                    }
-
-
-                }
-
-            }
-            #endregion
-
-            #region 11C - Inseparables
-            var result02T933 = from busqueda in datosOriginales
-                               where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("02T933")
-                               select busqueda;
-
-            string linea02T933 = string.Empty;
-            decimal total02T933 = decimal.Zero;
-
-            if (result02T933.Any())
-            {
-                linea02T933 = result02T933.FirstOrDefault() ?? string.Empty;
-                total02T933 = Convert.ToInt32(linea02T933.Substring(6, 14)) + Convert.ToInt32(linea02T933.Substring(20, 14)) + Convert.ToInt32(linea02T933.Substring(34, 14)) + Convert.ToInt32(linea02T933.Substring(48, 14)) + Convert.ToInt32(linea02T933.Substring(62, 14));
-            }
-
-            var result11C = from busqueda in datosOriginales
-                            where busqueda.Length > 3 && busqueda.Substring(0, 3).Equals("11C")
-                            select busqueda;
-            if (result11C.Any())
-            {
-                List<string> listaDetalles = result11C.ToList();
-
-                foreach (string detalle in listaDetalles)
-                {
-                    llave = detalle.Substring(6, 10).Trim();
-
-                    if ((llave == "0163710147" || llave == "0163711147") && total02T933 > 0 && (IsLte || IsLteCorporativo))
-                    {
-                        SubTotal1BBB -= total02T933;
-
-                    }
-                }
-            }
-            #endregion
-
-            ValoresCodeBar.Add(SubTotal1BBB);
-            ValoresCodeBar.Add(ValorPagarMes);
-
-
-            return ValoresCodeBar;
-            #endregion
-
         }
 
         /// <summary>
@@ -1690,6 +1505,35 @@ namespace App.ControlLogicaProcesos
         }
 
         // <summary>
+        /// Metodo que Obtiene Marca Parafiscales
+        /// </summary>
+        /// <returns></returns>
+        private string GetMarcaParafiscales()
+        {
+            #region GetMarcaParafiscales
+            string marcaParafiscales = string.Empty;
+
+            string cadenaCiclosParafiscales = Utilidades.LeerAppConfig("CiclosParafiscales");
+
+            if (!string.IsNullOrEmpty(cadenaCiclosParafiscales))
+            {
+                List<string> ciclosParafiscales = cadenaCiclosParafiscales.Split(',').ToList();
+
+                if (ciclosParafiscales.Count > 0)
+                {
+                    if (ciclosParafiscales.Contains(Ciclo))
+                    {
+                        marcaParafiscales = "LP";
+                    }
+                }
+
+            }
+
+            return marcaParafiscales;
+            #endregion
+        }
+
+        // <summary>
         /// Metodo que Obtiene Localizacion
         /// </summary>
         /// <returns></returns>
@@ -1887,10 +1731,26 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        private IEnumerable<string> MapeoCanal1BBB(List<string> datosOriginales)
+        private IEnumerable<string> MapeoCanal1BBB(List<string> pDatosOriginales)
         {
             #region MapeoCanal1BBB
+            IEnumerable<string> Lineas1BBB = ObtenerDatosCanal1BBB(pDatosOriginales, false);
+
+            return Lineas1BBB;
+            #endregion
+        }
+
+        /// <summary>
+        /// Metodo que obtiene las lineas del Canal 1BBB
+        /// </summary>
+        /// <param name="datosOriginales"></param>
+        /// <param name="sumatorias"></param>
+        /// <returns></returns>
+        private IEnumerable<string> ObtenerDatosCanal1BBB(List<string> datosOriginales, bool sumatorias)
+        {
+            #region ObtenerDatosCanal1BBB
             List<string> Lineas1BBB = new List<string>();
+            List<string> LineasSumatorias = new List<string>();
             string descripcion = string.Empty;
             string llave = string.Empty;
             decimal SubTotal1BBB = 0;
@@ -2174,7 +2034,18 @@ namespace App.ControlLogicaProcesos
 
             #endregion
 
-            return Lineas1BBB;
+            LineasSumatorias.Add(SubTotal1BBB.ToString());
+            LineasSumatorias.Add(ValorPagarMes.ToString());
+
+            if (sumatorias)
+            {
+                return LineasSumatorias;
+            }
+            else
+            {
+                return Lineas1BBB;
+            }
+
             #endregion
         }
 
