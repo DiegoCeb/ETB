@@ -1721,6 +1721,9 @@ namespace App.ControlInsumos
                 case TiposFormateo.Decimal04:
                     return FormatearDecimal("04", pCampo);
 
+                case TiposFormateo.Decimal05:
+                    return FormatearDecimal("05", pCampo);
+
                 case TiposFormateo.HoraMinuto:
                     return FormatearHoraMinuto(pCampo);
 
@@ -2069,6 +2072,51 @@ namespace App.ControlInsumos
                     {
                         transformado = temTransformado.ToString("N2");
                         return $"{transformado.Substring(0, transformado.LastIndexOf('.')).Replace(",", ".")},{transformado.Substring(transformado.LastIndexOf('.') + 1)}"; ;
+                    }
+
+                case "05":
+
+                    transformado = pCampo.Trim().TrimStart('0');
+
+                    if (string.IsNullOrEmpty(transformado))
+                    {
+                        transformado = "00";
+                    }
+
+                    if (transformado.Contains("-"))
+                    {
+                        if (transformado.Replace("-", "").Length < 3)
+                        {
+                            transformado = transformado.Replace("-", "");
+                            transformado = $"-{transformado.PadLeft(3, '0')}";
+                        }
+                    }
+                    else
+                    {
+                        if (transformado.Length < 3)
+                        {
+                            transformado = $"{transformado.PadLeft(3, '0')}";
+                        }
+                    }
+
+                    if (transformado.Length == 1)
+                    {
+                        transformado = transformado.PadLeft(2, '0');
+                    }
+                    transformado = $"{transformado.Substring(0, transformado.Length - 2)}.{transformado.Substring(transformado.Length - 2)}";
+                    //var temTransformado = Convert.ToDouble(transformado);
+                    temTransformado = Convert.ToDouble(transformado);
+
+                    if (temTransformado < 0)
+                    {
+                        temTransformado = temTransformado * -1;
+                        transformado = temTransformado.ToString("N2");
+                        return $"-$ {transformado}";                        
+                    }
+                    else
+                    {
+                        transformado = temTransformado.ToString("N2");
+                        return $"$ {transformado}";                        
                     }
 
                 default:
@@ -2772,7 +2820,7 @@ namespace App.ControlInsumos
         /// </summary>
         /// <param name="pCamposSumar">Lista de campos a Sumar</param>
         /// <returns>string formateado con la suma d elos valores</returns>
-        public static string SumarCampos(List<string> pCamposSumar)
+        public static string SumarCampos(List<string> pCamposSumar, string proceso = "M")
         {
             #region SumarCampos
             double totalSuma = 0;
@@ -2794,7 +2842,23 @@ namespace App.ControlInsumos
                     totalSuma += temTransformado;
                 }
             }
-            string ValorSumadoFormateado = FormatearCampos(TiposFormateo.Decimal01, totalSuma.ToString());
+            string ValorSumadoFormateado = string.Empty;
+
+            switch (proceso)
+            {
+                case "M": // Masivo
+                    ValorSumadoFormateado = FormatearCampos(TiposFormateo.Decimal01, totalSuma.ToString());
+                    break;
+
+                case "D": // Datos
+                case "G": // Gobierno
+                    ValorSumadoFormateado = FormatearCampos(TiposFormateo.Decimal05, totalSuma.ToString());
+                    break;
+
+                default:
+                    break;
+            }
+            
             return ValorSumadoFormateado;
             #endregion
         }
@@ -3086,6 +3150,7 @@ namespace App.ControlInsumos
         Decimal02,
         Decimal03,
         Decimal04,
+        Decimal05,
         HoraMinuto,
         HoraMinutoSegundo,
         Cadena01,

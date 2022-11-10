@@ -73,7 +73,14 @@ namespace App.ControlEjecucion
 
             //Escribir Diccionario Formateados llamando a un metodo de cracion de salidas donde se realice la segmentacion
             EscribirSalidasProceso($"{App.ControlInsumos.Helpers.RutaProceso}", Variables.Variables.DiccionarioExtractosFormateados, "1", lote);
-            #endregion
+
+            // Se crean los reportes
+            string rutaReportes = Path.Combine(App.ControlInsumos.Helpers.RutaProceso, "Reportes");
+            _ = new ReportesMasivos(Variables.Variables.DiccionarioExtractosFormateados, App.ControlInsumos.Helpers.RutaProceso,lote);         
+
+
+
+        #endregion
         }
 
         public void EjecutarProcesoDatos(string pRutaArchivosProcesar)
@@ -950,6 +957,7 @@ namespace App.ControlEjecucion
 
             #endregion
         }
+        
 
     }
 }

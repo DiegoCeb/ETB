@@ -32,6 +32,7 @@ namespace App.ControlLogicaProcesos
         private bool Is1OOA { get; set; }
         private bool Is1ODC { get; set; }
         private bool Is1AFI { get; set; }
+        private bool Is1PLA { get; set; }
 
         #endregion
 
@@ -148,6 +149,7 @@ namespace App.ControlLogicaProcesos
                 if (!string.IsNullOrEmpty(Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoCuentasExtraer, llaveCruce)))
                 {
                     //Cuenta Retenida
+                    Variables.Variables.CuentasNoImprimir.Add(llaveCruce, FormatearArchivo(llaveCruce, datosExtractoFormateo));                    
                     datosExtractoFormateo.Clear();
                 }
                 else
@@ -319,13 +321,14 @@ namespace App.ControlLogicaProcesos
             if (!string.IsNullOrEmpty(resultadoFormateoLinea))
             {
                 resultado.Add(resultadoFormateoLinea);
+                Is1PLA = true;
             }
 
             resultadoFormateoLinea = MapeoCanal1DET(datosOriginales);
 
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            if (((IEnumerable<string>)resultadoFormateoLinea).Any())
             {
-                resultado.Add(resultadoFormateoLinea);
+                resultado.AddRange(resultadoFormateoLinea);
             }
 
             resultadoFormateoLinea = MapeoCanal1CPA(datosOriginales);
@@ -515,6 +518,7 @@ namespace App.ControlLogicaProcesos
             Is1OOA = false;
             Is1ODC = false;
             Is1AFI = false;
+            Is1PLA = false;
             #endregion
         }
 
@@ -4526,13 +4530,16 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        private string MapeoCanal1DET(List<string> datosOriginales)
+        private IEnumerable<string> MapeoCanal1DET(List<string> datosOriginales)
         {
             #region MapeoCanal1DET
+            List<string> list1DET = new List<string>();
             string Lineas1DET = string.Empty;
+            string linea1PLA = string.Empty;
             string numeroConexion = string.Empty;
             List<string> camposSumar = new List<string>();
             List<PosCortes> listaCortes = new List<PosCortes>();
+            
 
             if (Is1ODC)
             {
@@ -4636,7 +4643,18 @@ namespace App.ControlLogicaProcesos
                 #endregion
             }
 
-            return Helpers.ValidarPipePipe(Lineas1DET);
+            if(!string.IsNullOrEmpty(Lineas1DET))
+            {
+                if (Is1PLA == false)
+                {
+                    linea1PLA = "1PLA||||||||| ";
+                    list1DET.Add(Helpers.ValidarPipePipe(linea1PLA));
+                }
+
+                list1DET.Add(Helpers.ValidarPipePipe(Lineas1DET));
+            }
+
+            return list1DET;
             #endregion
         }
 
