@@ -635,7 +635,7 @@ namespace App.ControlInsumos
 
             foreach (var datoLinea in pDatosInsumo)
             {
-                string llaveCruce = datoLinea.Split('|').ElementAt(0);
+                string llaveCruce = $"{datoLinea.Split('|').ElementAt(0)}-{datoLinea.Split('|').ElementAt(2)}";
 
                 if (!Variables.Variables.DatosInsumoClientesEspecialesDatos.ContainsKey(llaveCruce))
                 {
