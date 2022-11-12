@@ -133,11 +133,11 @@ namespace App.ControlLogicaProcesos
                         }
                     }
 
-                    datosExtractoFormateo.Add(linea);
+                    datosExtractoFormateo.Add(linea.Replace("|", string.Empty));
                 }
                 else
                 {
-                    datosExtractoFormateo.Add(linea);
+                    datosExtractoFormateo.Add(linea.Replace("|", string.Empty));
                 }
             }
 
@@ -2930,7 +2930,7 @@ namespace App.ControlLogicaProcesos
 
                                     string lineaCfi = string.Empty;
 
-                                    if (string.IsNullOrEmpty(lineaDetalleAgrupado.FirstOrDefault().Substring(132, 4).Trim()) || !lineaDetalleAgrupado.FirstOrDefault().Substring(128, 19).Trim().Contains("-"))
+                                    if (string.IsNullOrEmpty(lineaDetalleAgrupado.FirstOrDefault().Substring(132, 4).Trim()) || !lineaDetalleAgrupado.FirstOrDefault().Substring(128, 19).Trim().Contains("-") || !lineaDetalleAgrupado.FirstOrDefault().Substring(137, 1).Trim().Contains("-"))
                                     {
                                         lineaCfi = Helpers.ValidarPipePipe($"1CFI| |{descripcionConcepto}|{Helpers.SumarCampos(sumaValoresBase)}|{Helpers.SumarCampos(sumaValoresIva)}|" +
                                             $"{Helpers.SumarCampos(sumaValoresTotal)}|{Helpers.SumarCampos(sumaValoresImpuestos)}| ");
@@ -3055,12 +3055,12 @@ namespace App.ControlLogicaProcesos
                                 string Corte = string.IsNullOrEmpty(datosPaqueteAgrupado.Key.Trim()) ? "       " : datosPaqueteAgrupado.Key;
 
                                 var fechasDesde = from busqueda in lineas11C
-                                                  where busqueda.Substring(128, 19).Trim().Contains("-") &&
+                                                  where busqueda.Substring(137, 1).Trim().Contains("-") &&
                                                   !string.IsNullOrEmpty(busqueda.Substring(16, 14).Trim().TrimStart('0'))
                                                   select busqueda.Substring(128, 8);
 
                                 var fechasHasta = from busqueda in lineas11C
-                                                  where busqueda.Substring(128, 19).Trim().Contains("-") &&
+                                                  where busqueda.Substring(137, 1).Trim().Contains("-") &&
                                                   !string.IsNullOrEmpty(busqueda.Substring(16, 14).Trim().TrimStart('0'))
                                                   select busqueda.Substring(139, 8);
 

@@ -98,11 +98,11 @@ namespace App.ControlLogicaProcesos
                         }
                     }
 
-                    datosExtractoFormateo.Add(linea);
+                    datosExtractoFormateo.Add(linea.Replace("|", string.Empty));
                 }
                 else
                 {
-                    datosExtractoFormateo.Add(linea);
+                    datosExtractoFormateo.Add(linea.Replace("|", string.Empty));
                 }
             }
 

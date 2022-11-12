@@ -2389,6 +2389,8 @@ namespace App.ControlInsumos
         {
             if (!pCampo.Contains('-'))
             { return true; }
+            else if (pCampo.Substring(9, 1) != "-")
+            { return true; }
             else
             { return false; }
         }

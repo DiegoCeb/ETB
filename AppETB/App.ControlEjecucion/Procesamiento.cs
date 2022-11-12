@@ -65,7 +65,6 @@ namespace App.ControlEjecucion
             string periodo = File.ReadAllLines(archivoPeriodo.FirstOrDefault()).ToList().ElementAt(0).Split('\t').ElementAt(1).PadLeft(6, '0');
             string lote = File.ReadAllLines(archivoPeriodo.FirstOrDefault()).ToList().ElementAt(0).Split('\t').ElementAt(5);
 
-
             foreach (var archivo in archivos)
             {
                 _ = new ProcesoMasivos(archivo, periodo);
@@ -77,7 +76,6 @@ namespace App.ControlEjecucion
             // Se crean los reportes
             string rutaReportes = Path.Combine(App.ControlInsumos.Helpers.RutaProceso, "Reportes");
             _ = new ReportesMasivos(Variables.Variables.DiccionarioExtractosFormateados, App.ControlInsumos.Helpers.RutaProceso,lote);         
-
 
 
         #endregion
@@ -500,15 +498,9 @@ namespace App.ControlEjecucion
                                         where n.Substring(0, 4) == "1AAA"
                                         select n.Replace("KitXXXX", nuevoConsecutivo);
 
-                        string nuevo1AAAFinal = nuevo1AAA.FirstOrDefault();
-
-                        resultado.Add(nuevo1AAAFinal);
-
-                        datoLinea.Value.RemoveAt(0);
+                        Variables.Variables.DiccionarioExtractosFormateados[datoLinea.Key][0] = Variables.Variables.DiccionarioExtractosFormateados[datoLinea.Key][0].Replace("KitXXXX", nuevoConsecutivo);
 
                         resultado.AddRange(datoLinea.Value);
-
-                        datoLinea.Value.Insert(0, nuevo1AAAFinal.Replace(nuevoConsecutivo, "KitXXXX"));
 
                         consecutivo++;
                     }
@@ -1237,9 +1229,7 @@ namespace App.ControlEjecucion
                     }
                 }
 
-                resultado.Add(nuevo1AAA.FirstOrDefault());
-
-                datoCuenta.Value.RemoveAt(0);
+                Variables.Variables.DiccionarioExtractosFormateados[datoCuenta.Key][0] = Variables.Variables.DiccionarioExtractosFormateados[datoCuenta.Key][0].Replace("KitXXXX", nuevoConsecutivo);
 
                 resultado.AddRange(datoCuenta.Value);
 
