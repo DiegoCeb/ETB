@@ -70,15 +70,16 @@ namespace App.ControlEjecucion
                 _ = new ProcesoMasivos(archivo, periodo);
             }
 
+            
+
             //Escribir Diccionario Formateados llamando a un metodo de cracion de salidas donde se realice la segmentacion
             EscribirSalidasProceso($"{App.ControlInsumos.Helpers.RutaProceso}", Variables.Variables.DiccionarioExtractosFormateados, "1", lote);
 
             // Se crean los reportes
             string rutaReportes = Path.Combine(App.ControlInsumos.Helpers.RutaProceso, "Reportes");
-            _ = new ReportesMasivos(Variables.Variables.DiccionarioExtractosFormateados, App.ControlInsumos.Helpers.RutaProceso,lote);         
+            _ = new ReportesMasivos(Variables.Variables.DiccionarioExtractosFormateados, App.ControlInsumos.Helpers.RutaProceso, lote);
 
-
-        #endregion
+            #endregion
         }
 
         public void EjecutarProcesoDatos(string pRutaArchivosProcesar)
@@ -482,6 +483,8 @@ namespace App.ControlEjecucion
             List<string> resultado = new List<string>();
             int consecutivo = 1;
 
+            string cuenta = string.Empty;
+
             var datosImprimirFinal = new Dictionary<string, List<string>>(pDatosImprimir);
 
             switch (pTipoProceso)
@@ -503,6 +506,11 @@ namespace App.ControlEjecucion
                         resultado.AddRange(datoLinea.Value);
 
                         consecutivo++;
+
+                        // Se actualiza el Consecutivo del diccionario Original formateado
+                        Variables.Variables.DiccionarioExtractosFormateados[datoLinea.Key][0] = Variables.Variables.DiccionarioExtractosFormateados[datoLinea.Key][0].Replace("KitXXXX", nuevoConsecutivo);
+                        resultado.AddRange(datoLinea.Value);
+
                     }
 
                     Helpers.EscribirEnArchivo($"{pRuta}\\{pNombreArchivo}", resultado);
@@ -1207,6 +1215,8 @@ namespace App.ControlEjecucion
             int consecutivo = 1;
             int consecutivoInternoDivision = 0;
             int consecutivoInternoArchivo = 1;
+
+            //Dictionary<string, List<string>> datosImprimirFinal = new Dictionary<string, List<string>>(pDatos);
 
             foreach (var datoCuenta in pDatos)
             {
