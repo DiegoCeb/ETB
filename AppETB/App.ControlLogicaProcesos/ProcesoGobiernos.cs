@@ -22,7 +22,8 @@ namespace App.ControlLogicaProcesos
         private string FechaHasta { get; set; }
         private string FechaExpedicion { get; set; }
         private int? MesMora { get; set; }
-        private string CodigoDANE { get; set; }        
+        private string CodigoDANE { get; set; }
+        private bool ban1CTF { get; set; }
         #endregion
 
 
@@ -56,6 +57,11 @@ namespace App.ControlLogicaProcesos
 
         public void CargueFormateoArchivo(string pArchivo)
         {
+            if (pArchivo.Contains("desktop.ini"))
+            {
+                return;
+            }
+
             #region CargueFormateoArchivo
             List<string> DatosArchivo = File.ReadAllLines(pArchivo, Encoding.Default).ToList();
             List<string> datosExtractoFormateo = new List<string>();
@@ -177,51 +183,54 @@ namespace App.ControlLogicaProcesos
 
             resultadoFormateoLinea = FormateoCanal1CTF(datosOriginales);
 
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            if (ban1CTF)
             {
-                resultado.Add(resultadoFormateoLinea);
-            }
+                if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+                {
+                    resultado.Add(resultadoFormateoLinea);
+                }
 
-            resultadoFormateoLinea = FormateoCanal1CRM(datosOriginales);
+                resultadoFormateoLinea = FormateoCanal1CRM(datosOriginales);
 
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
+                if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+                {
+                    resultado.Add(resultadoFormateoLinea);
+                }
 
-            resultadoFormateoLinea = FormateoCanal1CTT(datosOriginales);
+                resultadoFormateoLinea = FormateoCanal1CTT(datosOriginales);
 
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
+                if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+                {
+                    resultado.Add(resultadoFormateoLinea);
+                }
 
-            resultadoFormateoLinea = FormateoCanal1CIM(datosOriginales);
+                resultadoFormateoLinea = FormateoCanal1CIM(datosOriginales);
 
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
+                if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+                {
+                    resultado.Add(resultadoFormateoLinea);
+                }
 
-            resultadoFormateoLinea = FormateoCanal1CIV(datosOriginales);
+                resultadoFormateoLinea = FormateoCanal1CIV(datosOriginales);
 
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
+                if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+                {
+                    resultado.Add(resultadoFormateoLinea);
+                }
 
-            resultadoFormateoLinea = FormateoCanal1CST(datosOriginales);
+                resultadoFormateoLinea = FormateoCanal1CST(datosOriginales);
 
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
+                if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+                {
+                    resultado.Add(resultadoFormateoLinea);
+                }
 
-            resultadoFormateoLinea = FormateoCanal1CCD(datosOriginales);
+                resultadoFormateoLinea = FormateoCanal1CCD(datosOriginales);
 
-            if (((IEnumerable<string>)resultadoFormateoLinea).Any())
-            {
-                resultado.AddRange(resultadoFormateoLinea);
+                if (((IEnumerable<string>)resultadoFormateoLinea).Any())
+                {
+                    resultado.AddRange(resultadoFormateoLinea);
+                }
             }
 
             resultadoFormateoLinea = FormateoCanalADNC(datosOriginales);
@@ -1798,7 +1807,14 @@ namespace App.ControlLogicaProcesos
                     }
                 }
 
-                resultado = "1CTF|TOTAL FACTURADO|" + Helpers.SumarCampos(lisCamposSumar) + "| ";
+                string sumaTotal = Helpers.SumarCampos(lisCamposSumar, "G");
+
+                if (sumaTotal != "$ 0.00")
+                {
+                    ban1CTF = true;
+                }
+
+                resultado = "1CTF|TOTAL FACTURADO|" + Helpers.SumarCampos(lisCamposSumar, "G") + "| ";
             }
 
             return Helpers.ValidarPipePipe(resultado);
@@ -1919,37 +1935,37 @@ namespace App.ControlLogicaProcesos
 
                 resultado = "1CRM|";
                 resultado += concepto + "|";
-                resultado += Helpers.SumarCampos(dicValores["1"]) + "|";
-                resultado += Helpers.SumarCampos(dicValores["3"]) + "|";
-                resultado += Helpers.SumarCampos(dicValores["2"]) + "|";
-                resultado += Helpers.SumarCampos(dicValores["9"]) + "|";
-                resultado += Helpers.SumarCampos(dicValores["4"]) + "|";
+                resultado += Helpers.SumarCampos(dicValores["1"],"G") + "|";
+                resultado += Helpers.SumarCampos(dicValores["3"], "G") + "|";
+                resultado += Helpers.SumarCampos(dicValores["2"], "G") + "|";
+                resultado += Helpers.SumarCampos(dicValores["9"], "G") + "|";
+                resultado += Helpers.SumarCampos(dicValores["4"], "G") + "|";
 
                 // Suma Conceptos 6 - 8
                 sumarCamposAux.AddRange(dicValores["6"]);
                 sumarCamposAux.AddRange(dicValores["8"]);
-                resultado += Helpers.SumarCampos(sumarCamposAux) + "|";
+                resultado += Helpers.SumarCampos(sumarCamposAux, "G") + "|";
                 sumarCamposAux.Clear();
 
                 // Suma Conceptos 5 - 7
                 sumarCamposAux.AddRange(dicValores["5"]);
                 sumarCamposAux.AddRange(dicValores["7"]);
-                resultado += Helpers.SumarCampos(sumarCamposAux) + "|";
+                resultado += Helpers.SumarCampos(sumarCamposAux, "G") + "|";
                 sumarCamposAux.Clear();
 
-                resultado += Helpers.SumarCampos(dicValores["SUBTOTAL"]) + "|";
-                resultado += Helpers.SumarCampos(dicValores["IVA"]) + "|";
-                resultado += Helpers.SumarCampos(dicValores["IMPUESTOS"]) + "|";
+                resultado += Helpers.SumarCampos(dicValores["SUBTOTAL"], "G") + "|";
+                resultado += Helpers.SumarCampos(dicValores["IVA"], "G") + "|";
+                resultado += Helpers.SumarCampos(dicValores["IMPUESTOS"], "G") + "|";
 
                 // Suma Conceptos 
                 sumarCamposAux.AddRange(dicValores["SUBTOTAL"]);
                 sumarCamposAux.AddRange(dicValores["IVA"]);
                 sumarCamposAux.AddRange(dicValores["IMPUESTOS"]);
-                resultado += Helpers.SumarCampos(sumarCamposAux) + "|";
+                resultado += Helpers.SumarCampos(sumarCamposAux, "G") + "|";
                 sumarCamposAux.Clear();
             }
 
-            return Helpers.ValidarPipePipe(resultado).Replace("$ 0,00", "-");
+            return Helpers.ValidarPipePipe(resultado).Replace("$ 0.00", "-");
             #endregion
         }
 
@@ -2094,7 +2110,7 @@ namespace App.ControlLogicaProcesos
                             else if (identificadorCanal == "02T582" || identificadorCanal == "02T507" || identificadorCanal == "02T510" || identificadorCanal == "02T511" ||
                                     identificadorCanal == "02T517" || identificadorCanal == "02T502" || identificadorCanal == "02T504" || identificadorCanal == "02T505" || identificadorCanal == "02T118")
                             {
-                                string sumaSubtotal = Helpers.SumarCampos(lisSUBTOTAL).Replace("$", "").Replace(".", "").Replace(",", "").Trim();
+                                string sumaSubtotal = Helpers.SumarCampos(lisSUBTOTAL, "G").Replace("$", "").Replace(".", "").Replace(",", "").Trim();
 
                                 var entero = sumaSubtotal.Substring(0, sumaSubtotal.Length - 2);
                                 var decima = sumaSubtotal.Substring(sumaSubtotal.Length - 2, 2);
@@ -2148,31 +2164,31 @@ namespace App.ControlLogicaProcesos
 
                 resultado = "1CTT|";
                 resultado += concepto + "|";
-                resultado += Helpers.SumarCampos(dicValores["1"]) + "|";
-                resultado += Helpers.SumarCampos(dicValores["3"]) + "|";
-                resultado += Helpers.SumarCampos(dicValores["2"]) + "|";
-                resultado += Helpers.SumarCampos(dicValores["9"]) + "|";
-                resultado += Helpers.SumarCampos(dicValores["4"]) + "|";
+                resultado += Helpers.SumarCampos(dicValores["1"], "G") + "|";
+                resultado += Helpers.SumarCampos(dicValores["3"], "G") + "|";
+                resultado += Helpers.SumarCampos(dicValores["2"], "G") + "|";
+                resultado += Helpers.SumarCampos(dicValores["9"], "G") + "|";
+                resultado += Helpers.SumarCampos(dicValores["4"], "G") + "|";
 
                 // Suma Conceptos 6 - 8
                 sumarCamposAux.AddRange(dicValores["6"]);
                 sumarCamposAux.AddRange(dicValores["8"]);
-                resultado += Helpers.SumarCampos(sumarCamposAux) + "|";
+                resultado += Helpers.SumarCampos(sumarCamposAux, "G") + "|";
                 sumarCamposAux.Clear();
 
                 // Suma Conceptos 5 - 7
                 sumarCamposAux.AddRange(dicValores["5"]);
                 sumarCamposAux.AddRange(dicValores["7"]);
-                resultado += Helpers.SumarCampos(sumarCamposAux) + "|";
+                resultado += Helpers.SumarCampos(sumarCamposAux, "G") + "|";
                 sumarCamposAux.Clear();
 
-                resultado += Helpers.SumarCampos(dicValores["SUBTOTAL"]) + "|";
-                resultado += Helpers.SumarCampos(dicValores["IVA"]) + "|";
-                resultado += Helpers.SumarCampos(dicValores["IMPUESTOS"]) + "|";
-                resultado += Helpers.SumarCampos(dicValores["TOTAL"]) + "| ";
+                resultado += Helpers.SumarCampos(dicValores["SUBTOTAL"], "G") + "|";
+                resultado += Helpers.SumarCampos(dicValores["IVA"], "G") + "|";
+                resultado += Helpers.SumarCampos(dicValores["IMPUESTOS"], "G") + "|";
+                resultado += Helpers.SumarCampos(dicValores["TOTAL"], "G") + "| ";
             }
 
-            return Helpers.ValidarPipePipe(resultado).Replace("$ 0,00", "-");
+            return Helpers.ValidarPipePipe(resultado).Replace("$ 0.00", "-");
             #endregion            
         }
 
@@ -2285,7 +2301,7 @@ namespace App.ControlLogicaProcesos
                             else if (identificadorCanal == "02T582" || identificadorCanal == "02T507" || identificadorCanal == "02T510" || identificadorCanal == "02T511" ||
                                     identificadorCanal == "02T517" || identificadorCanal == "02T502" || identificadorCanal == "02T504" || identificadorCanal == "02T505" || identificadorCanal == "02T118")
                             {
-                                string sumaSubtotal = Helpers.SumarCampos(lisSUBTOTAL).Replace("$", "").Replace(".", "").Replace(",", "").Trim();
+                                string sumaSubtotal = Helpers.SumarCampos(lisSUBTOTAL, "G").Replace("$", "").Replace(".", "").Replace(",", "").Trim();
 
                                 var entero = sumaSubtotal.Substring(0, sumaSubtotal.Length - 2);
                                 var decima = sumaSubtotal.Substring(sumaSubtotal.Length - 2, 2);
@@ -2351,31 +2367,31 @@ namespace App.ControlLogicaProcesos
 
                 resultado = "1CIM|";
                 resultado += concepto + "|";
-                resultado += Helpers.SumarCampos(dicValores["1"]) + "|";
-                resultado += Helpers.SumarCampos(dicValores["3"]) + "|";
-                resultado += Helpers.SumarCampos(dicValores["2"]) + "|";
-                resultado += Helpers.SumarCampos(dicValores["9"]) + "|";
-                resultado += Helpers.SumarCampos(dicValores["4"]) + "|";
+                resultado += Helpers.SumarCampos(dicValores["1"], "G") + "|";
+                resultado += Helpers.SumarCampos(dicValores["3"], "G") + "|";
+                resultado += Helpers.SumarCampos(dicValores["2"], "G") + "|";
+                resultado += Helpers.SumarCampos(dicValores["9"], "G") + "|";
+                resultado += Helpers.SumarCampos(dicValores["4"], "G") + "|";
 
                 // Suma Conceptos 6 - 8
                 sumarCamposAux.AddRange(dicValores["6"]);
                 sumarCamposAux.AddRange(dicValores["8"]);
-                resultado += Helpers.SumarCampos(sumarCamposAux) + "|";
+                resultado += Helpers.SumarCampos(sumarCamposAux, "G") + "|";
                 sumarCamposAux.Clear();
 
                 // Suma Conceptos 5 - 7
                 sumarCamposAux.AddRange(dicValores["5"]);
                 sumarCamposAux.AddRange(dicValores["7"]);
-                resultado += Helpers.SumarCampos(sumarCamposAux) + "|";
+                resultado += Helpers.SumarCampos(sumarCamposAux, "G") + "|";
                 sumarCamposAux.Clear();
 
-                resultado += Helpers.SumarCampos(dicValores["SUBTOTAL"]) + "|";
+                resultado += Helpers.SumarCampos(dicValores["SUBTOTAL"], "G") + "|";
                 resultado += Helpers.SumarCampos(dicValores["IVA"]) + "|";
-                resultado += Helpers.SumarCampos(dicValores["IMPUESTOS"]) + "|";
-                resultado += Helpers.SumarCampos(dicValores["TOTAL"]) + "| ";
+                resultado += Helpers.SumarCampos(dicValores["IMPUESTOS"], "G") + "|";
+                resultado += Helpers.SumarCampos(dicValores["TOTAL"], "G") + "| ";
             }
 
-            return Helpers.ValidarPipePipe(resultado).Replace("$ 0,00", "-");
+            return Helpers.ValidarPipePipe(resultado).Replace("$ 0.00", "-");
             #endregion
         }
 
@@ -2508,7 +2524,7 @@ namespace App.ControlLogicaProcesos
                             if (identificadorCanal == "02T582" || identificadorCanal == "02T507" || identificadorCanal == "02T510" || identificadorCanal == "02T511" ||
                                 identificadorCanal == "02T517" || identificadorCanal == "02T502" || identificadorCanal == "02T504" || identificadorCanal == "02T505" || identificadorCanal == "02T118")
                             {
-                                string sumaSubtotal = Helpers.SumarCampos(lisSUBTOTAL).Replace("$", "").Replace(".", "").Replace(",", "").Trim();
+                                string sumaSubtotal = Helpers.SumarCampos(lisSUBTOTAL, "G").Replace("$", "").Replace(".", "").Replace(",", "").Trim();
 
                                 var entero = sumaSubtotal.Substring(0, sumaSubtotal.Length - 2);
                                 var decima = sumaSubtotal.Substring(sumaSubtotal.Length - 2, 2);
@@ -2572,31 +2588,31 @@ namespace App.ControlLogicaProcesos
 
                 resultado = "1CIV|";
                 resultado += concepto + "|";
-                resultado += Helpers.SumarCampos(dicValores["1"]) + "|";
-                resultado += Helpers.SumarCampos(dicValores["3"]) + "|";
-                resultado += Helpers.SumarCampos(dicValores["2"]) + "|";
-                resultado += Helpers.SumarCampos(dicValores["9"]) + "|";
-                resultado += Helpers.SumarCampos(dicValores["4"]) + "|";
+                resultado += Helpers.SumarCampos(dicValores["1"], "G") + "|";
+                resultado += Helpers.SumarCampos(dicValores["3"], "G") + "|";
+                resultado += Helpers.SumarCampos(dicValores["2"], "G") + "|";
+                resultado += Helpers.SumarCampos(dicValores["9"], "G") + "|";
+                resultado += Helpers.SumarCampos(dicValores["4"], "G") + "|";
 
                 // Suma Conceptos 6 - 8
                 sumarCamposAux.AddRange(dicValores["6"]);
                 sumarCamposAux.AddRange(dicValores["8"]);
-                resultado += Helpers.SumarCampos(sumarCamposAux) + "|";
+                resultado += Helpers.SumarCampos(sumarCamposAux, "G") + "|";
                 sumarCamposAux.Clear();
 
                 // Suma Conceptos 5 - 7
                 sumarCamposAux.AddRange(dicValores["5"]);
                 sumarCamposAux.AddRange(dicValores["7"]);
-                resultado += Helpers.SumarCampos(sumarCamposAux) + "|";
+                resultado += Helpers.SumarCampos(sumarCamposAux, "G") + "|";
                 sumarCamposAux.Clear();
 
-                resultado += Helpers.SumarCampos(dicValores["SUBTOTAL"]) + "|";
-                resultado += Helpers.SumarCampos(dicValores["IVA"]) + "|";
-                resultado += Helpers.SumarCampos(dicValores["IMPUESTOS"]) + "|";
-                resultado += Helpers.SumarCampos(dicValores["TOTAL"]) + "| ";
+                resultado += Helpers.SumarCampos(dicValores["SUBTOTAL"], "G") + "|";
+                resultado += Helpers.SumarCampos(dicValores["IVA"], "G") + "|";
+                resultado += Helpers.SumarCampos(dicValores["IMPUESTOS"], "G") + "|";
+                resultado += Helpers.SumarCampos(dicValores["TOTAL"], "G") + "| ";
             }
 
-            return Helpers.ValidarPipePipe(resultado).Replace("$ 0,00", "-");
+            return Helpers.ValidarPipePipe(resultado).Replace("$ 0.00", "-");
             #endregion
         }
 
@@ -2700,31 +2716,31 @@ namespace App.ControlLogicaProcesos
 
                 resultado = "1CST|";
                 resultado += concepto + "|";
-                resultado += Helpers.SumarCampos(dicValores["1"]) + "|";
-                resultado += Helpers.SumarCampos(dicValores["3"]) + "|";
-                resultado += Helpers.SumarCampos(dicValores["2"]) + "|";
-                resultado += Helpers.SumarCampos(dicValores["9"]) + "|";
-                resultado += Helpers.SumarCampos(dicValores["4"]) + "|";
+                resultado += Helpers.SumarCampos(dicValores["1"], "G") + "|";
+                resultado += Helpers.SumarCampos(dicValores["3"], "G") + "|";
+                resultado += Helpers.SumarCampos(dicValores["2"], "G") + "|";
+                resultado += Helpers.SumarCampos(dicValores["9"], "G") + "|";
+                resultado += Helpers.SumarCampos(dicValores["4"], "G") + "|";
 
                 // Suma Conceptos 6 - 8
                 sumarCamposAux.AddRange(dicValores["6"]);
                 sumarCamposAux.AddRange(dicValores["8"]);
-                resultado += Helpers.SumarCampos(sumarCamposAux) + "|";
+                resultado += Helpers.SumarCampos(sumarCamposAux, "G") + "|";
                 sumarCamposAux.Clear();
 
                 // Suma Conceptos 5 - 7
                 sumarCamposAux.AddRange(dicValores["5"]);
                 sumarCamposAux.AddRange(dicValores["7"]);
-                resultado += Helpers.SumarCampos(sumarCamposAux) + "|";
+                resultado += Helpers.SumarCampos(sumarCamposAux, "G") + "|";
                 sumarCamposAux.Clear();
 
-                resultado += Helpers.SumarCampos(dicValores["SUBTOTAL"]) + "|";
-                resultado += Helpers.SumarCampos(dicValores["IVA"]) + "|";
-                resultado += Helpers.SumarCampos(dicValores["IMPUESTOS"]) + "|";
-                resultado += Helpers.SumarCampos(dicValores["TOTAL"]) + "| ";
+                resultado += Helpers.SumarCampos(dicValores["SUBTOTAL"], "G") + "|";
+                resultado += Helpers.SumarCampos(dicValores["IVA"], "G") + "|";
+                resultado += Helpers.SumarCampos(dicValores["IMPUESTOS"], "G") + "|";
+                resultado += Helpers.SumarCampos(dicValores["TOTAL"], "G") + "| ";
             }
 
-            return Helpers.ValidarPipePipe(resultado).Replace("$ 0,00", "-");
+            return Helpers.ValidarPipePipe(resultado).Replace("$ 0.00", "-");
             #endregion
         }
 
@@ -2740,36 +2756,109 @@ namespace App.ControlLogicaProcesos
             string resultadoTemp = string.Empty;
             List<string> lista02T = new List<string>();
 
-            #region Busqueda 11C y toma los cruces de DatosInsumoConfiguracionLLavesDoc1
+            #region Busqueda 11C y 13M y transforma en 02Txxx /// Especiales
 
-            var result11C = from busqueda in datosOriginales
-                            where busqueda.Length > 3 && busqueda.Substring(0, 3).Equals("11C")
+            var result = from busqueda in datosOriginales
+                         where busqueda.Length > 3 && ((busqueda.Substring(0, 3).Equals("11C") && !busqueda.Substring(16, 14).Equals(" 0000000000000"))
+                                                    || (busqueda.Substring(0, 4).Equals("11C0"))
+                                                    || (busqueda.Substring(0, 3).Equals("13M") && !busqueda.Substring(6, 16).Trim().Equals("")))                                                    
+                         select busqueda;
 
-                            select busqueda;
+            var result02T9 = from busqueda in datosOriginales
+                         where busqueda.Length > 3 && busqueda.Substring(0, 4).Equals("02T9")
+                         select busqueda;
 
-            if (result11C.Any())
+            // Se debe hacer cruce con llavesDoc (9) y lo que no pase se normal
+
+            Dictionary<string, string> dicAgrupado = new Dictionary<string, string>();
+
+            if (result.Any())
             {
+                string llaveAgrupacion = string.Empty;
                 string llaveDoc = string.Empty;
-                string valorDoc = string.Empty;
-                string valorDoc2 = string.Empty;
+                string ValorDoc = string.Empty;
+                string llaveProductoInicio = string.Empty;
 
-                foreach (var lineaActual11C in result11C)
+                foreach (var lineaActual in result)
                 {
-                    llaveDoc = lineaActual11C.Substring(6, 10);
+                    llaveAgrupacion = lineaActual.Substring(0, 6);// + "┬" + lineaActual.Substring(128, 19);
+                    llaveDoc = lineaActual.Substring(6, 10);
 
-                    if (Variables.Variables.DatosInsumoConfiguracionLLavesDoc1.ContainsKey(llaveDoc))
+                    llaveProductoInicio = lineaActual.Substring(3, 1);
+
+                    if(llaveProductoInicio == "9" )
                     {
-                        valorDoc = Variables.Variables.DatosInsumoConfiguracionLLavesDoc1[llaveDoc].ToString().Split('|')[13];
-                        valorDoc2 = Variables.Variables.DatosInsumoConfiguracionLLavesDoc1[llaveDoc].ToString().Split('|')[15];
+                        if (result02T9.Any())
+                        {
+                            foreach (var linea02T9 in result02T9)
+                            {
+                                string valor02T9 = linea02T9.Substring(6, 14);
+                                string valor11C9 = lineaActual.Substring(16, 14);
 
-                        if (!lista02T.Contains(valorDoc))
-                            lista02T.Add(valorDoc);
+                                if (valor02T9 == valor11C9)
+                                {
+                                    if (!dicAgrupado.ContainsKey(linea02T9.Substring(0, 6)))
+                                    {
+                                        dicAgrupado.Add(linea02T9.Substring(0, 6), linea02T9.Substring(0, 6));
+                                    }
+                                    break;
+                                }
 
-                        if (!lista02T.Contains(valorDoc2))
-                            lista02T.Add(valorDoc2);
+                            }
+                        }
+                    }
+                    else if (Variables.Variables.DatosInsumoConfiguracionLLavesDoc1.ContainsKey(llaveDoc))
+                    {
+                        ValorDoc = Variables.Variables.DatosInsumoConfiguracionLLavesDoc1[llaveDoc].Split('|')[13].Trim();
+                        
+                        if (!dicAgrupado.ContainsKey(ValorDoc))
+                        {
+                            dicAgrupado.Add(ValorDoc, ValorDoc);
+                        }
+                    }
+                    else if(!dicAgrupado.ContainsKey(llaveAgrupacion))
+                    {
+                        dicAgrupado.Add(llaveAgrupacion, "02T" + lineaActual.Substring(3, 3));
                     }
                 }
             }
+
+
+            #region No Borrar TEMP Especiales
+            // Se llenan los 02T Especiales
+
+            //var resultEspecial = from busqueda in datosOriginales
+            //                     where busqueda.Length > 6 && busqueda.Substring(0, 4).Equals("11C0")
+            //                     select busqueda;
+
+
+            //if (resultEspecial.Any())
+            //{
+            //    string llaveAgrupacion = string.Empty;
+            //    string llaveDoc = string.Empty;
+            //    string ValorDoc = string.Empty;
+
+            //    foreach (var lineaEspecial in resultEspecial)
+            //    {
+            //        if (Convert.ToInt16(lineaEspecial.Substring(4, 2)) >= 50 && Convert.ToInt16(lineaEspecial.Substring(4, 2)) <= 76)
+            //        {
+            //            llaveAgrupacion = lineaEspecial.Substring(0, 6);// + "┬" + lineaActual.Substring(128, 19);
+            //            llaveDoc = lineaEspecial.Substring(6, 10);
+
+            //            if (Variables.Variables.DatosInsumoConfiguracionLLavesDoc1.ContainsKey(llaveDoc))
+            //            {
+            //                ValorDoc = Variables.Variables.DatosInsumoConfiguracionLLavesDoc1[llaveDoc].Split('|')[13].Trim();
+            //            }
+
+            //            if (!dicAgrupado.ContainsKey(llaveAgrupacion))
+            //            {
+            //                dicAgrupado.Add(llaveAgrupacion, ValorDoc);
+            //            }
+            //        }
+            //    }
+            //} 
+            #endregion
+
 
             #endregion
 
@@ -2778,14 +2867,13 @@ namespace App.ControlLogicaProcesos
             Dictionary<string, List<string>> dicValores = new Dictionary<string, List<string>>();
             string llavePrincipal = string.Empty;
             string llaveProducto = string.Empty;
-            string concepto = "IVA";
-            string ivaFormateado = String.Empty;
-            string identificadorCanal = string.Empty;
-            decimal recargo = 0;
-            decimal ivaRecargo = 0;
-            decimal impuestoProducto = 0;
-            string impuestoFormateado = String.Empty;
+            string concepto = string.Empty;
             decimal iva = 0;
+            string ivaFormateado = "0";
+            string identificadorCanal = string.Empty;
+            decimal impuestoProducto = 0;
+            string impuestoFormateado = string.Empty;
+
 
             string llavelineaNegocio = string.Empty;
             string lineaNegocio = string.Empty;
@@ -2805,127 +2893,164 @@ namespace App.ControlLogicaProcesos
             dicValores.Add("IMPUESTOS", new List<string>());
             dicValores.Add("TOTAL", new List<string>());
 
+            List<string> lineaProcesarDetalles = new List<string>();
 
 
-            var result02T = from busqueda in datosOriginales
-                            where busqueda.Length > 3 && busqueda.Substring(0, 3).Equals("02T")
-                            select busqueda;
-
-            //CODT
-            if (result02T.Any())
+            #region Traer las lineas a procesar
+            foreach (var identificador in dicAgrupado.Values)
             {
-                foreach (var lineaResul02T in result02T)
+                var result02T = from busqueda in datosOriginales
+                                where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals(identificador)
+                                select busqueda;
+
+                if (result02T.Any())
                 {
-                    llavePrincipal = lineaResul02T.Substring(0, 6);
-
-                    if (lista02T.Contains(llavePrincipal))
+                    foreach (var linea02tActual in result02T)
                     {
-                        llaveProducto = lineaResul02T.Substring(3, 1);
-
-                        #region Toma Linea Negocio                        
-
-                        if (llaveProducto == "0")
+                        if (Convert.ToInt16(linea02tActual.Substring(4, 2)) >= 50 && Convert.ToInt16(linea02tActual.Substring(4, 2)) <= 76)
                         {
-                            llaveProducto = "1";
+                            lineaProcesarDetalles.Add(linea02tActual);
                         }
-
-                        llavelineaNegocio = "FACLIN" + llaveProducto;
-
-                        if (Variables.Variables.DatosInsumoTablaSustitucion.ContainsKey(llavelineaNegocio))
+                        else if (Convert.ToDouble(linea02tActual.Substring(6, 14)) != 0)
                         {
-                            lineaNegocio = Variables.Variables.DatosInsumoTablaSustitucion[llavelineaNegocio][0].Substring(8).Trim();
+                            lineaProcesarDetalles.Add(linea02tActual);
                         }
-                        #endregion
-
-                        // se toma el concepto
-
-                        if (Variables.Variables.DatosInsumoTablaSustitucion.ContainsKey("CODT" + llavePrincipal))
-                        {
-                            concepto = Variables.Variables.DatosInsumoTablaSustitucion["CODT" + llavePrincipal][0].Substring(11).Trim();
-                        }
-
-                        //En el caso de que toca reemplazar labels en larga distancia
-                        if (llavePrincipal == "02T204" || llavePrincipal == "02T207")
-                            concepto = "L.D. Nacional";
-
-                        if (dicValores.Keys.Contains(llaveProducto))
-                        {
-                            dicValores[llaveProducto].Add(lineaResul02T.Substring(6, 14));
-                            dicValores["SUBTOTAL"].Add(lineaResul02T.Substring(6, 14));
-
-                            // Otros operadores
-                            if (llaveProducto == "5" || llaveProducto == "7")
-                            {
-                                impuestoProducto = Convert.ToDecimal($"{lineaResul02T.Substring(6, 12)}.{lineaResul02T.Substring(18, 2)}");
-                                impuestoProducto = impuestoProducto * Convert.ToDecimal(Utilidades.LeerAppConfig("porcentajeImpuestoConsumo"));
-
-                                if (impuestoProducto.ToString().Contains("."))
-                                {
-                                    impuestoFormateado = impuestoProducto.ToString().Split('.')[0] + impuestoProducto.ToString().Split('.')[1].Substring(0, 2);
-                                }
-                                else
-                                {
-                                    impuestoFormateado = impuestoProducto.ToString().Replace(",", "").Replace(".", "");
-                                }
-
-                                dicValores["IVA"].Add("-" + impuestoFormateado);
-                                dicValores["IMPUESTOS"].Add(impuestoFormateado);
-                            }
-
-
-                            dicValores["IVA"].Add(lineaResul02T.Substring(34, 14));
-                            dicValores["IMPUESTOS"].Add(lineaResul02T.Substring(118, 14));
-
-                            dicValores["TOTAL"].Add(lineaResul02T.Substring(6, 14));
-                            dicValores["TOTAL"].Add(lineaResul02T.Substring(34, 14));
-                            dicValores["TOTAL"].Add(lineaResul02T.Substring(118, 14));
-                        }
-
-
-                        resultadoTemp = "1CCD|";
-                        resultadoTemp += concepto + "|";
-                        resultadoTemp += Helpers.SumarCampos(dicValores["1"]) + "|";
-                        resultadoTemp += Helpers.SumarCampos(dicValores["3"]) + "|";
-                        resultadoTemp += Helpers.SumarCampos(dicValores["2"]) + "|";
-                        resultadoTemp += Helpers.SumarCampos(dicValores["9"]) + "|";
-                        resultadoTemp += Helpers.SumarCampos(dicValores["4"]) + "|";
-
-                        List<string> sumarCamposAux = new List<string>();
-
-                        // Suma Conceptos 6 - 8
-                        sumarCamposAux.AddRange(dicValores["6"]);
-                        sumarCamposAux.AddRange(dicValores["8"]);
-                        resultadoTemp += Helpers.SumarCampos(sumarCamposAux) + "|";
-                        sumarCamposAux.Clear();
-
-                        // Suma Conceptos 5 - 7
-                        sumarCamposAux.AddRange(dicValores["5"]);
-                        sumarCamposAux.AddRange(dicValores["7"]);
-                        resultadoTemp += Helpers.SumarCampos(sumarCamposAux) + "|";
-                        sumarCamposAux.Clear();
-
-                        resultadoTemp += Helpers.SumarCampos(dicValores["SUBTOTAL"]) + "|";
-                        resultadoTemp += Helpers.SumarCampos(dicValores["IVA"]) + "|";
-                        resultadoTemp += Helpers.SumarCampos(dicValores["IMPUESTOS"]) + "|";
-                        resultadoTemp += Helpers.SumarCampos(dicValores["TOTAL"]) + "| ";
-
-                        resultado.Add(Helpers.ValidarPipePipe(resultadoTemp).Replace("$ 0,00", "-"));
-
-                        // Inicializa diccionario Con Valores
-                        dicValores["1"] = new List<string>();    // Telefonia Local
-                        dicValores["2"] = new List<string>();    // Larga Distancia
-                        dicValores["3"] = new List<string>();    // Internet y Datos
-                        dicValores["4"] = new List<string>();    // TV
-                        dicValores["5"] = new List<string>();    // Otros Operadores
-                        dicValores["6"] = new List<string>();    // Alianzas
-                        dicValores["7"] = new List<string>();    // Otros Operadores
-                        dicValores["8"] = new List<string>();    // Alianzas
-                        dicValores["9"] = new List<string>();    // Movilidad
-                        dicValores["SUBTOTAL"] = new List<string>();
-                        dicValores["IVA"] = new List<string>();
-                        dicValores["IMPUESTOS"] = new List<string>();
-                        dicValores["TOTAL"] = new List<string>();
                     }
+                }
+            } 
+            #endregion
+
+            if (lineaProcesarDetalles.Count() > 0)
+            {
+                foreach (var lineaResul02T in lineaProcesarDetalles)
+                {
+                    ivaFormateado = "0";
+                    llavePrincipal = lineaResul02T.Substring(0, 6);
+                    llaveProducto = lineaResul02T.Substring(3, 1);
+
+                    if(llaveProducto == "0")
+                    {
+                        llaveProducto = "1";
+                    }
+
+                    // se toma el concepto
+                    if (Variables.Variables.DatosInsumoTablaSustitucion.ContainsKey("CODT" + llavePrincipal))
+                    {
+                        concepto = Variables.Variables.DatosInsumoTablaSustitucion["CODT" + llavePrincipal][0].Substring(11).Trim();
+                    }
+
+                    //En el caso de que toca reemplazar labels en larga distancia
+                    if (llavePrincipal == "02T204" || llavePrincipal == "02T207")
+                        concepto = "L.D. Nacional";
+
+                    if (llavePrincipal == "02T208" || llavePrincipal == "02T209")
+                        concepto = "L.D. Internacional";
+
+                    
+                    if (dicValores.Keys.Contains(llaveProducto))
+                    {
+                        dicValores[llaveProducto].Add(lineaResul02T.Substring(6, 14));
+                        dicValores["SUBTOTAL"].Add(lineaResul02T.Substring(6, 14));
+
+                        // Otros operadores
+                        if (llaveProducto == "5" || llaveProducto == "7")
+                        {
+                            impuestoProducto = Convert.ToDecimal($"{lineaResul02T.Substring(6, 12)}.{lineaResul02T.Substring(18, 2)}");
+                            impuestoProducto = impuestoProducto * Convert.ToDecimal(Utilidades.LeerAppConfig("porcentajeImpuestoConsumo"));
+
+                            if (impuestoProducto.ToString().Contains("."))
+                            {
+                                impuestoFormateado = impuestoProducto.ToString().Split('.')[0] + impuestoProducto.ToString().Split('.')[1].Substring(0, 2);
+                            }
+                            else
+                            {
+                                impuestoFormateado = impuestoProducto.ToString().Replace(",", "").Replace(".", "");
+                            }
+                            
+                            dicValores["IMPUESTOS"].Add(impuestoFormateado);                           
+                        }
+                        else
+                        {
+                            #region Calcula iva por si a acaso
+                            // Calcular el IVA
+                            //switch (lineaResul02T.Substring(3, 1))
+                            //{
+                            //    case "9":
+                            //        dicValores["IVA"].Add(lineaResul02T.Substring(34, 14));
+                            //        break;
+                            //    default:
+                            //        iva = Convert.ToDecimal($"{lineaResul02T.Substring(6, 12)}.{lineaResul02T.Substring(18, 2)}");
+                            //        iva = iva * Convert.ToDecimal(Utilidades.LeerAppConfig("porcentajeIva"));
+
+                            //        if (iva.ToString().Contains("."))
+                            //        {
+                            //            ivaFormateado = iva.ToString().Split('.')[0] + iva.ToString().Split('.')[1].Substring(0, 2);
+                            //        }
+                            //        else
+                            //        {
+                            //            ivaFormateado = iva.ToString().Replace(",", "").Replace(".", "");
+                            //        }
+
+                            //        dicValores["IVA"].Add(ivaFormateado);
+
+                            //        break;
+                            //}            
+                            #endregion
+                        }
+
+                        dicValores["IVA"].Add(lineaResul02T.Substring(34, 14));
+                        dicValores["IMPUESTOS"].Add(lineaResul02T.Substring(118, 14));
+
+                        dicValores["TOTAL"].Add(lineaResul02T.Substring(6, 14));
+                        dicValores["TOTAL"].Add(lineaResul02T.Substring(34, 14));
+                        dicValores["TOTAL"].Add(lineaResul02T.Substring(118, 14));
+                    }
+
+
+                    resultadoTemp = "1CCD|";
+                    resultadoTemp += concepto + "|";
+                    resultadoTemp += Helpers.SumarCampos(dicValores["1"], "G") + "|";
+                    resultadoTemp += Helpers.SumarCampos(dicValores["3"], "G") + "|";
+                    resultadoTemp += Helpers.SumarCampos(dicValores["2"], "G") + "|";
+                    resultadoTemp += Helpers.SumarCampos(dicValores["9"], "G") + "|";
+                    resultadoTemp += Helpers.SumarCampos(dicValores["4"], "G") + "|";
+
+                    List<string> sumarCamposAux = new List<string>();
+
+                    // Suma Conceptos 6 - 8
+                    sumarCamposAux.AddRange(dicValores["6"]);
+                    sumarCamposAux.AddRange(dicValores["8"]);
+                    resultadoTemp += Helpers.SumarCampos(sumarCamposAux, "G") + "|";
+                    sumarCamposAux.Clear();
+
+                    // Suma Conceptos 5 - 7
+                    sumarCamposAux.AddRange(dicValores["5"]);
+                    sumarCamposAux.AddRange(dicValores["7"]);
+                    resultadoTemp += Helpers.SumarCampos(sumarCamposAux, "G") + "|";
+                    sumarCamposAux.Clear();
+
+                    resultadoTemp += Helpers.SumarCampos(dicValores["SUBTOTAL"], "G") + "|";
+                    resultadoTemp += Helpers.SumarCampos(dicValores["IVA"], "G") + "|";
+                    resultadoTemp += Helpers.SumarCampos(dicValores["IMPUESTOS"], "G") + "|";
+                    resultadoTemp += Helpers.SumarCampos(dicValores["TOTAL"], "G") + "| ";
+
+                    resultado.Add(Helpers.ValidarPipePipe(resultadoTemp).Replace("$ 0.00", "-"));
+                    
+                    #region Inicializa diccionario Con Valores
+                    dicValores["1"] = new List<string>();    // Telefonia Local
+                    dicValores["2"] = new List<string>();    // Larga Distancia
+                    dicValores["3"] = new List<string>();    // Internet y Datos
+                    dicValores["4"] = new List<string>();    // TV
+                    dicValores["5"] = new List<string>();    // Otros Operadores
+                    dicValores["6"] = new List<string>();    // Alianzas
+                    dicValores["7"] = new List<string>();    // Otros Operadores
+                    dicValores["8"] = new List<string>();    // Alianzas
+                    dicValores["9"] = new List<string>();    // Movilidad
+                    dicValores["SUBTOTAL"] = new List<string>();
+                    dicValores["IVA"] = new List<string>();
+                    dicValores["IMPUESTOS"] = new List<string>();
+                    dicValores["TOTAL"] = new List<string>(); 
+                    #endregion
                 }
             }
 
@@ -3184,8 +3309,8 @@ namespace App.ControlLogicaProcesos
                             iva = lineaTotales.FirstOrDefault().Substring(34, 14).Trim().TrimStart('0');
 
                             resultado.Add(Helpers.ValidarPipePipe($"1DDA|{lineaDetalle.Key}|{DescripcionLineaNegocio}|" +
-                                $"{Helpers.SumarCampos(new List<string> { @base, recargoMora })}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, iva)}|" +
-                                $"{Helpers.SumarCampos(new List<string> { @base, iva, recargoMora })}| "));
+                                $"{Helpers.SumarCampos(new List<string> { @base, recargoMora }, "G")}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, iva)}|" +
+                                $"{Helpers.SumarCampos(new List<string> { @base, iva, recargoMora }, "G")}| "));
                             #endregion
 
                             #region Armar Canal 1DDD
@@ -3233,8 +3358,8 @@ namespace App.ControlLogicaProcesos
                                 string DescripcionCodigoFactura = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruce).FirstOrDefault()?.Substring(15).Trim() ?? string.Empty;
 
                                 resultado.Add(Helpers.ValidarPipePipe($"1DDD|{lineaDetalle.Key}|{DescripcionCodigoFactura}|" +
-                                $"{Helpers.SumarCampos(sumaValoresBase)}|{Helpers.SumarCampos(sumaValoresIva)}|" +
-                                $"{Helpers.SumarCampos(sumaValoresTotal)}|{Helpers.SumarCampos(sumaValoresSubsidio)}| | "));
+                                $"{Helpers.SumarCampos(sumaValoresBase, "G")}|{Helpers.SumarCampos(sumaValoresIva, "G")}|" +
+                                $"{Helpers.SumarCampos(sumaValoresTotal, "G")}|{Helpers.SumarCampos(sumaValoresSubsidio, "G")}| | "));
                             }
                             #endregion
                         }
@@ -3380,8 +3505,8 @@ namespace App.ControlLogicaProcesos
                             }
 
                             resultado.Add(Helpers.ValidarPipePipe($"1EE1|{lineaDetalle.Key}|{Helpers.FormatearCampos(TiposFormateo.LetraCapital, lineaNegocio)}" +
-                                $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, @base)}|{Helpers.SumarCampos(new List<string> { iva, restaImpuesto })}|" +
-                                $"{Helpers.SumarCampos(new List<string> { @base, iva, restaImpuesto, impuesto })}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, impuesto)}| "));
+                                $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, @base)}|{Helpers.SumarCampos(new List<string> { iva, restaImpuesto }, "G")}|" +
+                                $"{Helpers.SumarCampos(new List<string> { @base, iva, restaImpuesto, impuesto }, "G")}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, impuesto)}| "));
                             #endregion
 
                             #region Datos 1EE2
@@ -3604,11 +3729,11 @@ namespace App.ControlLogicaProcesos
                         sumaValoresTotal.AddRange(sumaValoresBase);
                         sumaValoresTotal.AddRange(sumaValoresIva);
 
-                        resultado.Add(Helpers.ValidarPipePipe($"1GGA|Total {descripcionSubProducto}|{Helpers.SumarCampos(sumaValoresBase)}|" +
-                            $"{Helpers.SumarCampos(sumaValoresIva)}|{Helpers.SumarCampos(sumaValoresTotal)}| "));
+                        resultado.Add(Helpers.ValidarPipePipe($"1GGA|Total {descripcionSubProducto}|{Helpers.SumarCampos(sumaValoresBase, "G")}|" +
+                            $"{Helpers.SumarCampos(sumaValoresIva, "G")}|{Helpers.SumarCampos(sumaValoresTotal, "G")}| "));
 
-                        resultado.Add(Helpers.ValidarPipePipe($"1GGB|Total {descripcionProducto}|{Helpers.SumarCampos(sumaValoresBase1GGB)}|" +
-                            $"{Helpers.SumarCampos(sumaValoresIva1GGB)}|{Helpers.SumarCampos(sumaValoresTotal1GGB)}| "));
+                        resultado.Add(Helpers.ValidarPipePipe($"1GGB|Total {descripcionProducto}|{Helpers.SumarCampos(sumaValoresBase1GGB, "G")}|" +
+                            $"{Helpers.SumarCampos(sumaValoresIva1GGB, "G")}|{Helpers.SumarCampos(sumaValoresTotal1GGB, "G")}| "));
                         #endregion
                     }
                 }
@@ -3809,7 +3934,7 @@ namespace App.ControlLogicaProcesos
                 if (perido.Trim() != null)
                 {
                     resultado.Add(Helpers.ValidarPipePipe($"1FFF|{concepto}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, total)}" +
-                        $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, subtotal)}|{Helpers.SumarCampos(new List<string> { total, subtotal })}|{perido}| "));
+                        $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, subtotal)}|{Helpers.SumarCampos(new List<string> { total, subtotal }, "G")}|{perido}| "));
 
                     resultado.Add("1FFF| | | | | | ");
                 }
@@ -3839,7 +3964,7 @@ namespace App.ControlLogicaProcesos
                 string subtotal = linea13M317.FirstOrDefault().Substring(56, 14).Trim();
 
                 resultado = Helpers.ValidarPipePipe($"1FFA|Total|{Helpers.FormatearCampos(TiposFormateo.Decimal05, total)}" +
-                    $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, subtotal)}|{Helpers.SumarCampos(new List<string> { total, subtotal })}| ");
+                    $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, subtotal)}|{Helpers.SumarCampos(new List<string> { total, subtotal }, "G")}| ");
             }
 
             return resultado;
@@ -3985,12 +4110,12 @@ namespace App.ControlLogicaProcesos
                 #region Formatear 1JJA
 
                 lineaFormateada = "1JJA|Total|";
-                lineaFormateada += Helpers.SumarCampos(sumaCampo1) + "|";
-                lineaFormateada += Helpers.SumarCampos(sumaCampo2) + "|";
-                lineaFormateada += Helpers.SumarCampos(sumaCampo3) + "|";
-                lineaFormateada += Helpers.SumarCampos(sumaCampo4) + "|";
-                lineaFormateada += Helpers.SumarCampos(sumaCampo5) + "|";
-                lineaFormateada += Helpers.SumarCampos(sumaCampo6) + "| ";
+                lineaFormateada += Helpers.SumarCampos(sumaCampo1, "G") + "|";
+                lineaFormateada += Helpers.SumarCampos(sumaCampo2, "G") + "|";
+                lineaFormateada += Helpers.SumarCampos(sumaCampo3, "G") + "|";
+                lineaFormateada += Helpers.SumarCampos(sumaCampo4, "G") + "|";
+                lineaFormateada += Helpers.SumarCampos(sumaCampo5, "G") + "|";
+                lineaFormateada += Helpers.SumarCampos(sumaCampo6, "G") + "| ";
                 resultado.Add(Helpers.ValidarPipePipe(lineaFormateada));
 
                 #endregion

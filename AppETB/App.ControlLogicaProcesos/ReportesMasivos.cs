@@ -44,147 +44,86 @@ namespace App.ControlLogicaProcesos
         public void Ejecutar(Dictionary<string, List<string>> pDatosImprimir)
         {
             Helpers.CrearCarpeta(rutaSalida + @"\Reportes");
-            ListarArchivosProcesar();
-            ExtraccionReportes(pDatosImprimir);
+            CargarDiccionario();
+
+            ExtraccionReportes(DiccionarioExtractosReporte);           
+
         }
 
-        private void ListarArchivosProcesar()
+        private void CargarDiccionario()
         {
-            List<string> archivosSal = new List<string>();
-            archivosSal = Directory.GetFiles(rutaSalida).ToList();
+            DiccionarioExtractosReporte = Variables.Variables.DiccionarioExtractosFormateados;
 
-            foreach (var archivoActual in archivosSal)
+            // Agrego los datos de No Imprimir
+            foreach (var keyNoImprimir in Variables.Variables.CuentasNoImprimir.Keys)
             {
-                if (archivoActual.Contains("COMPLETO"))
-                {
-                    LeerArchivosReporte(archivoActual);
-                }
-                else if (archivoActual.Contains("NO_IMPRIMIR"))
-                {
-                    LeerArchivosReporte(archivoActual);
-                }
-                else if (archivoActual.Contains("ERROR"))
-                {
-                    LeerArchivosReporte(archivoActual);
-                }
+                DiccionarioExtractosReporte.Add(keyNoImprimir, new List<string>(Variables.Variables.CuentasNoImprimir[keyNoImprimir]));
+            }
+
+            // Agrego los datos de ErrorLTE
+            foreach (var keyErrorLTE in Variables.Variables.DatosErrorLTE.Keys)
+            {
+                DiccionarioExtractosReporte.Add(keyErrorLTE, new List<string>(Variables.Variables.DatosErrorLTE[keyErrorLTE]));
             }
         }
 
-        private void LeerArchivosReporte(string pArchivo)
-        {
-            List<string> DatosArchivo = File.ReadAllLines(pArchivo, Encoding.Default).ToList();
-            bool extractoCompleto = false;
-            List<string> datosExtractoCompleto = new List<string>();
-            string llaveCruce = string.Empty;
-
-
-            if (DatosArchivo.Count > 0)
-            {
-                foreach (var linea in DatosArchivo)
-                {
-                    if (linea.Split('|')[0] == "1AAA") //Inicio Extracto
-                    {
-                        extractoCompleto = false;
-
-                        if (datosExtractoCompleto.Count > 1)
-                        {
-                            extractoCompleto = true;
-                        }
-
-                        if (extractoCompleto)
-                        {
-                            llaveCruce = datosExtractoCompleto.ElementAt(0).Split('|')[7].Trim();
-                            CargarDiccionario(llaveCruce,datosExtractoCompleto);
-                            datosExtractoCompleto.Clear();
-                        }
-
-                        datosExtractoCompleto.Add(linea);
-                    }
-                    else
-                    {
-                        datosExtractoCompleto.Add(linea);
-                    }
-                }
-
-                //Ultimo Extracto
-                if (datosExtractoCompleto.Count > 1)
-                {
-                    llaveCruce = datosExtractoCompleto.ElementAt(0).Split('|')[7].Trim();
-                    CargarDiccionario(llaveCruce, datosExtractoCompleto);
-                    datosExtractoCompleto.Clear();                   
-                }
-            }
-        }
-
-        private void CargarDiccionario(string llaveCruce, List<string> extracto)
-        {
-            if(DiccionarioExtractosReporte.ContainsKey(llaveCruce))
-            {
-                DiccionarioExtractosReporte[llaveCruce].AddRange(extracto);
-            }
-            else
-            {
-                DiccionarioExtractosReporte.Add(llaveCruce, new List<string>(extracto) );
-            }
-        }
-
-        private void ExtraccionReportes(Dictionary<string, List<string>> pDatosImprimir)
+        private void ExtraccionReportes(Dictionary<string, List<string>> pDatosProcesados)
         {
             List<string> listReporte = new List<string>();
+            
+            foreach (var datosSal in pDatosProcesados.Values)            
+            {
+                // Rpt Maestra
+                listReporte.AddRange(GetReporteMaestra(datosSal.ToList()));
+                EscribirReporteMaestra(listReporte);
+                listReporte.Clear();
 
-            // Rpt Maestra
-            listReporte = GetReporteMaestra(pDatosImprimir);
-            EscribirReporteMaestra(listReporte);
-            listReporte.Clear();
+                // Rpt Maestra Insertos
+                listReporte.AddRange(GetReporteMaestraInserto(datosSal.ToList()));
+                EscribirReporteMaestraInserto(listReporte);
+                listReporte.Clear();
 
-            // Rpt Maestra Insertos
-            listReporte = GetReporteMaestraInserto(pDatosImprimir);
-            EscribirReporteMaestraInserto(listReporte);
-            listReporte.Clear();
+                // Rpt Resumen Distribucion Especial
+                listReporte = GetReporteDistribucionEspecial(datosSal.ToList());
+                EscribirReporteDistribucionEspecial(listReporte);
+                listReporte.Clear();
+
+                // Rpt Resumen SMS
+                listReporte = GetReporteSMS(datosSal.ToList());
+                EscribirReporteSMS(listReporte);
+                listReporte.Clear();
+            }
 
             // Rpt Resumen Maestra
-            listReporte = GetLineaResumenMaestra(pDatosImprimir);
+            listReporte = GetLineaResumenMaestra(DiccionarioExtractosReporte);
             EscribirReporteResumenMaestra(listReporte);
             listReporte.Clear();
 
             // Rpt Resumen Estadistico
             listReporte = GetReporteEstadistico();
             EscribirReporteEstadistico(listReporte);
-            listReporte.Clear();
-
-            // Rpt Resumen Distribucion Especial
-            listReporte = GetReporteDistribucionEspecial(pDatosImprimir);
-            EscribirReporteDistribucionEspecial(listReporte);
-            listReporte.Clear();
-
-            // Rpt Resumen Distribucion Especial
-            listReporte = GetReporteSMS(pDatosImprimir);
-            EscribirReporteSMS(listReporte);
-            listReporte.Clear();
+            listReporte.Clear();            
         }
 
-        private List<string> GetReporteMaestra(Dictionary<string, List<string>> pDatosImprimir)
+        private List<string> GetReporteMaestra(List<string> pDatosImprimir)
         {
             #region GetReporteMaestra
             List<string> lineaMaestra = new List<string>();
-
-            foreach (List<string> extracto in pDatosImprimir.Values)
-            {
-                lineaMaestra.Add(GetLineaMaestra(extracto));
-            }
+            lineaMaestra.Add(GetLineaMaestra(pDatosImprimir));
 
             return lineaMaestra;
             #endregion
         }
 
-        private List<string> GetReporteMaestraInserto(Dictionary<string, List<string>> pDatosImprimir)
+        private List<string> GetReporteMaestraInserto(List<string> pDatosImprimir)
         {
             #region GetReporteMaestraInserto
             List<string> lineaMaestraInserto = new List<string>();
+            string lineaInsert = GetLineaMaestraInserto(pDatosImprimir);
 
-            foreach (List<string> extracto in pDatosImprimir.Values)
+            if(!string.IsNullOrEmpty(lineaInsert))
             {
-                lineaMaestraInserto.Add(GetLineaMaestraInserto(extracto));
+                lineaMaestraInserto.Add(GetLineaMaestraInserto(pDatosImprimir));
             }
 
             return lineaMaestraInserto;
@@ -213,38 +152,32 @@ namespace App.ControlLogicaProcesos
             #endregion
         }
 
-        private List<string> GetReporteDistribucionEspecial(Dictionary<string, List<string>> pDatosImprimir)
+        private List<string> GetReporteDistribucionEspecial(List<string> pExtracto)
         {
             #region GetReporteDistribucionEspecial
             List<string> lineaReporte = new List<string>();
             string lineaTem = string.Empty;
 
-            foreach (List<string> extracto in pDatosImprimir.Values)
+            lineaTem = GetLineaDistribucionEspecial(pExtracto);
+            if (!string.IsNullOrEmpty(lineaTem))
             {
-                lineaTem = GetLineaDistribucionEspecial(extracto);
-                if (!string.IsNullOrEmpty(lineaTem))
-                {
-                    lineaReporte.Add(lineaTem);
-                }
+                lineaReporte.Add(lineaTem);
             }
 
             return lineaReporte;
             #endregion
         }
 
-        private List<string> GetReporteSMS(Dictionary<string, List<string>> pDatosImprimir)
+        private List<string> GetReporteSMS(List<string> pExtracto)
         {
             #region GetReporteMSM
             List<string> lineaReporte = new List<string>();
             string lineaTem = string.Empty;
 
-            foreach (List<string> extracto in pDatosImprimir.Values)
+            lineaTem = GetLineaSMS(pExtracto);
+            if (!string.IsNullOrEmpty(lineaTem))
             {
-                lineaTem = GetLineaSMS(extracto);
-                if (!string.IsNullOrEmpty(lineaTem))
-                {
-                    lineaReporte.Add(lineaTem);
-                }
+                lineaReporte.Add(lineaTem);
             }
 
             return lineaReporte;
@@ -366,7 +299,7 @@ namespace App.ControlLogicaProcesos
 
         private string GetLineaMaestraInserto(List<string> pExtracto)
         {
-            #region GetLineaMaestra
+            #region GetLineaMaestraInserto
             string LineaMaestraInserto = string.Empty;
             List<string> camposLinea = new List<string>();
 
@@ -519,7 +452,7 @@ namespace App.ControlLogicaProcesos
 
         private string GetLineaDistribucionEspecial(List<string> pExtracto)
         {
-            #region GetLineaMaestra
+            #region GetLineaDistribucionEspecial
             string LineaDistribucionEspecial = string.Empty;
             List<string> camposLinea = new List<string>();
 
@@ -533,9 +466,7 @@ namespace App.ControlLogicaProcesos
             if (result1AAA.Any())
             {
                 string[] campos1AAA = result1AAA.FirstOrDefault().Split('|');
-
                 cuenta = campos1AAA[7];
-
                 LineaDistribucionEspecial = GetDistribucionEspecial();
 
             }
@@ -875,11 +806,14 @@ namespace App.ControlLogicaProcesos
             List<string> resultado = new List<string>();
             string rutaReportes = string.Empty;
             string nombreArchivo = lote + "_Maestra.txt";
-
-            resultado.Add("Telefono|Cuenta|Nombre|Direccion|Zona|Consecutivo|Archivo|Factura|Mora|Estrato|Dane|Ciudad|Localidad|Barrio|TotalFactura|Ciclo|Lote|Fecx|Fecp|Fecb|Fecc|Total Iva|Total IVA Otros Operadores|Insertos|Valor Pagar Mes|Actividad|Logo TIC|Valor Subsidiado|TipoEnvioCartaEmail|Email|FECL|ReferenciaPago|ProcedimientoReclamacion|LeyendaCartera|NIT/CED|TipoProducto|PlanPrimarioLTE|PlanActual|ConceptoFinanciacion|SaldoFinanciacion|cuotaFinanciacion|ValorfacturaAnterior|GraciasPorSuPago|PorcentajeMora|Retencion|ORDER_COURRIER|CourerAsignado|MarcaRoaming|CodigoBarra|NroLineas12M|MarcaPaqueteHBO|MinutosConsumoMes|CuentaVencidaAnticipada|Precis|ChipCatastral|Cordenadas|CUFE|QR");
-            resultado.AddRange(pDatosImprimir);
-
             rutaReportes = Path.Combine(rutaSalida, "Reportes", nombreArchivo);
+
+            if(!File.Exists(rutaReportes))
+            {
+                resultado.Add("Telefono|Cuenta|Nombre|Direccion|Zona|Consecutivo|Archivo|Factura|Mora|Estrato|Dane|Ciudad|Localidad|Barrio|TotalFactura|Ciclo|Lote|Fecx|Fecp|Fecb|Fecc|Total Iva|Total IVA Otros Operadores|Insertos|Valor Pagar Mes|Actividad|Logo TIC|Valor Subsidiado|TipoEnvioCartaEmail|Email|FECL|ReferenciaPago|ProcedimientoReclamacion|LeyendaCartera|NIT/CED|TipoProducto|PlanPrimarioLTE|PlanActual|ConceptoFinanciacion|SaldoFinanciacion|cuotaFinanciacion|ValorfacturaAnterior|GraciasPorSuPago|PorcentajeMora|Retencion|ORDER_COURRIER|CourerAsignado|MarcaRoaming|CodigoBarra|NroLineas12M|MarcaPaqueteHBO|MinutosConsumoMes|CuentaVencidaAnticipada|Precis|ChipCatastral|Cordenadas|CUFE|QR");
+            }
+            
+            resultado.AddRange(pDatosImprimir);            
 
             Helpers.EscribirEnArchivo(rutaReportes, resultado);
 
@@ -898,11 +832,14 @@ namespace App.ControlLogicaProcesos
             List<string> resultado = new List<string>();
             string rutaReportes = string.Empty;
             string nombreArchivo = lote + "_Maestra_Insertos.txt";
-
-            resultado.Add("Telefono|Cuenta|Nombre|Direccion|Zona|CscImp|NomArchivo|Factura|ValoraPagar|Ciclo|Inserto");
-            resultado.AddRange(pDatosImprimir);
-
             rutaReportes = Path.Combine(rutaSalida, "Reportes", nombreArchivo);
+
+            if(!File.Exists(rutaReportes))
+            {
+                resultado.Add("Telefono|Cuenta|Nombre|Direccion|Zona|CscImp|NomArchivo|Factura|ValoraPagar|Ciclo|Inserto");
+            }
+            
+            resultado.AddRange(pDatosImprimir);
 
             Helpers.EscribirEnArchivo(rutaReportes, resultado);
 
@@ -921,11 +858,13 @@ namespace App.ControlLogicaProcesos
             List<string> resultado = new List<string>();
             string rutaReportes = string.Empty;
             string nombreArchivo = lote + "_Resumen_Maestra.txt";
-
-            resultado.Add("Archivo|Tipo|Cantidad");
-            resultado.AddRange(pDatosImprimir);
-
             rutaReportes = Path.Combine(rutaSalida, "Reportes", nombreArchivo);
+
+            if(!File.Exists(rutaReportes))
+            {
+                resultado.Add("Archivo|Tipo|Cantidad");
+            }            
+            resultado.AddRange(pDatosImprimir);            
 
             Helpers.EscribirEnArchivo(rutaReportes, resultado);
 
@@ -944,11 +883,14 @@ namespace App.ControlLogicaProcesos
             List<string> resultado = new List<string>();
             string rutaReportes = string.Empty;
             string nombreArchivo = lote + "Estadistico.txt";
-
-            resultado.Add("Archivo|Cons_Ini|Cons_Fin|Facturas|Impresor");
-            resultado.AddRange(pDatosImprimir);
-
             rutaReportes = Path.Combine(rutaSalida, "Reportes", nombreArchivo);
+
+            if(!File.Exists(rutaReportes))
+            {
+                resultado.Add("Archivo|Cons_Ini|Cons_Fin|Facturas|Impresor");
+            }
+            
+            resultado.AddRange(pDatosImprimir);            
 
             Helpers.EscribirEnArchivo(rutaReportes, resultado);
 
