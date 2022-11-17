@@ -501,16 +501,10 @@ namespace App.ControlEjecucion
                                         where n.Substring(0, 4) == "1AAA"
                                         select n.Replace("KitXXXX", nuevoConsecutivo);
 
-                        Variables.Variables.DiccionarioExtractosFormateados[datoLinea.Key][0] = Variables.Variables.DiccionarioExtractosFormateados[datoLinea.Key][0].Replace("KitXXXX", nuevoConsecutivo);
-
-                        resultado.AddRange(datoLinea.Value);
-
-                        consecutivo++;
-
                         // Se actualiza el Consecutivo del diccionario Original formateado
                         Variables.Variables.DiccionarioExtractosFormateados[datoLinea.Key][0] = Variables.Variables.DiccionarioExtractosFormateados[datoLinea.Key][0].Replace("KitXXXX", nuevoConsecutivo);
                         resultado.AddRange(datoLinea.Value);
-
+                        consecutivo++;
                     }
 
                     Helpers.EscribirEnArchivo($"{pRuta}\\{pNombreArchivo}", resultado);
@@ -836,7 +830,7 @@ namespace App.ControlEjecucion
                                 !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.NumHojas.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.DatosInsumoClientesEspecialesDatos.ContainsKey($"{busqueda.Key}-{busqueda.Value.FirstOrDefault().Split('|').ElementAt(9)}") &&
-                                !Variables.Variables.DatosInsumoDistribucionEmailLlanos.ContainsKey(busqueda.Key)
+                                !Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key)
                                 select busqueda).ToDictionary(x => x.Key).Values;
 
                     if (objDatos.Any())
@@ -850,7 +844,7 @@ namespace App.ControlEjecucion
                                 where Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.NumHojas.ContainsKey(busqueda.Key) &&
-                                !Variables.Variables.DatosInsumoDistribucionEmailLlanos.ContainsKey(busqueda.Key)
+                                !Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key)
                                 select busqueda).ToDictionary(x => x.Key).Values;
 
                     if (objDatos.Any())

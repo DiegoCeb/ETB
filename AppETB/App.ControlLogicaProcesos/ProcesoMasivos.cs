@@ -133,11 +133,11 @@ namespace App.ControlLogicaProcesos
                         }
                     }
 
-                    datosExtractoFormateo.Add(linea.Replace("|", string.Empty));
+                    datosExtractoFormateo.Add(linea.Replace("|", " "));
                 }
                 else
                 {
-                    datosExtractoFormateo.Add(linea.Replace("|", string.Empty));
+                    datosExtractoFormateo.Add(linea.Replace("|", " "));
                 }
             }
 
