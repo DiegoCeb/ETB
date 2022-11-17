@@ -49,6 +49,11 @@ namespace App.ControlLogicaProcesos
 
         public void CargueFormateoArchivo(string pArchivo)
         {
+            if (pArchivo.Contains("desktop.ini"))
+            {
+                return;
+            }
+
             #region CargueFormateoArchivo
             List<string> DatosArchivo = File.ReadAllLines(pArchivo, Encoding.Default).ToList();
             List<string> datosExtractoFormateo = new List<string>();
