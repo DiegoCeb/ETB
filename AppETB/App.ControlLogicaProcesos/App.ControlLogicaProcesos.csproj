@@ -54,6 +54,9 @@
     <Compile Include="ProcesoMasivos.cs" />
     <Compile Include="IProcess.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReportesAnexosVerdes.cs" />
+    <Compile Include="ReportesGobiernos.cs" />
+    <Compile Include="ReportesDatos.cs" />
     <Compile Include="ReportesMasivos.cs" />
   </ItemGroup>
   <ItemGroup>

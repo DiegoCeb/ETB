@@ -69,14 +69,12 @@ namespace App.ControlEjecucion
             {
                 _ = new ProcesoMasivos(archivo, periodo);
             }
-
             
 
             //Escribir Diccionario Formateados llamando a un metodo de cracion de salidas donde se realice la segmentacion
             EscribirSalidasProceso($"{App.ControlInsumos.Helpers.RutaProceso}", Variables.Variables.DiccionarioExtractosFormateados, "1", lote);
 
-            // Se crean los reportes
-            string rutaReportes = Path.Combine(App.ControlInsumos.Helpers.RutaProceso, "Reportes");
+            // Se crean los reportes            
             _ = new ReportesMasivos(Variables.Variables.DiccionarioExtractosFormateados, App.ControlInsumos.Helpers.RutaProceso, lote);
 
             #endregion
@@ -103,6 +101,10 @@ namespace App.ControlEjecucion
 
             //Escribir Diccionario Formateados llamando a un metodo de cracion de salidas donde se realice la segmentacion
             EscribirSalidasProceso($"{App.ControlInsumos.Helpers.RutaProceso}", Variables.Variables.DiccionarioExtractosFormateados, "2", lote);
+
+            // Se crean los reportes
+            _ = new ReportesDatos(Variables.Variables.DiccionarioExtractosFormateados, App.ControlInsumos.Helpers.RutaProceso, lote);
+
             #endregion
         }
 
@@ -128,6 +130,9 @@ namespace App.ControlEjecucion
 
             //Escribir Diccionario Formateados llamando a un metodo de cracion de salidas donde se realice la segmentacion
             EscribirSalidasProceso($"{App.ControlInsumos.Helpers.RutaProceso}", Variables.Variables.DiccionarioExtractosFormateados, "3", lote);
+
+            // Se crean los reportes            
+            _ = new ReportesGobiernos(Variables.Variables.DiccionarioExtractosFormateados, App.ControlInsumos.Helpers.RutaProceso, lote);
             #endregion
         }
 
@@ -192,6 +197,9 @@ namespace App.ControlEjecucion
 
             //Escribir Diccionario Formateados llamando a un metodo de cracion de salidas donde se realice la segmentacion
             EscribirSalidasProceso($"{App.ControlInsumos.Helpers.RutaProceso}", Variables.Variables.DiccionarioExtractosFormateados, "6");
+
+            // Se crean los reportes
+            _ = new ReportesAnexosVerdes(Variables.Variables.DiccionarioExtractosFormateados, App.ControlInsumos.Helpers.RutaProceso, "");
             #endregion
         }
 
@@ -499,9 +507,7 @@ namespace App.ControlEjecucion
 
                         var nuevo1AAA = from n in datoLinea.Value
                                         where n.Substring(0, 4) == "1AAA"
-                                        select n.Replace("KitXXXX", nuevoConsecutivo);
-
-                        Variables.Variables.DiccionarioExtractosFormateados[datoLinea.Key][0] = Variables.Variables.DiccionarioExtractosFormateados[datoLinea.Key][0].Replace("KitXXXX", nuevoConsecutivo);
+                                        select n.Replace("KitXXXX", nuevoConsecutivo);                        
 
                         resultado.AddRange(datoLinea.Value);
 
@@ -533,6 +539,8 @@ namespace App.ControlEjecucion
             List<string> resultado = new List<string>();
             int consecutivoInternoDivision = 0;
             int consecutivoInternoArchivo = 1;
+            string cuenta = string.Empty;
+            string archivoActual = string.Empty;           
 
             switch (pTipoProceso)
             {
@@ -547,10 +555,18 @@ namespace App.ControlEjecucion
                             if (linea.Substring(0, 4) == "1AAA")
                             {
                                 consecutivoInternoDivision++;
+                                cuenta = linea.Split('|')[7].Trim();
+                                archivoActual = $"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}_{consecutivoInternoArchivo.ToString().PadLeft(3, '0')}.sal";
+
+                                // Se agrega la cuenta en el archivo final                                
+                                if (!Variables.Variables.ArchivoSalidaFinal.ContainsKey(cuenta))
+                                    Variables.Variables.ArchivoSalidaFinal.Add(cuenta, archivoActual);
 
                                 if (consecutivoInternoDivision == 8001)
                                 {
-                                    Helpers.EscribirEnArchivo($"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}_{consecutivoInternoArchivo.ToString().PadLeft(3, '0')}.sal", resultado);
+                                    archivoActual = $"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}_{consecutivoInternoArchivo.ToString().PadLeft(3, '0')}.sal";
+                                    Helpers.EscribirEnArchivo(archivoActual, resultado);
+                                    //Helpers.EscribirEnArchivo($"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}_{consecutivoInternoArchivo.ToString().PadLeft(3, '0')}.sal", resultado);                                    
                                     consecutivoInternoArchivo++;
                                     consecutivoInternoDivision = 1;
                                     resultado.Clear();
@@ -559,8 +575,9 @@ namespace App.ControlEjecucion
 
                             resultado.Add(linea);
                         }
-
-                        Helpers.EscribirEnArchivo($"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}_{consecutivoInternoArchivo.ToString().PadLeft(3, '0')}.sal", resultado);
+                        
+                        Helpers.EscribirEnArchivo(archivoActual, resultado);
+                        //Helpers.EscribirEnArchivo($"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}_{consecutivoInternoArchivo.ToString().PadLeft(3, '0')}.sal", resultado);                        
                     }
 
                     break;
@@ -770,16 +787,25 @@ namespace App.ControlEjecucion
             List<string> resultado = new List<string>();
             int consecutivoInternoDivision = 0;
             int consecutivoInternoArchivo = 1;
+            string cuenta = string.Empty;
+            string archivoActual = string.Empty;
 
             foreach (var linea in pDatos.SelectMany(x => x.Value))
             {
                 if (linea.Substring(0, 4) == "1AAA")
                 {
                     consecutivoInternoDivision++;
+                    cuenta = linea.Split('|')[7].Trim();
+                    archivoActual = $"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}_{consecutivoInternoArchivo.ToString().PadLeft(3, '0')}.sal";
+
+                    // Se agrega la cuenta en el archivo final                                
+                    if (!Variables.Variables.ArchivoSalidaFinal.ContainsKey(cuenta))
+                        Variables.Variables.ArchivoSalidaFinal.Add(cuenta, archivoActual);
 
                     if (consecutivoInternoDivision == 8001)
                     {
-                        Helpers.EscribirEnArchivo($"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}_{consecutivoInternoArchivo.ToString().PadLeft(3, '0')}.sal", resultado);
+                        //Helpers.EscribirEnArchivo($"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}_{consecutivoInternoArchivo.ToString().PadLeft(3, '0')}.sal", resultado);
+                        Helpers.EscribirEnArchivo(archivoActual, resultado);
                         consecutivoInternoArchivo++;
                         consecutivoInternoDivision = 1;
                         resultado.Clear();
@@ -795,7 +821,8 @@ namespace App.ControlEjecucion
                 resultado.Add(linea);
             }
 
-            Helpers.EscribirEnArchivo($"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}_{consecutivoInternoArchivo.ToString().PadLeft(3, '0')}.sal", resultado);
+            Helpers.EscribirEnArchivo(archivoActual, resultado);
+            //Helpers.EscribirEnArchivo($"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}_{consecutivoInternoArchivo.ToString().PadLeft(3, '0')}.sal", resultado);
 
             resultado.Clear();
             #endregion
@@ -886,6 +913,11 @@ namespace App.ControlEjecucion
                     if (fechaPeriodoProceso == fechaPeriodoInsumo)
                     {
                         datosFinales.AddRange(dato.Value);
+
+                        // Se agrega la cuenta en el archivo final                                
+                        if (!Variables.Variables.ArchivoSalidaFinal.ContainsKey(dato.Key))
+                            Variables.Variables.ArchivoSalidaFinal.Add(dato.Key, $"{pRuta}\\{pNombreArchivo}");
+
                     }
                 }
             }
@@ -907,11 +939,21 @@ namespace App.ControlEjecucion
         {
             #region EscribirDatosSalidaErrorLte
             List<string> resultado = new List<string>();
+            string cuenta = string.Empty;
 
             if (Variables.Variables.DatosErrorLTE.Any())
             {
                 foreach (var linea in Variables.Variables.DatosErrorLTE.SelectMany(x => x.Value))
                 {
+                    if(linea.Split('|')[0] == "1AAA")
+                    {
+                        cuenta = linea.Split('|')[7];
+
+                        // Se agrega la cuenta en el archivo final                                
+                        if (!Variables.Variables.ArchivoSalidaFinal.ContainsKey(cuenta))
+                            Variables.Variables.ArchivoSalidaFinal.Add(cuenta, $"{pRuta}\\{pNombreArchivo}");
+                    }
+
                     resultado.Add(linea);
                 }
 
@@ -945,6 +987,11 @@ namespace App.ControlEjecucion
             foreach (var dato in busquedaCuentas)
             {
                 Variables.Variables.Diferencias.Add(dato.Key, string.Empty);
+
+                // Se agrega la cuenta en el archivo final                                
+                if (!Variables.Variables.ArchivoSalidaFinal.ContainsKey(dato.Key))
+                    Variables.Variables.ArchivoSalidaFinal.Add(dato.Key, $"{pRuta}\\{pNombreArchivo}");
+
 
                 if (pDatosImprimir.ContainsKey(dato.Key))
                 {
@@ -1042,6 +1089,10 @@ namespace App.ControlEjecucion
             foreach (var datoCuenta in pDatos)
             {
                 resultado.AddRange(datoCuenta.Value);
+
+                // Se agrega la cuenta en el archivo final                                
+                if (!Variables.Variables.ArchivoSalidaFinal.ContainsKey(datoCuenta.Key))
+                    Variables.Variables.ArchivoSalidaFinal.Add(datoCuenta.Key, $"{pRuta}\\{pNombreArchivo}");
             }
 
             Helpers.EscribirEnArchivo($"{pRuta}\\{pNombreArchivo}", resultado);
@@ -1215,8 +1266,8 @@ namespace App.ControlEjecucion
             int consecutivo = 1;
             int consecutivoInternoDivision = 0;
             int consecutivoInternoArchivo = 1;
-
-            //Dictionary<string, List<string>> datosImprimirFinal = new Dictionary<string, List<string>>(pDatos);
+            string cuenta = string.Empty;
+            string archivoActual = string.Empty;            
 
             foreach (var datoCuenta in pDatos)
             {
@@ -1229,10 +1280,17 @@ namespace App.ControlEjecucion
                 if (datoCuenta.Value.FirstOrDefault().Substring(0, 4) == "1AAA")
                 {
                     consecutivoInternoDivision++;
+                    cuenta = datoCuenta.Value.FirstOrDefault().Split('|')[7].Trim();
+                    archivoActual = $"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}_{consecutivoInternoArchivo.ToString().PadLeft(3, '0')}.sal";
+
+                    // Se agrega la cuenta en el archivo final                                
+                    if (!Variables.Variables.ArchivoSalidaFinal.ContainsKey(cuenta))
+                        Variables.Variables.ArchivoSalidaFinal.Add(cuenta, archivoActual);
 
                     if (consecutivoInternoDivision == 8001)
                     {
-                        Helpers.EscribirEnArchivo($"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}_{consecutivoInternoArchivo.ToString().PadLeft(3, '0')}.sal", resultado);
+                        //Helpers.EscribirEnArchivo($"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}_{consecutivoInternoArchivo.ToString().PadLeft(3, '0')}.sal", resultado);
+                        Helpers.EscribirEnArchivo(archivoActual, resultado);
                         consecutivoInternoArchivo++;
                         consecutivoInternoDivision = 1;
                         resultado.Clear();
@@ -1246,7 +1304,8 @@ namespace App.ControlEjecucion
                 consecutivo++;
             }
 
-            Helpers.EscribirEnArchivo($"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}_{consecutivoInternoArchivo.ToString().PadLeft(3, '0')}.sal", resultado);
+            Helpers.EscribirEnArchivo(archivoActual, resultado);
+            //Helpers.EscribirEnArchivo($"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}_{consecutivoInternoArchivo.ToString().PadLeft(3, '0')}.sal", resultado);
 
             resultado.Clear();
             #endregion
@@ -1277,6 +1336,11 @@ namespace App.ControlEjecucion
                 {
                     Variables.Variables.NumHojas.Add(datoCuenta.Key, string.Empty);
                     resultado.AddRange(datoCuenta.Value);
+
+                    // Se agrega la cuenta en el archivo final
+                    if (!Variables.Variables.ArchivoSalidaFinal.ContainsKey(datoCuenta.Key))
+                        Variables.Variables.ArchivoSalidaFinal.Add(datoCuenta.Key, $"{pRuta}\\{pNombreArchivo}");
+                    
                 }
 
                 Helpers.EscribirEnArchivo($"{pRuta}\\{pNombreArchivo}", resultado);
@@ -1313,6 +1377,10 @@ namespace App.ControlEjecucion
                     if (fechaPeriodoProceso == fechaPeriodoInsumo && cicloProceso == cicloInsumo)
                     {
                         datosFinales.AddRange(dato.Value);
+
+                        // Se agrega la cuenta en el archivo final                                
+                        if (!Variables.Variables.ArchivoSalidaFinal.ContainsKey(dato.Key))
+                            Variables.Variables.ArchivoSalidaFinal.Add(dato.Key, $"{pRuta}\\{pNombreArchivo}");
                     }
                 }
             }
@@ -1336,6 +1404,7 @@ namespace App.ControlEjecucion
             #region EscribirDatosSalidaImpresionNormal
             List<string> resultado = new List<string>();
             int consecutivo = 1;
+            string cuenta = string.Empty;
 
             var busquedaCuentasImpresion = (from busqueda in pDatosImprimir
                                             select busqueda).ToDictionary(x => x.Key).Values;
@@ -1350,11 +1419,20 @@ namespace App.ControlEjecucion
                                     where n.Substring(0, 4) == "1AAA"
                                     select n.Replace("KitXXXXX", nuevoConsecutivo);
 
+                    cuenta = nuevo1AAA.FirstOrDefault().Split('|')[7];
+
+                    // Se agrega la cuenta en el archivo final                                
+                    if (!Variables.Variables.ArchivoSalidaFinal.ContainsKey(cuenta))
+                        Variables.Variables.ArchivoSalidaFinal.Add(cuenta, $"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}.sal");
+
                     resultado.Add(nuevo1AAA.FirstOrDefault());
 
-                    datoCuenta.Value.RemoveAt(0);
+                    //datoCuenta.Value.RemoveAt(0);
+
+                    Variables.Variables.DiccionarioExtractosFormateados[datoCuenta.Key][0] = Variables.Variables.DiccionarioExtractosFormateados[datoCuenta.Key][0].Replace("KitXXXX", nuevoConsecutivo);
 
                     resultado.AddRange(datoCuenta.Value);
+                    
 
                     consecutivo++;
                 }

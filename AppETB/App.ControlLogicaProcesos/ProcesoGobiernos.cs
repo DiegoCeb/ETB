@@ -4185,7 +4185,14 @@ namespace App.ControlLogicaProcesos
                 valor = Variables.Variables.DatosInsumoETBFacturaElectronica[Cuenta];
             }
 
-            resultado += valor + "| ";
+            if (string.IsNullOrEmpty(valor))
+            {
+                resultado = string.Empty;
+            }
+            else
+            {
+                resultado += valor + "| ";
+            }
 
             return Helpers.ValidarPipePipe(resultado);
             #endregion

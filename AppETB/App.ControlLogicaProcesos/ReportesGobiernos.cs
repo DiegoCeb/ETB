@@ -6,9 +6,8 @@ using App.ControlInsumos;
 
 namespace App.ControlLogicaProcesos
 {
-    public class ReportesMasivos
+    public class ReportesGobiernos
     {
-
         #region Variables
         // Utiles
         public static Dictionary<string, List<string>> DiccionarioExtractosReporte = new Dictionary<string, List<string>>();
@@ -25,14 +24,13 @@ namespace App.ControlLogicaProcesos
         List<string> listaReporteMaestra = new List<string>();
         List<string> listaReporteDistrEspecial = new List<string>();
         List<string> listaReporteInsertos = new List<string>();
-        List<string> listaReporteSMS = new List<string>();
         #endregion
 
         #region Construcctores
         /// <summary>
         /// 
         /// </summary>
-        public ReportesMasivos()
+        public ReportesGobiernos()
         { }
 
         /// <summary>
@@ -41,7 +39,7 @@ namespace App.ControlLogicaProcesos
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRutaSalida"></param>
         /// <param name="pLote"></param>
-        public ReportesMasivos(Dictionary<string, List<string>> pDatosImprimir, string pRutaSalida, string pLote)
+        public ReportesGobiernos(Dictionary<string, List<string>> pDatosImprimir, string pRutaSalida, string pLote)
         {
             #region ProcesoMasivos
             try
@@ -86,11 +84,11 @@ namespace App.ControlLogicaProcesos
         {
             #region CargarDiccionario
             DiccionarioExtractosReporte = Variables.Variables.DiccionarioExtractosFormateados;
-
+            
             // Agrego los datos de No Imprimir
             foreach (var keyNoImprimir in Variables.Variables.CuentasNoImprimir.Keys)
             {
-                if (!DiccionarioExtractosReporte.ContainsKey(keyNoImprimir))
+                if(!DiccionarioExtractosReporte.ContainsKey(keyNoImprimir))
                     DiccionarioExtractosReporte.Add(keyNoImprimir, new List<string>(Variables.Variables.CuentasNoImprimir[keyNoImprimir]));
             }
 
@@ -113,7 +111,7 @@ namespace App.ControlLogicaProcesos
         {
             #region ExtraccionReportes
             List<string> listReporte = new List<string>();
-
+            
             foreach (var datosSal in pDatosProcesados.Values)
             {
                 // Rpt Maestra
@@ -132,13 +130,7 @@ namespace App.ControlLogicaProcesos
                 listReporte = GetReporteDistribucionEspecial(datosSal.ToList());
                 if (listReporte.Count > 0)
                     listaReporteDistrEspecial.AddRange(listReporte.ToList());
-                listReporte.Clear();
-
-                // Rpt Resumen SMS
-                listReporte = GetReporteSMS(datosSal.ToList());
-                if (listReporte.Count > 0)
-                    listaReporteSMS.AddRange(listReporte);                    
-                listReporte.Clear();
+                listReporte.Clear();                
             }
 
             // Escribir Maestra
@@ -153,14 +145,6 @@ namespace App.ControlLogicaProcesos
             EscribirReporteMaestraInserto(listaReporteInsertos);
             listaReporteInsertos.Clear();
 
-            // Escribir SMS Det
-            EscribirReporteSMS(listaReporteSMS);
-
-            // Rpt Resumen SMS
-            EscribirReporteSMSTotal();
-
-            // Cambiar nombre arvchivo SMS Detallado
-            RenombrarArchivoSMSDet();
 
             // Rpt Resumen Maestra
             listReporte = GetLineaResumenMaestra(DiccionarioExtractosReporte);
@@ -175,7 +159,7 @@ namespace App.ControlLogicaProcesos
             listReporte.Clear();  
             #endregion
         }
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -397,7 +381,7 @@ namespace App.ControlLogicaProcesos
                     camposLinea.Add(string.Empty); // QR
                 }
 
-                LineaMaestra = Helpers.ListaCamposToLinea(camposLinea, '|');
+                LineaMaestra = Helpers.ListaCamposToLinea(camposLinea, '|').Replace('\t',' ');
             }
 
             return LineaMaestra;
@@ -459,81 +443,190 @@ namespace App.ControlLogicaProcesos
 
             List<string> lineasResumen = new List<string>();
 
-            Dictionary<string, int> dicCartas = new Dictionary<string, int>();
+            Dictionary<string, int> dicFE = new Dictionary<string, int>();
+            Dictionary<string, int> dicTramites = new Dictionary<string, int>();
+            Dictionary<string, int> dicLocBar = new Dictionary<string, int>();
+            Dictionary<string, int> dicDisEspecial = new Dictionary<string, int>();
             Dictionary<string, int> dicTranspromo = new Dictionary<string, int>();
-            Dictionary<string, int> dicCupones = new Dictionary<string, int>();
+            Dictionary<string, int> dicFechaPagoFijo = new Dictionary<string, int>();
 
+            string tipo = string.Empty;
+            bool valorInsumo = false;
+            string transpromo = string.Empty;
 
             foreach (List<string> extracto in pDatosImprimir.Values)
             {
+
                 var result = from busqueda in extracto
-                             where busqueda.Length > 5 && (busqueda.Substring(0, 5).Equals("1AAA|") || busqueda.Substring(0, 5).Equals("CART|"))
+                             where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("1AAA|")
                              select busqueda;
 
                 if (result.Any())
                 {
-                    foreach (var lineaActual in result)
-                    {
-                        if (lineaActual.Substring(0, 4) == "1AAA")
-                        {
-                            // Llena diccionario Transpromo
-                            if (!string.IsNullOrEmpty(lineaActual.Split('|')[33].Trim()))
-                            {
-                                if (dicTranspromo.ContainsKey(lineaActual.Split('|')[33]))
-                                {
-                                    dicTranspromo[lineaActual.Split('|')[33]] = dicTranspromo[lineaActual.Split('|')[33]] + 1;
-                                }
-                                else
-                                {
-                                    dicTranspromo.Add(lineaActual.Split('|')[33], 1);
-                                }
-                            }
+                    cuenta = result.FirstOrDefault().Split('|')[7];
+                    tipo = result.FirstOrDefault().Split('|')[46];
+                    valorInsumo = false;
+                    transpromo = result.FirstOrDefault().Split('|')[33].Trim();
 
-                            // Llena diccionario Cupones
-                            if (!string.IsNullOrEmpty(lineaActual.Split('|')[36].Trim()))
-                            {
-                                if (dicCupones.ContainsKey(lineaActual.Split('|')[36]))
-                                {
-                                    dicCupones[lineaActual.Split('|')[36]] = dicCupones[lineaActual.Split('|')[36]] + 1;
-                                }
-                                else
-                                {
-                                    dicCupones.Add(lineaActual.Split('|')[36], 1);
-                                }
-                            }
-                        }
-                        else if (lineaActual.Substring(0, 4) == "CART")
-                        {
-                            // Llena diccionario Cartas
-                            if (dicCartas.ContainsKey(lineaActual.Split('|')[1]))
-                            {
-                                dicCartas[lineaActual.Split('|')[1]] = dicCartas[lineaActual.Split('|')[1]] + 1;
-                            }
-                            else
-                            {
-                                dicCartas.Add(lineaActual.Split('|')[1], 1);
-                            }
-                        }
+                    #region Suma Cuentas FE
+                    if (Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey(cuenta))
+                    {
+                        valorInsumo = true;
                     }
+
+                    if (valorInsumo)
+                    {
+                        if (dicFE.ContainsKey(tipo))
+                        {
+                            dicFE[tipo] = dicFE[tipo] + 1;
+                        }
+                        else
+                        {
+                            dicFE.Add(tipo, 1);
+                        }
+
+                        valorInsumo = false;
+                    }
+                    #endregion
+
+                    #region Suma Tramites
+                    if (Variables.Variables.DatosInsumoTramites.ContainsKey(cuenta))
+                    {
+                        valorInsumo = true;
+                    }
+
+                    if (valorInsumo)
+                    {
+                        if (dicTramites.ContainsKey(tipo))
+                        {
+                            dicTramites[tipo] = dicTramites[tipo] + 1;
+                        }
+                        else
+                        {
+                            dicTramites.Add(tipo, 1);
+                        }
+
+                        valorInsumo = false;
+                    }
+                    #endregion
+
+                    #region Suma LOC_BAR
+                    if (Variables.Variables.DatosInsumoLocBar.ContainsKey(cuenta))
+                    {
+                        valorInsumo = true;
+                    }
+
+                    if (valorInsumo)
+                    {
+                        if (dicLocBar.ContainsKey(tipo))
+                        {
+                            dicLocBar[tipo] = dicLocBar[tipo] + 1;
+                        }
+                        else
+                        {
+                            dicLocBar.Add(tipo, 1);
+                        }
+
+                        valorInsumo = false;
+                    }
+                    #endregion
+
+                    #region Suma Distri. Especial
+                    if (Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(cuenta))
+                    {
+                        valorInsumo = true;
+                    }
+
+                    if (valorInsumo)
+                    {
+                        if (dicDisEspecial.ContainsKey(tipo))
+                        {
+                            dicDisEspecial[tipo] = dicDisEspecial[tipo] + 1;
+                        }
+                        else
+                        {
+                            dicDisEspecial.Add(tipo, 1);
+                        }
+
+                        valorInsumo = false;
+                    }
+                    #endregion
+
+                    #region Suma Transpromo
+                    if (Variables.Variables.DatosInsumoBaseTranspromo.ContainsKey(cuenta))
+                    {                        
+                        valorInsumo = true;
+                    }
+
+                    if (valorInsumo)
+                    {
+                        if (dicTranspromo.ContainsKey(transpromo))
+                        {
+                            dicTranspromo[transpromo] = dicTranspromo[transpromo] + 1;
+                        }
+                        else
+                        {
+                            dicTranspromo.Add(transpromo, 1);
+                        }
+
+                        valorInsumo = false;
+                    }
+                    #endregion
+
+                    #region Suma fecha Pago Fijo
+                    if (Variables.Variables.DatosInsumoFechaPagoFijas.ContainsKey(cuenta))
+                    {
+                        valorInsumo = true;
+                    }
+
+                    if (valorInsumo)
+                    {
+                        if (dicFechaPagoFijo.ContainsKey(tipo))
+                        {
+                            dicFechaPagoFijo[tipo] = dicFechaPagoFijo[tipo] + 1;
+                        }
+                        else
+                        {
+                            dicFechaPagoFijo.Add(tipo, 1);
+                        }
+
+                        valorInsumo = false;
+                    }
+                    #endregion
                 }
             }
 
 
             // llenar lista con resultados del diccionario
 
-            foreach (var keyCartas in dicCartas.Keys)
+            foreach (string keyFE in dicFE.Keys)
             {
-                lineasResumen.Add("Cartas" + keyCartas + "|" + dicCartas[keyCartas].ToString());
+                lineasResumen.Add("ETB_Factura_Electronica|" + keyFE + "|" + dicFE[keyFE].ToString());
             }
 
-            foreach (var keyTranspromo in dicTranspromo.Keys)
+            foreach (string keyTramites in dicTramites.Keys)
             {
-                lineasResumen.Add("BASETRANSPROMO" + keyTranspromo + "|" + dicTranspromo[keyTranspromo].ToString());
+                lineasResumen.Add("Tramites|" + keyTramites + "|" + dicTramites[keyTramites].ToString());
             }
 
-            foreach (var keyCupones in dicCupones.Keys)
+            foreach (string keyLocBar in dicLocBar.Keys)
             {
-                lineasResumen.Add("Cupones" + keyCupones + "|" + dicTranspromo[keyCupones].ToString());
+                lineasResumen.Add("LOC_BAR|" + keyLocBar + "|" + dicLocBar[keyLocBar].ToString());
+            }
+
+            foreach (string keyDisEspecial in dicDisEspecial.Keys)
+            {
+                lineasResumen.Add("distribucion_especial|" + keyDisEspecial + "|" + dicDisEspecial[keyDisEspecial].ToString());
+            }
+
+            foreach (string keyTranspromo in dicTranspromo.Keys)
+            {
+                lineasResumen.Add("BASETRANSPROMO|" + keyTranspromo + "|" + dicTranspromo[keyTranspromo].ToString());
+            }
+
+            foreach (string keyFechaPagoFijo in dicFechaPagoFijo.Keys)
+            {
+                lineasResumen.Add("Fechas_Pago_Fijas|" + keyFechaPagoFijo + "|" + dicFechaPagoFijo[keyFechaPagoFijo].ToString());
             }
 
             return lineasResumen;
@@ -669,9 +762,9 @@ namespace App.ControlLogicaProcesos
             #region GetArchivoSalida
             string nombreArchivo = string.Empty;
 
-            if (Variables.Variables.ArchivoSalidaFinal.ContainsKey(cuenta))
+            if(Variables.Variables.ArchivoSalidaFinal.ContainsKey(cuenta))
             {
-                nombreArchivo = Path.GetFileNameWithoutExtension(Variables.Variables.ArchivoSalidaFinal[cuenta]);
+                nombreArchivo = Path.GetFileNameWithoutExtension(Variables.Variables.ArchivoSalidaFinal[cuenta]); 
             }
 
             return nombreArchivo;
@@ -982,7 +1075,7 @@ namespace App.ControlLogicaProcesos
 
             List<string> resultado = new List<string>();
             string rutaReportes = string.Empty;
-            string nombreArchivo = lote + "_Maestra.txt";
+            string nombreArchivo = "ESP_" + lote + "_Maestra.txt";
             rutaReportes = Path.Combine(rutaSalida, "Reportes", nombreArchivo);
 
             if (!File.Exists(rutaReportes))
@@ -1008,7 +1101,7 @@ namespace App.ControlLogicaProcesos
 
             List<string> resultado = new List<string>();
             string rutaReportes = string.Empty;
-            string nombreArchivo = lote + "_Maestra_Insertos.txt";
+            string nombreArchivo = "ESP_" + lote + "_Maestra_Insertos.txt";
             rutaReportes = Path.Combine(rutaSalida, "Reportes", nombreArchivo);
 
             if (!File.Exists(rutaReportes))
@@ -1034,7 +1127,7 @@ namespace App.ControlLogicaProcesos
 
             List<string> resultado = new List<string>();
             string rutaReportes = string.Empty;
-            string nombreArchivo = lote + "_Resumen_Maestra.txt";
+            string nombreArchivo = "ESP_" + lote + "_Resumen_Maestra.txt";
             rutaReportes = Path.Combine(rutaSalida, "Reportes", nombreArchivo);
 
             if (!File.Exists(rutaReportes))
@@ -1059,7 +1152,7 @@ namespace App.ControlLogicaProcesos
 
             List<string> resultado = new List<string>();
             string rutaReportes = string.Empty;
-            string nombreArchivo = lote + "Estadistico.txt";
+            string nombreArchivo = "ESP_" + lote + "Estadistico.txt";
             rutaReportes = Path.Combine(rutaSalida, "Reportes", nombreArchivo);
 
             if (!File.Exists(rutaReportes))
@@ -1155,8 +1248,8 @@ namespace App.ControlLogicaProcesos
             }
 
             string nombreNuevo = Path.Combine(rutaSalida, "Reportes", nombreArchivoDetSMS.Replace("_CICLOS", cambiar));
-
-            if (File.Exists(nombreAnterior))
+            
+            if(File.Exists(nombreAnterior))
                 File.Move(nombreAnterior, nombreNuevo);
             #endregion
         } 
