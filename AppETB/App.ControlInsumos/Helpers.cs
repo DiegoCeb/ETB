@@ -2657,8 +2657,30 @@ namespace App.ControlInsumos
         public static void EscribirVentanaLog(string Mensaje)
         {
             #region EscribirVentanaLog
+            Console.ResetColor();
             Console.WriteLine(string.Format("{0} {1}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), Mensaje));
             Utilidades.EscribirLog(Mensaje, Utilidades.LeerAppConfig("RutaLog"));
+            #endregion
+        }
+
+        /// <summary>
+        /// Metodo creado para escribir en la Ventana de ejecucion
+        /// </summary>
+        /// <param name="Mensaje">Mensaje a escribir</param>
+        public static void EscribirVentanaMismaLinea(string Mensaje, bool fecha = true)
+        {
+            #region EscribirVentanaLog
+            if (fecha)
+            {
+                Console.ResetColor();
+                Console.Write(string.Format("{0} {1}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), Mensaje));
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write(Mensaje);
+            }
+
             #endregion
         }
 
@@ -3047,6 +3069,64 @@ namespace App.ControlInsumos
                 throw new Exception("Error: " + mens.Message);
             }
             #endregion
+        }
+
+        /// <summary>
+        /// Metodo que comprueba si una fecha es festiva o Dominical
+        /// </summary>
+        /// <param name="pFestivos"></param>
+        /// <param name="pFechaComporbar"></param>
+        /// <param name="pComprarDomingo"></param>
+        /// <returns>True es Festiva, false no es festiva</returns>
+        public static bool EsFestivo(List<DateTime> pFestivos, DateTime pFechaComporbar, bool pComprarDomingo = true)
+        {
+            #region EsFestivo
+            if (pFechaComporbar != null)
+            {
+                if (pFechaComporbar.DayOfWeek == DayOfWeek.Sunday)
+                {
+                    return true;
+                }
+                else
+                {
+
+                    if (pFestivos.Contains(pFechaComporbar))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+                return false;
+            } 
+            #endregion
+        }
+
+        /// <summary>
+        /// Metodo que obtiene el siguiente dia habil
+        /// </summary>
+        /// <param name="pFechaComporbar"></param>
+        /// <returns>proximo dia habil</returns>
+        public static DateTime GetSiguienteDiaHabil(DateTime pFechaComporbar)
+        {
+            #region GetSiguienteDiaHabil
+            DateTime fechaResult = pFechaComporbar;
+            
+            List<DateTime> festivos = ControlInsumos.FestivosColombia.DiasFestivos(pFechaComporbar.Year);
+
+            while (EsFestivo(festivos, pFechaComporbar))
+            {
+                fechaResult.AddDays(1);
+            }
+
+            return fechaResult; 
+            #endregion
+
         }
     }
 
