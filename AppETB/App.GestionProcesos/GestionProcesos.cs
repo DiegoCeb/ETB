@@ -76,6 +76,7 @@ namespace App.ControlProcesos
             }
 
             Helpers.EscribirVentanaLog("Final Existoso del Proceso, revise la carpeta salidas !!!");
+            Helpers.EscribirVentanaLog($"Ruta Salidas: {Helpers.RutaProceso}");
             Helpers.EscribirVentanaLog("Presione una tecla para cerrar...");
             Console.ReadKey();
             Environment.Exit(1); 
@@ -142,36 +143,54 @@ namespace App.ControlProcesos
             switch (Variables.Variables.Proceso)
             {
                 case "1":
+                    Helpers.EscribirVentanaLog("Proceso Seleccionado 1. Masivos");
+                    Helpers.EscribirVentanaLog(" ");
+                    Helpers.EscribirVentanaLog("Inicio Proceso Masivos");
                     Ejecutar("1");
                     break;
 
                 case "2":
+                    Helpers.EscribirVentanaLog("Proceso Seleccionado 2. Datos");
+                    Helpers.EscribirVentanaLog(" ");
+                    Helpers.EscribirVentanaLog("Inicio Proceso Datos");
                     Ejecutar("2");
                     break;
 
                 case "3":
+                    Helpers.EscribirVentanaLog("Proceso Seleccionado 3. Gobiernos");
+                    Helpers.EscribirVentanaLog(" ");
+                    Helpers.EscribirVentanaLog("Inicio Proceso Gobiernos");
                     Ejecutar("3");
                     break;
 
                 case "4":
+                    Helpers.EscribirVentanaLog("Proceso Seleccionado 4. Llanos");
+                    Helpers.EscribirVentanaLog(" ");
+                    Helpers.EscribirVentanaLog("Inicio Proceso Llanos");
                     Ejecutar("4");
                     break;
 
                 case "5":
+                    Helpers.EscribirVentanaLog("Proceso Seleccionado 5. Credito Hipotecario");
+                    Helpers.EscribirVentanaLog(" ");
+                    Helpers.EscribirVentanaLog("Inicio Proceso Credito Hipotecario");
                     Ejecutar("5");
                     break;
 
                 case "6":
+                    Helpers.EscribirVentanaLog("Proceso Seleccionado 6. Anexos Verdes");
+                    Helpers.EscribirVentanaLog("Inicio Proceso Anexos Verdes");
                     Ejecutar("6");
                     break;
 
                 default:
-                    Console.WriteLine("Ingrese el numero de proceso valido");
+                    Helpers.EscribirVentanaLog($"Ingrese el numero de proceso valido, Proceso Ingresado {Variables.Variables.Proceso}");
                     System.Threading.Thread.Sleep(1500);
                     Console.Clear();
                     Menu();
                     break;
             }
+            
             #endregion
         }
 
