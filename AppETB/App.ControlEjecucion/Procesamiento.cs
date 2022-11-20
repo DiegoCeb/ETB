@@ -27,8 +27,10 @@ namespace App.ControlEjecucion
             #region AdecuarTrabajoApp
             //Creacion Carpeta Salida
             Helpers.RutaProceso = Directory.CreateDirectory($"{Utilidades.LeerAppConfig("RutaSalida")}\\{pIdentificadorProceso}{DateTime.Now:yyyyMMddhhmmss}").FullName;
+            Helpers.EscribirVentanaLog($"Creación Ruta de Salida: {Helpers.RutaProceso}");
 
             //Mover de entrada a originales y trabajar con estos archivos
+            Helpers.EscribirVentanaLog("Mover Archivos de entrada a originales");
             Helpers.RutaOriginales = Directory.CreateDirectory($"{Utilidades.LeerAppConfig("RutaOriginales")}\\{pIdentificadorProceso}Originales{DateTime.Now:yyyyMMddhhmmss}").FullName;
             Helpers.MoverArchivos(Utilidades.LeerAppConfig("RutaEntrada"), Helpers.RutaOriginales);
 
@@ -39,11 +41,14 @@ namespace App.ControlEjecucion
 
                 default:
                     //Mover archivos de entrada a original y la carpeta completa de insumos
+                    Helpers.EscribirVentanaLog("Inicia Carga de Insumos");
                     Helpers.RutaInsumos = $"{Helpers.RutaOriginales}\\Insumos";
                     Helpers.CopiarCarpetaCompleta(Utilidades.LeerAppConfig("RutaInsumos"), Helpers.RutaInsumos, true);
 
                     //Cargue Lista Insumos para despues usar en el formateo desde originales
                     CargueGeneralInsumos(Helpers.RutaInsumos);
+                    Helpers.EscribirVentanaLog("Final Carga de Insumos");
+                    Helpers.EscribirVentanaLog(" ");
                     break;
             }
 
@@ -65,16 +70,25 @@ namespace App.ControlEjecucion
             string periodo = File.ReadAllLines(archivoPeriodo.FirstOrDefault()).ToList().ElementAt(0).Split('\t').ElementAt(1).PadLeft(6, '0');
             string lote = File.ReadAllLines(archivoPeriodo.FirstOrDefault()).ToList().ElementAt(0).Split('\t').ElementAt(5);
 
+            Helpers.EscribirVentanaLog($"Archivos Cargados Para Proceso: {archivos.Count().ToString()}");
+            Helpers.EscribirVentanaLog(" ");
+
+            Helpers.EscribirVentanaLog($"Inicia Formateo de Archivos");
+            Helpers.EscribirVentanaMismaLinea($"Formateando Archivos: ");
             foreach (var archivo in archivos)
             {
                 _ = new ProcesoMasivos(archivo, periodo);
+                Helpers.EscribirVentanaMismaLinea($"X", false);
             }
-            
+            Helpers.EscribirVentanaMismaLinea(System.Environment.NewLine, false);
 
             //Escribir Diccionario Formateados llamando a un metodo de cracion de salidas donde se realice la segmentacion
+            Helpers.EscribirVentanaLog($"Inicia Escritura de Salidas");
             EscribirSalidasProceso($"{App.ControlInsumos.Helpers.RutaProceso}", Variables.Variables.DiccionarioExtractosFormateados, "1", lote);
 
-            // Se crean los reportes            
+
+            // Se crean los reportes
+            Helpers.EscribirVentanaLog($"Inicia Proceso Reportes");
             _ = new ReportesMasivos(Variables.Variables.DiccionarioExtractosFormateados, App.ControlInsumos.Helpers.RutaProceso, lote);
 
             #endregion
@@ -94,15 +108,24 @@ namespace App.ControlEjecucion
 
             string lote = File.ReadAllLines(archivoPeriodo.FirstOrDefault()).ToList().ElementAt(0).Split('\t').ElementAt(5);
 
+            Helpers.EscribirVentanaLog($"Archivos Cargados Para Proceso: {archivos.Count().ToString()}");
+            Helpers.EscribirVentanaLog(" ");
+
+            Helpers.EscribirVentanaLog($"Inicia Formateo de Archivos");
+            Helpers.EscribirVentanaMismaLinea($"Formateando Archivos: ");
             foreach (var archivo in archivos)
-            {
+            {                
                 _ = new ProcesoDatos(archivo);
+                Helpers.EscribirVentanaMismaLinea($"X", false);
             }
+            Helpers.EscribirVentanaMismaLinea(System.Environment.NewLine, false);
 
             //Escribir Diccionario Formateados llamando a un metodo de cracion de salidas donde se realice la segmentacion
+            Helpers.EscribirVentanaLog($"Inicia Escritura de Salidas");
             EscribirSalidasProceso($"{App.ControlInsumos.Helpers.RutaProceso}", Variables.Variables.DiccionarioExtractosFormateados, "2", lote);
 
             // Se crean los reportes
+            Helpers.EscribirVentanaLog($"Inicia Proceso Reportes");
             _ = new ReportesDatos(Variables.Variables.DiccionarioExtractosFormateados, App.ControlInsumos.Helpers.RutaProceso, lote);
 
             #endregion
@@ -122,16 +145,24 @@ namespace App.ControlEjecucion
 
             string lote = File.ReadAllLines(archivoPeriodo.FirstOrDefault()).ToList().ElementAt(0).Split('\t').ElementAt(5);
 
+            Helpers.EscribirVentanaLog($"Archivos Cargados Para Proceso: {archivos.Count().ToString()}");
+            Helpers.EscribirVentanaLog(" ");
 
+            Helpers.EscribirVentanaLog($"Inicia Formateo de Archivos");
+            Helpers.EscribirVentanaMismaLinea($"Formateando Archivos: ");
             foreach (var archivo in archivos)
             {
                 _ = new ProcesoGobiernos(archivo);
+                Helpers.EscribirVentanaMismaLinea($"X", false);
             }
+            Helpers.EscribirVentanaMismaLinea(System.Environment.NewLine, false);
 
             //Escribir Diccionario Formateados llamando a un metodo de cracion de salidas donde se realice la segmentacion
+            Helpers.EscribirVentanaLog($"Inicia Escritura de Salidas");
             EscribirSalidasProceso($"{App.ControlInsumos.Helpers.RutaProceso}", Variables.Variables.DiccionarioExtractosFormateados, "3", lote);
 
-            // Se crean los reportes            
+            // Se crean los reportes
+            Helpers.EscribirVentanaLog($"Inicia Proceso Reportes");
             _ = new ReportesGobiernos(Variables.Variables.DiccionarioExtractosFormateados, App.ControlInsumos.Helpers.RutaProceso, lote);
             #endregion
         }
@@ -143,13 +174,20 @@ namespace App.ControlEjecucion
             var archivos = from busqueda in Directory.GetFiles(pRutaArchivosProcesar)
                            select busqueda;
 
+            Helpers.EscribirVentanaLog($"Archivos Cargados Para Proceso: {archivos.Count().ToString()}");
+            Helpers.EscribirVentanaLog(" ");
+
+            Helpers.EscribirVentanaLog($"Inicia Formateo de Archivos");
             foreach (var archivo in archivos)
             {
                 _ = new ProcesoLlanos(archivo);
             }
 
             //Escribir Diccionario Formateados llamando a un metodo de cracion de salidas donde se realice la segmentacion
+            Helpers.EscribirVentanaLog($"Inicia Escritura de Salidas");
             EscribirSalidasProceso($"{App.ControlInsumos.Helpers.RutaProceso}", Variables.Variables.DiccionarioExtractosFormateados, "4");
+
+            Helpers.EscribirVentanaLog($"Inicia Proceso Reportes");
             #endregion
         }
 
@@ -166,13 +204,18 @@ namespace App.ControlEjecucion
                                 select busqueda;
             Helpers.GetCartasHipotecario(archivosExcel.ToList());
 
+            Helpers.EscribirVentanaLog($"Inicia Formateo de Archivos");
             foreach (var archivo in archivos)
             {
                 _ = new ProcesoCreditoHipotecario(archivo);
             }
 
             //Escribir Diccionario Formateados llamando a un metodo de cracion de salidas donde se realice la segmentacion
+            Helpers.EscribirVentanaLog($"Inicia Escritura de Salidas");
             EscribirSalidasProceso($"{App.ControlInsumos.Helpers.RutaProceso}", Variables.Variables.DiccionarioExtractosFormateados, "5");
+
+            Helpers.EscribirVentanaLog($"Inicia Proceso Reportes");
+
             #endregion
         }
 
@@ -190,21 +233,25 @@ namespace App.ControlEjecucion
 
             Helpers.GetAuxAnexosVerdes(archivosAuxiliar.ToList());
 
+            Helpers.EscribirVentanaLog($"Inicia Formateo de Archivos");
             foreach (var archivo in archivos)
             {
                 _ = new ProcesoAnexosVerdes(pRutaArchivosProcesar);
             }
 
             //Escribir Diccionario Formateados llamando a un metodo de cracion de salidas donde se realice la segmentacion
+            Helpers.EscribirVentanaLog($"Inicia Escritura de Salidas");
             EscribirSalidasProceso($"{App.ControlInsumos.Helpers.RutaProceso}", Variables.Variables.DiccionarioExtractosFormateados, "6");
 
             // Se crean los reportes
+            Helpers.EscribirVentanaLog($"Inicia Proceso Reportes");
             _ = new ReportesAnexosVerdes(Variables.Variables.DiccionarioExtractosFormateados, App.ControlInsumos.Helpers.RutaProceso, "");
             #endregion
         }
 
         public void CargueGeneralInsumos(string Pruta)
         {
+            Helpers.EscribirVentanaMismaLinea($"Cargando Insumos: ");
             #region CargueGeneralInsumos
             foreach (var Carpeta in Directory.GetDirectories(Pruta))
             {
@@ -407,9 +454,12 @@ namespace App.ControlEjecucion
                         //TODO: No existe insumo configurado, Mostrar mensaje de error
 
                     }
+
+                    Helpers.EscribirVentanaMismaLinea($"X", false);
                 }
 
             }
+            Helpers.EscribirVentanaMismaLinea(System.Environment.NewLine, false);
             #endregion
         }
 

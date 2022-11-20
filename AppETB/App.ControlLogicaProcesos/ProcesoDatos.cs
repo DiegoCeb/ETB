@@ -431,7 +431,7 @@ namespace App.ControlLogicaProcesos
                 Linea040000 = result040000.FirstOrDefault();
 
                 Cuenta = Linea010000.Substring(117, 20).Trim();// Cuenta
-                Ciclo = Linea010000.Substring(151, 4).Trim().TrimStart('0'); // Asignamos Ciclo a variable Global
+                Ciclo = Linea010000.Substring(151, 3).Trim().TrimStart('0'); // Asignamos Ciclo a variable Global
 
                 cE = CargarClientesEspeciales(Cuenta, Ciclo);
 
@@ -468,9 +468,7 @@ namespace App.ControlLogicaProcesos
                 ListaCanal1AAA.Add(GetTelefono(datosOriginales));
                 ListaCanal1AAA.Add(string.Empty); // Tipo Identificacion solo aplica para Fibra
 
-                ListaCanal1AAA.Add(Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"FECP{Helpers.FormatearCampos(TiposFormateo.Fecha02, Linea010000.Substring(168, 8).Trim())}{Linea010000.Substring(151, 3).Trim().TrimStart('0')}").FirstOrDefault()?.Substring(12).Trim() ?? string.Empty);
-                ListaCanal1AAA.Add(Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"FECL{Helpers.FormatearCampos(TiposFormateo.Fecha02, Linea010000.Substring(168, 8).Trim())}{Linea010000.Substring(151, 3).Trim().TrimStart('0')}").FirstOrDefault()?.Substring(12).Trim() ?? string.Empty);
-                ListaCanal1AAA.Add(GetFechaExpedicion(Linea010000));
+                ListaCanal1AAA.AddRange(GetFechaPagoLimiteExpedicion(Linea010000));
 
                 ListaCanal1AAA.Add(GetNumeroReferencia(Linea010000.Substring(139, 12).Trim()));
                 ListaCanal1AAA.AddRange(GetCodigosBarras(Linea010000.Substring(139, 12), Linea010000, datosOriginales));
@@ -555,7 +553,18 @@ namespace App.ControlLogicaProcesos
             #region GetTotalPagar
             string resultado = string.Empty;
             List<string> valoresPago = ObtenerDatosCanal1BBB(pDatosOriginales, true).ToList();
-            string totalPagar = valoresPago[0].ToString().Trim().PadLeft(12, '0');
+
+            Int64 total = Convert.ToInt64(valoresPago[0].ToString().Trim());
+
+            string totalPagar = String.Empty;
+            if (total > 0)
+            {
+                totalPagar = valoresPago[0].ToString().Trim();
+            }
+            else
+            {
+                totalPagar = "0";
+            }
 
             resultado = Helpers.FormatearCampos(TiposFormateo.Decimal05, totalPagar);
             return resultado;
@@ -628,6 +637,54 @@ namespace App.ControlLogicaProcesos
             }
 
             return telefono;
+            #endregion
+        }
+
+        /// <summary>
+        /// Metodo que obtiene Fecha de Pago de Limite de pago y de Expedicion
+        /// </summary>
+        /// <param name="pLinea010000"></param>
+        /// <returns>Lista de Fechas</returns>
+        private List<string> GetFechaPagoLimiteExpedicion(string pLinea010000)
+        {
+            #region GetFechaPagoLimiteExpedicion
+            List<string> listaFechas = new List<string>();
+            string fechaPago = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"FECP{Helpers.FormatearCampos(TiposFormateo.Fecha02, pLinea010000.Substring(168, 8).Trim())}{pLinea010000.Substring(151, 3).Trim().TrimStart('0')}").FirstOrDefault()?.Substring(12).Trim() ?? string.Empty;
+            string fechaLimitePago = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"FECL{Helpers.FormatearCampos(TiposFormateo.Fecha02, pLinea010000.Substring(168, 8).Trim())}{pLinea010000.Substring(151, 3).Trim().TrimStart('0')}").FirstOrDefault()?.Substring(12).Trim() ?? string.Empty;
+            string fechaExpedicionInsumo = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"FECX{Helpers.FormatearCampos(TiposFormateo.Fecha02, pLinea010000.Substring(168, 8).Trim())}{pLinea010000.Substring(151, 3).Trim().TrimStart('0')}").FirstOrDefault()?.Substring(12).Trim() ?? string.Empty;
+            string fechaExpedicion = GetFechaExpedicion(pLinea010000);
+
+            string fechaPagoFijo = Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoFechaPagoFijas, $"{Cuenta}") ?? string.Empty;
+
+            if (!string.IsNullOrEmpty(fechaPagoFijo) && !string.IsNullOrEmpty(fechaExpedicionInsumo))
+            {
+                string[] campos = fechaPagoFijo.Split('|');
+                int diasCorte = Convert.ToInt32(campos[1]);
+
+                DateTime fechaReferencia = Convert.ToDateTime(fechaExpedicionInsumo.Substring(0,10));
+
+                int año = fechaReferencia.Year;
+                int mes = fechaReferencia.Month;
+                int dia = fechaReferencia.Day;
+
+                DateTime fechaCorte = Helpers.GetSiguienteDiaHabil(fechaReferencia);
+                fechaCorte = fechaCorte.AddDays(diasCorte);
+                fechaCorte = Helpers.GetSiguienteDiaHabil(fechaCorte);
+
+                DateTime fechaCorteLimite = fechaCorte.AddDays(1);
+                fechaCorteLimite = Helpers.GetSiguienteDiaHabil(fechaCorteLimite);
+
+                fechaPago = fechaCorte.ToString("dd/MM/yyyy");
+                fechaLimitePago = fechaCorteLimite.ToString("dd/MM/yyyy");
+
+            }
+
+
+
+            listaFechas.Add(fechaPago);
+            listaFechas.Add(fechaLimitePago);
+            listaFechas.Add(fechaExpedicion);
+            return listaFechas;
             #endregion
         }
 
@@ -735,7 +792,7 @@ namespace App.ControlLogicaProcesos
             string ValorPagarCB2 = valoresPago[1].ToString().Trim().PadLeft(12, '0');
 
             string CodeBar1 = String.Empty;
-            if (Convert.ToInt64(valoresPago[1]) >= 0)
+            if (Convert.ToInt64(valoresPago[0]) >= 0)
             {
                 CodeBar1 = $"(415){numeroETB}(8020){numReferencia}(3900){ValorPagarCB1.Substring(0, 10)}(96){fechaPago}";
             }
@@ -746,7 +803,16 @@ namespace App.ControlLogicaProcesos
 
             result.Add(CodeBar1);
 
-            string CodeBar2 = $"(415){numeroETB}(8020){numReferencia}(3900){ValorPagarCB2.Substring(0, 10)}(96){fechaPago}";
+            string CodeBar2 = String.Empty;
+
+            if (Convert.ToInt64(valoresPago[1]) >= 0)
+            {
+                CodeBar2 = $"(415){numeroETB}(8020){numReferencia}(3900){ValorPagarCB2.Substring(0, 10)}(96){fechaPago}";
+            }
+            else
+            {
+                CodeBar2 = $"(415){numeroETB}(8020){numReferencia}(3900)0000000000(96){fechaPago}";
+            }
 
             result.Add(CodeBar2);
             return result;
@@ -927,7 +993,20 @@ namespace App.ControlLogicaProcesos
             #region GetValorPagarMes
 
             List<string> valoresPago = ObtenerDatosCanal1BBB(pDatosOriginales, true).ToList();
-            string ValorPagar = Helpers.FormatearCampos(TiposFormateo.Decimal05, valoresPago[1].ToString());
+
+            Int64 total = Convert.ToInt64(valoresPago[1].ToString().Trim());
+
+            string totalPagar = String.Empty;
+            if (total > 0)
+            {
+                totalPagar = valoresPago[1].ToString().Trim();
+            }
+            else
+            {
+                totalPagar = "0";
+            }
+
+            string ValorPagar = Helpers.FormatearCampos(TiposFormateo.Decimal05, totalPagar);
 
             return ValorPagar ?? string.Empty;
             #endregion
@@ -1453,6 +1532,11 @@ namespace App.ControlLogicaProcesos
                     else if (llave == "02T112")
                     {
                         descripcion = descripcion.Substring(0, 31);
+                    }
+
+                    if (descripcion == "Otros Operadores y Alianzas con IVA") // Regla especifica de este detalle
+                    {
+                        descripcion = descripcion.Replace("Otros", "").Trim();
                     }
 
                     if (llave == "02T008")
