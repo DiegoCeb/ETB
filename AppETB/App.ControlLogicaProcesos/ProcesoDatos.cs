@@ -396,9 +396,7 @@ namespace App.ControlLogicaProcesos
             MesMora = null;
             CodigoDANE = string.Empty;
             #endregion           
-        }
-
-        #region Canales Logica
+        }        
 
         /// <summary>
         /// 
@@ -568,7 +566,7 @@ namespace App.ControlLogicaProcesos
                 totalPagar = "0";
             }
 
-            resultado = Helpers.FormatearCampos(TiposFormateo.Decimal01, totalPagar);
+            resultado = Helpers.FormatearCampos(TiposFormateo.Decimal05, totalPagar);
             return resultado;
             #endregion
         }
@@ -1441,8 +1439,7 @@ namespace App.ControlLogicaProcesos
             #endregion
         }
 
-
-        #endregion Metodos 1AAA
+        #endregion        
 
         /// <summary>
         /// 
@@ -1653,7 +1650,7 @@ namespace App.ControlLogicaProcesos
 
                             if (llave != "02T004")
                             {
-                                lineasFinales1BBB.Add($"1BBB|{descripcion}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, sumatoria.ToString())}| ");
+                                lineasFinales1BBB.Add($"1BBB|{descripcion}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, sumatoria.ToString())}| ");
                             }
 
                             SubTotal1BBB += sumatoria;
@@ -2883,117 +2880,129 @@ namespace App.ControlLogicaProcesos
         /// <returns></returns>
         private IEnumerable<string> FormateoCanal1CCD(List<string> datosOriginales)
         {
-            #region FormateoCanal1CCD
+            #region FormateoCanal1CCDPrueba
             List<string> resultado = new List<string>();
             string resultadoTemp = string.Empty;
-            List<string> lista02T = new List<string>();
+            Dictionary<string, List<string>> dicAgrupado = new Dictionary<string, List<string>>();
+            Dictionary<string, List<string>> dic11C9 = new Dictionary<string, List<string>>();
 
-            #region Busqueda 11C y 13M y transforma en 02Txxx /// Especiales
+            #region Busquedas
 
-            var result = from busqueda in datosOriginales
-                         where busqueda.Length > 3 && ((busqueda.Substring(0, 3).Equals("11C") && !busqueda.Substring(16, 14).Equals(" 0000000000000"))
-                                                    || (busqueda.Substring(0, 4).Equals("11C0"))
-                                                    || (busqueda.Substring(0, 3).Equals("13M") && !busqueda.Substring(6, 16).Trim().Equals("")))
-                         select busqueda;
+            var dataProcesar = from busqueda in datosOriginales
+                               where busqueda.Length > 3 && (busqueda.Substring(0, 3).Equals("11C") && !busqueda.Substring(16, 42).Equals(" 0000000000000 0000000000000 0000000000000"))
+                                                         || (busqueda.Substring(0, 3).Equals("13M") && !busqueda.Substring(6, 16).Trim().Equals(""))
+                               select busqueda;
+
+            var result02Todos = from busqueda in datosOriginales
+                                where busqueda.Length > 3 && busqueda.Substring(0, 3).Equals("02T")
+                                select busqueda;
 
             var result02T9 = from busqueda in datosOriginales
-                             where busqueda.Length > 3 && busqueda.Substring(0, 4).Equals("02T9")
+                             where busqueda.Length > 3 && busqueda.Substring(0, 4).Equals("02T9") && !busqueda.Substring(0, 6).Equals("02T942")
                              select busqueda;
+            #endregion
 
-            // Se debe hacer cruce con llavesDoc (9) y lo que no pase se normal
+            #region Agrupaiento TEMP Para procesar
+            string llaveAgrupacion = string.Empty;
+            string llaveDoc = string.Empty;
+            string ValorDoc = string.Empty;
+            string llaveProductoInicio = string.Empty;
 
-            Dictionary<string, string> dicAgrupado = new Dictionary<string, string>();
-
-            if (result.Any())
+            foreach (var lineaActual in dataProcesar)
             {
-                string llaveAgrupacion = string.Empty;
-                string llaveDoc = string.Empty;
-                string ValorDoc = string.Empty;
-                string llaveProductoInicio = string.Empty;
+                llaveAgrupacion = lineaActual.Substring(0, 6);
+                llaveDoc = lineaActual.Substring(6, 10);
+                llaveProductoInicio = lineaActual.Substring(3, 1);
 
-                foreach (var lineaActual in result)
+                var cruceTemp = from busqueda in result02Todos
+                                where busqueda.Substring(0, 6).Equals("02T" + lineaActual.Substring(3, 3))
+                                select busqueda;
+
+                // C
+                if (llaveAgrupacion == "11C118")
                 {
-                    llaveAgrupacion = lineaActual.Substring(0, 6);// + "┬" + lineaActual.Substring(128, 19);
-                    llaveDoc = lineaActual.Substring(6, 10);
-
-                    llaveProductoInicio = lineaActual.Substring(3, 1);
-
-                    if (llaveProductoInicio == "9")
+                    if (dicAgrupado.ContainsKey("02T123"))
                     {
-                        if (result02T9.Any())
-                        {
-                            foreach (var linea02T9 in result02T9)
-                            {
-                                string valor02T9 = linea02T9.Substring(6, 14);
-                                string valor11C9 = lineaActual.Substring(16, 14);
-
-                                if (valor02T9 == valor11C9)
-                                {
-                                    if (!dicAgrupado.ContainsKey(linea02T9.Substring(0, 6)))
-                                    {
-                                        dicAgrupado.Add(linea02T9.Substring(0, 6), linea02T9.Substring(0, 6));
-                                    }
-                                    break;
-                                }
-
-                            }
-                        }
+                        dicAgrupado["02T123"].Add(lineaActual);
                     }
-                    else if (Variables.Variables.DatosInsumoConfiguracionLLavesDoc1.ContainsKey(llaveDoc))
+                    else
                     {
-                        ValorDoc = Variables.Variables.DatosInsumoConfiguracionLLavesDoc1[llaveDoc].Split('|')[13].Trim();
+                        dicAgrupado.Add("02T123", new List<string>() { lineaActual });
+                    }
 
-                        if (!dicAgrupado.ContainsKey(ValorDoc))
-                        {
-                            dicAgrupado.Add(ValorDoc, ValorDoc);
-                        }
-                    }
-                    else if (!dicAgrupado.ContainsKey(llaveAgrupacion))
+                    continue;
+                }
+
+
+                if (llaveProductoInicio == "9")
+                {
+                    // Se llena dicciinario 11C9
+
+                    if (dic11C9.ContainsKey(llaveAgrupacion))
                     {
-                        dicAgrupado.Add(llaveAgrupacion, "02T" + lineaActual.Substring(3, 3));
+                        dic11C9[llaveAgrupacion].Add(lineaActual);
                     }
+                    else
+                    {
+                        dic11C9.Add(llaveAgrupacion, new List<string> { lineaActual });
+                    }
+                }
+                else if (Variables.Variables.DatosInsumoConfiguracionLLavesDoc1.ContainsKey(llaveDoc) && !cruceTemp.Any())
+                {
+                    ValorDoc = Variables.Variables.DatosInsumoConfiguracionLLavesDoc1[llaveDoc].Split('|')[13].Trim();
+
+                    if (!dicAgrupado.ContainsKey(ValorDoc))
+                    {
+                        dicAgrupado.Add(ValorDoc, new List<string>() { lineaActual });
+                    }
+                    else
+                    {
+                        dicAgrupado[ValorDoc].Add(lineaActual);
+                    }
+                }
+                else if (!dicAgrupado.ContainsKey("02T" + lineaActual.Substring(3, 3)))
+                {
+                    dicAgrupado.Add("02T" + lineaActual.Substring(3, 3), new List<string>() { lineaActual });
+                }
+                else
+                {
+                    dicAgrupado["02T" + lineaActual.Substring(3, 3)].Add(lineaActual);
                 }
             }
 
+            // Procesa los 11C9
 
-            #region No Borrar TEMP Especiales
-            // Se llenan los 02T Especiales
+            if (result02T9.Any())
+            {
+                List<string> listSuma11C9 = new List<string>();
 
-            //var resultEspecial = from busqueda in datosOriginales
-            //                     where busqueda.Length > 6 && busqueda.Substring(0, 4).Equals("11C0")
-            //                     select busqueda;
+                foreach (var grupol11C9 in dic11C9.Values)
+                {
+                    foreach (var lineaActaul11C9 in grupol11C9)
+                    {
+                        listSuma11C9.Add(lineaActaul11C9.Substring(16, 14));
+                    }
 
+                    string valorSuma = Helpers.SumarCampos(listSuma11C9, "D").Replace(".", "").Replace(",", "").Replace("-", "").Replace("$", "").Trim();
 
-            //if (resultEspecial.Any())
-            //{
-            //    string llaveAgrupacion = string.Empty;
-            //    string llaveDoc = string.Empty;
-            //    string ValorDoc = string.Empty;
+                    foreach (var registros02t9 in result02T9)
+                    {
+                        string valor02T9 = registros02t9.Substring(7, 13).TrimStart('0');
 
-            //    foreach (var lineaEspecial in resultEspecial)
-            //    {
-            //        if (Convert.ToInt16(lineaEspecial.Substring(4, 2)) >= 50 && Convert.ToInt16(lineaEspecial.Substring(4, 2)) <= 76)
-            //        {
-            //            llaveAgrupacion = lineaEspecial.Substring(0, 6);// + "┬" + lineaActual.Substring(128, 19);
-            //            llaveDoc = lineaEspecial.Substring(6, 10);
-
-            //            if (Variables.Variables.DatosInsumoConfiguracionLLavesDoc1.ContainsKey(llaveDoc))
-            //            {
-            //                ValorDoc = Variables.Variables.DatosInsumoConfiguracionLLavesDoc1[llaveDoc].Split('|')[13].Trim();
-            //            }
-
-            //            if (!dicAgrupado.ContainsKey(llaveAgrupacion))
-            //            {
-            //                dicAgrupado.Add(llaveAgrupacion, ValorDoc);
-            //            }
-            //        }
-            //    }
-            //} 
+                        if (valor02T9 == valorSuma)
+                        {
+                            if (!dicAgrupado.ContainsKey(registros02t9.Substring(0, 6)))
+                            {
+                                dicAgrupado.Add(registros02t9.Substring(0, 6), grupol11C9);
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
             #endregion
 
-
-            #endregion
-
+            #region Variables resultado
 
             List<string> lisCamposSumar = new List<string>();
             Dictionary<string, List<string>> dicValores = new Dictionary<string, List<string>>();
@@ -3003,8 +3012,10 @@ namespace App.ControlLogicaProcesos
             string identificadorCanal = string.Empty;
             decimal impuestoProducto = 0;
             string impuestoFormateado = string.Empty;
-
-
+            decimal iva = 0;
+            string ivaFormateado = string.Empty;
+            decimal recargoMora = 0;
+            string recargoMoraFormateado = string.Empty;
             string llavelineaNegocio = string.Empty;
             string lineaNegocio = string.Empty;
 
@@ -3025,37 +3036,18 @@ namespace App.ControlLogicaProcesos
 
             List<string> lineaProcesarDetalles = new List<string>();
 
-
-            #region Traer las lineas a procesar
-            foreach (var identificador in dicAgrupado.Values)
-            {
-                var result02T = from busqueda in datosOriginales
-                                where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals(identificador)
-                                select busqueda;
-
-                if (result02T.Any())
-                {
-                    foreach (var linea02tActual in result02T)
-                    {
-                        if (Convert.ToInt16(linea02tActual.Substring(4, 2)) >= 50 && Convert.ToInt16(linea02tActual.Substring(4, 2)) <= 76)
-                        {
-                            lineaProcesarDetalles.Add(linea02tActual);
-                        }
-                        else if (Convert.ToDouble(linea02tActual.Substring(6, 14)) != 0)
-                        {
-                            lineaProcesarDetalles.Add(linea02tActual);
-                        }
-                    }
-                }
-            }
             #endregion
 
-            if (lineaProcesarDetalles.Count() > 0)
+            // Procesar la data Seleccionada
+            foreach (var dicPrincipal in dicAgrupado)
             {
-                foreach (var lineaResul02T in lineaProcesarDetalles)
+                foreach (var lineaProcesar in dicPrincipal.Value)
                 {
-                    llavePrincipal = lineaResul02T.Substring(0, 6);
-                    llaveProducto = lineaResul02T.Substring(3, 1);
+                    llavePrincipal = dicPrincipal.Key;
+                    llaveProducto = dicPrincipal.Key.Substring(3, 1);
+
+                    impuestoFormateado = string.Empty;
+                    ivaFormateado = string.Empty;
 
                     if (llaveProducto == "0")
                     {
@@ -3072,115 +3064,250 @@ namespace App.ControlLogicaProcesos
                     if (llavePrincipal == "02T204" || llavePrincipal == "02T207")
                         concepto = "L.D. Nacional";
 
-                    if (llavePrincipal == "02T208" || llavePrincipal == "02T209")
+                    if (concepto == "L.D. Automática Internacional")
                         concepto = "L.D. Internacional";
 
-
-                    if (dicValores.Keys.Contains(llaveProducto))
+                    switch (lineaProcesar.Substring(0, 3))
                     {
-                        dicValores[llaveProducto].Add(lineaResul02T.Substring(6, 14));
-                        dicValores["SUBTOTAL"].Add(lineaResul02T.Substring(6, 14));
-
-                        // Otros operadores
-                        if (llaveProducto == "5" || llaveProducto == "7")
-                        {
-                            impuestoProducto = Convert.ToDecimal($"{lineaResul02T.Substring(6, 12)}.{lineaResul02T.Substring(18, 2)}");
-                            impuestoProducto = impuestoProducto * Convert.ToDecimal(Utilidades.LeerAppConfig("porcentajeImpuestoConsumo"));
-
-                            if (impuestoProducto.ToString().Contains("."))
+                        case "11C":
+                            if (dicValores.Keys.Contains(llaveProducto))
                             {
-                                impuestoFormateado = impuestoProducto.ToString().Split('.')[0] + impuestoProducto.ToString().Split('.')[1].Substring(0, 2);
+                                dicValores[llaveProducto].Add(lineaProcesar.Substring(16, 14));
+                                dicValores["SUBTOTAL"].Add(lineaProcesar.Substring(16, 14));
+
+                                // Otros operadores
+                                if (llaveProducto == "5" || llaveProducto == "7")
+                                {
+                                    impuestoProducto = Convert.ToDecimal($"{lineaProcesar.Substring(16, 12)}.{lineaProcesar.Substring(28, 2)}");
+                                    impuestoProducto = impuestoProducto * Convert.ToDecimal(Utilidades.LeerAppConfig("porcentajeImpuestoConsumo"));
+
+                                    if (impuestoProducto.ToString().Contains("."))
+                                    {
+                                        impuestoFormateado = impuestoProducto.ToString().Split('.')[0] + impuestoProducto.ToString().Split('.')[1].Substring(0, 2);
+                                    }
+                                    else
+                                    {
+                                        impuestoFormateado = impuestoProducto.ToString().Replace(",", "").Replace(".", "");
+                                    }
+
+                                    dicValores["IMPUESTOS"].Add(impuestoFormateado);
+                                    dicValores["IVA"].Add("-" + impuestoFormateado);
+                                    //dicValores["TOTAL"].Add("-" + impuestoFormateado); // Impuesto
+                                }
+
+                                dicValores["IVA"].Add(lineaProcesar.Substring(44, 14));
+
+                                dicValores["TOTAL"].Add(lineaProcesar.Substring(16, 14)); // Sub Total
+                                dicValores["TOTAL"].Add(lineaProcesar.Substring(44, 14)); // Iva
+
+
+                                #region Calculo Recargo Mora para restar
+
+                                if (Convert.ToDouble(lineaProcesar.Substring(30, 14)) != 0)
+                                {
+                                    recargoMora = Convert.ToDecimal($"{lineaProcesar.Substring(30, 12)}.{lineaProcesar.Substring(42, 2)}");
+                                    recargoMora = recargoMora * Convert.ToDecimal(Utilidades.LeerAppConfig("porcentajeIva"));
+
+                                    if (recargoMora.ToString().Contains("."))
+                                    {
+                                        recargoMoraFormateado = recargoMora.ToString().Split('.')[0] + recargoMora.ToString().Split('.')[1].Substring(0, 2);
+                                    }
+                                    else
+                                    {
+                                        recargoMoraFormateado = recargoMora.ToString().Replace(",", "").Replace(".", "");
+                                    }
+
+                                    dicValores["IVA"].Add("-" + recargoMoraFormateado);
+                                    dicValores["TOTAL"].Add("-" + recargoMoraFormateado);
+                                }
+                                #endregion
                             }
-                            else
+                            break;
+                        case "13M":
+                            if (dicValores.Keys.Contains(llaveProducto))
                             {
-                                impuestoFormateado = impuestoProducto.ToString().Replace(",", "").Replace(".", "");
+                                dicValores[llaveProducto].Add(lineaProcesar.Substring(42, 14));
+                                dicValores["SUBTOTAL"].Add(lineaProcesar.Substring(42, 14));
+
+                                // Otros operadores
+                                if (llaveProducto == "5" || llaveProducto == "7")
+                                {
+                                    impuestoProducto = Convert.ToDecimal($"{lineaProcesar.Substring(42, 12)}.{lineaProcesar.Substring(54, 2)}");
+                                    impuestoProducto = impuestoProducto * Convert.ToDecimal(Utilidades.LeerAppConfig("porcentajeImpuestoConsumo"));
+
+                                    if (impuestoProducto.ToString().Contains("."))
+                                    {
+                                        impuestoFormateado = impuestoProducto.ToString().Split('.')[0] + impuestoProducto.ToString().Split('.')[1].Substring(0, 2);
+                                    }
+                                    else
+                                    {
+                                        impuestoFormateado = impuestoProducto.ToString().Replace(",", "").Replace(".", "");
+                                    }
+
+                                    dicValores["IMPUESTOS"].Add(impuestoFormateado);
+                                    dicValores["IVA"].Add("-" + impuestoFormateado);
+                                    //dicValores["TOTAL"].Add("-" + impuestoFormateado); // Impuesto
+                                }
+
+                                dicValores["IVA"].Add(lineaProcesar.Substring(56, 14));
+
+                                dicValores["TOTAL"].Add(lineaProcesar.Substring(42, 14)); // Sub Total
+                                dicValores["TOTAL"].Add(lineaProcesar.Substring(56, 14)); // Iva
+
+
+                                #region Calculo Recargo Mora para restar
+
+                                //if (Convert.ToDouble(lineaProcesar.Substring(30, 14)) != 0)
+                                //{
+                                //    recargoMora = Convert.ToDecimal($"{lineaProcesar.Substring(30, 12)}.{lineaProcesar.Substring(42, 2)}");
+                                //    recargoMora = recargoMora * Convert.ToDecimal(Utilidades.LeerAppConfig("porcentajeIva"));
+
+                                //    if (recargoMora.ToString().Contains("."))
+                                //    {
+                                //        recargoMoraFormateado = recargoMora.ToString().Split('.')[0] + recargoMora.ToString().Split('.')[1].Substring(0, 2);
+                                //    }
+                                //    else
+                                //    {
+                                //        recargoMoraFormateado = recargoMora.ToString().Replace(",", "").Replace(".", "");
+                                //    }
+
+                                //    dicValores["IVA"].Add("-" + recargoMoraFormateado);
+                                //    dicValores["TOTAL"].Add("-" + recargoMoraFormateado);
+                                //}
+                                #endregion
                             }
+                            break;
 
-                            dicValores["IMPUESTOS"].Add(impuestoFormateado);
-                        }
-                        else
-                        {
-                            #region Calcula iva por si a acaso
-                            // Calcular el IVA
-                            //switch (lineaResul02T.Substring(3, 1))
-                            //{
-                            //    case "9":
-                            //        dicValores["IVA"].Add(lineaResul02T.Substring(34, 14));
-                            //        break;
-                            //    default:
-                            //        iva = Convert.ToDecimal($"{lineaResul02T.Substring(6, 12)}.{lineaResul02T.Substring(18, 2)}");
-                            //        iva = iva * Convert.ToDecimal(Utilidades.LeerAppConfig("porcentajeIva"));
-
-                            //        if (iva.ToString().Contains("."))
-                            //        {
-                            //            ivaFormateado = iva.ToString().Split('.')[0] + iva.ToString().Split('.')[1].Substring(0, 2);
-                            //        }
-                            //        else
-                            //        {
-                            //            ivaFormateado = iva.ToString().Replace(",", "").Replace(".", "");
-                            //        }
-
-                            //        dicValores["IVA"].Add(ivaFormateado);
-
-                            //        break;
-                            //}            
-                            #endregion
-                        }
-
-                        dicValores["IVA"].Add(lineaResul02T.Substring(34, 14));
-                        dicValores["IMPUESTOS"].Add(lineaResul02T.Substring(118, 14));
-
-                        dicValores["TOTAL"].Add(lineaResul02T.Substring(6, 14));
-                        dicValores["TOTAL"].Add(lineaResul02T.Substring(34, 14));
-                        dicValores["TOTAL"].Add(lineaResul02T.Substring(118, 14));
+                        default:
+                            break;
                     }
 
+                    #region basur mintras
+                    //if (dicValores.Keys.Contains(llaveProducto))
+                    //{
+                    //    dicValores[llaveProducto].Add(lineaProcesar.Substring(16, 14));
+                    //    dicValores["SUBTOTAL"].Add(lineaProcesar.Substring(16, 14));
 
-                    resultadoTemp = "1CCD|";
-                    resultadoTemp += concepto + "|";
-                    resultadoTemp += Helpers.SumarCampos(dicValores["1"], "D") + "|";
-                    resultadoTemp += Helpers.SumarCampos(dicValores["3"], "D") + "|";
-                    resultadoTemp += Helpers.SumarCampos(dicValores["2"], "D") + "|";
-                    resultadoTemp += Helpers.SumarCampos(dicValores["9"], "D") + "|";
-                    resultadoTemp += Helpers.SumarCampos(dicValores["4"], "D") + "|";
+                    //    // Otros operadores
+                    //    if (llaveProducto == "5" || llaveProducto == "7")
+                    //    {
+                    //        impuestoProducto = Convert.ToDecimal($"{lineaProcesar.Substring(16, 12)}.{lineaProcesar.Substring(28, 2)}");
+                    //        impuestoProducto = impuestoProducto * Convert.ToDecimal(Utilidades.LeerAppConfig("porcentajeImpuestoConsumo"));
 
-                    List<string> sumarCamposAux = new List<string>();
+                    //        if (impuestoProducto.ToString().Contains("."))
+                    //        {
+                    //            impuestoFormateado = impuestoProducto.ToString().Split('.')[0] + impuestoProducto.ToString().Split('.')[1].Substring(0, 2);
+                    //        }
+                    //        else
+                    //        {
+                    //            impuestoFormateado = impuestoProducto.ToString().Replace(",", "").Replace(".", "");
+                    //        }
 
-                    // Suma Conceptos 6 - 8
-                    sumarCamposAux.AddRange(dicValores["6"]);
-                    sumarCamposAux.AddRange(dicValores["8"]);
-                    resultadoTemp += Helpers.SumarCampos(sumarCamposAux, "D") + "|";
-                    sumarCamposAux.Clear();
+                    //        dicValores["IMPUESTOS"].Add(impuestoFormateado);
+                    //        dicValores["IVA"].Add("-" + impuestoFormateado);
+                    //        //dicValores["TOTAL"].Add("-" + impuestoFormateado); // Impuesto
+                    //    }
 
-                    // Suma Conceptos 5 - 7
-                    sumarCamposAux.AddRange(dicValores["5"]);
-                    sumarCamposAux.AddRange(dicValores["7"]);
-                    resultadoTemp += Helpers.SumarCampos(sumarCamposAux, "D") + "|";
-                    sumarCamposAux.Clear();
+                    //    dicValores["IVA"].Add(lineaProcesar.Substring(44, 14));
 
-                    resultadoTemp += Helpers.SumarCampos(dicValores["SUBTOTAL"], "D") + "|";
-                    resultadoTemp += Helpers.SumarCampos(dicValores["IVA"], "D") + "|";
-                    resultadoTemp += Helpers.SumarCampos(dicValores["IMPUESTOS"], "D") + "|";
-                    resultadoTemp += Helpers.SumarCampos(dicValores["TOTAL"], "D") + "| ";
+                    //    dicValores["TOTAL"].Add(lineaProcesar.Substring(16, 14)); // Sub Total
+                    //    dicValores["TOTAL"].Add(lineaProcesar.Substring(44, 14)); // Iva
 
-                    resultado.Add(Helpers.ValidarPipePipe(resultadoTemp).Replace("$ 0.00", "-"));
 
-                    #region Inicializa diccionario Con Valores
-                    dicValores["1"] = new List<string>();    // Telefonia Local
-                    dicValores["2"] = new List<string>();    // Larga Distancia
-                    dicValores["3"] = new List<string>();    // Internet y Datos
-                    dicValores["4"] = new List<string>();    // TV
-                    dicValores["5"] = new List<string>();    // Otros Operadores
-                    dicValores["6"] = new List<string>();    // Alianzas
-                    dicValores["7"] = new List<string>();    // Otros Operadores
-                    dicValores["8"] = new List<string>();    // Alianzas
-                    dicValores["9"] = new List<string>();    // Movilidad
-                    dicValores["SUBTOTAL"] = new List<string>();
-                    dicValores["IVA"] = new List<string>();
-                    dicValores["IMPUESTOS"] = new List<string>();
-                    dicValores["TOTAL"] = new List<string>();
+                    //    #region Calculo Recargo Mora para restar
+
+                    //    if (Convert.ToDouble(lineaProcesar.Substring(30, 14)) != 0)
+                    //    {
+                    //        recargoMora = Convert.ToDecimal($"{lineaProcesar.Substring(30, 12)}.{lineaProcesar.Substring(42, 2)}");
+                    //        recargoMora = recargoMora * Convert.ToDecimal(Utilidades.LeerAppConfig("porcentajeIva"));
+
+                    //        if (recargoMora.ToString().Contains("."))
+                    //        {
+                    //            recargoMoraFormateado = recargoMora.ToString().Split('.')[0] + recargoMora.ToString().Split('.')[1].Substring(0, 2);
+                    //        }
+                    //        else
+                    //        {
+                    //            recargoMoraFormateado = recargoMora.ToString().Replace(",", "").Replace(".", "");
+                    //        }
+
+                    //        dicValores["IVA"].Add("-" + recargoMoraFormateado);
+                    //        dicValores["TOTAL"].Add("-" + recargoMoraFormateado);
+                    //    }
+
+                    //    #endregion
+
+                    #region Impuestos
+
+                    //if (!string.IsNullOrEmpty(impuestoFormateado))
+                    //{
+                    //    dicValores["IMPUESTOS"].Add(lineaProcesar.Substring(118, 14));
+                    //    dicValores["TOTAL"].Add(lineaProcesar.Substring(118, 14)); // Impuesto
+                    //}
+                    //else
+                    //{
+                    //    dicValores["TOTAL"].Add(impuestoFormateado);
+                    //}
+
+                    #endregion
+
+
+
+
+
+
+
+
+                    //dicValores["TOTAL"].Add(lineaProcesar.Substring(6, 14)); 
                     #endregion
                 }
+
+                #region Pinta Resultado
+                resultadoTemp = "1CCD|";
+                resultadoTemp += concepto + "|";
+                resultadoTemp += Helpers.SumarCampos(dicValores["1"], "D") + "|";
+                resultadoTemp += Helpers.SumarCampos(dicValores["3"], "D") + "|";
+                resultadoTemp += Helpers.SumarCampos(dicValores["2"], "D") + "|";
+                resultadoTemp += Helpers.SumarCampos(dicValores["9"], "D") + "|";
+                resultadoTemp += Helpers.SumarCampos(dicValores["4"], "D") + "|";
+
+                List<string> sumarCamposAux = new List<string>();
+
+                // Suma Conceptos 6 - 8
+                sumarCamposAux.AddRange(dicValores["6"]);
+                sumarCamposAux.AddRange(dicValores["8"]);
+                resultadoTemp += Helpers.SumarCampos(sumarCamposAux, "D") + "|";
+                sumarCamposAux.Clear();
+
+                // Suma Conceptos 5 - 7
+                sumarCamposAux.AddRange(dicValores["5"]);
+                sumarCamposAux.AddRange(dicValores["7"]);
+                resultadoTemp += Helpers.SumarCampos(sumarCamposAux, "D") + "|";
+                sumarCamposAux.Clear();
+
+                resultadoTemp += Helpers.SumarCampos(dicValores["SUBTOTAL"], "D") + "|";
+                resultadoTemp += Helpers.SumarCampos(dicValores["IVA"], "D") + "|";
+                resultadoTemp += Helpers.SumarCampos(dicValores["IMPUESTOS"], "D") + "|";
+                resultadoTemp += Helpers.SumarCampos(dicValores["TOTAL"], "D") + "| ";
+
+                resultado.Add(Helpers.ValidarPipePipe(resultadoTemp).Replace("$ 0.00", "-"));
+                #endregion
+
+                #region Inicializa diccionario Con Valores
+                dicValores["1"] = new List<string>();    // Telefonia Local
+                dicValores["2"] = new List<string>();    // Larga Distancia
+                dicValores["3"] = new List<string>();    // Internet y Datos
+                dicValores["4"] = new List<string>();    // TV
+                dicValores["5"] = new List<string>();    // Otros Operadores
+                dicValores["6"] = new List<string>();    // Alianzas
+                dicValores["7"] = new List<string>();    // Otros Operadores
+                dicValores["8"] = new List<string>();    // Alianzas
+                dicValores["9"] = new List<string>();    // Movilidad
+                dicValores["SUBTOTAL"] = new List<string>();
+                dicValores["IVA"] = new List<string>();
+                dicValores["IMPUESTOS"] = new List<string>();
+                dicValores["TOTAL"] = new List<string>();
+                #endregion
+
             }
 
             return resultado;
@@ -4634,8 +4761,6 @@ namespace App.ControlLogicaProcesos
             return Helpers.ValidarPipePipe(LineaCUFE);
             #endregion
         }
-
-        #endregion
 
         private ClientesEspeciales CargarClientesEspeciales(string pCuenta, string pCiclo)
         {
