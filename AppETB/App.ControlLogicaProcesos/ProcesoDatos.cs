@@ -626,7 +626,10 @@ namespace App.ControlLogicaProcesos
 
                     if (GetTipo(item.Substring(6, 20).Trim()) == "Conexion")
                     {
-                        if (item.Substring(6, 20).Trim().Length >= 8)
+                        if (item.Substring(6, 20).Trim().Length >= 8 &&
+                            ((item.Substring(6, 20).Trim().Length == 10 && item.Substring(6, 2) == "60") ||
+                                     (item.Substring(6, 20).Trim().Length == 8 && item.Substring(6, 3) == "60") ||
+                                     (item.Substring(6, 20).Trim().Length == 10 && item.Substring(6, 12) == "3")))
                         {
                             telefono = item.Substring(6, 20).Trim();
                             break;
