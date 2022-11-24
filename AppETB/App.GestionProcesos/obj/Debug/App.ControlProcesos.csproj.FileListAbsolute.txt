@@ -32,9 +32,7 @@ C:\Users\adieg\Documents\GitHub\ETB\AppETB\App.GestionProcesos\bin\Debug\App.Con
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\App.GestionProcesos\bin\Debug\App.ControlLogicaProcesos.pdb
 C:\Proyectos\ETB\AppETB\App.GestionProcesos\bin\Debug\App.ControlLogicaProcesos.dll
 C:\Proyectos\ETB\AppETB\App.GestionProcesos\bin\Debug\App.ControlLogicaProcesos.pdb
-C:\Proyectos\ETB\AppETB\App.GestionProcesos\bin\Debug\DLL_Utilidades.pdb
 C:\Proyectos\ETB\AppETB\App.GestionProcesos\bin\Debug\Excel.dll
-C:\Proyectos\ETB\AppETB\App.GestionProcesos\bin\Debug\ICSharpCode.SharpZipLib.dll
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\App.GestionProcesos\bin\Debug\Excel.dll
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\App.GestionProcesos\bin\Debug\ICSharpCode.SharpZipLib.dll
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.GestionProcesos\bin\Debug\App.ControlProcesos.dll

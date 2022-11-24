@@ -254,13 +254,6 @@ namespace App.ControlLogicaProcesos
                 resultado.AddRange(resultadoFormateoLinea);
             }
 
-            resultadoFormateoLinea = FormateoCanal1FFA(datosOriginales);
-
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
-
             resultadoFormateoLinea = FormarPaqueteSERV(datosOriginales);
 
             if (((IEnumerable<string>)resultadoFormateoLinea).Any())
@@ -619,7 +612,10 @@ namespace App.ControlLogicaProcesos
 
                     if (GetTipo(item.Substring(6, 20).Trim()) == "Conexion")
                     {
-                        if (item.Substring(6, 20).Trim().Length >= 8)
+                        if (item.Substring(6, 20).Trim().Length >= 8 &&
+                            ((item.Substring(6, 20).Trim().Length == 10 && item.Substring(6, 2) == "60") ||
+                                     (item.Substring(6, 20).Trim().Length == 8 && item.Substring(6, 3) == "60") ||
+                                     (item.Substring(6, 20).Trim().Length == 10 && item.Substring(6, 12) == "3")))
                         {
                             telefono = item.Substring(6, 20).Trim();
                             break;
@@ -4466,43 +4462,18 @@ namespace App.ControlLogicaProcesos
             }
             else
             {
-                Canal1FFA = Helpers.ValidarPipePipe($"1FFA|Total|{Helpers.FormatearCampos(TiposFormateo.Decimal05, sumatoriaTotal.ToString())}" +
-                    $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, sumatoriaSubTotal.ToString())}|{Helpers.SumarCampos(new List<string> { sumatoriaTotal.ToString(), sumatoriaSubTotal.ToString() }, "G")}| ");
+                if (resultado.Count > 0)
+                {
+
+                    Canal1FFA = Helpers.ValidarPipePipe($"1FFA|Total|{Helpers.FormatearCampos(TiposFormateo.Decimal05, sumatoriaTotal.ToString())}" +
+                        $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, sumatoriaSubTotal.ToString())}|{Helpers.SumarCampos(new List<string> { sumatoriaTotal.ToString(), sumatoriaSubTotal.ToString() }, "G")}| ");
+
+                    resultado.Add(Canal1FFA);
+                }
             }
 
-            resultado.Add(Canal1FFA);
+            
             #endregion FormateoCanal1FFA
-
-            return resultado;
-            #endregion
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="datosOriginales"></param>
-        /// <returns></returns>
-        private string FormateoCanal1FFA(List<string> datosOriginales)
-        {
-            #region FormateoCanal1FFA
-            string resultado = string.Empty;
-
-            var linea13M317 = from busqueda in datosOriginales
-                              where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("13M317")
-                              select busqueda;
-
-            if (linea13M317.Any())
-            {
-                string total = linea13M317.FirstOrDefault().Substring(42, 14).Trim();
-                string subtotal = linea13M317.FirstOrDefault().Substring(56, 14).Trim();
-
-                resultado = Helpers.ValidarPipePipe($"1FFA|Total|{Helpers.FormatearCampos(TiposFormateo.Decimal05, total)}" +
-                    $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, subtotal)}|{Helpers.SumarCampos(new List<string> { total, subtotal }, "G")}| ");
-            }
-            else
-            {
-
-            }
 
             return resultado;
             #endregion
