@@ -62,7 +62,7 @@ namespace App.ControlLogicaProcesos
                 Helpers.EscribirLogVentana(StructError, true);
             }
             #endregion
-        } 
+        }
         #endregion
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace App.ControlLogicaProcesos
             #region Ejecutar
             Helpers.CrearCarpeta(rutaSalida + @"\Reportes");
             CargarDiccionario();
-            ExtraccionReportes(DiccionarioExtractosReporte);            
+            ExtraccionReportes(DiccionarioExtractosReporte);
             #endregion
         }
 
@@ -96,7 +96,7 @@ namespace App.ControlLogicaProcesos
             foreach (var keyErrorLTE in Variables.Variables.DatosErrorLTE.Keys)
             {
                 DiccionarioExtractosReporte.Add(keyErrorLTE, new List<string>(Variables.Variables.DatosErrorLTE[keyErrorLTE]));
-            } 
+            }
             #endregion
         }
 
@@ -144,10 +144,10 @@ namespace App.ControlLogicaProcesos
             listReporte = GetReporteEstadistico();
             if (listReporte.Count > 0)
                 EscribirReporteEstadistico(listReporte);
-            listReporte.Clear();  
+            listReporte.Clear();
             #endregion
         }
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -254,7 +254,7 @@ namespace App.ControlLogicaProcesos
 
             return lineaReporte;
             #endregion
-        } 
+        }
         #endregion
 
         #region Obtener Lineas Reporte 
@@ -268,6 +268,7 @@ namespace App.ControlLogicaProcesos
             #region GetLineaMaestra
             string LineaMaestra = string.Empty;
             List<string> camposLinea = new List<string>();
+            string numTelefono = string.Empty;
 
             #region Busquedas
             var result1AAA = from busqueda in pExtracto
@@ -276,17 +277,17 @@ namespace App.ControlLogicaProcesos
 
             var resultCUFE = from busqueda in pExtracto
                              where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("CUFE|")
-                             select busqueda;
+                             select busqueda;            
+
             #endregion
 
             if (result1AAA.Any())
             {
                 string[] campos1AAA = result1AAA.FirstOrDefault().Split('|');
-                
+                cuenta = campos1AAA[7];                
 
-                camposLinea.Add(campos1AAA[16]); // Telefono
+                camposLinea.Add(campos1AAA[15]);// Telefono
                 camposLinea.Add(campos1AAA[7]); // Cuenta
-                cuenta = campos1AAA[7];
                 camposLinea.Add(campos1AAA[2]); // Nombre
                 camposLinea.Add(campos1AAA[4]); // Direccion
                 camposLinea.Add(campos1AAA[40]); // Zona
@@ -299,26 +300,21 @@ namespace App.ControlLogicaProcesos
                 camposLinea.Add(campos1AAA[5]);  // Ciudad
                 camposLinea.Add(campos1AAA[30]); // Localidad
                 camposLinea.Add(campos1AAA[29]); // Barrio
-                camposLinea.Add(campos1AAA[10].Split(',')[0].Replace("$", "").Replace(".", "").Trim()); // TotalFactura
+                camposLinea.Add(campos1AAA[10].Split('.')[0].Replace("$", "").Replace(",", "").Trim()); // Total Factura
                 camposLinea.Add(campos1AAA[9]);  // Ciclo
-                camposLinea.Add(campos1AAA[1].Split('_')[0]); // Lote
+                camposLinea.Add(lote); // Lote
                 camposLinea.Add(campos1AAA[19]); // Fecx
                 camposLinea.Add(campos1AAA[17]); // Fecp
-
-                camposLinea.Add(campos1AAA[1]); // Fecb
-                camposLinea.Add(campos1AAA[1]); // Fecc
-
-                camposLinea.Add(GetTotalIva(pExtracto)); // Total Iva
-
-                camposLinea.Add(campos1AAA[1]); // Total IVA Otros Operadores
-
+                camposLinea.Add(string.Empty); // Fecb
+                camposLinea.Add(string.Empty); // Fecc
+                //camposLinea.Add(GetTotalIva(pExtracto)); // Total Iva
+                camposLinea.Add("$ 0.00"); // Total Iva
+                camposLinea.Add(string.Empty); // Total IVA Otros Operadores
                 camposLinea.Add(campos1AAA[33]); // Insertos
-                camposLinea.Add(campos1AAA[10]); // Valor Pagar Mes
+                camposLinea.Add(campos1AAA[31]); // Valor Pagar Mes
                 camposLinea.Add(campos1AAA[27]); // Actividad
-
-                camposLinea.Add(campos1AAA[1]); // Logo TIC
-                camposLinea.Add(campos1AAA[1]); // Valor Subsidiado
-
+                camposLinea.Add(string.Empty); // Logo TIC
+                camposLinea.Add("$ 0.00"); // Valor Subsidiado
                 camposLinea.Add(campos1AAA[35]); // TipoEnvioCartaEmail
                 camposLinea.Add(campos1AAA[34]); // Email
                 camposLinea.Add(campos1AAA[18]); // FECL
@@ -327,33 +323,23 @@ namespace App.ControlLogicaProcesos
                 camposLinea.Add(GetLeyendaCarta(pExtracto)); // LeyendaCartera
                 camposLinea.Add(campos1AAA[3]); // NIT/CED
                 camposLinea.Add(campos1AAA[23]); // TipoProducto
-
-                camposLinea.Add(campos1AAA[1]); // PlanPrimarioLTE
-
+                camposLinea.Add(string.Empty); // PlanPrimarioLTE
                 camposLinea.Add(GetPlanActual(pExtracto)); // PlanActual
-
-                camposLinea.Add(campos1AAA[1]); // ConceptoFinanciacion
-                camposLinea.Add(campos1AAA[1]); // SaldoFinanciacion
-                camposLinea.Add(campos1AAA[1]); // cuotaFinanciacion
-
+                camposLinea.Add(string.Empty); // ConceptoFinanciacion
+                camposLinea.Add(string.Empty); // SaldoFinanciacion
+                camposLinea.Add(string.Empty); // cuotaFinanciacion
                 camposLinea.Add(GetValorFacturaAnterior(pExtracto)); // ValorfacturaAnterior
                 camposLinea.Add(GetGraciasPago(pExtracto)); // GraciasPorSuPago
                 camposLinea.Add(campos1AAA[24].Split(' ')[0].Trim()); // PorcentajeMora
-
-                camposLinea.Add(campos1AAA[1]); // Retencion
-
+                camposLinea.Add(GetRetencion()); // Retencion
                 camposLinea.Add(GetOrderCourrier()); // ORDER_COURRIER
                 camposLinea.Add(GetCourrierAsignado()); // CourerAsignado
-
-                camposLinea.Add(campos1AAA[1]); // MarcaRoaming
-
+                camposLinea.Add(string.Empty); // MarcaRoaming
                 camposLinea.Add(campos1AAA[21].Replace("(", "").Replace(")", "")); // CodigoBarra                
                 camposLinea.Add(GetContador12M(pExtracto)); // NroLineas12M
                 camposLinea.Add(GetMarcaPaqueteHBO(pExtracto)); // MarcaPaqueteHBO
                 camposLinea.Add(GetMinutosConMes(pExtracto)); // MinutosConsumoMes
-
-                camposLinea.Add(campos1AAA[1]); // CuentaVencidaAnticipada
-
+                camposLinea.Add(string.Empty); // CuentaVencidaAnticipada
                 camposLinea.Add(campos1AAA[47]); // Precis
                 camposLinea.Add(campos1AAA[48]); // ChipCatastral
                 camposLinea.Add(campos1AAA[49]); // Cordenadas
@@ -370,7 +356,7 @@ namespace App.ControlLogicaProcesos
                     camposLinea.Add(string.Empty); // QR
                 }
 
-                LineaMaestra = Helpers.ListaCamposToLinea(camposLinea, '|');
+                LineaMaestra = Helpers.ListaCamposToLinea(camposLinea, '|').Replace('\t', ' ');
             }
 
             return LineaMaestra;
@@ -433,14 +419,14 @@ namespace App.ControlLogicaProcesos
             List<string> lineasResumen = new List<string>();
 
             Dictionary<string, int> dicLocBar = new Dictionary<string, int>();
-            Dictionary<string, int> dicFE = new Dictionary<string, int>();            
+            Dictionary<string, int> dicFE = new Dictionary<string, int>();
             Dictionary<string, int> dicTranspromo = new Dictionary<string, int>();
             Dictionary<string, int> dicDisEspecial = new Dictionary<string, int>();
             Dictionary<string, int> dicCtaExtraer = new Dictionary<string, int>();
             Dictionary<string, int> dicProcuni = new Dictionary<string, int>();
             Dictionary<string, int> dicFechaPagoFijo = new Dictionary<string, int>();
 
-            string tipo = string.Empty;            
+            string tipo = string.Empty;
             bool valorInsumo = false;
 
             foreach (List<string> extracto in pDatosImprimir.Values)
@@ -737,10 +723,59 @@ namespace App.ControlLogicaProcesos
 
             return lineaSMS;
             #endregion
-        } 
+        }
         #endregion
 
         #region Metodos Propios
+
+        private string GetTelefono(List<string> pExtracto)
+        {
+            #region GetTelefono
+            string resultado = string.Empty;
+
+            var resultTelefono = from busqueda in pExtracto
+                                 where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("ADN1|") || busqueda.Substring(0, 5).Equals("1ADDA|")
+                                                           || busqueda.Substring(0, 5).Equals("1DDD|") || busqueda.Substring(0, 5).Equals("1GGG|")
+                                                           || busqueda.Substring(0, 5).Equals("1JJK|")
+                                 select busqueda;
+
+            if (resultTelefono.Any())
+            {
+                foreach (var telefono in resultTelefono)
+                {
+                    resultado = string.Empty;
+
+                    switch (telefono.Substring(0, 5))
+                    {
+                        case "ADN1|":
+                        case "1DDA|":
+                        case "1DDD|":
+                            resultado =  telefono.Split('|')[1];
+                            break;
+
+                        case "1GGG|":
+                            resultado = telefono.Split('|')[3];
+                            break;
+
+                        case "1JJK|":
+                            resultado = telefono.Split('|')[1];
+                            break;
+                        default:
+                            break;
+                    }
+
+                    if(!string.IsNullOrEmpty(resultado) && resultado.Length != 10)
+                    {
+                        resultado = string.Empty;
+                    }
+
+                }
+            }
+
+            return resultado;
+            #endregion
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -753,6 +788,11 @@ namespace App.ControlLogicaProcesos
             if (Variables.Variables.ArchivoSalidaFinal.ContainsKey(cuenta))
             {
                 nombreArchivo = Path.GetFileNameWithoutExtension(Variables.Variables.ArchivoSalidaFinal[cuenta]);
+
+                if(!nombreArchivo.Contains("OTROS"))
+                {
+                    nombreArchivo = nombreArchivo.Substring(0,nombreArchivo.Length - 4);
+                }
             }
 
             return nombreArchivo;
@@ -904,7 +944,7 @@ namespace App.ControlLogicaProcesos
             string resultado = "0";
 
             var result1EE3 = from busqueda in pExtracto
-                             where busqueda.Substring(0, 4).Equals("1EE3") && !busqueda.Contains("Consumo Fijo Etb A Móvil|")
+                             where busqueda.Substring(0, 4).Equals("1EE3")  && !busqueda.Contains("Consumo Fijo Etb A Móvil|")
                              select busqueda;
 
             if (result1EE3.Any())
@@ -1046,6 +1086,32 @@ namespace App.ControlLogicaProcesos
             {
                 resultado = Variables.Variables.DatosInsumoDistribucionEspecial[cuenta][0].Trim().Replace("/", "");
             }
+
+            return resultado;
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pExtracto"></param>
+        /// <returns></returns>
+        private string GetRetencion()
+        {
+            #region GetRetencion
+            string resultado = string.Empty;
+
+            if(Variables.Variables.CuentasNoImprimir.ContainsKey(cuenta))
+            {
+                if (Variables.Variables.DatosInsumoCuentasExtraer.ContainsKey(cuenta))
+                {
+                    resultado = "Retencion_Insumo";
+                }
+                else
+                {
+                    resultado = "Retencion_Valor";
+                }
+            }            
 
             return resultado;
             #endregion
@@ -1236,11 +1302,11 @@ namespace App.ControlLogicaProcesos
             }
 
             string nombreNuevo = Path.Combine(rutaSalida, "Reportes", nombreArchivoDetSMS.Replace("_CICLOS", cambiar));
-            
-            if(File.Exists(nombreAnterior))
+
+            if (File.Exists(nombreAnterior))
                 File.Move(nombreAnterior, nombreNuevo);
             #endregion
-        } 
+        }
         #endregion
     }
 }

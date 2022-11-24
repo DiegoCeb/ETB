@@ -293,11 +293,11 @@ namespace App.ControlLogicaProcesos
 
             if (result1AAA.Any())
             {
-                string[] campos1AAA = result1AAA.FirstOrDefault().Split('|');                
-
-                camposLinea.Add(campos1AAA[16]); // Telefono
-                camposLinea.Add(campos1AAA[7]); // Cuenta
+                string[] campos1AAA = result1AAA.FirstOrDefault().Split('|');
                 cuenta = campos1AAA[7];
+
+                camposLinea.Add(campos1AAA[15]); // Telefono
+                camposLinea.Add(campos1AAA[7]); // Cuenta                
                 camposLinea.Add(campos1AAA[2]); // Nombre
                 camposLinea.Add(campos1AAA[4]); // Direccion
                 camposLinea.Add(campos1AAA[40]); // Zona
@@ -312,24 +312,19 @@ namespace App.ControlLogicaProcesos
                 camposLinea.Add(campos1AAA[29]); // Barrio
                 camposLinea.Add(campos1AAA[10].Split(',')[0].Replace("$", "").Replace(".", "").Trim()); // TotalFactura
                 camposLinea.Add(campos1AAA[9]);  // Ciclo
-                camposLinea.Add(campos1AAA[1].Split('_')[0]); // Lote
+                camposLinea.Add(lote); // Lote
                 camposLinea.Add(campos1AAA[19]); // Fecx
                 camposLinea.Add(campos1AAA[17]); // Fecp
-
-                camposLinea.Add(campos1AAA[1]); // Fecb
-                camposLinea.Add(campos1AAA[1]); // Fecc
-
-                camposLinea.Add(GetTotalIva(pExtracto)); // Total Iva
-
-                camposLinea.Add(campos1AAA[1]); // Total IVA Otros Operadores
-
+                camposLinea.Add(string.Empty); // Fecb
+                camposLinea.Add(string.Empty); // Fecc
+                //camposLinea.Add(GetTotalIva(pExtracto)); // Total Iva
+                camposLinea.Add("$ 0.00"); // Total Iva
+                camposLinea.Add(string.Empty); // Total IVA Otros Operadores
                 camposLinea.Add(campos1AAA[33]); // Insertos
                 camposLinea.Add(campos1AAA[10]); // Valor Pagar Mes
                 camposLinea.Add(campos1AAA[27]); // Actividad
-
-                camposLinea.Add(campos1AAA[1]); // Logo TIC
-                camposLinea.Add(campos1AAA[1]); // Valor Subsidiado
-
+                camposLinea.Add(string.Empty); // Logo TIC
+                camposLinea.Add("$ 0.00"); // Valor Subsidiado
                 camposLinea.Add(campos1AAA[35]); // TipoEnvioCartaEmail
                 camposLinea.Add(campos1AAA[34]); // Email
                 camposLinea.Add(campos1AAA[18]); // FECL
@@ -338,33 +333,23 @@ namespace App.ControlLogicaProcesos
                 camposLinea.Add(GetLeyendaCarta(pExtracto)); // LeyendaCartera
                 camposLinea.Add(campos1AAA[3]); // NIT/CED
                 camposLinea.Add(campos1AAA[23]); // TipoProducto
-
-                camposLinea.Add(campos1AAA[1]); // PlanPrimarioLTE
-
+                camposLinea.Add(string.Empty); // PlanPrimarioLTE
                 camposLinea.Add(GetPlanActual(pExtracto)); // PlanActual
-
-                camposLinea.Add(campos1AAA[1]); // ConceptoFinanciacion
-                camposLinea.Add(campos1AAA[1]); // SaldoFinanciacion
-                camposLinea.Add(campos1AAA[1]); // cuotaFinanciacion
-
+                camposLinea.Add(string.Empty); // ConceptoFinanciacion
+                camposLinea.Add(string.Empty); // SaldoFinanciacion
+                camposLinea.Add(string.Empty); // cuotaFinanciacion
                 camposLinea.Add(GetValorFacturaAnterior(pExtracto)); // ValorfacturaAnterior
                 camposLinea.Add(GetGraciasPago(pExtracto)); // GraciasPorSuPago
                 camposLinea.Add(campos1AAA[24].Split(' ')[0].Trim()); // PorcentajeMora
-
-                camposLinea.Add(campos1AAA[1]); // Retencion
-
+                camposLinea.Add(GetRetencion()); // Retencion
                 camposLinea.Add(GetOrderCourrier()); // ORDER_COURRIER
                 camposLinea.Add(GetCourrierAsignado()); // CourerAsignado
-
-                camposLinea.Add(campos1AAA[1]); // MarcaRoaming
-
+                camposLinea.Add(string.Empty); // MarcaRoaming
                 camposLinea.Add(campos1AAA[21].Replace("(", "").Replace(")", "")); // CodigoBarra                
                 camposLinea.Add(GetContador12M(pExtracto)); // NroLineas12M
                 camposLinea.Add(GetMarcaPaqueteHBO(pExtracto)); // MarcaPaqueteHBO
                 camposLinea.Add(GetMinutosConMes(pExtracto)); // MinutosConsumoMes
-
-                camposLinea.Add(campos1AAA[1]); // CuentaVencidaAnticipada
-
+                camposLinea.Add(string.Empty); // CuentaVencidaAnticipada
                 camposLinea.Add(campos1AAA[47]); // Precis
                 camposLinea.Add(campos1AAA[48]); // ChipCatastral
                 camposLinea.Add(campos1AAA[49]); // Cordenadas
@@ -764,7 +749,12 @@ namespace App.ControlLogicaProcesos
 
             if(Variables.Variables.ArchivoSalidaFinal.ContainsKey(cuenta))
             {
-                nombreArchivo = Path.GetFileNameWithoutExtension(Variables.Variables.ArchivoSalidaFinal[cuenta]); 
+                nombreArchivo = Path.GetFileNameWithoutExtension(Variables.Variables.ArchivoSalidaFinal[cuenta]);
+
+                if (!nombreArchivo.Contains("OTROS"))
+                {
+                    nombreArchivo = nombreArchivo.Substring(0, nombreArchivo.Length - 4);
+                }
             }
 
             return nombreArchivo;
@@ -1062,6 +1052,33 @@ namespace App.ControlLogicaProcesos
             return resultado;
             #endregion
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pExtracto"></param>
+        /// <returns></returns>
+        private string GetRetencion()
+        {
+            #region GetRetencion
+            string resultado = string.Empty;
+
+            if (Variables.Variables.CuentasNoImprimir.ContainsKey(cuenta))
+            {
+                if (Variables.Variables.DatosInsumoCuentasExtraer.ContainsKey(cuenta))
+                {
+                    resultado = "Retencion_Insumo";
+                }
+                else
+                {
+                    resultado = "Retencion_Valor";
+                }
+            }
+
+            return resultado;
+            #endregion
+        }
+
         #endregion
 
         #region Escribir Archivos
