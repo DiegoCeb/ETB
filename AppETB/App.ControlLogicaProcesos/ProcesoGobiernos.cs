@@ -542,7 +542,7 @@ namespace App.ControlLogicaProcesos
         {
             #region GetTotalPagar
             string resultado = string.Empty;
-            List<string> valoresPago = ObtenerDatosCanal1BBB(pDatosOriginales,true).ToList();
+            List<string> valoresPago = ObtenerDatosCanal1BBB(pDatosOriginales, true).ToList();
             //string totalPagar = valoresPago[0].ToString().Trim().PadLeft(12, '0');
 
             Int64 total = Convert.ToInt64(valoresPago[0].ToString().Trim());
@@ -3240,7 +3240,7 @@ namespace App.ControlLogicaProcesos
 
             }
 
-            return resultado; 
+            return resultado;
             #endregion
         }
 
@@ -3342,8 +3342,17 @@ namespace App.ControlLogicaProcesos
 
                     var lineasNegocioFactura = from busqueda in lineaDetalle.Value
                                                where busqueda.Length > 3 && busqueda.Substring(0, 3).Equals("11C") &&
-                                               !string.IsNullOrEmpty(busqueda.Substring(44, 14).Trim().TrimStart('0'))
+                                               !string.IsNullOrEmpty(busqueda.Substring(44, 14).Trim().TrimStart('0')) &&
+                                                !string.IsNullOrEmpty(busqueda.Substring(16, 14).Trim().TrimStart('0'))
                                                select busqueda;
+
+                    if (!lineasNegocioFactura.Any())
+                    {
+                        lineasNegocioFactura = from busqueda in lineaDetalle.Value
+                                               where busqueda.Length > 3 && busqueda.Substring(0, 3).Equals("11C") &&
+                                                !string.IsNullOrEmpty(busqueda.Substring(16, 14).Trim().TrimStart('0'))
+                                               select busqueda;
+                    }
 
                     if (lineasNegocioFactura.Any())
                     {
@@ -3473,6 +3482,11 @@ namespace App.ControlLogicaProcesos
                                 }
                             }
 
+                            if (!lineaTotales.Any())
+                            {
+                                lineaTotales = new List<string> { lineaNegocioInfo.Value.FirstOrDefault().Substring(10) };
+                            }
+
                             llaveCruce = $"FACLIN{lineaNegocioInfo.Key}";
 
                             string DescripcionLineaNegocio = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruce).FirstOrDefault()?.Substring(8).Trim() ?? string.Empty;
@@ -3509,6 +3523,13 @@ namespace App.ControlLogicaProcesos
                                                 where !string.IsNullOrEmpty(busqueda.Substring(44, 14).Trim().TrimStart('0'))
                                                 group busqueda by busqueda.Substring(274, 7).Trim() into busqueda
                                                 select busqueda;
+
+                                if (!lineadetalles.Any())
+                                {
+                                    lineadetalles = from busqueda in lineaNegocioInfo.Value
+                                                    group busqueda by busqueda.Substring(274, 7).Trim() into busqueda
+                                                    select busqueda;
+                                }
                             }
                             else if (lineaNegocioInfo.Key == "2" || lineaNegocioInfo.Key == "6" || lineaNegocioInfo.Key == "9" || lineaNegocioInfo.Key == "4")
                             {
@@ -3516,6 +3537,13 @@ namespace App.ControlLogicaProcesos
                                                 where !string.IsNullOrEmpty(busqueda.Substring(44, 14).Trim().TrimStart('0'))
                                                 group busqueda by busqueda.Substring(0, 16).Trim() into busqueda
                                                 select busqueda;
+
+                                if (!lineadetalles.Any())
+                                {
+                                    lineadetalles = from busqueda in lineaNegocioInfo.Value
+                                                    group busqueda by busqueda.Substring(0, 16).Trim() into busqueda
+                                                    select busqueda;
+                                }
                             }
                             else
                             {
@@ -3886,7 +3914,7 @@ namespace App.ControlLogicaProcesos
 
                         if (!string.IsNullOrEmpty(@base))
                         {
-                            if (!paquetesInformacionFinales.ContainsKey(llave) && !paquetesInformacionFinales.Keys.Where(x => x.Contains(detalle.Substring(274, 7).Trim())).Any())
+                            if (!paquetesInformacionFinales.ContainsKey(llave) && !paquetesInformacionFinales.Keys.Where(x => x.Contains(detalle.Substring(274, 7).Trim()) && x.Contains(detalle.Substring(6, 10).Trim())).Any())
                             {
                                 paquetesInformacionFinales.Add(llave, new Dictionary<string, List<string>> { { lineaPaquete.Key, new List<string> { detalle } } });
                             }
@@ -3894,7 +3922,7 @@ namespace App.ControlLogicaProcesos
                             {
                                 if (!paquetesInformacionFinales.ContainsKey(llave))
                                 {
-                                    var llaveCanal = paquetesInformacionFinales.Keys.Where(x => x.Contains(detalle.Substring(274, 7).Trim()));
+                                    var llaveCanal = paquetesInformacionFinales.Keys.Where(x => x.Contains(detalle.Substring(274, 7).Trim()) && x.Contains(detalle.Substring(6, 10).Trim()));
 
                                     if (paquetesInformacionFinales[llaveCanal.FirstOrDefault()].ContainsKey(lineaPaquete.Key))
                                     {
@@ -3969,6 +3997,11 @@ namespace App.ControlLogicaProcesos
                 #region Logica
                 foreach (var lineaDetallePaquete in paquetesInformacionFinales)
                 {
+                    if (lineaDetallePaquete.Key.Substring(3, 1).Equals("5"))
+                    {
+                        continue;
+                    }
+
                     consecutivo++;
                     resultado = new List<string>();
 
@@ -4118,6 +4151,11 @@ namespace App.ControlLogicaProcesos
 
                                 foreach (var item in lineaDetalle.Value)
                                 {
+                                    if (item.Substring(3, 1) == "5")
+                                    {
+                                        continue;
+                                    }
+
                                     baseInterna.Add(item.Substring(16, 14).Trim());
                                     ivaInterna.Add(item.Substring(44, 14).Trim());
                                 }
@@ -4557,7 +4595,7 @@ namespace App.ControlLogicaProcesos
             }
             else
             {
-                
+
             }
 
             return resultado;
