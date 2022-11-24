@@ -290,7 +290,7 @@ namespace App.ControlLogicaProcesos
             if (!string.IsNullOrEmpty(resultadoFormateoLinea))
             {
                 resultado.Add(resultadoFormateoLinea);
-            }
+            }           
 
             resultadoFormateoLinea = FormateoCanalCONS(datosOriginales);
 
@@ -376,6 +376,13 @@ namespace App.ControlLogicaProcesos
                 resultado.AddRange(resultadoFormateoLinea);
             }
 
+            resultadoFormateoLinea = FormateoCanalCUFE(datosOriginales);
+
+            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            {
+                resultado.Add(resultadoFormateoLinea);
+            }
+
             #endregion
 
             return resultado;
@@ -395,8 +402,9 @@ namespace App.ControlLogicaProcesos
             FechaExpedicion = string.Empty;
             MesMora = null;
             CodigoDANE = string.Empty;
+            ban1CTF = false;
             #endregion           
-        }        
+        }
 
         /// <summary>
         /// 
@@ -661,7 +669,7 @@ namespace App.ControlLogicaProcesos
                 string[] campos = fechaPagoFijo.Split('|');
                 int diasCorte = Convert.ToInt32(campos[1]);
 
-                DateTime fechaReferencia = Convert.ToDateTime(fechaExpedicionInsumo.Substring(0,10));
+                DateTime fechaReferencia = Convert.ToDateTime(fechaExpedicionInsumo.Substring(0, 10));
 
                 int año = fechaReferencia.Year;
                 int mes = fechaReferencia.Month;
@@ -2902,12 +2910,13 @@ namespace App.ControlLogicaProcesos
                              select busqueda;
             #endregion
 
-            #region Agrupaiento TEMP Para procesar
+            #region Agrupaiento Para procesar
             string llaveAgrupacion = string.Empty;
             string llaveDoc = string.Empty;
             string ValorDoc = string.Empty;
             string llaveProductoInicio = string.Empty;
 
+            #region Agrupar 11C y 13M
             foreach (var lineaActual in dataProcesar)
             {
                 llaveAgrupacion = lineaActual.Substring(0, 6);
@@ -2968,10 +2977,10 @@ namespace App.ControlLogicaProcesos
                 {
                     dicAgrupado["02T" + lineaActual.Substring(3, 3)].Add(lineaActual);
                 }
-            }
+            } 
+            #endregion
 
-            // Procesa los 11C9
-
+            #region Agrupar 11C9
             if (result02T9.Any())
             {
                 List<string> listSuma11C9 = new List<string>();
@@ -2999,7 +3008,9 @@ namespace App.ControlLogicaProcesos
                         }
                     }
                 }
-            }
+            } 
+            #endregion
+
             #endregion
 
             #region Variables resultado
@@ -3070,6 +3081,7 @@ namespace App.ControlLogicaProcesos
                     switch (lineaProcesar.Substring(0, 3))
                     {
                         case "11C":
+                            #region 11C
                             if (dicValores.Keys.Contains(llaveProducto))
                             {
                                 dicValores[llaveProducto].Add(lineaProcesar.Substring(16, 14));
@@ -3105,25 +3117,36 @@ namespace App.ControlLogicaProcesos
 
                                 if (Convert.ToDouble(lineaProcesar.Substring(30, 14)) != 0)
                                 {
-                                    recargoMora = Convert.ToDecimal($"{lineaProcesar.Substring(30, 12)}.{lineaProcesar.Substring(42, 2)}");
-                                    recargoMora = recargoMora * Convert.ToDecimal(Utilidades.LeerAppConfig("porcentajeIva"));
-
-                                    if (recargoMora.ToString().Contains("."))
+                                    if (Convert.ToDouble(lineaProcesar.Substring(44, 14)) == 0)
                                     {
-                                        recargoMoraFormateado = recargoMora.ToString().Split('.')[0] + recargoMora.ToString().Split('.')[1].Substring(0, 2);
+                                        recargoMora = Convert.ToDecimal($"{lineaProcesar.Substring(30, 12)}.{lineaProcesar.Substring(42, 2)}");
+                                        recargoMora = recargoMora * Convert.ToDecimal(Utilidades.LeerAppConfig("porcentajeIva"));
+
+                                        if (recargoMora.ToString().Contains("."))
+                                        {
+                                            recargoMoraFormateado = recargoMora.ToString().Split('.')[0] + recargoMora.ToString().Split('.')[1].Substring(0, 2);
+                                        }
+                                        else
+                                        {
+                                            recargoMoraFormateado = recargoMora.ToString().Replace(",", "").Replace(".", "");
+                                        }
+
+                                        dicValores["IVA"].Add("-" + recargoMoraFormateado);
+                                        dicValores["TOTAL"].Add("-" + recargoMoraFormateado);
                                     }
                                     else
                                     {
-                                        recargoMoraFormateado = recargoMora.ToString().Replace(",", "").Replace(".", "");
+                                        dicValores["IVA"].Add("-" + lineaProcesar.Substring(44, 14));
+                                        dicValores["TOTAL"].Add("-" + lineaProcesar.Substring(44, 14));
                                     }
 
-                                    dicValores["IVA"].Add("-" + recargoMoraFormateado);
-                                    dicValores["TOTAL"].Add("-" + recargoMoraFormateado);
                                 }
                                 #endregion
                             }
-                            break;
+                            break; 
+                        #endregion
                         case "13M":
+                            #region 13M
                             if (dicValores.Keys.Contains(llaveProducto))
                             {
                                 dicValores[llaveProducto].Add(lineaProcesar.Substring(42, 14));
@@ -3176,89 +3199,12 @@ namespace App.ControlLogicaProcesos
                                 //}
                                 #endregion
                             }
-                            break;
+                            break; 
+                        #endregion
 
                         default:
                             break;
                     }
-
-                    #region basur mintras
-                    //if (dicValores.Keys.Contains(llaveProducto))
-                    //{
-                    //    dicValores[llaveProducto].Add(lineaProcesar.Substring(16, 14));
-                    //    dicValores["SUBTOTAL"].Add(lineaProcesar.Substring(16, 14));
-
-                    //    // Otros operadores
-                    //    if (llaveProducto == "5" || llaveProducto == "7")
-                    //    {
-                    //        impuestoProducto = Convert.ToDecimal($"{lineaProcesar.Substring(16, 12)}.{lineaProcesar.Substring(28, 2)}");
-                    //        impuestoProducto = impuestoProducto * Convert.ToDecimal(Utilidades.LeerAppConfig("porcentajeImpuestoConsumo"));
-
-                    //        if (impuestoProducto.ToString().Contains("."))
-                    //        {
-                    //            impuestoFormateado = impuestoProducto.ToString().Split('.')[0] + impuestoProducto.ToString().Split('.')[1].Substring(0, 2);
-                    //        }
-                    //        else
-                    //        {
-                    //            impuestoFormateado = impuestoProducto.ToString().Replace(",", "").Replace(".", "");
-                    //        }
-
-                    //        dicValores["IMPUESTOS"].Add(impuestoFormateado);
-                    //        dicValores["IVA"].Add("-" + impuestoFormateado);
-                    //        //dicValores["TOTAL"].Add("-" + impuestoFormateado); // Impuesto
-                    //    }
-
-                    //    dicValores["IVA"].Add(lineaProcesar.Substring(44, 14));
-
-                    //    dicValores["TOTAL"].Add(lineaProcesar.Substring(16, 14)); // Sub Total
-                    //    dicValores["TOTAL"].Add(lineaProcesar.Substring(44, 14)); // Iva
-
-
-                    //    #region Calculo Recargo Mora para restar
-
-                    //    if (Convert.ToDouble(lineaProcesar.Substring(30, 14)) != 0)
-                    //    {
-                    //        recargoMora = Convert.ToDecimal($"{lineaProcesar.Substring(30, 12)}.{lineaProcesar.Substring(42, 2)}");
-                    //        recargoMora = recargoMora * Convert.ToDecimal(Utilidades.LeerAppConfig("porcentajeIva"));
-
-                    //        if (recargoMora.ToString().Contains("."))
-                    //        {
-                    //            recargoMoraFormateado = recargoMora.ToString().Split('.')[0] + recargoMora.ToString().Split('.')[1].Substring(0, 2);
-                    //        }
-                    //        else
-                    //        {
-                    //            recargoMoraFormateado = recargoMora.ToString().Replace(",", "").Replace(".", "");
-                    //        }
-
-                    //        dicValores["IVA"].Add("-" + recargoMoraFormateado);
-                    //        dicValores["TOTAL"].Add("-" + recargoMoraFormateado);
-                    //    }
-
-                    //    #endregion
-
-                    #region Impuestos
-
-                    //if (!string.IsNullOrEmpty(impuestoFormateado))
-                    //{
-                    //    dicValores["IMPUESTOS"].Add(lineaProcesar.Substring(118, 14));
-                    //    dicValores["TOTAL"].Add(lineaProcesar.Substring(118, 14)); // Impuesto
-                    //}
-                    //else
-                    //{
-                    //    dicValores["TOTAL"].Add(impuestoFormateado);
-                    //}
-
-                    #endregion
-
-
-
-
-
-
-
-
-                    //dicValores["TOTAL"].Add(lineaProcesar.Substring(6, 14)); 
-                    #endregion
                 }
 
                 #region Pinta Resultado
@@ -3289,7 +3235,12 @@ namespace App.ControlLogicaProcesos
                 resultadoTemp += Helpers.SumarCampos(dicValores["IMPUESTOS"], "D") + "|";
                 resultadoTemp += Helpers.SumarCampos(dicValores["TOTAL"], "D") + "| ";
 
-                resultado.Add(Helpers.ValidarPipePipe(resultadoTemp).Replace("$ 0.00", "-"));
+                // Se valida si esta vacio el concepto para no pintarlo
+                if (!Helpers.ValidarPipePipe(resultadoTemp).Replace("$ 0.00", "-").Contains("|-|-|-|-|-|-|-|-|-|-|-|"))
+                {
+                    resultado.Add(Helpers.ValidarPipePipe(resultadoTemp).Replace("$ 0.00", "-"));
+                }
+
                 #endregion
 
                 #region Inicializa diccionario Con Valores
@@ -4615,8 +4566,6 @@ namespace App.ControlLogicaProcesos
             #endregion
         }
 
-
-
         /// <summary>
         /// 
         /// </summary>
@@ -4658,7 +4607,6 @@ namespace App.ControlLogicaProcesos
             return listaTemp1MMM;
             #endregion
         }
-
 
         /// <summary>
         /// 
@@ -4762,8 +4710,15 @@ namespace App.ControlLogicaProcesos
             #endregion
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pCuenta"></param>
+        /// <param name="pCiclo"></param>
+        /// <returns></returns>
         private ClientesEspeciales CargarClientesEspeciales(string pCuenta, string pCiclo)
         {
+            #region CargarClientesEspeciales
             ClientesEspeciales cE = new ClientesEspeciales();
 
             string pLineaInsumo = Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoClientesEspecialesDatos, $"{pCuenta}-{pCiclo}") ?? string.Empty;
@@ -4792,8 +4747,8 @@ namespace App.ControlLogicaProcesos
                 cE.ReversionPago = camposInsumo[17].Trim();
             }
 
-            return cE;
-
+            return cE; 
+            #endregion
         }
     }
 
