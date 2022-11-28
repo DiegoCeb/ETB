@@ -159,7 +159,7 @@ namespace App.ControlLogicaProcesos
             dynamic resultadoFormateoLinea = null;
 
             //Para Validaciones
-            if (pLLaveCruce == "7109443991")
+            if (pLLaveCruce == "7272912881")
             {
 
             }
@@ -2942,7 +2942,6 @@ namespace App.ControlLogicaProcesos
             string identificadorCanal = string.Empty;
             decimal impuestoProducto = 0;
             string impuestoFormateado = string.Empty;
-            decimal iva = 0;
             string ivaFormateado = string.Empty;
             decimal recargoMora = 0;
             string recargoMoraFormateado = string.Empty;

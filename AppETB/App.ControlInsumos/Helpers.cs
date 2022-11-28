@@ -635,11 +635,14 @@ namespace App.ControlInsumos
 
             foreach (var datoLinea in pDatosInsumo)
             {
-                string llaveCruce = $"{datoLinea.Split('|').ElementAt(0)}-{datoLinea.Split('|').ElementAt(2)}";
-
-                if (!Variables.Variables.DatosInsumoClientesEspecialesDatos.ContainsKey(llaveCruce))
+                if (!string.IsNullOrEmpty(datoLinea.Trim()))
                 {
-                    Variables.Variables.DatosInsumoClientesEspecialesDatos.Add(llaveCruce, datoLinea);
+                    string llaveCruce = $"{datoLinea.Split('|').ElementAt(0)}-{datoLinea.Split('|').ElementAt(2)}";
+
+                    if (!Variables.Variables.DatosInsumoClientesEspecialesDatos.ContainsKey(llaveCruce))
+                    {
+                        Variables.Variables.DatosInsumoClientesEspecialesDatos.Add(llaveCruce, datoLinea);
+                    }
                 }
             }
             #endregion
@@ -1516,7 +1519,6 @@ namespace App.ControlInsumos
                 throw new Exception("Error: " + ex.Message);
             }
             #endregion
-
         }
 
         /// <summary>
@@ -2078,7 +2080,7 @@ namespace App.ControlInsumos
 
                     transformado = pCampo.Trim().TrimStart('0');
 
-                    if (string.IsNullOrEmpty(transformado))
+                    if (string.IsNullOrEmpty(transformado) || transformado.Contains("#"))
                     {
                         transformado = "00";
                     }
@@ -2576,7 +2578,7 @@ namespace App.ControlInsumos
                 foreach (var _Archivo in Directory.GetFiles(RutaEntrada))
                 {
 #if DEBUG == false
-                    File.Move(_Archivo, RutaSalida + "\\" + Path.GetFileName(_Archivo));
+                    File.Copy(_Archivo, RutaSalida + "\\" + Path.GetFileName(_Archivo));
 #endif
                     File.Copy(_Archivo, RutaSalida + "\\" + Path.GetFileName(_Archivo));
                 }
@@ -3121,7 +3123,8 @@ namespace App.ControlInsumos
 
             while (EsFestivo(festivos, pFechaComporbar))
             {
-                fechaResult.AddDays(1);
+                fechaResult = fechaResult.AddDays(1);
+                pFechaComporbar = fechaResult;
             }
 
             return fechaResult; 

@@ -36,7 +36,7 @@ namespace App.ControlProcesos
                     //Se crea carpeta salida se mueven datos de entrada e insumos a originales
                     _objProcesamiento.AdecuarTrabajoApp("Masivos");
                     //Inicio cargue archivos y proceso de formateo
-                    _objProcesamiento.EjecutarProcesoMasivo(Helpers.RutaOriginales);
+                     _objProcesamiento.EjecutarProcesoMasivo(Helpers.RutaOriginales);
                     break;
 
                 case "2": //Datos

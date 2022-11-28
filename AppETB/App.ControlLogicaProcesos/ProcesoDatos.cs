@@ -55,13 +55,12 @@ namespace App.ControlLogicaProcesos
         public ProcesoDatos()
         { }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pArchivo"></param>
         public void CargueFormateoArchivo(string pArchivo)
         {
-            if (pArchivo.Contains("desktop.ini"))
-            {
-                return;
-            }
-
             #region CargueFormateoArchivo
             List<string> DatosArchivo = File.ReadAllLines(pArchivo, Encoding.Default).ToList();
             List<string> datosExtractoFormateo = new List<string>();
@@ -3026,7 +3025,6 @@ namespace App.ControlLogicaProcesos
             string identificadorCanal = string.Empty;
             decimal impuestoProducto = 0;
             string impuestoFormateado = string.Empty;
-            decimal iva = 0;
             string ivaFormateado = string.Empty;
             decimal recargoMora = 0;
             string recargoMoraFormateado = string.Empty;
