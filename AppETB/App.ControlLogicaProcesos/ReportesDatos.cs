@@ -277,14 +277,14 @@ namespace App.ControlLogicaProcesos
 
             var resultCUFE = from busqueda in pExtracto
                              where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("CUFE|")
-                             select busqueda;            
+                             select busqueda;
 
             #endregion
 
             if (result1AAA.Any())
             {
                 string[] campos1AAA = result1AAA.FirstOrDefault().Split('|');
-                cuenta = campos1AAA[7];                
+                cuenta = campos1AAA[7];
 
                 camposLinea.Add(campos1AAA[15]);// Telefono
                 camposLinea.Add(campos1AAA[7]); // Cuenta
@@ -311,7 +311,20 @@ namespace App.ControlLogicaProcesos
                 camposLinea.Add("$ 0.00"); // Total Iva
                 camposLinea.Add(string.Empty); // Total IVA Otros Operadores
                 camposLinea.Add(campos1AAA[33]); // Insertos
-                camposLinea.Add(campos1AAA[31]); // Valor Pagar Mes
+
+                #region Requerimiento 360
+                List<decimal> comparacionValores = new List<decimal>
+                {
+                    Convert.ToDecimal(Helpers.FormatearCampos(TiposFormateo.Decimal03, campos1AAA[10])), //Valor total Factura
+                    Convert.ToDecimal(Helpers.FormatearCampos(TiposFormateo.Decimal03, campos1AAA[31]))  //Valor Mes
+                };
+
+                var valorMenor = from busqueda in comparacionValores
+                                 orderby busqueda ascending
+                                 select busqueda; 
+                #endregion
+
+                camposLinea.Add(Helpers.FormatearCampos(TiposFormateo.Decimal05, valorMenor.FirstOrDefault().ToString().Replace(".", string.Empty))); // Valor Pagar Mes
                 camposLinea.Add(campos1AAA[27]); // Actividad
                 camposLinea.Add(string.Empty); // Logo TIC
                 camposLinea.Add("$ 0.00"); // Valor Subsidiado
@@ -709,7 +722,7 @@ namespace App.ControlLogicaProcesos
                     }
 
                     var vencimiento = campos1AAA[15].Trim() == "1" ? campos1AAA[17].Trim() : "Pago Inmediato";
-                    mensaje2 = $"Pago electronico {cuenta} valor {campos1AAA[10].Replace("$", "").Trim()} vence: { vencimiento}";
+                    mensaje2 = $"Pago electronico {cuenta} valor {campos1AAA[10].Replace("$", "").Trim()} vence: {vencimiento}";
 
                     lineaSMS = campos1AAA[15].Trim() + mensaje + mensaje2;
 
@@ -750,7 +763,7 @@ namespace App.ControlLogicaProcesos
                         case "ADN1|":
                         case "1DDA|":
                         case "1DDD|":
-                            resultado =  telefono.Split('|')[1];
+                            resultado = telefono.Split('|')[1];
                             break;
 
                         case "1GGG|":
@@ -764,7 +777,7 @@ namespace App.ControlLogicaProcesos
                             break;
                     }
 
-                    if(!string.IsNullOrEmpty(resultado) && resultado.Length != 10)
+                    if (!string.IsNullOrEmpty(resultado) && resultado.Length != 10)
                     {
                         resultado = string.Empty;
                     }
@@ -789,9 +802,9 @@ namespace App.ControlLogicaProcesos
             {
                 nombreArchivo = Path.GetFileNameWithoutExtension(Variables.Variables.ArchivoSalidaFinal[cuenta]);
 
-                if(!nombreArchivo.Contains("OTROS"))
+                if (!nombreArchivo.Contains("OTROS"))
                 {
-                    nombreArchivo = nombreArchivo.Substring(0,nombreArchivo.Length - 4);
+                    nombreArchivo = nombreArchivo.Substring(0, nombreArchivo.Length - 4);
                 }
             }
 
@@ -944,7 +957,7 @@ namespace App.ControlLogicaProcesos
             string resultado = "0";
 
             var result1EE3 = from busqueda in pExtracto
-                             where busqueda.Substring(0, 4).Equals("1EE3")  && !busqueda.Contains("Consumo Fijo Etb A Móvil|")
+                             where busqueda.Substring(0, 4).Equals("1EE3") && !busqueda.Contains("Consumo Fijo Etb A Móvil|")
                              select busqueda;
 
             if (result1EE3.Any())
@@ -1101,7 +1114,7 @@ namespace App.ControlLogicaProcesos
             #region GetRetencion
             string resultado = string.Empty;
 
-            if(Variables.Variables.CuentasNoImprimir.ContainsKey(cuenta))
+            if (Variables.Variables.CuentasNoImprimir.ContainsKey(cuenta))
             {
                 if (Variables.Variables.DatosInsumoCuentasExtraer.ContainsKey(cuenta))
                 {
@@ -1111,7 +1124,7 @@ namespace App.ControlLogicaProcesos
                 {
                     resultado = "Retencion_Valor";
                 }
-            }            
+            }
 
             return resultado;
             #endregion

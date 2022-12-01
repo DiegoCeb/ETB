@@ -321,7 +321,20 @@ namespace App.ControlLogicaProcesos
                 camposLinea.Add("$ 0.00"); // Total Iva
                 camposLinea.Add(string.Empty); // Total IVA Otros Operadores
                 camposLinea.Add(campos1AAA[33]); // Insertos
-                camposLinea.Add(campos1AAA[10]); // Valor Pagar Mes
+
+                #region Requerimiento 360
+                List<decimal> comparacionValores = new List<decimal>
+                {
+                    Convert.ToDecimal(Helpers.FormatearCampos(TiposFormateo.Decimal03, campos1AAA[10])), //Valor total Factura
+                    Convert.ToDecimal(Helpers.FormatearCampos(TiposFormateo.Decimal03, campos1AAA[31]))  //Valor Mes
+                };
+
+                var valorMenor = from busqueda in comparacionValores
+                                 orderby busqueda ascending
+                                 select busqueda;
+                #endregion
+
+                camposLinea.Add(Helpers.FormatearCampos(TiposFormateo.Decimal05, valorMenor.FirstOrDefault().ToString().Replace(".", string.Empty))); // Valor Pagar Mes
                 camposLinea.Add(campos1AAA[27]); // Actividad
                 camposLinea.Add(string.Empty); // Logo TIC
                 camposLinea.Add("$ 0.00"); // Valor Subsidiado
