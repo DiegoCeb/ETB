@@ -40,3 +40,4 @@ C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.ControlLogicaProceso
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaProcesos.csproj.CopyComplete
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaProcesos.dll
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaProcesos.pdb
+C:\Proyectos\ETB\AppETB\App.ControlLogicaProcesos\bin\Debug\ICSharpCode.SharpZipLib.dll

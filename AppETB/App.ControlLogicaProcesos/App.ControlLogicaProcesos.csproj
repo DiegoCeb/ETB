@@ -51,6 +51,7 @@
     <Compile Include="ProcesoDatos.cs" />
     <Compile Include="ProcesoGobiernos.cs" />
     <Compile Include="ProcesoLlanos.cs" />
+    <Compile Include="ProcesoLteCorp.cs" />
     <Compile Include="ProcesoMasivos.cs" />
     <Compile Include="IProcess.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

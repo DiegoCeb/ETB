@@ -248,6 +248,43 @@ namespace App.ControlEjecucion
             #endregion
         }
 
+        public void EjecutarProcesoLteCorp(string pRutaArchivosProcesar)
+        {
+            #region EjecutarProcesoMasivo
+            var archivos = from busqueda in Directory.GetFiles(pRutaArchivosProcesar)
+                           where !busqueda.Contains("CONTEO") && !busqueda.Contains("IDENTIFICACION") && !busqueda.Contains("premaestra") //TODO: se omiten estos archivos peor ahi que revisar para que sirven
+                           select busqueda;
+
+            var archivoPeriodo = from busqueda in Directory.GetFiles(pRutaArchivosProcesar)
+                                 where busqueda.Contains("IDENTIFICACION")
+                                 select busqueda;
+
+            string periodo = File.ReadAllLines(archivoPeriodo.FirstOrDefault()).ToList().ElementAt(0).Split('\t').ElementAt(1).PadLeft(6, '0');
+            string lote = File.ReadAllLines(archivoPeriodo.FirstOrDefault()).ToList().ElementAt(0).Split('\t').ElementAt(5);
+
+            Helpers.EscribirVentanaLog($"Archivos Cargados Para Proceso: {archivos.Count().ToString()}");
+            Helpers.EscribirVentanaLog(" ");
+
+            Helpers.EscribirVentanaLog($"Inicia Formateo de Archivos");
+            Helpers.EscribirVentanaMismaLinea($"Formateando Archivos: ");
+            foreach (var archivo in archivos)
+            {
+                _ = new ProcesoLteCorp(archivo, periodo);
+                Helpers.EscribirVentanaMismaLinea($"X", false);
+            }
+            Helpers.EscribirVentanaMismaLinea(System.Environment.NewLine, false);
+
+            //Escribir Diccionario Formateados llamando a un metodo de cracion de salidas donde se realice la segmentacion
+            Helpers.EscribirVentanaLog($"Inicia Escritura de Salidas");
+            EscribirSalidasProceso($"{App.ControlInsumos.Helpers.RutaProceso}", Variables.Variables.DiccionarioExtractosFormateados, "1", lote);
+
+            // Se crean los reportes
+            Helpers.EscribirVentanaLog($"Inicia Proceso Reportes");
+            _ = new ReportesMasivos(Variables.Variables.DiccionarioExtractosFormateados, App.ControlInsumos.Helpers.RutaProceso, lote);
+
+            #endregion
+        }
+
         public void CargueGeneralInsumos(string Pruta)
         {
             Helpers.EscribirVentanaMismaLinea($"Cargando Insumos: ");

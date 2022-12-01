@@ -73,6 +73,12 @@ namespace App.ControlProcesos
                     //Inicio cargue archivos y proceso de formateo
                     _objProcesamiento.EjecutarProcesoAnexosVerdes(Helpers.RutaOriginales);
                     break;
+                case "7": //Anexos Verdes
+                    //Se crea carpeta salida se mueven datos de entrada e insumos a originales
+                    _objProcesamiento.AdecuarTrabajoApp("LteCorp");
+                    //Inicio cargue archivos y proceso de formateo
+                    _objProcesamiento.EjecutarProcesoLteCorp(Helpers.RutaOriginales);
+                    break;
             }
 
             Helpers.EscribirVentanaLog("Final Existoso del Proceso, revise la carpeta salidas !!!");
@@ -137,6 +143,8 @@ namespace App.ControlProcesos
             Console.WriteLine("");
             Console.WriteLine("6. Anexos Verdes");
             Console.WriteLine("");
+            Console.WriteLine("7. LTE Corporativo");
+            Console.WriteLine("");
             Variables.Variables.Proceso = Console.ReadKey().KeyChar.ToString();
             Console.WriteLine("");
 
@@ -179,8 +187,16 @@ namespace App.ControlProcesos
 
                 case "6":
                     Helpers.EscribirVentanaLog("Proceso Seleccionado 6. Anexos Verdes");
+                    Helpers.EscribirVentanaLog(" ");
                     Helpers.EscribirVentanaLog("Inicio Proceso Anexos Verdes");
                     Ejecutar("6");
+                    break;
+
+                case "7":
+                    Helpers.EscribirVentanaLog("Proceso Seleccionado 7. LTE Corporativo");
+                    Helpers.EscribirVentanaLog(" ");
+                    Helpers.EscribirVentanaLog("Inicio LTE Corporativo");
+                    Ejecutar("7");
                     break;
 
                 default:
