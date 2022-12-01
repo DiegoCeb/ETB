@@ -10,7 +10,7 @@ using DLL_Utilidades;
 
 namespace App.ControlLogicaProcesos
 {
-    public class ProcesoMasivos : IProcess
+    public class ProcesoLteCorp : IProcess
     {
         #region Variables del proceso
         private bool IsResidencial { get; set; }
@@ -35,9 +35,9 @@ namespace App.ControlLogicaProcesos
 
         #endregion
 
-        public ProcesoMasivos(string pArchivo, string pPeridoFacturacion)
+        public ProcesoLteCorp(string pArchivo, string pPeridoFacturacion)
         {
-            #region ProcesoMasivos
+            #region ProcesoLteCorp
             try
             {
                 PeriodoFacturacion = pPeridoFacturacion;
@@ -61,7 +61,7 @@ namespace App.ControlLogicaProcesos
         /// <summary>
         /// Constructor General
         /// </summary>
-        public ProcesoMasivos()
+        public ProcesoLteCorp()
         { }
 
         public void CargueFormateoArchivo(string pArchivo)
@@ -558,8 +558,8 @@ namespace App.ControlLogicaProcesos
                 ListaCanal1AAA.Add(string.Empty); //TODO: Doble marca Transpromo Verificar
                 ListaCanal1AAA.Add(GetMarcaCourier());
                 ListaCanal1AAA.Add(GetCuentaVencidaAnticipada()); // TODO: Validar que sea el insumo correcto
-                ListaCanal1AAA.Add(string.Empty); //TODO: Tipo Email Prevalidador Verificar
                 ListaCanal1AAA.Add(GetMarcaParafiscales()); //Parafiscales
+                ListaCanal1AAA.Add(string.Empty); //TODO: Tipo Email Prevalidador Verificar
                 ListaCanal1AAA.AddRange(GetLocBar());
                 ListaCanal1AAA.AddRange(GetQR(Linea010000.Substring(6, 50)));
                 ListaCanal1AAA.Add(string.Empty); //CampoVacio
@@ -666,6 +666,7 @@ namespace App.ControlLogicaProcesos
             return mesMora.ToString();
             #endregion
         }
+
         /// <summary>
         /// Regla FechaDesdeHasta
         /// </summary>
@@ -680,7 +681,7 @@ namespace App.ControlLogicaProcesos
             {
                 string fechaFactura = Helpers.FormatearCampos(TiposFormateo.Fecha02, pLinea010000.Substring(168, 8));
 
-                int mes = Convert.ToInt32(fechaFactura.Substring(4, 2));
+                int mes = Convert.ToInt32(fechaFactura.Substring(4,2));
                 int año = Convert.ToInt32(fechaFactura.Substring(0, 4));
                 DateTime fecha = new DateTime(año, mes, 1);
                 DateTime fecha1 = new DateTime(año, mes, 1);
@@ -707,8 +708,8 @@ namespace App.ControlLogicaProcesos
                 }
 
             }
-
-            if (FechaDesdeHasta.Count == 0)
+            
+            if(FechaDesdeHasta.Count == 0)
             {
                 List<PosCortes> listaCortes = new List<PosCortes>();
                 listaCortes.Add(new PosCortes(178, 8, TiposFormateo.Fecha01));
@@ -1040,89 +1041,6 @@ namespace App.ControlLogicaProcesos
 
             switch (ciclo)
             {
-                case 15:
-                case 16:
-                case 87:
-                    tipociclo = "FIB";
-                    IsFibra = true;
-                    break;
-
-                case 17:
-                case 31:
-                case 32:
-                case 33:
-                case 34:
-                case 35:
-                case 36:
-                case 38:
-                case 39:
-                case 40:
-                case 44:
-                case 45:
-                case 46:
-                case 47:
-                case 48:
-                case 49:
-                case 50:
-                case 51:
-                case 52:
-                case 53:
-                case 54:
-                case 55:
-                case 56:
-                case 57:
-                case 58:
-                case 59:
-                case 60:
-                case 61:
-                case 62:
-                case 63:
-                case 68:
-                case 70:
-                case 71:
-                    tipociclo = "PAR";
-                    IsResidencial = true;
-                    break;
-
-                case 18:
-                case 19:
-                case 37:
-                case 64:
-                case 67:
-                case 69:
-                    tipociclo = "GOB";
-                    IsGobierno = true;
-                    break;
-
-                case 66:
-                case 79:
-                case 80:
-                case 81:
-                case 82:
-                case 84:
-                case 85:
-                case 86:
-                case 88:
-                    tipociclo = "DAT";
-                    IsDatos = true;
-                    break;
-
-                case 3:
-                case 4:
-                case 5:
-                case 6:
-                case 7:
-                case 8:
-                case 90:
-                case 91:
-                case 92:
-                case 93:
-                case 94:
-                case 95:
-                    tipociclo = "LTE";
-                    IsLte = true;
-                    break;
-
                 case 96:
                 case 97:
                     tipociclo = "LTE_CORP";
@@ -1142,40 +1060,19 @@ namespace App.ControlLogicaProcesos
         private string GetTasaInteres(string pLinea040000)
         {
             #region GetTasaInteres
-            string idActividad = GetIdActividad(pLinea040000.Substring(124, 2));
+            
             string tasaInteresTablaSustitucion = string.Empty;
 
-            tasaInteresTablaSustitucion = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"TASM{idActividad}").FirstOrDefault()?.Substring(6).Trim() ?? string.Empty;
-            tasaInteresTablaSustitucion.Replace("TASAS DE MORA POR ACTIVIDAD", string.Empty);
+            tasaInteresTablaSustitucion = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"TASM10").FirstOrDefault()?.Substring(6).Trim() ?? string.Empty;
 
-            if (!string.IsNullOrEmpty(tasaInteresTablaSustitucion))
+            if (string.IsNullOrEmpty(tasaInteresTablaSustitucion))
             {
-                return tasaInteresTablaSustitucion;
+                string idActividad = GetIdActividad(pLinea040000.Substring(124, 2));
+                tasaInteresTablaSustitucion = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"TASM{idActividad}").FirstOrDefault()?.Substring(6).Trim() ?? string.Empty;
             }
-            else
-            {
-                if (IsDatos || IsLteCorporativo)
-                {
-                    tasaInteresTablaSustitucion = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"TASM10").FirstOrDefault()?.Substring(6).Trim() ?? string.Empty;
-                    return tasaInteresTablaSustitucion;
-                }
-                else if (IsLte)
-                {
-                    tasaInteresTablaSustitucion = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"TASM08").FirstOrDefault()?.Substring(6).Trim() ?? string.Empty;
-                    return tasaInteresTablaSustitucion;
-                }
-                else if (IsResidencial || IsFibra || IsGobierno)
-                {
-                    tasaInteresTablaSustitucion = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"TASM08").FirstOrDefault()?.Substring(6).Trim() ?? string.Empty;
-                    tasaInteresTablaSustitucion += $" {Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"TASM10").FirstOrDefault()?.Substring(6).Trim() ?? string.Empty}";
+            
+            return tasaInteresTablaSustitucion;
 
-                    return tasaInteresTablaSustitucion;
-                }
-                else
-                {
-                    return string.Empty;
-                }
-            }
             #endregion
         }
 
@@ -4231,7 +4128,7 @@ namespace App.ControlLogicaProcesos
                         totalDispositivosFinanciados++;
                         totalValorFinanciado += valorFinanciado;
                         totalSaldoRestante += saldoRestante;
-                        totalValorPorPagar += valorXPagar;                        
+                        totalValorPorPagar += valorXPagar;
                     }
                     else if (IsResidencial)
                     {
@@ -5785,6 +5682,6 @@ namespace App.ControlLogicaProcesos
             return resultado;
             #endregion
         }
-        #endregion
+#endregion
     }
 }

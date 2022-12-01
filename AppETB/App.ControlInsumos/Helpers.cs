@@ -280,7 +280,6 @@ namespace App.ControlInsumos
             // CODXCODIGOS DE BARRIOS
             // CJURI1EMPRESAS DE COBRO JURIDICO POR MES
             // CJURI2DIRECCION EMPRESAS DE COBRO JURIDICO POR MES
-            // PERIODOS DE CORTES SERVICIO LTE
 
             var result12 = from datos in pDatosInsumo
                            where datos.Length > 12
@@ -296,8 +295,7 @@ namespace App.ControlInsumos
                            comp2 == "SV" ||
                            comp4 == "CODX" ||
                            comp6 == "CJURI1" ||
-                           comp6 == "CJURI2" ||
-                           comp6 == "PERCOR"
+                           comp6 == "CJURI2"
                            select datos;
 
             foreach (var dato in result12)
@@ -417,6 +415,28 @@ namespace App.ControlInsumos
             foreach (var dato in result29)
             {
                 string llaveCruce = dato.Substring(0, 29).Trim();
+
+                if (!Variables.Variables.DatosInsumoTablaSustitucion.ContainsKey(llaveCruce))
+                {
+                    Variables.Variables.DatosInsumoTablaSustitucion.Add(llaveCruce, new List<string> { dato });
+                }
+            }
+            #endregion
+
+            #region XEspacio
+            // PERIODOS DE CORTES SERVICIO LTE
+
+            var resultesp = from datos in pDatosInsumo
+                           where datos.Length > 12
+                           let comp6 = datos.Substring(0, 6).Trim()
+                           where
+                           comp6 == "PERCOR"
+                           select datos;
+
+            foreach (var dato in resultesp)
+            {
+                int corte = dato.IndexOf(" ");
+                string llaveCruce = dato.Substring(0, corte).Trim();
 
                 if (!Variables.Variables.DatosInsumoTablaSustitucion.ContainsKey(llaveCruce))
                 {
@@ -1658,7 +1678,7 @@ namespace App.ControlInsumos
             switch (pFormateoTipo)
             {
                 case TiposFormateo.Fecha01:
-                    return FormatearFecha("01", pCampo); // De ddMMyy a dd/MM/yyyy
+                    return FormatearFecha("01", pCampo); // De ddMMyyyy a dd/MM/yyyy
 
                 case TiposFormateo.LetraCapital:
                     return FormatearLetraCapital(pCampo);
