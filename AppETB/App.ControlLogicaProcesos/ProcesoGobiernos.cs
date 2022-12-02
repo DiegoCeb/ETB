@@ -159,7 +159,7 @@ namespace App.ControlLogicaProcesos
             dynamic resultadoFormateoLinea = null;
 
             //Para Validaciones
-            if (pLLaveCruce == "7109443991")
+            if (pLLaveCruce == "7272912881")
             {
 
             }
@@ -796,7 +796,53 @@ namespace App.ControlLogicaProcesos
 
             if (Convert.ToInt64(valoresPago[1]) >= 0)
             {
-                CodeBar2 = $"(415){numeroETB}(8020){numReferencia}(3900){ValorPagarCB2.Substring(0, 10)}(96){fechaPago}";
+                #region Requerimiento 360
+                Int64 total = Convert.ToInt64(ValorPagarCB2);
+
+                var result29000 = from busqueda in pDatosOriginales
+                                  where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("29000")
+                                  select busqueda;
+
+                var result02T003 = from busqueda in pDatosOriginales
+                                   where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("02T003")
+                                   select busqueda;
+
+                if (result29000.Any())
+                {
+                    //Nota Credito
+                    foreach (var lineaNotaCredito in result29000)
+                    {
+                        total += Convert.ToInt64(lineaNotaCredito.Substring(29, 20).Trim());
+                    }
+                }
+
+                if (result02T003.Any())
+                {
+                    //Ajuste Decena
+                    foreach (var lineaAjusteDecena in result02T003)
+                    {
+                        total += Convert.ToInt64(lineaAjusteDecena.Substring(6, 14)) +
+                           Convert.ToInt64(lineaAjusteDecena.Substring(20, 14)) +
+                           Convert.ToInt64(lineaAjusteDecena.Substring(34, 14)) +
+                           Convert.ToInt64(lineaAjusteDecena.Substring(48, 14)) +
+                           Convert.ToInt64(lineaAjusteDecena.Substring(62, 14));
+                    }
+                }
+
+                if (total < 0)
+                {
+                    total = 0;
+                }
+                #endregion
+
+                if (total == 0)
+                {
+                    CodeBar2 = $"(415){numeroETB}(8020){numReferencia}(3900){total.ToString().PadLeft(10, '0')}(96){fechaPago}";
+                }
+                else
+                {
+                    CodeBar2 = $"(415){numeroETB}(8020){numReferencia}(3900){total.ToString().Substring(0, total.ToString().Length - 2).PadLeft(10, '0')}(96){fechaPago}";
+                }
             }
             else
             {
@@ -984,6 +1030,51 @@ namespace App.ControlLogicaProcesos
         {
             #region GetValorPagarMes
             List<string> valoresPago = ObtenerDatosCanal1BBB(pDatosOriginales, true).ToList();
+
+            Int64 total = Convert.ToInt64(valoresPago[1].ToString().Trim());
+
+            #region Requerimiento 360
+            var result29000 = from busqueda in pDatosOriginales
+                              where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("29000")
+                              select busqueda;
+
+            var result02T003 = from busqueda in pDatosOriginales
+                               where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("02T003")
+                               select busqueda;
+
+            if (result29000.Any())
+            {
+                //Nota Credito
+                foreach (var lineaNotaCredito in result29000)
+                {
+                    total += Convert.ToInt64(lineaNotaCredito.Substring(29, 20).Trim());
+                }
+            }
+
+            if (result02T003.Any())
+            {
+                //Ajuste Decena
+                foreach (var lineaAjusteDecena in result02T003)
+                {
+                    total += Convert.ToInt64(lineaAjusteDecena.Substring(6, 14)) +
+                       Convert.ToInt64(lineaAjusteDecena.Substring(20, 14)) +
+                       Convert.ToInt64(lineaAjusteDecena.Substring(34, 14)) +
+                       Convert.ToInt64(lineaAjusteDecena.Substring(48, 14)) +
+                       Convert.ToInt64(lineaAjusteDecena.Substring(62, 14));
+                }
+            }
+            #endregion
+
+            string totalPagar = String.Empty;
+            if (total > 0)
+            {
+                totalPagar = total.ToString();
+            }
+            else
+            {
+                totalPagar = "0";
+            }
+
             string ValorPagar = Helpers.FormatearCampos(TiposFormateo.Decimal05, valoresPago[1].ToString());
 
             return ValorPagar ?? string.Empty;
@@ -2942,7 +3033,6 @@ namespace App.ControlLogicaProcesos
             string identificadorCanal = string.Empty;
             decimal impuestoProducto = 0;
             string impuestoFormateado = string.Empty;
-            decimal iva = 0;
             string ivaFormateado = string.Empty;
             decimal recargoMora = 0;
             string recargoMoraFormateado = string.Empty;

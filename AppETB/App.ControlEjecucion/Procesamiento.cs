@@ -86,7 +86,6 @@ namespace App.ControlEjecucion
             Helpers.EscribirVentanaLog($"Inicia Escritura de Salidas");
             EscribirSalidasProceso($"{App.ControlInsumos.Helpers.RutaProceso}", Variables.Variables.DiccionarioExtractosFormateados, "1", lote);
 
-
             // Se crean los reportes
             Helpers.EscribirVentanaLog($"Inicia Proceso Reportes");
             _ = new ReportesMasivos(Variables.Variables.DiccionarioExtractosFormateados, App.ControlInsumos.Helpers.RutaProceso, lote);
@@ -114,7 +113,7 @@ namespace App.ControlEjecucion
             Helpers.EscribirVentanaLog($"Inicia Formateo de Archivos");
             Helpers.EscribirVentanaMismaLinea($"Formateando Archivos: ");
             foreach (var archivo in archivos)
-            {                
+            {
                 _ = new ProcesoDatos(archivo);
                 Helpers.EscribirVentanaMismaLinea($"X", false);
             }
@@ -246,6 +245,43 @@ namespace App.ControlEjecucion
             // Se crean los reportes
             Helpers.EscribirVentanaLog($"Inicia Proceso Reportes");
             _ = new ReportesAnexosVerdes(Variables.Variables.DiccionarioExtractosFormateados, App.ControlInsumos.Helpers.RutaProceso, "");
+            #endregion
+        }
+
+        public void EjecutarProcesoLteCorp(string pRutaArchivosProcesar)
+        {
+            #region EjecutarProcesoMasivo
+            var archivos = from busqueda in Directory.GetFiles(pRutaArchivosProcesar)
+                           where !busqueda.Contains("CONTEO") && !busqueda.Contains("IDENTIFICACION") && !busqueda.Contains("premaestra") //TODO: se omiten estos archivos peor ahi que revisar para que sirven
+                           select busqueda;
+
+            var archivoPeriodo = from busqueda in Directory.GetFiles(pRutaArchivosProcesar)
+                                 where busqueda.Contains("IDENTIFICACION")
+                                 select busqueda;
+
+            string periodo = File.ReadAllLines(archivoPeriodo.FirstOrDefault()).ToList().ElementAt(0).Split('\t').ElementAt(1).PadLeft(6, '0');
+            string lote = File.ReadAllLines(archivoPeriodo.FirstOrDefault()).ToList().ElementAt(0).Split('\t').ElementAt(5);
+
+            Helpers.EscribirVentanaLog($"Archivos Cargados Para Proceso: {archivos.Count().ToString()}");
+            Helpers.EscribirVentanaLog(" ");
+
+            Helpers.EscribirVentanaLog($"Inicia Formateo de Archivos");
+            Helpers.EscribirVentanaMismaLinea($"Formateando Archivos: ");
+            foreach (var archivo in archivos)
+            {
+                _ = new ProcesoLteCorp(archivo, periodo);
+                Helpers.EscribirVentanaMismaLinea($"X", false);
+            }
+            Helpers.EscribirVentanaMismaLinea(System.Environment.NewLine, false);
+
+            //Escribir Diccionario Formateados llamando a un metodo de cracion de salidas donde se realice la segmentacion
+            Helpers.EscribirVentanaLog($"Inicia Escritura de Salidas");
+            EscribirSalidasProceso($"{App.ControlInsumos.Helpers.RutaProceso}", Variables.Variables.DiccionarioExtractosFormateados, "1", lote);
+
+            // Se crean los reportes
+            Helpers.EscribirVentanaLog($"Inicia Proceso Reportes");
+            _ = new ReportesMasivos(Variables.Variables.DiccionarioExtractosFormateados, App.ControlInsumos.Helpers.RutaProceso, lote);
+
             #endregion
         }
 
@@ -557,7 +593,7 @@ namespace App.ControlEjecucion
 
                         var nuevo1AAA = from n in datoLinea.Value
                                         where n.Substring(0, 4) == "1AAA"
-                                        select n.Replace("KitXXXX", nuevoConsecutivo);                        
+                                        select n.Replace("KitXXXX", nuevoConsecutivo);
 
                         // Se actualiza el Consecutivo del diccionario Original formateado
                         Variables.Variables.DiccionarioExtractosFormateados[datoLinea.Key][0] = Variables.Variables.DiccionarioExtractosFormateados[datoLinea.Key][0].Replace("KitXXXX", nuevoConsecutivo);
@@ -586,7 +622,7 @@ namespace App.ControlEjecucion
             int consecutivoInternoDivision = 0;
             int consecutivoInternoArchivo = 1;
             string cuenta = string.Empty;
-            string archivoActual = string.Empty;           
+            string archivoActual = string.Empty;
 
             switch (pTipoProceso)
             {
@@ -621,7 +657,7 @@ namespace App.ControlEjecucion
 
                             resultado.Add(linea);
                         }
-                        
+
                         Helpers.EscribirEnArchivo(archivoActual, resultado);
                         //Helpers.EscribirEnArchivo($"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}_{consecutivoInternoArchivo.ToString().PadLeft(3, '0')}.sal", resultado);                        
                     }
@@ -991,7 +1027,7 @@ namespace App.ControlEjecucion
             {
                 foreach (var linea in Variables.Variables.DatosErrorLTE.SelectMany(x => x.Value))
                 {
-                    if(linea.Split('|')[0] == "1AAA")
+                    if (linea.Split('|')[0] == "1AAA")
                     {
                         cuenta = linea.Split('|')[7];
 
@@ -1313,7 +1349,7 @@ namespace App.ControlEjecucion
             int consecutivoInternoDivision = 0;
             int consecutivoInternoArchivo = 1;
             string cuenta = string.Empty;
-            string archivoActual = string.Empty;            
+            string archivoActual = string.Empty;
 
             foreach (var datoCuenta in pDatos)
             {
@@ -1386,7 +1422,7 @@ namespace App.ControlEjecucion
                     // Se agrega la cuenta en el archivo final
                     if (!Variables.Variables.ArchivoSalidaFinal.ContainsKey(datoCuenta.Key))
                         Variables.Variables.ArchivoSalidaFinal.Add(datoCuenta.Key, $"{pRuta}\\{pNombreArchivo}");
-                    
+
                 }
 
                 Helpers.EscribirEnArchivo($"{pRuta}\\{pNombreArchivo}", resultado);
@@ -1478,7 +1514,7 @@ namespace App.ControlEjecucion
                     Variables.Variables.DiccionarioExtractosFormateados[datoCuenta.Key][0] = Variables.Variables.DiccionarioExtractosFormateados[datoCuenta.Key][0].Replace("KitXXXX", nuevoConsecutivo);
 
                     resultado.AddRange(datoCuenta.Value);
-                    
+
 
                     consecutivo++;
                 }

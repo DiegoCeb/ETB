@@ -46,5 +46,5 @@ C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.ControlEjecucion\obj
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.ControlEjecucion\obj\Debug\App.ControlEjecucion.csproj.CopyComplete
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.ControlEjecucion\obj\Debug\App.ControlEjecucion.dll
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.ControlEjecucion\obj\Debug\App.ControlEjecucion.pdb
-C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.ControlEjecucion\bin\Debug\ICSharpCode.SharpZipLib.dll
-C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.ControlEjecucion\bin\Debug\DLL_Utilidades.pdb
+C:\Proyectos\ETB\AppETB\App.ControlEjecucion\bin\Debug\ICSharpCode.SharpZipLib.dll
+C:\Proyectos\ETB\AppETB\App.ControlEjecucion\bin\Debug\DLL_Utilidades.pdb
