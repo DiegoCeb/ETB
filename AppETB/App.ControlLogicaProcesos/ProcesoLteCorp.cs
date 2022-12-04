@@ -215,6 +215,20 @@ namespace App.ControlLogicaProcesos
                 resultado.AddRange(resultadoFormateoLinea);
             }
 
+            resultadoFormateoLinea = MapeoGrupo1DAA(datosOriginales);
+
+            if (((IEnumerable<string>)resultadoFormateoLinea).Any())
+            {
+                resultado.AddRange(resultadoFormateoLinea);
+            }
+
+            resultadoFormateoLinea = MapeoGrupo1JAA(datosOriginales);
+
+            if (((IEnumerable<string>)resultadoFormateoLinea).Any())
+            {
+                resultado.AddRange(resultadoFormateoLinea);
+            }
+
             resultadoFormateoLinea = MapeoAgrupacion1CCA(datosOriginales);
 
             if (((IEnumerable<string>)resultadoFormateoLinea).Any())
@@ -419,14 +433,11 @@ namespace App.ControlLogicaProcesos
                 resultado.AddRange(resultadoFormateoLinea);
             }
 
-            if (IsLteCorporativo)
-            {
-                resultadoFormateoLinea = FormateoCanal1III(datosOriginales);
+            resultadoFormateoLinea = FormateoCanal1III(datosOriginales);
 
-                if (((IEnumerable<string>)resultadoFormateoLinea).Any())
-                {
-                    resultado.AddRange(resultadoFormateoLinea);
-                }
+            if (((IEnumerable<string>)resultadoFormateoLinea).Any())
+            {
+                resultado.AddRange(resultadoFormateoLinea);
             }
 
             #endregion
@@ -543,7 +554,7 @@ namespace App.ControlLogicaProcesos
                 ListaCanal1AAA.Add(GetActividad(Linea040000));
                 ListaCanal1AAA.Add(GetEstrato(Linea040000));
                 ListaCanal1AAA.AddRange(GetBarrioLocalidad(datosOriginales));
-                ListaCanal1AAA.Add(string.Empty); // Valor Pagar Vacio
+                ListaCanal1AAA.Add(GetValorPagarMes(datosOriginales)); // Valor Pagar Vacio
                 ListaCanal1AAA.Add(GetLogoInternet());
                 ListaCanal1AAA.Add(GetMarcaAnexosPublicidad());
                 ListaCanal1AAA.AddRange(GetEmailTipoEmal());
@@ -629,8 +640,69 @@ namespace App.ControlLogicaProcesos
                 totalPagar = "0";
             }
 
-            resultado = Helpers.FormatearCampos(TiposFormateo.Decimal01, totalPagar);
+            resultado = Helpers.FormatearCampos(TiposFormateo.Decimal05, totalPagar);
             return resultado;
+            #endregion
+        }
+
+        /// <summary>
+        /// Metodo que Obtiene el Valor Pagar Mes
+        /// </summary>
+        /// <param name="pDatosOriginales"></param>
+        /// <returns></returns>
+        private string GetValorPagarMes(List<string> pDatosOriginales)
+        {
+            #region GetValorPagarMes
+
+            List<string> valoresPago = ObtenerDatosCanal1BBB(pDatosOriginales, true).ToList();
+
+            Int64 total = Convert.ToInt64(valoresPago[1].ToString().Trim());
+
+            #region Requerimiento 360
+            var result29000 = from busqueda in pDatosOriginales
+                              where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("29000")
+                              select busqueda;
+
+            var result02T003 = from busqueda in pDatosOriginales
+                               where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("02T003")
+                               select busqueda;
+
+            if (result29000.Any())
+            {
+                //Nota Credito
+                foreach (var lineaNotaCredito in result29000)
+                {
+                    total += Convert.ToInt64(lineaNotaCredito.Substring(29, 20).Trim());
+                }
+            }
+
+            if (result02T003.Any())
+            {
+                //Ajuste Decena
+                foreach (var lineaAjusteDecena in result02T003)
+                {
+                    total += Convert.ToInt64(lineaAjusteDecena.Substring(6, 14)) +
+                       Convert.ToInt64(lineaAjusteDecena.Substring(20, 14)) +
+                       Convert.ToInt64(lineaAjusteDecena.Substring(34, 14)) +
+                       Convert.ToInt64(lineaAjusteDecena.Substring(48, 14)) +
+                       Convert.ToInt64(lineaAjusteDecena.Substring(62, 14));
+                }
+            }
+            #endregion
+
+            string totalPagar = String.Empty;
+            if (total > 0)
+            {
+                totalPagar = total.ToString();
+            }
+            else
+            {
+                totalPagar = "0";
+            }
+
+            string ValorPagar = Helpers.FormatearCampos(TiposFormateo.Decimal05, totalPagar);
+
+            return ValorPagar ?? string.Empty;
             #endregion
         }
 
@@ -681,7 +753,7 @@ namespace App.ControlLogicaProcesos
             {
                 string fechaFactura = Helpers.FormatearCampos(TiposFormateo.Fecha02, pLinea010000.Substring(168, 8));
 
-                int mes = Convert.ToInt32(fechaFactura.Substring(4,2));
+                int mes = Convert.ToInt32(fechaFactura.Substring(4, 2));
                 int año = Convert.ToInt32(fechaFactura.Substring(0, 4));
                 DateTime fecha = new DateTime(año, mes, 1);
                 DateTime fecha1 = new DateTime(año, mes, 1);
@@ -708,8 +780,8 @@ namespace App.ControlLogicaProcesos
                 }
 
             }
-            
-            if(FechaDesdeHasta.Count == 0)
+
+            if (FechaDesdeHasta.Count == 0)
             {
                 List<PosCortes> listaCortes = new List<PosCortes>();
                 listaCortes.Add(new PosCortes(178, 8, TiposFormateo.Fecha01));
@@ -1007,8 +1079,9 @@ namespace App.ControlLogicaProcesos
             List<string> valoresPago = ObtenerDatosCanal1BBB(pDatosOriginales, true).ToList();
             string ValorPagarCB1 = valoresPago[0].ToString().Trim().PadLeft(12, '0');
             string ValorPagarCB2 = valoresPago[1].ToString().Trim().PadLeft(12, '0');
-
             string CodeBar1 = String.Empty;
+            string CodeBar2 = String.Empty;
+
             if (Convert.ToInt64(valoresPago[1]) >= 0)
             {
                 CodeBar1 = $"(415){numeroETB}(8020){numReferencia}(3900){ValorPagarCB1.Substring(0, 10)}(96){fechaPago}";
@@ -1020,7 +1093,60 @@ namespace App.ControlLogicaProcesos
 
             result.Add(CodeBar1);
 
-            string CodeBar2 = $"(415){numeroETB}(8020){numReferencia}(3900){ValorPagarCB2.Substring(0, 10)}(96){fechaPago}";
+            #region Requerimiento 360
+            Int64 total = Convert.ToInt64(ValorPagarCB2);
+
+            var result29000 = from busqueda in pDatosOriginales
+                              where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("29000")
+                              select busqueda;
+
+            var result02T003 = from busqueda in pDatosOriginales
+                               where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("02T003")
+                               select busqueda;
+
+            if (result29000.Any())
+            {
+                //Nota Credito
+                foreach (var lineaNotaCredito in result29000)
+                {
+                    total += Convert.ToInt64(lineaNotaCredito.Substring(29, 20).Trim());
+                }
+            }
+
+            if (result02T003.Any())
+            {
+                //Ajuste Decena
+                foreach (var lineaAjusteDecena in result02T003)
+                {
+                    total += Convert.ToInt64(lineaAjusteDecena.Substring(6, 14)) +
+                       Convert.ToInt64(lineaAjusteDecena.Substring(20, 14)) +
+                       Convert.ToInt64(lineaAjusteDecena.Substring(34, 14)) +
+                       Convert.ToInt64(lineaAjusteDecena.Substring(48, 14)) +
+                       Convert.ToInt64(lineaAjusteDecena.Substring(62, 14));
+                }
+            }
+
+            if (total < 0)
+            {
+                total = 0;
+            }
+            #endregion
+
+            if (total == 0)
+            {
+                CodeBar2 = $"(415){numeroETB}(8020){numReferencia}(3900){total.ToString().PadLeft(10, '0')}(96){fechaPago}";
+            }
+            else
+            {
+                if (total.ToString().Length < 3)
+                {
+                    CodeBar2 = $"(415){numeroETB}(8020){numReferencia}(3900){total.ToString().PadLeft(10, '0')}(96){fechaPago}";
+                }
+                else
+                {
+                    CodeBar2 = $"(415){numeroETB}(8020){numReferencia}(3900){total.ToString().Substring(0, total.ToString().Length - 2).PadLeft(10, '0')}(96){fechaPago}";
+                }
+            }
 
             result.Add(CodeBar2);
             return result;
@@ -1060,7 +1186,7 @@ namespace App.ControlLogicaProcesos
         private string GetTasaInteres(string pLinea040000)
         {
             #region GetTasaInteres
-            
+
             string tasaInteresTablaSustitucion = string.Empty;
 
             tasaInteresTablaSustitucion = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"TASM10").FirstOrDefault()?.Substring(6).Trim() ?? string.Empty;
@@ -1070,7 +1196,7 @@ namespace App.ControlLogicaProcesos
                 string idActividad = GetIdActividad(pLinea040000.Substring(124, 2));
                 tasaInteresTablaSustitucion = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"TASM{idActividad}").FirstOrDefault()?.Substring(6).Trim() ?? string.Empty;
             }
-            
+
             return tasaInteresTablaSustitucion;
 
             #endregion
@@ -1790,7 +1916,7 @@ namespace App.ControlLogicaProcesos
 
                 if (!string.IsNullOrEmpty(linea29000))
                 {
-                    lineaNotasCredito = $"1BBB|Notas Crédito|{Helpers.FormatearCampos(TiposFormateo.Decimal01, linea29000.Substring(29, 20).TrimStart('0'))}| ";
+                    lineaNotasCredito = $"1BBB|Notas Crédito|{Helpers.FormatearCampos(TiposFormateo.Decimal05, linea29000.Substring(29, 20).TrimStart('0'))}| ";
                     SubTotal1BBB += Convert.ToInt64(linea29000.Substring(29, 20));
                 }
 
@@ -1847,7 +1973,7 @@ namespace App.ControlLogicaProcesos
                     {
                         if (!string.IsNullOrEmpty(detalle.Substring(20, 14).Trim()) && Convert.ToInt64(detalle.Substring(20, 14)) != 0)
                         {
-                            Lineas1BBB.Add($"1BBB|Traslado de Saldos|{Helpers.FormatearCampos(TiposFormateo.Decimal01, detalle.Substring(20, 14).TrimStart('0'))}| ");
+                            Lineas1BBB.Add($"1BBB|Traslado de Saldos|{Helpers.FormatearCampos(TiposFormateo.Decimal05, detalle.Substring(20, 14).TrimStart('0'))}| ");
                             SubTotal1BBB += Convert.ToInt64(detalle.Substring(20, 14));
                         }
 
@@ -1855,14 +1981,14 @@ namespace App.ControlLogicaProcesos
                         {
                             if (string.IsNullOrEmpty(linea150001) || (!string.IsNullOrEmpty(linea150001) && linea150001.Substring(6, 1) != "N")) // Regla No sumar saldo anterior
                             {
-                                Lineas1BBB.Add($"1BBB|{descripcion}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, detalle.Substring(6, 14).TrimStart('0'))}| ");
+                                Lineas1BBB.Add($"1BBB|{descripcion}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, detalle.Substring(6, 14).TrimStart('0'))}| ");
                                 SubTotal1BBB += Convert.ToInt64(detalle.Substring(6, 14));
                             }
                         }
 
                         if (!string.IsNullOrEmpty(detalle.Substring(34, 14).Trim()) && Convert.ToInt64(detalle.Substring(34, 14)) != 0 /*&& trim($valores_temp["DOC1_SALDO_GRACIAS"]) == "X"*/)
                         {
-                            Lineas1BBB.Add($"1BBB|Ajuste De Pagos|{Helpers.FormatearCampos(TiposFormateo.Decimal01, detalle.Substring(34, 14).TrimStart('0'))}| ");
+                            Lineas1BBB.Add($"1BBB|Ajuste De Pagos|{Helpers.FormatearCampos(TiposFormateo.Decimal05, detalle.Substring(34, 14).TrimStart('0'))}| ");
                             SubTotal1BBB += Convert.ToInt64(detalle.Substring(34, 14));
                         }
                     }
@@ -1877,7 +2003,7 @@ namespace App.ControlLogicaProcesos
                         {
                             if (!string.IsNullOrEmpty(detalle.Substring(6, 14).Trim()) && Convert.ToInt64(detalle.Substring(6, 14)) != 0)
                             {
-                                Lineas1BBB.Add($"1BBB|{descripcion}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, detalle.Substring(6, 14).TrimStart('0'))}| ");
+                                Lineas1BBB.Add($"1BBB|{descripcion}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, detalle.Substring(6, 14).TrimStart('0'))}| ");
                                 SubTotal1BBB += Convert.ToInt64(detalle.Substring(6, 14)) + Convert.ToInt64(detalle.Substring(20, 14)) + Convert.ToInt64(detalle.Substring(34, 14)) + Convert.ToInt64(detalle.Substring(48, 14)) + Convert.ToInt64(detalle.Substring(62, 14));
                             }
                         }
@@ -1886,7 +2012,7 @@ namespace App.ControlLogicaProcesos
 
                             if (!string.IsNullOrEmpty(detalle.Substring(6, 14).Trim()) && Convert.ToInt64(detalle.Substring(6, 14)) != 0)
                             {
-                                Lineas1BBB.Add($"1BBB|{descripcion}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, detalle.Substring(6, 14).TrimStart('0'))}| ");
+                                Lineas1BBB.Add($"1BBB|{descripcion}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, detalle.Substring(6, 14).TrimStart('0'))}| ");
                                 SubTotal1BBB += Convert.ToInt64(detalle.Substring(6, 14)) + Convert.ToInt64(detalle.Substring(20, 14)) + Convert.ToInt64(detalle.Substring(34, 14)) + Convert.ToInt64(detalle.Substring(48, 14)) + Convert.ToInt64(detalle.Substring(62, 14));
                             }
                         }
@@ -1894,7 +2020,7 @@ namespace App.ControlLogicaProcesos
                         {
                             if (!string.IsNullOrEmpty(detalle.Substring(6, 14).Trim()) && Convert.ToInt64(detalle.Substring(6, 14)) != 0)
                             {
-                                Lineas1BBB.Add($"1BBB|{descripcion}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, detalle.Substring(6, 14).TrimStart('0'))}| ");
+                                Lineas1BBB.Add($"1BBB|{descripcion}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, detalle.Substring(6, 14).TrimStart('0'))}| ");
                                 SubTotal1BBB += Convert.ToInt64(detalle.Substring(6, 14)) + Convert.ToInt64(detalle.Substring(20, 14)) + Convert.ToInt64(detalle.Substring(34, 14)) + Convert.ToInt64(detalle.Substring(48, 14)) + Convert.ToInt64(detalle.Substring(62, 14));
                             }
                         }
@@ -1902,7 +2028,7 @@ namespace App.ControlLogicaProcesos
                         {
                             calculoAjusteDecena += Convert.ToInt64(detalle.Substring(6, 14)) + Convert.ToInt64(detalle.Substring(20, 14)) + Convert.ToInt64(detalle.Substring(34, 14)) + Convert.ToInt64(detalle.Substring(48, 14)) + Convert.ToInt64(detalle.Substring(62, 14));
 
-                            lineaAjusteDecena = $"1BBB|{descripcion}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, detalle.Substring(6, 14).TrimStart('0'))}| ";
+                            lineaAjusteDecena = $"1BBB|{descripcion}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, detalle.Substring(6, 14).TrimStart('0'))}| ";
                             SubTotal1BBB += calculoAjusteDecena;
 
                         }
@@ -1928,13 +2054,13 @@ namespace App.ControlLogicaProcesos
                             }
                             else if (llave == "02T020" || llave == "02T050")
                             { // Req 11052015 Campo Financiacion Mes
-                                lineasFinanciacion.Add($"1BBF|$Descripcion|{Helpers.FormatearCampos(TiposFormateo.Decimal01, sumatoria.ToString())}| ");
+                                lineasFinanciacion.Add($"1BBF|$Descripcion|{Helpers.FormatearCampos(TiposFormateo.Decimal05, sumatoria.ToString())}| ");
                                 continue;
                             }
 
                             if ((!IsFibra || llave == "02T014") && llave != "02T004")
                             {
-                                lineasFinales1BBB.Add($"1BBB|{descripcion}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, sumatoria.ToString())}| ");
+                                lineasFinales1BBB.Add($"1BBB|{descripcion}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, sumatoria.ToString())}| ");
                             }
 
                             SubTotal1BBB += sumatoria;
@@ -1977,7 +2103,7 @@ namespace App.ControlLogicaProcesos
 
                         if (!Lineas1BBB.Contains("1BBB|Mod. Inseparables con IVA"))
                         {
-                            Lineas1BBB.Add($"1BBB|Mod. Inseparables con IVA|{Helpers.FormatearCampos(TiposFormateo.Decimal01, total02T933.ToString())}| ");
+                            Lineas1BBB.Add($"1BBB|Mod. Inseparables con IVA|{Helpers.FormatearCampos(TiposFormateo.Decimal05, total02T933.ToString())}| ");
                             tempValorTotalIva -= total02T933;
                         }
 
@@ -1996,7 +2122,7 @@ namespace App.ControlLogicaProcesos
 
                     if (campos[2] == "***")
                     {
-                        Lineas1BBB.Add(linea.Replace("***", $"{Helpers.FormatearCampos(TiposFormateo.Decimal01, tempValorTotalIva.ToString())}"));
+                        Lineas1BBB.Add(linea.Replace("***", $"{Helpers.FormatearCampos(TiposFormateo.Decimal05, tempValorTotalIva.ToString())}"));
                     }
                     else
                     {
@@ -2016,29 +2142,29 @@ namespace App.ControlLogicaProcesos
 
             if (IsFibra)
             {
-                Lineas1BBB.Add($"1BBB|Total Facturado en el Mes|{Helpers.FormatearCampos(TiposFormateo.Decimal01, ValorPagarMes.ToString())}| ");
+                Lineas1BBB.Add($"1BBB|Total Facturado en el Mes|{Helpers.FormatearCampos(TiposFormateo.Decimal05, ValorPagarMes.ToString())}| ");
             }
 
             if (SubTotal1BBB > 0)
             {
                 if (IsFibra)
                 {
-                    Lineas1BBB.Add($"1BBA|Valor total a pagar|{Helpers.FormatearCampos(TiposFormateo.Decimal01, SubTotal1BBB.ToString())}| ");
+                    Lineas1BBB.Add($"1BBA|Valor total a pagar|{Helpers.FormatearCampos(TiposFormateo.Decimal05, SubTotal1BBB.ToString())}| ");
                 }
                 else
                 {
-                    Lineas1BBB.Add($"1BBA|Total de la Factura ETB|{Helpers.FormatearCampos(TiposFormateo.Decimal01, SubTotal1BBB.ToString())}| ");
+                    Lineas1BBB.Add($"1BBA|Total de la Factura ETB|{Helpers.FormatearCampos(TiposFormateo.Decimal05, SubTotal1BBB.ToString())}| ");
                 }
             }
             else
             {
                 if (IsFibra)
                 {
-                    Lineas1BBB.Add($"1BBA|Valor total a pagar|{Helpers.FormatearCampos(TiposFormateo.Decimal01, SubTotal1BBB.ToString())}| ");
+                    Lineas1BBB.Add($"1BBA|Valor total a pagar|{Helpers.FormatearCampos(TiposFormateo.Decimal05, SubTotal1BBB.ToString())}| ");
                 }
                 else
                 {
-                    Lineas1BBB.Add($"1BBA|Saldo a Favor|{Helpers.FormatearCampos(TiposFormateo.Decimal01, SubTotal1BBB.ToString())}| ");
+                    Lineas1BBB.Add($"1BBA|Saldo a Favor|{Helpers.FormatearCampos(TiposFormateo.Decimal05, SubTotal1BBB.ToString())}| ");
                 }
             }
 
@@ -2318,7 +2444,7 @@ namespace App.ControlLogicaProcesos
                     {
                         linea1CCC = "1CCC|";
                         linea1CCC += descripcion + "|";
-                        linea1CCC += Helpers.FormatearCampos(TiposFormateo.Decimal01, linea.Substring(6, 14)) + "||| ";
+                        linea1CCC += Helpers.FormatearCampos(TiposFormateo.Decimal05, linea.Substring(6, 14)) + "||| ";
                         list.Add(Helpers.ValidarPipePipe(linea1CCC));
                     }
                     linea1CCC = string.Empty;
@@ -2327,7 +2453,7 @@ namespace App.ControlLogicaProcesos
                     if (Convert.ToDouble(linea.Substring(34, 14)) != 0)
                     {
                         linea1CCC = "1CCC|Iva|";
-                        linea1CCC += Helpers.FormatearCampos(TiposFormateo.Decimal01, linea.Substring(34, 14)) + "||| ";
+                        linea1CCC += Helpers.FormatearCampos(TiposFormateo.Decimal05, linea.Substring(34, 14)) + "||| ";
 
                         list.Add(Helpers.ValidarPipePipe(linea1CCC));
                         linea1CCC = string.Empty;
@@ -2345,7 +2471,7 @@ namespace App.ControlLogicaProcesos
                     {
                         linea1CCC = "1CCC|";
                         linea1CCC += descripcion + "|";
-                        linea1CCC += Helpers.FormatearCampos(TiposFormateo.Decimal01, linea.Substring(6, 14)) + "||| ";
+                        linea1CCC += Helpers.FormatearCampos(TiposFormateo.Decimal05, linea.Substring(6, 14)) + "||| ";
                         list.Add(Helpers.ValidarPipePipe(linea1CCC));
                     }
                     return list;
@@ -2356,7 +2482,7 @@ namespace App.ControlLogicaProcesos
                     if (Convert.ToDouble(linea.Substring(20, 14)) != 0)
                     {
                         linea1CCC = "1CCC|Recargo mora|";
-                        linea1CCC += Helpers.FormatearCampos(TiposFormateo.Decimal01, linea.Substring(20, 14)) + "||| ";
+                        linea1CCC += Helpers.FormatearCampos(TiposFormateo.Decimal05, linea.Substring(20, 14)) + "||| ";
                         list.Add(Helpers.ValidarPipePipe(linea1CCC));
                     }
 
@@ -3243,7 +3369,7 @@ namespace App.ControlLogicaProcesos
             #region GetAjusteDecena
             string resultado = string.Empty;
 
-            resultado = $"1CFI| |Ajuste Decena|{Helpers.FormatearCampos(TiposFormateo.Decimal01, pDato.Substring(6, 14))}| |{Helpers.FormatearCampos(TiposFormateo.Decimal01, pDato.Substring(6, 14))}| | ";
+            resultado = $"1CFI| |Ajuste Decena|{Helpers.FormatearCampos(TiposFormateo.Decimal05, pDato.Substring(6, 14))}| |{Helpers.FormatearCampos(TiposFormateo.Decimal05, pDato.Substring(6, 14))}| | ";
 
             pBandera = true;
 
@@ -3487,7 +3613,7 @@ namespace App.ControlLogicaProcesos
                     temp.AddRange(paquetesInformacion[llaveCuentaConexion.Key]);
                     temp.AddRange(resultLineasHIS.ToList());
 
-                    resultadoFormateo = MapeoCanal1HIS(temp);
+                    resultadoFormateo = MapeoCanal1PPD(temp);
 
                     if (!string.IsNullOrEmpty(resultadoFormateo))
                     {
@@ -3504,7 +3630,7 @@ namespace App.ControlLogicaProcesos
                     temp.AddRange(paquetesInformacion[llaveCuentaConexion.Key]);
                     temp.AddRange(resultLineasHDT.ToList());
 
-                    resultadoFormateo = MapeoCanal1HDT(temp);
+                    resultadoFormateo = MapeoCanal1PPV(temp);
 
                     if (!string.IsNullOrEmpty(resultadoFormateo))
                     {
@@ -3775,7 +3901,7 @@ namespace App.ControlLogicaProcesos
                         lineaTem1OMV += Helpers.ExtraccionCamposSpool(listaCortes, registroActual) + " seg|";
 
                         listaCortes.Clear();
-                        listaCortes.Add(new PosCortes(179, 14, TiposFormateo.Decimal01));
+                        listaCortes.Add(new PosCortes(179, 14, TiposFormateo.Decimal05));
                         lineaTem1OMV += Helpers.ExtraccionCamposSpool(listaCortes, registroActual) + "| ";
 
                         listaTemp1OMV.Add(Helpers.ValidarPipePipe(lineaTem1OMV));
@@ -3983,7 +4109,7 @@ namespace App.ControlLogicaProcesos
             if (result02S000.Any())
             {
                 listaCortes.Clear();
-                //listaCortes.Add(new PosCortes(48, 14, TiposFormateo.Decimal01));
+                //listaCortes.Add(new PosCortes(48, 14, TiposFormateo.Decimal05));
                 valorDinero = Helpers.ExtraccionCamposSpool(listaCortes, result02S000.FirstOrDefault());
             }
 
@@ -4109,10 +4235,10 @@ namespace App.ControlLogicaProcesos
                         saldoRestante = 0;
                         cuota = "0";
                     }
-                    string valorFinanciadoFormat = Helpers.FormatearCampos(TiposFormateo.Decimal01, valorFinanciado.ToString());
-                    string saldoRestanteFormat = Helpers.FormatearCampos(TiposFormateo.Decimal01, saldoRestante.ToString());
+                    string valorFinanciadoFormat = Helpers.FormatearCampos(TiposFormateo.Decimal05, valorFinanciado.ToString());
+                    string saldoRestanteFormat = Helpers.FormatearCampos(TiposFormateo.Decimal05, saldoRestante.ToString());
                     Int64 valorXPagar = valorFinanciado - saldoRestante;
-                    string valorXPagarFormat = Helpers.FormatearCampos(TiposFormateo.Decimal01, valorXPagar.ToString());
+                    string valorXPagarFormat = Helpers.FormatearCampos(TiposFormateo.Decimal05, valorXPagar.ToString());
 
                     if (camposFinanciacion.Length > 1 && camposFinanciacion[0].Trim() == "B" && IsResidencial)
                     {
@@ -4136,7 +4262,7 @@ namespace App.ControlLogicaProcesos
                     }
                     else if (valorFinanciado > 0)
                     {
-                        resultado.Add($"1III|{descripcion}|{valorFinanciadoFormat}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, item.Substring(16, 14))}|{saldoRestanteFormat}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, item.Substring(44, 14))}|{cuota}|{interes}| ");
+                        resultado.Add($"1III|{descripcion}|{valorFinanciadoFormat}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, item.Substring(16, 14))}|{saldoRestanteFormat}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, item.Substring(44, 14))}|{cuota}|{interes}| ");
                     }
 
                 }
@@ -4151,7 +4277,7 @@ namespace App.ControlLogicaProcesos
 
                 if (IsLteCorporativo && totalDispositivosFinanciados > 0)
                 {
-                    resultado.Add($"1IRT|{totalDispositivosFinanciados.ToString()}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, totalValorFinanciado.ToString())}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, totalSaldoRestante.ToString())}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, totalValorPorPagar.ToString())}| ");
+                    resultado.Add($"1IRT|{totalDispositivosFinanciados.ToString()}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, totalValorFinanciado.ToString())}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, totalSaldoRestante.ToString())}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, totalValorPorPagar.ToString())}| ");
                 }
 
             }
@@ -4224,7 +4350,7 @@ namespace App.ControlLogicaProcesos
                         iva = linea.Substring(44, 14).Trim().TrimStart('0');
 
                         resultado.Add(Helpers.ValidarPipePipe($"1EE1|-|{descripcionTitulo}" +
-                            $"|{Helpers.FormatearCampos(TiposFormateo.Decimal01, @base)}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, iva)}|" +
+                            $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, @base)}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, iva)}|" +
                             $"{Helpers.SumarCampos(new List<string> { @base, iva })}| | | "));
                         #endregion
 
@@ -4246,12 +4372,12 @@ namespace App.ControlLogicaProcesos
                         {
                             resultado.Add(Helpers.ValidarPipePipe($"1EE3|-|{Helpers.FormatearCampos(TiposFormateo.Fecha12, lineaDet.Substring(6, 10))}|" +
                                 $"{Helpers.FormatearCampos(TiposFormateo.HoraMinutoSegundo, lineaDet.Substring(14, 6))}|{lineaDet.Substring(20, 10).Trim()}|" +
-                                $"{lineaDet.Substring(33, 10)}|{lineaDet.Substring(96, 11)}|{lineaDet.Substring(66, 2).TrimStart('0')}:00|{Helpers.FormatearCampos(TiposFormateo.Decimal01, lineaDet.Substring(47, 9)).Replace("$", "").Trim()}|" +
-                                $"{Helpers.FormatearCampos(TiposFormateo.Decimal01, lineaDet.Substring(56, 9)).Replace("$", "").Trim()}| "));
+                                $"{lineaDet.Substring(33, 10)}|{lineaDet.Substring(96, 11)}|{lineaDet.Substring(66, 2).TrimStart('0')}:00|{Helpers.FormatearCampos(TiposFormateo.Decimal05, lineaDet.Substring(47, 9)).Replace("$", "").Trim()}|" +
+                                $"{Helpers.FormatearCampos(TiposFormateo.Decimal05, lineaDet.Substring(56, 9)).Replace("$", "").Trim()}| "));
                         }
 
                         resultado.Add(Helpers.ValidarPipePipe($"1EE3|-|{Helpers.FormatearCampos(TiposFormateo.LetraCapital, descripcionTitulo)}" +
-                            $"|{Helpers.FormatearCampos(TiposFormateo.Decimal01, @base)}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, iva)}|" +
+                            $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, @base)}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, iva)}|" +
                             $"{Helpers.SumarCampos(new List<string> { @base, iva })}| | | "));
 
                         #endregion
@@ -4355,8 +4481,8 @@ namespace App.ControlLogicaProcesos
                     }
 
                     resultado.Add(Helpers.ValidarPipePipe($"1EE1|-|{Helpers.FormatearCampos(TiposFormateo.LetraCapital, lineaNegocio)}" +
-                        $"|{Helpers.FormatearCampos(TiposFormateo.Decimal01, @base)}|{Helpers.SumarCampos(new List<string> { iva, restaImpuesto })}|" +
-                        $"{Helpers.SumarCampos(new List<string> { @base, iva, restaImpuesto, impuesto })}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, impuesto)}| | "));
+                        $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, @base)}|{Helpers.SumarCampos(new List<string> { iva, restaImpuesto })}|" +
+                        $"{Helpers.SumarCampos(new List<string> { @base, iva, restaImpuesto, impuesto })}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, impuesto)}| | "));
                     #endregion
 
                     #region Datos 1EE2
@@ -4369,13 +4495,13 @@ namespace App.ControlLogicaProcesos
                     {
                         resultado.Add(Helpers.ValidarPipePipe($"1EE3|-|{Helpers.FormatearCampos(TiposFormateo.Fecha12, linea.Substring(6, 10))}|" +
                             $"{Helpers.FormatearCampos(TiposFormateo.HoraMinutoSegundo, linea.Substring(14, 6))}|{linea.Substring(20, 10).Trim()}|" +
-                            $"{linea.Substring(33, 10).Trim()}|{linea.Substring(96, 11).Trim()}|{linea.Substring(66, 2).TrimStart('0')}:00|{Helpers.FormatearCampos(TiposFormateo.Decimal01, linea.Substring(47, 9)).Replace("$", "").Trim()}|" +
-                            $"{Helpers.FormatearCampos(TiposFormateo.Decimal01, linea.Substring(56, 9)).Replace("$", "").Trim()}| "));
+                            $"{linea.Substring(33, 10).Trim()}|{linea.Substring(96, 11).Trim()}|{linea.Substring(66, 2).TrimStart('0')}:00|{Helpers.FormatearCampos(TiposFormateo.Decimal05, linea.Substring(47, 9)).Replace("$", "").Trim()}|" +
+                            $"{Helpers.FormatearCampos(TiposFormateo.Decimal05, linea.Substring(56, 9)).Replace("$", "").Trim()}| "));
                     }
 
                     resultado.Add(Helpers.ValidarPipePipe($"1EE3|-|{Helpers.FormatearCampos(TiposFormateo.LetraCapital, lineaNegocio)}" +
-                        $"|{Helpers.FormatearCampos(TiposFormateo.Decimal01, @base)}|{Helpers.SumarCampos(new List<string> { iva, restaImpuesto })}|" +
-                        $"{Helpers.SumarCampos(new List<string> { @base, iva, restaImpuesto, impuesto })}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, impuesto)}| | "));
+                        $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, @base)}|{Helpers.SumarCampos(new List<string> { iva, restaImpuesto })}|" +
+                        $"{Helpers.SumarCampos(new List<string> { @base, iva, restaImpuesto, impuesto })}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, impuesto)}| | "));
 
                     #endregion
 
@@ -4397,7 +4523,7 @@ namespace App.ControlLogicaProcesos
                     iva = "000";
 
                     resultado.Add(Helpers.ValidarPipePipe($"1EE1|-|{descripcionTitulo}" +
-                        $"|{Helpers.FormatearCampos(TiposFormateo.Decimal01, @base)}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, iva)}|" +
+                        $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, @base)}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, iva)}|" +
                         $"{Helpers.SumarCampos(new List<string> { @base, iva })}| | | "));
                     #endregion
 
@@ -4411,12 +4537,12 @@ namespace App.ControlLogicaProcesos
                     {
                         resultado.Add(Helpers.ValidarPipePipe($"1EE3|-|{Helpers.FormatearCampos(TiposFormateo.Fecha12, lineaDet.Substring(6, 10))}|" +
                             $"{Helpers.FormatearCampos(TiposFormateo.HoraMinutoSegundo, lineaDet.Substring(14, 6))}|{lineaDet.Substring(20, 10).Trim()}|" +
-                            $"{lineaDet.Substring(33, 10)}|{lineaDet.Substring(96, 11)}|{lineaDet.Substring(66, 2).TrimStart('0')}:00|{Helpers.FormatearCampos(TiposFormateo.Decimal01, lineaDet.Substring(47, 9)).Replace("$", "").Trim()}|" +
-                            $"{Helpers.FormatearCampos(TiposFormateo.Decimal01, lineaDet.Substring(56, 9)).Replace("$", "").Trim()}| "));
+                            $"{lineaDet.Substring(33, 10)}|{lineaDet.Substring(96, 11)}|{lineaDet.Substring(66, 2).TrimStart('0')}:00|{Helpers.FormatearCampos(TiposFormateo.Decimal05, lineaDet.Substring(47, 9)).Replace("$", "").Trim()}|" +
+                            $"{Helpers.FormatearCampos(TiposFormateo.Decimal05, lineaDet.Substring(56, 9)).Replace("$", "").Trim()}| "));
                     }
 
                     resultado.Add(Helpers.ValidarPipePipe($"1EE3|-|{Helpers.FormatearCampos(TiposFormateo.LetraCapital, descripcionTitulo)}" +
-                        $"|{Helpers.FormatearCampos(TiposFormateo.Decimal01, @base)}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, iva)}|" +
+                        $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, @base)}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, iva)}|" +
                         $"{Helpers.SumarCampos(new List<string> { @base, iva })}| | | "));
 
                     #endregion
@@ -4445,8 +4571,8 @@ namespace App.ControlLogicaProcesos
                     impuesto = "00";
 
                     resultado.Add(Helpers.ValidarPipePipe($"1EE1|-|{Helpers.FormatearCampos(TiposFormateo.LetraCapital, lineaNegocio)}" +
-                        $"|{Helpers.FormatearCampos(TiposFormateo.Decimal01, @base)}|{Helpers.SumarCampos(new List<string> { iva, restaImpuesto })}|" +
-                        $"{Helpers.SumarCampos(new List<string> { @base, iva, restaImpuesto, impuesto })}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, impuesto)}| | "));
+                        $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, @base)}|{Helpers.SumarCampos(new List<string> { iva, restaImpuesto })}|" +
+                        $"{Helpers.SumarCampos(new List<string> { @base, iva, restaImpuesto, impuesto })}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, impuesto)}| | "));
                     #endregion
 
                     #region Datos 1EE2
@@ -4459,13 +4585,13 @@ namespace App.ControlLogicaProcesos
                     {
                         resultado.Add(Helpers.ValidarPipePipe($"1EE3|-|{Helpers.FormatearCampos(TiposFormateo.Fecha12, linea.Substring(6, 10))}|" +
                             $"{Helpers.FormatearCampos(TiposFormateo.HoraMinutoSegundo, linea.Substring(14, 6))}|{linea.Substring(20, 10).Trim()}|" +
-                            $"{linea.Substring(33, 10).Trim()}|{linea.Substring(96, 11).Trim()}|{linea.Substring(65, 3).TrimStart('0')}:00|{Helpers.FormatearCampos(TiposFormateo.Decimal01, linea.Substring(47, 9)).Replace("$", "").Trim()}|" +
-                            $"{Helpers.FormatearCampos(TiposFormateo.Decimal01, linea.Substring(56, 9)).Replace("$", "").Trim()}| "));
+                            $"{linea.Substring(33, 10).Trim()}|{linea.Substring(96, 11).Trim()}|{linea.Substring(65, 3).TrimStart('0')}:00|{Helpers.FormatearCampos(TiposFormateo.Decimal05, linea.Substring(47, 9)).Replace("$", "").Trim()}|" +
+                            $"{Helpers.FormatearCampos(TiposFormateo.Decimal05, linea.Substring(56, 9)).Replace("$", "").Trim()}| "));
                     }
 
                     resultado.Add(Helpers.ValidarPipePipe($"1EE3|-|{Helpers.FormatearCampos(TiposFormateo.LetraCapital, lineaNegocio)}" +
-                        $"|{Helpers.FormatearCampos(TiposFormateo.Decimal01, @base)}|{Helpers.SumarCampos(new List<string> { iva, restaImpuesto })}|" +
-                        $"{Helpers.SumarCampos(new List<string> { @base, iva, restaImpuesto, impuesto })}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, impuesto)}| | "));
+                        $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, @base)}|{Helpers.SumarCampos(new List<string> { iva, restaImpuesto })}|" +
+                        $"{Helpers.SumarCampos(new List<string> { @base, iva, restaImpuesto, impuesto })}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, impuesto)}| | "));
 
                     #endregion
                 }
@@ -4521,13 +4647,13 @@ namespace App.ControlLogicaProcesos
         }
 
 
-        /// Metodo que obtiene la linea formateada de Canal 1HIS
+        /// Metodo que obtiene la linea formateada de Canal 1PPV
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        private string MapeoCanal1HIS(List<string> datosOriginales)
+        private string MapeoCanal1PPV(List<string> datosOriginales)
         {
-            #region MapeoCanal1HIS
+            #region MapeoCanal1PPV
             string resultado = string.Empty;
             string numeroConexion = string.Empty;
 
@@ -4561,15 +4687,8 @@ namespace App.ControlLogicaProcesos
                     string mesActual = (Convert.ToDouble(Helpers.FormatearCampos(TiposFormateo.Decimal02, linea070001.FirstOrDefault().Substring(6, 8).Trim())) * 60 / 10).ToString();
                     string promedio = (Convert.ToDouble(Helpers.FormatearCampos(TiposFormateo.Decimal02, linea070001.FirstOrDefault().Substring(62, 8).Trim())) * 60 / 10).ToString();
 
-                    resultado = Helpers.ValidarPipePipe($"1HIS|{numeroConexion}|Mes Actual: {mesActual}|{ArmarMesesHistograma(Helpers.FormatearCampos(TiposFormateo.Fecha01, linea10000.FirstOrDefault().Substring(168, 8)))}|" +
+                    resultado = Helpers.ValidarPipePipe($"1PPV|Mes Actual: {mesActual}|{ArmarMesesHistograma(Helpers.FormatearCampos(TiposFormateo.Fecha01, linea10000.FirstOrDefault().Substring(168, 8)))}|" +
                         $"{ArmarValoresHistograma(linea070001.FirstOrDefault(), "2")}|Promedio: {promedio}| ");
-                }
-                else
-                {
-                    if (!string.IsNullOrEmpty(numeroConexion))
-                    {
-                        resultado = Helpers.ValidarPipePipe($"1HIS|{numeroConexion}|Mes Actual: 0|{ArmarMesesHistograma(Helpers.FormatearCampos(TiposFormateo.Fecha01, linea10000.FirstOrDefault().Substring(168, 8)))}|0|0|0|0|0|0|Promedio: 0| ");
-                    }
                 }
             }
 
@@ -4577,13 +4696,13 @@ namespace App.ControlLogicaProcesos
             #endregion
         }
 
-        /// Metodo que obtiene la linea formateada de Canal 1HDT
+        /// Metodo que obtiene la linea formateada de Canal 1PPD
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        private string MapeoCanal1HDT(List<string> datosOriginales)
+        private string MapeoCanal1PPD(List<string> datosOriginales)
         {
-            #region MapeoCanal1HDT
+            #region MapeoCanal1PPD
             string resultado = string.Empty;
             string numeroConexion = string.Empty;
 
@@ -4617,7 +4736,7 @@ namespace App.ControlLogicaProcesos
                     string mesActual = (Convert.ToDouble(Helpers.FormatearCampos(TiposFormateo.Decimal02, linea070002.FirstOrDefault().Substring(6, 6).Trim())) / 10).ToString();
                     string promedio = (Convert.ToDouble(Helpers.FormatearCampos(TiposFormateo.Decimal02, linea070002.FirstOrDefault().Substring(48, 6).Trim())) / 10).ToString();
 
-                    resultado = Helpers.ValidarPipePipe($"1HDT|{numeroConexion}|Mes Actual: {mesActual}|{ArmarMesesHistograma(Helpers.FormatearCampos(TiposFormateo.Fecha01, linea10000.FirstOrDefault().Substring(168, 8)))}|" +
+                    resultado = Helpers.ValidarPipePipe($"1PPD|Mes Actual: {mesActual}|{ArmarMesesHistograma(Helpers.FormatearCampos(TiposFormateo.Fecha01, linea10000.FirstOrDefault().Substring(168, 8)))}|" +
                         $"{ArmarValoresHistograma(linea070002.FirstOrDefault(), "3")}|Promedio: {promedio}| ");
                 }
             }
@@ -4646,8 +4765,8 @@ namespace App.ControlLogicaProcesos
                 string total = linea13M317.FirstOrDefault().Substring(42, 14).Trim();
                 string subtotal = linea13M317.FirstOrDefault().Substring(56, 14).Trim();
 
-                resultado = Helpers.ValidarPipePipe($"1FFA|Total|{Helpers.FormatearCampos(TiposFormateo.Decimal01, total)}" +
-                    $"|{Helpers.FormatearCampos(TiposFormateo.Decimal01, subtotal)}|{Helpers.SumarCampos(new List<string> { total, subtotal })}| ");
+                resultado = Helpers.ValidarPipePipe($"1FFA|Total|{Helpers.FormatearCampos(TiposFormateo.Decimal05, total)}" +
+                    $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, subtotal)}|{Helpers.SumarCampos(new List<string> { total, subtotal })}| ");
             }
 
             return resultado;
@@ -4668,118 +4787,129 @@ namespace App.ControlLogicaProcesos
             List<string> camposSumar = new List<string>();
             List<PosCortes> listaCortes = new List<PosCortes>();
 
+            Dictionary<string, List<string>> dicAgruNumConexion = new Dictionary<string, List<string>>();
+            List<string> paqueteActual = new List<string>();
+            string llaveCruve = string.Empty;
+
+            List<string> valor1 = new List<string>();
+            List<string> valor2 = new List<string>();
+            List<string> valor3 = new List<string>();
+            List<string> total = new List<string>();
+            string periodo = string.Empty;
+            string primerFecha = string.Empty;
+            string segundaFecha = string.Empty;
+            bool primerReg1DET = true;
 
             if (Is1ODC)
             {
-                #region Consultas
-                var linea040000 = from busqueda in datosOriginales
-                                  where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("040000")
-                                  select busqueda;
-
-                var linea888888 = from busqueda in datosOriginales
-                                  where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("888888")
-                                  select busqueda;
-
-                var linea3000401 = from busqueda in datosOriginales
-                                   where busqueda.Length > 7 && busqueda.Substring(0, 7).Equals("3000401")
-                                   select busqueda;
-
-                var linea3000404 = from busqueda in datosOriginales
-                                   where busqueda.Length > 7 && busqueda.Substring(0, 7).Equals("3000404")
-                                   select busqueda;
-
-                var linea11C901 = from busqueda in datosOriginales
-                                  where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("11C901")
-                                  select busqueda;
-
-                #endregion
-
-                #region Formato
-                foreach (var lineaDatos in linea040000)
+                #region armar paquetes
+                foreach (var lineaActual in datosOriginales)
                 {
-                    if (lineaDatos.Substring(6, 20).Trim() != Cuenta)
+                    if (lineaActual.Substring(0, 6) == "040000") // inicio Paquete
                     {
-                        numeroConexion = lineaDatos.Substring(6, 20).Trim();
-                        break;
+                        llaveCruve = lineaActual.Substring(0, 25).Trim();
                     }
-                }
 
-                if (linea888888.Any())
-                {
-                    foreach (var registroActual in linea888888)
+                    if (!string.IsNullOrEmpty(llaveCruve))
                     {
-                        camposSumar.Add(registroActual.Substring(82, 14));
-                    }
-                }
+                        // Se llena Diccionario a procesar
 
-                Lineas1DET = "1DET|";
-                Lineas1DET += numeroConexion + "|";
-                Lineas1DET += "Total|";
-                Lineas1DET += Helpers.SumarCampos(camposSumar) + "|";
-
-                if (linea3000401.Any())
-                {
-                    listaCortes.Add(new PosCortes(12, 20, TiposFormateo.Decimal01));
-                    Lineas1DET += Helpers.ExtraccionCamposSpool(listaCortes, linea3000401.FirstOrDefault()) + "|";
-                    listaCortes.Clear();
-
-                    camposSumar.Add(linea3000401.FirstOrDefault().Substring(12, 20).Trim());
-                }
-                else
-                {
-                    Lineas1DET += "|";
-                }
-
-                if (linea3000404.Any())
-                {
-                    listaCortes.Add(new PosCortes(12, 20, TiposFormateo.Decimal01));
-                    Lineas1DET += Helpers.ExtraccionCamposSpool(listaCortes, linea3000404.FirstOrDefault()) + "|";
-                    listaCortes.Clear();
-
-                    camposSumar.Add(linea3000404.FirstOrDefault().Substring(12, 20).Trim());
-                }
-                else
-                {
-                    Lineas1DET += "|";
-                }
-
-                Lineas1DET += Helpers.SumarCampos(camposSumar) + "|";
-
-                if (linea11C901.Any())
-                {
-                    foreach (var registroACtual11C901 in linea11C901)
-                    {
-                        if (registroACtual11C901.Substring(128, 19).Contains("-"))
+                        if (dicAgruNumConexion.ContainsKey(llaveCruve))
                         {
-                            Lineas1DET += registroACtual11C901.Substring(128, 6) + "|";
-                            listaCortes.Clear();
-                            listaCortes.Add(new PosCortes(128, 8, TiposFormateo.Fecha06));
-                            string primerFecha = Helpers.ExtraccionCamposSpool(listaCortes, registroACtual11C901);
-                            listaCortes.Clear();
-
-                            listaCortes.Add(new PosCortes(139, 8, TiposFormateo.Fecha06));
-                            string segundaFecha = Helpers.ExtraccionCamposSpool(listaCortes, registroACtual11C901);
-                            Lineas1DET += primerFecha + " a " + segundaFecha + "| ";
-                            break;
+                            dicAgruNumConexion[llaveCruve].Add(lineaActual);
+                        }
+                        else
+                        {
+                            dicAgruNumConexion.Add(llaveCruve, new List<string> { lineaActual });
                         }
                     }
                 }
-                else
-                {
-                    Lineas1DET += "|| ";
-                }
                 #endregion
-            }
 
-            if (!string.IsNullOrEmpty(Lineas1DET))
-            {
-                if (Is1PLA == false)
+                #region Procesamiento
+
+                foreach (var dicAgruNumConexionActual in dicAgruNumConexion)
                 {
-                    linea1PLA = "1PLA||||||||| ";
-                    list1DET.Add(Helpers.ValidarPipePipe(linea1PLA));
+                    #region Busquedas
+                    var lineas040000 = from busqueda in dicAgruNumConexionActual.Value
+                                       where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("040000")
+                                       select busqueda;
+
+                    var lineas11C901 = from busqueda in dicAgruNumConexionActual.Value
+                                       where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("11C901")
+                                       select busqueda;
+                    #endregion
+
+                    #region Mapeo
+
+                    if (lineas040000.Any())
+                    {
+                        if (lineas040000.FirstOrDefault().Substring(6, 20).Trim() != Cuenta)
+                        {
+                            numeroConexion = lineas040000.FirstOrDefault().Substring(6, 20).Trim();
+
+                            // Se toman los valores
+                            if (lineas11C901.Any())
+                            {
+                                foreach (var linea11CActual in lineas11C901)
+                                {
+                                    valor1.Add(linea11CActual.Substring(16, 14));
+                                    valor2.Add(linea11CActual.Substring(44, 14));
+                                    valor3.Add(linea11CActual.Substring(172, 14));
+
+                                    if (linea11CActual.Substring(128, 19).Contains("-"))
+                                    {
+                                        periodo = linea11CActual.Substring(128, 6);
+                                        listaCortes.Clear();
+                                        listaCortes.Add(new PosCortes(128, 8, TiposFormateo.Fecha06));
+                                        primerFecha = Helpers.ExtraccionCamposSpool(listaCortes, linea11CActual);
+                                        listaCortes.Clear();
+
+                                        listaCortes.Add(new PosCortes(139, 8, TiposFormateo.Fecha06));
+                                        segundaFecha = Helpers.ExtraccionCamposSpool(listaCortes, linea11CActual);
+                                    }
+                                }
+                            }
+
+                            // sumar el total
+                            total.AddRange(valor1);
+                            total.AddRange(valor2);
+                            total.AddRange(valor3);
+
+                            Lineas1DET = "1DET|";
+                            Lineas1DET += numeroConexion + "|";
+                            Lineas1DET += "Total|";
+                            Lineas1DET += Helpers.SumarCampos(valor1) + "|";
+                            Lineas1DET += Helpers.SumarCampos(valor2) + "|";
+                            Lineas1DET += Helpers.SumarCampos(valor3) + "|";
+                            Lineas1DET += Helpers.SumarCampos(total) + "|";
+                            Lineas1DET += periodo + "| ";
+                            Lineas1DET += primerFecha + " a " + segundaFecha + "| ";
+
+                            valor1.Clear();
+                            valor2.Clear();
+                            valor3.Clear();
+                            total.Clear();
+
+                            if (!string.IsNullOrEmpty(Lineas1DET))
+                            {
+                                if (Is1PLA == false && primerReg1DET)
+                                {
+                                    linea1PLA = "1PLA||||||||| ";
+                                    list1DET.Add(Helpers.ValidarPipePipe(linea1PLA));
+                                    primerReg1DET = false;
+                                }
+
+                                list1DET.Add(Helpers.ValidarPipePipe(Lineas1DET));
+                            }
+                        }
+                    }
+
+                    #endregion
+
                 }
 
-                list1DET.Add(Helpers.ValidarPipePipe(Lineas1DET));
+                #endregion
             }
 
             return list1DET;
@@ -4838,7 +4968,7 @@ namespace App.ControlLogicaProcesos
             if (result3000404.Any())
             {
                 Lineas1CIC = result3000404.FirstOrDefault();
-                Lineas1CIC = $"1CIC| |Impuesto Consumo {Helpers.FormatearCampos(TiposFormateo.Decimal01, Lineas1CIC.Substring(12, 20).TrimStart('0').Trim())}| ";
+                Lineas1CIC = $"1CIC| |Impuesto Consumo {Helpers.FormatearCampos(TiposFormateo.Decimal05, Lineas1CIC.Substring(12, 20).TrimStart('0').Trim())}| ";
             }
 
             return Lineas1CIC;
@@ -4871,8 +5001,8 @@ namespace App.ControlLogicaProcesos
                 string producto = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruceProducto).FirstOrDefault().Substring(11).Trim();
                 string subProducto = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruceSubProducto).FirstOrDefault().Substring(11).Trim();
 
-                resultado = Helpers.ValidarPipePipe($"1RRT|Total|{Helpers.FormatearCampos(TiposFormateo.Decimal01, @base)}|" +
-                    $"{Helpers.FormatearCampos(TiposFormateo.Decimal01, iva)}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, impuesto)}|" +
+                resultado = Helpers.ValidarPipePipe($"1RRT|Total|{Helpers.FormatearCampos(TiposFormateo.Decimal05, @base)}|" +
+                    $"{Helpers.FormatearCampos(TiposFormateo.Decimal05, iva)}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, impuesto)}|" +
                     $"{Helpers.SumarCampos(new List<string> { @base, iva, impuesto })}|{producto}|{subProducto}| ");
             }
 
@@ -4902,8 +5032,8 @@ namespace App.ControlLogicaProcesos
                 string iva = linea20M.FirstOrDefault().Substring(44, 14).Trim();
                 string impuesto = linea20M.FirstOrDefault().Substring(58, 14).Trim();
 
-                resultado = Helpers.ValidarPipePipe($"1RRR|{concepto}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, @base)}|" +
-                    $"{Helpers.FormatearCampos(TiposFormateo.Decimal01, iva)}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, impuesto)}|" +
+                resultado = Helpers.ValidarPipePipe($"1RRR|{concepto}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, @base)}|" +
+                    $"{Helpers.FormatearCampos(TiposFormateo.Decimal05, iva)}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, impuesto)}|" +
                     $"{Helpers.FormatearCampos(TiposFormateo.Fecha09, linea20M.FirstOrDefault().Substring(86, 8).Trim())}|" +
                     $"{Helpers.FormatearCampos(TiposFormateo.HoraMinuto, linea20M.FirstOrDefault().Substring(94, 4).Trim())}|" +
                     $"{linea20M.FirstOrDefault().Substring(122, 50).Trim()}| ");
@@ -5019,7 +5149,7 @@ namespace App.ControlLogicaProcesos
 
                 mesesFinal.Reverse();
 
-                resultado = $"{mesesFinal.ElementAt(0)}|{mesesFinal.ElementAt(1)}|{mesesFinal.ElementAt(2)}|{mesesFinal.ElementAt(3)}|{mesesFinal.ElementAt(4)}|{mesesFinal.ElementAt(5)}";
+                resultado = $"{mesesFinal.ElementAt(0).Substring(0, 3)}|{mesesFinal.ElementAt(1).Substring(0, 3)}|{mesesFinal.ElementAt(2).Substring(0, 3)}|{mesesFinal.ElementAt(3).Substring(0, 3)}|{mesesFinal.ElementAt(4).Substring(0, 3)}|{mesesFinal.ElementAt(5).Substring(0, 3)}";
             }
             else
             {
@@ -5091,32 +5221,32 @@ namespace App.ControlLogicaProcesos
                 {
                     #region Estrato
                     case "1":
-                        resultado = Helpers.FormatearCampos(TiposFormateo.Decimal01, pLineaTablaSustitucion.Substring(14, 10));
+                        resultado = Helpers.FormatearCampos(TiposFormateo.Decimal05, pLineaTablaSustitucion.Substring(14, 10));
                         break;
 
                     case "2":
-                        resultado = Helpers.FormatearCampos(TiposFormateo.Decimal01, pLineaTablaSustitucion.Substring(24, 10));
+                        resultado = Helpers.FormatearCampos(TiposFormateo.Decimal05, pLineaTablaSustitucion.Substring(24, 10));
                         break;
 
                     case "3":
-                        resultado = Helpers.FormatearCampos(TiposFormateo.Decimal01, pLineaTablaSustitucion.Substring(34, 10));
+                        resultado = Helpers.FormatearCampos(TiposFormateo.Decimal05, pLineaTablaSustitucion.Substring(34, 10));
                         break;
 
                     case "4":
-                        resultado = Helpers.FormatearCampos(TiposFormateo.Decimal01, pLineaTablaSustitucion.Substring(44, 10));
+                        resultado = Helpers.FormatearCampos(TiposFormateo.Decimal05, pLineaTablaSustitucion.Substring(44, 10));
                         break;
 
                     case "5":
-                        resultado = Helpers.FormatearCampos(TiposFormateo.Decimal01, pLineaTablaSustitucion.Substring(54, 10));
+                        resultado = Helpers.FormatearCampos(TiposFormateo.Decimal05, pLineaTablaSustitucion.Substring(54, 10));
                         break;
 
                     case "6":
-                        resultado = Helpers.FormatearCampos(TiposFormateo.Decimal01, pLineaTablaSustitucion.Substring(64, 10));
+                        resultado = Helpers.FormatearCampos(TiposFormateo.Decimal05, pLineaTablaSustitucion.Substring(64, 10));
                         break;
 
                     default:
                         //Por defecto va con estrato 6
-                        resultado = Helpers.FormatearCampos(TiposFormateo.Decimal01, pLineaTablaSustitucion.Substring(64, 10));
+                        resultado = Helpers.FormatearCampos(TiposFormateo.Decimal05, pLineaTablaSustitucion.Substring(64, 10));
                         break;
                         #endregion
                 }
@@ -5210,9 +5340,9 @@ namespace App.ControlLogicaProcesos
                             if (registroActual.Substring(281, 20) == "Pago por Uso Pospago")
                             {
                                 // Cortes
-                                listaCortes.Add(new PosCortes(16, 14, TiposFormateo.Decimal01));
-                                listaCortes.Add(new PosCortes(44, 14, TiposFormateo.Decimal01));
-                                listaCortes.Add(new PosCortes(172, 14, TiposFormateo.Decimal01));
+                                listaCortes.Add(new PosCortes(16, 14, TiposFormateo.Decimal05));
+                                listaCortes.Add(new PosCortes(44, 14, TiposFormateo.Decimal05));
+                                listaCortes.Add(new PosCortes(172, 14, TiposFormateo.Decimal05));
                                 camposValores = Helpers.ExtraccionCamposSpool(listaCortes, registroActual);
                                 camposSumar.Add(registroActual.Substring(16, 14).Trim());
                                 camposSumar.Add(registroActual.Substring(44, 14).Trim());
@@ -5266,7 +5396,7 @@ namespace App.ControlLogicaProcesos
             if (linea29000.Any())
             {
                 resultado = Helpers.ValidarPipePipe($"NTC1|{linea29000.FirstOrDefault().Substring(5, 12).Trim()}|{linea29000.FirstOrDefault().Substring(18, 10).Trim()}|" +
-                    $"{Helpers.FormatearCampos(TiposFormateo.Decimal01, linea29000.FirstOrDefault().Substring(29, 20).Trim())}|{linea29000.FirstOrDefault().Substring(49).Trim()}| ");
+                    $"{Helpers.FormatearCampos(TiposFormateo.Decimal05, linea29000.FirstOrDefault().Substring(29, 20).Trim())}|{linea29000.FirstOrDefault().Substring(49).Trim()}| ");
             }
 
             return resultado;
@@ -5673,8 +5803,8 @@ namespace App.ControlLogicaProcesos
                 string total = linea13M317.FirstOrDefault().Substring(42, 14).Trim();
                 string subtotal = linea13M317.FirstOrDefault().Substring(56, 14).Trim();
 
-                resultado.Add(Helpers.ValidarPipePipe($"1FFF|{concepto}|{Helpers.FormatearCampos(TiposFormateo.Decimal01, total)}" +
-                    $"|{Helpers.FormatearCampos(TiposFormateo.Decimal01, subtotal)}|{Helpers.SumarCampos(new List<string> { total, subtotal })}| | "));
+                resultado.Add(Helpers.ValidarPipePipe($"1FFF|{concepto}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, total)}" +
+                    $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, subtotal)}|{Helpers.SumarCampos(new List<string> { total, subtotal })}| | "));
 
                 resultado.Add("1FFF| | | | | | ");
             }
@@ -5682,6 +5812,325 @@ namespace App.ControlLogicaProcesos
             return resultado;
             #endregion
         }
-#endregion
+
+        /// Metodo que obtiene las lineas formateadas de Canal 1DAA y 1DBB
+        /// </summary>
+        /// <param name="datosOriginales"></param>
+        /// <returns></returns>
+        private IEnumerable<string> MapeoGrupo1DAA(List<string> datosOriginales)
+        {
+            #region MapeoGrupo1DAA
+
+            List<string> listResultado = new List<string>();
+            string LineaTemp = string.Empty;
+            string numeroConexion = string.Empty;
+            Dictionary<string, List<string>> dicAgruNumConexion = new Dictionary<string, List<string>>();
+            Dictionary<string, List<string>> dicAgruPorCargo = new Dictionary<string, List<string>>();
+            Dictionary<string, int> dicCountPorCargo = new Dictionary<string, int>();
+            List<string> paqueteActual = new List<string>();
+            string llaveCruve = string.Empty;
+
+            string concepto1DBB = string.Empty;
+            List<string> valor1_1DBB = new List<string>();
+            List<string> valor2_1DBB = new List<string>();
+            List<string> valor3_1DBB = new List<string>();
+            List<string> valor4_1DBB = new List<string>();
+
+            List<string> valor1_1DAA = new List<string>();
+            List<string> valor2_1DAA = new List<string>();
+            List<string> valor3_1DAA = new List<string>();
+            List<string> valor4_1DAA = new List<string>();
+            string valor02T004 = string.Empty;
+
+            #region Busquea 02T004
+
+            var lineas02T004 = from busqueda in datosOriginales
+                               where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("02T004")
+                               select busqueda;
+
+            if (lineas02T004.Any())
+            {
+                valor02T004 = lineas02T004.FirstOrDefault().Substring(104, 14).Trim().TrimStart('0');
+            }
+
+            #endregion
+
+            #region armar paquetes por 040000
+            foreach (var lineaActual in datosOriginales)
+            {
+                if (lineaActual.Substring(0, 6) == "040000") // inicio Paquete
+                {
+                    llaveCruve = lineaActual.Substring(0, 25).Trim();
+                }
+
+                if (!string.IsNullOrEmpty(llaveCruve))
+                {
+                    // Se llena Diccionario a procesar
+
+                    if (dicAgruNumConexion.ContainsKey(llaveCruve))
+                    {
+                        dicAgruNumConexion[llaveCruve].Add(lineaActual);
+                    }
+                    else
+                    {
+                        dicAgruNumConexion.Add(llaveCruve, new List<string> { lineaActual });
+                    }
+                }
+            }
+            #endregion
+
+            #region Arma grupo por concepto 1DBB
+
+            foreach (var dicAgruNumConexionActual in dicAgruNumConexion)
+            {
+                #region Busquedas               
+
+                var lineas11C = from busqueda in dicAgruNumConexionActual.Value
+                                where busqueda.Length > 6 && busqueda.Substring(0, 3).Equals("11C")
+                                select busqueda;
+                #endregion
+
+                #region agrupo
+
+                if (lineas11C.Any())
+                {
+                    foreach (var linea11CActual in lineas11C)
+                    {
+
+                        concepto1DBB = linea11CActual.Substring(281).Trim();
+
+                        if (Convert.ToDouble(linea11CActual.Substring(30, 14)) != 0)
+                        {
+                            concepto1DBB = "Recargo de mora";
+                        }
+
+                        if (dicAgruPorCargo.ContainsKey(concepto1DBB))
+                        {
+                            dicAgruPorCargo[concepto1DBB].Add(linea11CActual);
+                        }
+                        else
+                        {
+                            dicAgruPorCargo.Add(concepto1DBB, new List<string> { linea11CActual });
+                        }
+                    }
+                }
+
+                #endregion
+
+            }
+
+            #endregion
+
+            #region Formatear
+
+            foreach (var dicAgruPorCargoActual in dicAgruPorCargo)
+            {
+                concepto1DBB = dicAgruPorCargoActual.Key;
+
+                foreach (var lineaProcesar in dicAgruPorCargoActual.Value)
+                {
+
+                    if (concepto1DBB == "Recargo de mora")
+                    {
+                        valor1_1DBB.Add(lineaProcesar.Substring(30, 14));
+
+                        valor2_1DBB.Add(lineaProcesar.Substring(30, 14));
+                        valor2_1DBB.Add(lineaProcesar.Substring(44, 14));
+
+                        valor3_1DBB.Add(lineaProcesar.Substring(44, 14));
+
+                        valor4_1DBB.Add("0");
+                    }
+                    else
+                    {
+
+                        valor1_1DBB.Add(lineaProcesar.Substring(16, 14));
+
+                        valor2_1DBB.Add(lineaProcesar.Substring(16, 14));
+                        valor2_1DBB.Add(lineaProcesar.Substring(44, 14));
+                        valor2_1DBB.Add(lineaProcesar.Substring(172, 14));
+
+                        valor3_1DBB.Add(lineaProcesar.Substring(44, 14));
+
+                        valor4_1DBB.Add(lineaProcesar.Substring(172, 14));
+
+                    }
+                }
+
+                // Agregar Campos a Totalizar
+                valor1_1DAA.AddRange(valor1_1DBB);
+                valor2_1DAA.AddRange(valor2_1DBB);
+                valor3_1DAA.AddRange(valor3_1DBB);
+                valor4_1DAA.AddRange(valor4_1DBB);
+
+
+                LineaTemp = "1DBB|";
+                LineaTemp += concepto1DBB + "|";
+                LineaTemp += Helpers.SumarCampos(valor1_1DBB) + "|";
+                LineaTemp += Helpers.SumarCampos(valor2_1DBB) + "|";
+                LineaTemp += " |";
+                LineaTemp += Helpers.SumarCampos(valor3_1DBB) + "|";
+                LineaTemp += Helpers.SumarCampos(valor4_1DBB) + "|";
+
+                if (concepto1DBB == "Recargo de mora")
+                {
+                    LineaTemp += "0| ";
+                }
+                else
+                {
+                    LineaTemp += valor02T004 + "| ";
+                }
+
+
+                valor1_1DBB.Clear();
+                valor2_1DBB.Clear();
+                valor3_1DBB.Clear();
+                valor4_1DBB.Clear();
+
+                listResultado.Add(Helpers.ValidarPipePipe(LineaTemp));
+            }
+
+            #endregion
+
+            // Se crea el canal 1DAA
+            LineaTemp = "1DAA|";
+            LineaTemp += "Total cargos|";
+            LineaTemp += Helpers.SumarCampos(valor1_1DAA) + "|";
+            LineaTemp += Helpers.SumarCampos(valor2_1DAA) + "|";
+            LineaTemp += Helpers.SumarCampos(valor3_1DAA) + "|";
+            LineaTemp += Helpers.SumarCampos(valor4_1DAA) + "| ";
+
+            listResultado.Insert(0, Helpers.ValidarPipePipe(LineaTemp));
+
+            return listResultado;
+            #endregion
+        }
+
+        /// Metodo que obtiene las lineas formateadas de Canal 1JAA y 1JBB
+        /// </summary>
+        /// <param name="datosOriginales"></param>
+        /// <returns></returns>
+        private IEnumerable<string> MapeoGrupo1JAA(List<string> datosOriginales)
+        {
+            #region MapeoGrupo1JAA
+
+            List<string> listResultado = new List<string>();
+            string LineaTemp = string.Empty;
+            string numeroConexion = string.Empty;
+            Dictionary<string, List<string>> dicAgruNumConexion = new Dictionary<string, List<string>>();
+            List<string> paqueteActual = new List<string>();
+            string llaveCruve = string.Empty;
+
+            List<string> valor1_1JBB = new List<string>();
+            List<string> valor2_1JBB = new List<string>();
+
+            List<string> valor1_1JAA = new List<string>();
+            List<string> valor2_1JAA = new List<string>();
+
+
+            #region armar paquetes
+            foreach (var lineaActual in datosOriginales)
+            {
+                if (lineaActual.Substring(0, 6) == "040000") // inicio Paquete
+                {
+                    llaveCruve = lineaActual.Substring(0, 25).Trim();
+                }
+
+                if (!string.IsNullOrEmpty(llaveCruve))
+                {
+                    // Se llena Diccionario a procesar
+
+                    if (dicAgruNumConexion.ContainsKey(llaveCruve))
+                    {
+                        dicAgruNumConexion[llaveCruve].Add(lineaActual);
+                    }
+                    else
+                    {
+                        dicAgruNumConexion.Add(llaveCruve, new List<string> { lineaActual });
+                    }
+                }
+            }
+            #endregion
+
+            #region Procesamiento
+
+            foreach (var dicAgruNumConexionActual in dicAgruNumConexion)
+            {
+                #region Busquedas
+                var lineas040000 = from busqueda in dicAgruNumConexionActual.Value
+                                   where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("040000")
+                                   select busqueda;
+
+                var lineas11C = from busqueda in dicAgruNumConexionActual.Value
+                                where busqueda.Length > 6 && busqueda.Substring(0, 3).Equals("11C")
+                                select busqueda;
+                #endregion
+
+                #region Mapeo
+
+                if (lineas040000.Any())
+                {
+                    numeroConexion = lineas040000.FirstOrDefault().Substring(6, 20).Trim();
+
+                    // Se toman los valores
+                    if (lineas11C.Any())
+                    {
+                        foreach (var linea11CActual in lineas11C)
+                        {
+                            if (numeroConexion == Cuenta)
+                            {
+                                valor1_1JBB.Add(linea11CActual.Substring(30, 14));
+
+                                valor2_1JBB.Add(linea11CActual.Substring(30, 14));
+                                valor2_1JBB.Add(linea11CActual.Substring(44, 14));
+                            }
+                            else
+                            {
+                                valor1_1JBB.Add(linea11CActual.Substring(16, 14));
+                                valor1_1JBB.Add(linea11CActual.Substring(30, 14));
+
+                                valor2_1JBB.Add(linea11CActual.Substring(16, 14));
+                                valor2_1JBB.Add(linea11CActual.Substring(30, 14));
+                                valor2_1JBB.Add(linea11CActual.Substring(44, 14));
+                                valor2_1JBB.Add(linea11CActual.Substring(172, 14));
+                            }
+
+                        }
+
+                        // Agregar Campos a Totalizar
+                        valor1_1JAA.AddRange(valor1_1JBB);
+                        valor2_1JAA.AddRange(valor2_1JBB);
+                    }
+
+                    LineaTemp = "1JBB|";
+                    LineaTemp += numeroConexion + "|";
+                    LineaTemp += Helpers.SumarCampos(valor1_1JBB) + "|";
+                    LineaTemp += Helpers.SumarCampos(valor2_1JBB) + "| ";
+
+                    valor1_1JBB.Clear();
+                    valor2_1JBB.Clear();
+
+                    listResultado.Add(Helpers.ValidarPipePipe(LineaTemp));
+
+                }
+
+                #endregion
+            }
+
+            // Se crea el canal 1JAA
+            LineaTemp = "1JAA|";
+            LineaTemp += "Total por linea|";
+            LineaTemp += Helpers.SumarCampos(valor1_1JAA) + "|";
+            LineaTemp += Helpers.SumarCampos(valor2_1JAA) + "| ";
+
+            listResultado.Insert(0, Helpers.ValidarPipePipe(LineaTemp));
+
+            #endregion
+
+
+            return listResultado;
+            #endregion
+        }
+        #endregion
     }
 }

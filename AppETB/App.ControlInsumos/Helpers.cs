@@ -1683,6 +1683,9 @@ namespace App.ControlInsumos
                 case TiposFormateo.LetraCapital:
                     return FormatearLetraCapital(pCampo);
 
+                case TiposFormateo.PrimeraMayuscula:
+                    return FormatearPrimeraMayuscula(pCampo);
+
                 case TiposFormateo.Fecha02:
                     return FormatearFecha("02", pCampo); // De ddMMyy a yyyyMM
 
@@ -2162,6 +2165,18 @@ namespace App.ControlInsumos
             letraCapital = myTextInfo.ToTitleCase(lower);
 
             return letraCapital;
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pCampo"></param>
+        /// <returns></returns>
+        private static string FormatearPrimeraMayuscula(string pCampo)
+        {
+            #region FormatearPrimeraMayuscula
+            return pCampo.First().ToString().ToUpper() + pCampo.Substring(1).ToLower();
             #endregion
         }
 
@@ -3251,6 +3266,7 @@ namespace App.ControlInsumos
         Fecha16,
         Fecha17,
         LetraCapital,
+        PrimeraMayuscula,
         Decimal01,
         Decimal02,
         Decimal03,
