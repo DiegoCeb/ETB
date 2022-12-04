@@ -4200,7 +4200,7 @@ namespace App.ControlLogicaProcesos
 
                         // Cortes
                         listaCortes.Add(new PosCortes(41, 10));
-                        listaCortes.Add(new PosCortes(41, 10));
+                        listaCortes.Add(new PosCortes(75, 3));
                         listaCortes.Add(new PosCortes(26, 8, TiposFormateo.Fecha09));
                         listaCortes.Add(new PosCortes(262, 8));
                         listaCortes.Add(new PosCortes(41, 10));
@@ -4217,6 +4217,7 @@ namespace App.ControlLogicaProcesos
                         listaCortes.Clear();
                         listaCortes.Add(new PosCortes(179, 14, TiposFormateo.Decimal01));
                         lineaTem1OMV += Helpers.ExtraccionCamposSpool(listaCortes, registroActual) + "| ";
+                        listaCortes.Clear();
 
                         listaTemp1OMV.Add(Helpers.ValidarPipePipe(lineaTem1OMV));
                     }
