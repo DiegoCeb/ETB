@@ -58,6 +58,7 @@
     <Compile Include="ReportesAnexosVerdes.cs" />
     <Compile Include="ReportesGobiernos.cs" />
     <Compile Include="ReportesDatos.cs" />
+    <Compile Include="ReportesLteCorporativo.cs" />
     <Compile Include="ReportesMasivos.cs" />
   </ItemGroup>
   <ItemGroup>

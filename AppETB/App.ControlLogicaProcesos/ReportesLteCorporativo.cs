@@ -6,7 +6,7 @@ using App.ControlInsumos;
 
 namespace App.ControlLogicaProcesos
 {
-    public class ReportesMasivos
+    public class ReportesLteCorporativo
     {
 
         #region Variables
@@ -32,7 +32,7 @@ namespace App.ControlLogicaProcesos
         /// <summary>
         /// 
         /// </summary>
-        public ReportesMasivos()
+        public ReportesLteCorporativo()
         { }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace App.ControlLogicaProcesos
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRutaSalida"></param>
         /// <param name="pLote"></param>
-        public ReportesMasivos(Dictionary<string, List<string>> pDatosImprimir, string pRutaSalida, string pLote)
+        public ReportesLteCorporativo(Dictionary<string, List<string>> pDatosImprimir, string pRutaSalida, string pLote)
         {
             #region ProcesoMasivos
             try
@@ -63,7 +63,7 @@ namespace App.ControlLogicaProcesos
                 Helpers.EscribirLogVentana(StructError, true);
             }
             #endregion
-        } 
+        }
         #endregion
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace App.ControlLogicaProcesos
             #region Ejecutar
             Helpers.CrearCarpeta(rutaSalida + @"\Reportes");
             CargarDiccionario();
-            ExtraccionReportes(DiccionarioExtractosReporte);            
+            ExtraccionReportes(DiccionarioExtractosReporte);
             #endregion
         }
 
@@ -99,7 +99,7 @@ namespace App.ControlLogicaProcesos
             {
                 if (!DiccionarioExtractosReporte.ContainsKey(keyErrorLTE))
                     DiccionarioExtractosReporte.Add(keyErrorLTE, new List<string>(Variables.Variables.DatosErrorLTE[keyErrorLTE]));
-            } 
+            }
             #endregion
         }
 
@@ -137,7 +137,7 @@ namespace App.ControlLogicaProcesos
                 // Rpt Resumen SMS
                 listReporte = GetReporteSMS(datosSal.ToList());
                 if (listReporte.Count > 0)
-                    listaReporteSMS.AddRange(listReporte);                    
+                    listaReporteSMS.AddRange(listReporte);
                 listReporte.Clear();
             }
 
@@ -172,10 +172,10 @@ namespace App.ControlLogicaProcesos
             listReporte = GetReporteEstadistico();
             if (listReporte.Count > 0)
                 EscribirReporteEstadistico(listReporte);
-            listReporte.Clear();  
+            listReporte.Clear();
             #endregion
         }
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -282,7 +282,7 @@ namespace App.ControlLogicaProcesos
 
             return lineaReporte;
             #endregion
-        } 
+        }
         #endregion
 
         #region Obtener Lineas Reporte 
@@ -334,11 +334,25 @@ namespace App.ControlLogicaProcesos
                 camposLinea.Add(string.Empty); // Fecb
                 camposLinea.Add(string.Empty); // Fecc
                 camposLinea.Add(GetTotalIva(pExtracto)); // Total Iva
-                
+
                 camposLinea.Add(campos1AAA[1]); // Total IVA Otros Operadores
 
                 camposLinea.Add(campos1AAA[33]); // Insertos
-                camposLinea.Add(campos1AAA[10]); // Valor Pagar Mes
+
+                #region Requerimiento 360
+                List<decimal> comparacionValores = new List<decimal>
+                {
+                    Convert.ToDecimal(Helpers.FormatearCampos(TiposFormateo.Decimal03, campos1AAA[10])), //Valor total Factura
+                    Convert.ToDecimal(Helpers.FormatearCampos(TiposFormateo.Decimal03, campos1AAA[31]))  //Valor Mes
+                };
+
+                var valorMenor = from busqueda in comparacionValores
+                                 orderby busqueda ascending
+                                 select busqueda;
+                #endregion
+
+                camposLinea.Add(Helpers.FormatearCampos(TiposFormateo.Decimal05, valorMenor.FirstOrDefault().ToString().Replace(".", string.Empty))); // Valor Pagar Mes
+
                 camposLinea.Add(campos1AAA[27]); // Actividad
 
                 camposLinea.Add(campos1AAA[1]); // Logo TIC
@@ -632,7 +646,7 @@ namespace App.ControlLogicaProcesos
                     }
 
                     var vencimiento = campos1AAA[15].Trim() == "1" ? campos1AAA[17].Trim() : "Pago Inmediato";
-                    mensaje2 = $"Pago electronico {cuenta} valor {campos1AAA[10].Replace("$", "").Trim()} vence: { vencimiento}";
+                    mensaje2 = $"Pago electronico {cuenta} valor {campos1AAA[10].Replace("$", "").Trim()} vence: {vencimiento}";
 
                     lineaSMS = campos1AAA[15].Trim() + mensaje + mensaje2;
 
@@ -646,7 +660,7 @@ namespace App.ControlLogicaProcesos
 
             return lineaSMS;
             #endregion
-        } 
+        }
         #endregion
 
         #region Metodos Propios
@@ -1180,7 +1194,7 @@ namespace App.ControlLogicaProcesos
             if (File.Exists(nombreAnterior))
                 File.Move(nombreAnterior, nombreNuevo);
             #endregion
-        } 
+        }
         #endregion
     }
 }
