@@ -2898,7 +2898,8 @@ namespace App.ControlLogicaProcesos
         /// <returns></returns>
         private IEnumerable<string> FormateoCanal1CCD(List<string> datosOriginales)
         {
-            #region FormateoCanal1CCDPrueba
+
+            #region FormateoCanal1CCD
             List<string> resultado = new List<string>();
             string resultadoTemp = string.Empty;
             Dictionary<string, List<string>> dicAgrupado = new Dictionary<string, List<string>>();
@@ -2937,7 +2938,6 @@ namespace App.ControlLogicaProcesos
                                 where busqueda.Substring(0, 6).Equals("02T" + lineaActual.Substring(3, 3))
                                 select busqueda;
 
-                // C
                 if (llaveAgrupacion == "11C118")
                 {
                     if (dicAgrupado.ContainsKey("02T123"))
@@ -3019,6 +3019,44 @@ namespace App.ControlLogicaProcesos
                     }
                 }
             }
+            #endregion
+
+            #region Agrupa 11C123 - 02T123
+
+            if (dicAgrupado.ContainsKey("02T123"))
+            {
+                List<string> itemRemover = new List<string>();
+
+                foreach (var linea11C123 in dicAgrupado["02T123"])
+                {
+
+                    if (!string.IsNullOrEmpty(linea11C123.Substring(128, 19).Trim()))
+                    {
+                        itemRemover.Add(linea11C123);
+
+                        // Se agrega al diccionario en el 02T124
+
+                        if (dicAgrupado.ContainsKey("02T124"))
+                        {
+                            dicAgrupado["02T124"].Add(linea11C123);
+                        }
+                        else
+                        {
+                            dicAgrupado.Add("02T124", new List<string> { linea11C123 });
+                        }
+                    }
+
+                }
+
+                // se eliminan las lineas que se pasaron al 02T124
+                foreach (var remover in itemRemover)
+                {
+                    dicAgrupado["02T123"].Remove(remover);
+                }
+
+            }
+
+
             #endregion
 
             #endregion
