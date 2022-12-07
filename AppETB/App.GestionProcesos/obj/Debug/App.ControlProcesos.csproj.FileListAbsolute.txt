@@ -35,6 +35,8 @@ C:\Proyectos\ETB\AppETB\App.GestionProcesos\bin\Debug\App.ControlLogicaProcesos.
 C:\Proyectos\ETB\AppETB\App.GestionProcesos\bin\Debug\Excel.dll
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\App.GestionProcesos\bin\Debug\Excel.dll
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\App.GestionProcesos\bin\Debug\ICSharpCode.SharpZipLib.dll
+C:\Proyectos\ETB\AppETB\App.GestionProcesos\bin\Debug\ICSharpCode.SharpZipLib.dll
+C:\Proyectos\ETB\AppETB\App.GestionProcesos\bin\Debug\DLL_Utilidades.pdb
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.GestionProcesos\bin\Debug\App.ControlProcesos.dll
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.GestionProcesos\bin\Debug\App.ControlProcesos.pdb
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.GestionProcesos\bin\Debug\App.ControlEjecucion.dll
@@ -43,6 +45,7 @@ C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.GestionProcesos\bin\
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.GestionProcesos\bin\Debug\App.ControlLogicaProcesos.dll
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.GestionProcesos\bin\Debug\SharpCompress.dll
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.GestionProcesos\bin\Debug\Excel.dll
+C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.GestionProcesos\bin\Debug\ICSharpCode.SharpZipLib.dll
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.GestionProcesos\bin\Debug\App.ControlEjecucion.pdb
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.GestionProcesos\bin\Debug\App.ControlInsumos.pdb
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.GestionProcesos\bin\Debug\App.Variables.pdb
@@ -52,7 +55,3 @@ C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.GestionProcesos\obj\
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.GestionProcesos\obj\Debug\App.ControlProcesos.csproj.CopyComplete
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.GestionProcesos\obj\Debug\App.ControlProcesos.dll
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.GestionProcesos\obj\Debug\App.ControlProcesos.pdb
-C:\Proyectos\ETB\AppETB\App.GestionProcesos\bin\Debug\ICSharpCode.SharpZipLib.dll
-C:\Proyectos\ETB\AppETB\App.GestionProcesos\bin\Debug\DLL_Utilidades.pdb
-C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.GestionProcesos\bin\Debug\ICSharpCode.SharpZipLib.dll
-C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.GestionProcesos\bin\Debug\DLL_Utilidades.pdb
