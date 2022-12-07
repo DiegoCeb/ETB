@@ -3580,6 +3580,21 @@ namespace App.ControlLogicaProcesos
                             #endregion
                         }
                     }
+                    else
+                    {
+                        string lineaODC = resultadoTemporal.Find(x => x.Substring(0, 4).Equals("1ODC"));
+                        int lineaODCIndice = resultadoTemporal.FindIndex(x => x.Substring(0, 4).Equals("1ODC"));
+
+                        if (!string.IsNullOrEmpty(lineaODC))
+                        {
+                            lineaODC = lineaODC.Replace("***BASE***", Helpers.SumarCampos(sumaValoresBase));
+                            lineaODC = lineaODC.Replace("***IVA***", Helpers.SumarCampos(sumaValoresIva));
+                            lineaODC = lineaODC.Replace("***IMPUESTOS***", Helpers.SumarCampos(sumaValoresImpuestos));
+                            lineaODC = lineaODC.Replace("***TOTAL***", Helpers.SumarCampos(sumaValoresTotal));
+
+                            resultadoTemporal[lineaODCIndice] = lineaODC;
+                        }
+                    }
 
                     temp = new List<string>();
 
@@ -5642,7 +5657,7 @@ namespace App.ControlLogicaProcesos
 
                                     if (string.IsNullOrEmpty(concepto))
                                     {
-                                        concepto = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruce).FirstOrDefault()?.Substring(14).Trim() ?? "";
+                                        concepto = Helpers.FormatearCampos(TiposFormateo.PrimeraMayuscula, Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruce).FirstOrDefault()?.Substring(14).Trim() ?? "");
                                     }
                                 }
 
