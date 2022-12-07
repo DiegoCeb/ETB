@@ -2284,7 +2284,7 @@ namespace App.ControlLogicaProcesos
                 foreach (var registroActual in resultPaquetes)
                 {
 
-                    if (IsFibra || IsResidencial || IsLte)
+                    if (IsFibra || IsResidencial || IsLte || IsLteCorporativo)
                     {
                         llave = "FACLIN" + registroActual.Substring(3, 1);
 

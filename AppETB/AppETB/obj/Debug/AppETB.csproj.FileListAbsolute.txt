@@ -44,6 +44,8 @@ C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\bin\Debug\DLL_Utilidades.pdb
 C:\Proyectos\ETB\AppETB\AppETB\bin\Debug\Excel.dll
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\bin\Debug\Excel.dll
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\bin\Debug\ICSharpCode.SharpZipLib.dll
+C:\Proyectos\ETB\AppETB\AppETB\bin\Debug\ICSharpCode.SharpZipLib.dll
+C:\Proyectos\ETB\AppETB\AppETB\bin\Debug\DLL_Utilidades.pdb
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\bin\Debug\AppETB.exe.config
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\bin\Debug\AppETB.exe
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\bin\Debug\AppETB.pdb
@@ -54,10 +56,12 @@ C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\bin\Debug\SharpCo
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\bin\Debug\Excel.dll
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\bin\Debug\DLL_Utilidades.dll
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\bin\Debug\App.ControlEjecucion.dll
+C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\bin\Debug\ICSharpCode.SharpZipLib.dll
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\bin\Debug\App.ControlLogicaProcesos.dll
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\bin\Debug\App.ControlInsumos.pdb
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\bin\Debug\App.ControlProcesos.pdb
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\bin\Debug\App.Variables.pdb
+C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\bin\Debug\DLL_Utilidades.pdb
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\bin\Debug\App.ControlEjecucion.pdb
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\bin\Debug\App.ControlLogicaProcesos.pdb
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\obj\Debug\AppETB.csproj.AssemblyReference.cache
@@ -66,7 +70,3 @@ C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\obj\Debug\AppETB.
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\obj\Debug\AppETB.csproj.CopyComplete
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\obj\Debug\AppETB.exe
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\obj\Debug\AppETB.pdb
-C:\Proyectos\ETB\AppETB\AppETB\bin\Debug\ICSharpCode.SharpZipLib.dll
-C:\Proyectos\ETB\AppETB\AppETB\bin\Debug\DLL_Utilidades.pdb
-C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\bin\Debug\ICSharpCode.SharpZipLib.dll
-C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\bin\Debug\DLL_Utilidades.pdb
