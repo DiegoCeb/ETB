@@ -423,42 +423,7 @@ namespace App.ControlLogicaProcesos
                 resultado.Add(resultadoFormateoLinea);
             }
 
-            resultadoFormateoLinea = FormateoCanalNTC0(datosOriginales);
-
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
-
-            resultadoFormateoLinea = FormateoCanalNTC1(datosOriginales);
-
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
-
-            resultadoFormateoLinea = MapeoCanalNTC2(datosOriginales);
-
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
-
-            resultadoFormateoLinea = MapeoCanalNTC3(datosOriginales);
-
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
-
-            resultadoFormateoLinea = MapeoCanalNTC4(datosOriginales);
-
-            if (((IEnumerable<string>)resultadoFormateoLinea).Any())
-            {
-                resultado.AddRange(resultadoFormateoLinea);
-            }
-
-            resultadoFormateoLinea = MapeoCanalNTC5(datosOriginales);
+            resultadoFormateoLinea = FormateoPaqueteNTC(datosOriginales);
 
             if (((IEnumerable<string>)resultadoFormateoLinea).Any())
             {
@@ -5405,6 +5370,55 @@ namespace App.ControlLogicaProcesos
             if (linea28000.Any())
             {
                 resultado = Helpers.ValidarPipePipe($"NTC0|{linea28000.FirstOrDefault().Substring(5, 12).Trim()}|{linea28000.FirstOrDefault().Substring(21, 15).Trim()}|{linea28000.FirstOrDefault().Substring(50).Trim()}| ");
+            }
+
+            return resultado;
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="datosOriginales"></param>
+        /// <returns></returns>
+        private IEnumerable<string> FormateoPaqueteNTC(List<string> datosOriginales)
+        {
+            #region FormateoPaqueteNTC
+            List<string> resultado = new List<string>();
+
+            int indiceBusquedaInicio = datosOriginales.FindIndex(x => x.Substring(0, 5).Equals("28000"));
+
+            for (int i = indiceBusquedaInicio; i < datosOriginales.Count; i++)
+            {
+                string linea = datosOriginales.ElementAt(i);
+                string canal = datosOriginales.ElementAt(i).Substring(0, 5);
+
+                switch (canal)
+                {
+                    case "28000":
+                        resultado.Add(FormateoCanalNTC0(new List<string> { linea }));
+                        break;
+
+                    case "29000":
+                        resultado.Add(FormateoCanalNTC1(new List<string> { linea }));
+                        break;
+
+                    case "30000":
+                        resultado.Add(MapeoCanalNTC2(new List<string> { linea }));
+                        break;
+
+                    case "30001":
+                        resultado.Add(MapeoCanalNTC3(new List<string> { linea }));
+                        break;
+
+                    case "30002":
+                        resultado.AddRange(MapeoCanalNTC4(new List<string> { linea }));
+                        break;
+
+                    case "30003":
+                        resultado.AddRange(MapeoCanalNTC5(new List<string> { linea }));
+                        break;
+                }
             }
 
             return resultado;
