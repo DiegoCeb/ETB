@@ -280,7 +280,7 @@ namespace App.ControlEjecucion
 
             // Se crean los reportes
             Helpers.EscribirVentanaLog($"Inicia Proceso Reportes");
-            _ = new ReportesMasivos(Variables.Variables.DiccionarioExtractosFormateados, App.ControlInsumos.Helpers.RutaProceso, lote);
+            _ = new ReportesLteCorporativo(Variables.Variables.DiccionarioExtractosFormateados, App.ControlInsumos.Helpers.RutaProceso, lote);
 
             #endregion
         }
