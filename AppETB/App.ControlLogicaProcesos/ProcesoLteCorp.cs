@@ -208,6 +208,19 @@ namespace App.ControlLogicaProcesos
                 resultado.Add(resultadoFormateoLinea);
             }
 
+            List<string> datosSinformatearTemp = new List<string>();
+            datosSinformatearTemp.AddRange(datosOriginales);
+
+            // Se llena el diccionario sin formatear
+            if (Variables.Variables.DicDatosSinFormatear.ContainsKey(Ciclo))
+            {
+                Variables.Variables.DicDatosSinFormatear[Ciclo].AddRange(datosSinformatearTemp);
+            }
+            else
+            {
+                Variables.Variables.DicDatosSinFormatear.Add(Ciclo, datosSinformatearTemp);
+            }
+
             resultadoFormateoLinea = MapeoCanal1BBB(datosOriginales);
 
             if (((IEnumerable<string>)resultadoFormateoLinea).Any())
@@ -6003,11 +6016,11 @@ namespace App.ControlLogicaProcesos
 
                 LineaTemp = "1DBB|";
                 LineaTemp += concepto1DBB + "|";
-                LineaTemp += Helpers.SumarCampos(valor1_1DBB) + "|";
-                LineaTemp += Helpers.SumarCampos(valor2_1DBB) + "|";
+                LineaTemp += Helpers.SumarCampos(valor1_1DBB, "G") + "|";
+                LineaTemp += Helpers.SumarCampos(valor2_1DBB, "G") + "|";
                 LineaTemp += " |";
-                LineaTemp += Helpers.SumarCampos(valor3_1DBB) + "|";
-                LineaTemp += Helpers.SumarCampos(valor4_1DBB) + "|";
+                LineaTemp += Helpers.SumarCampos(valor3_1DBB, "G") + "|";
+                LineaTemp += Helpers.SumarCampos(valor4_1DBB, "G") + "|";
 
                 if (concepto1DBB == "Recargo de mora")
                 {
@@ -6032,10 +6045,10 @@ namespace App.ControlLogicaProcesos
             // Se crea el canal 1DAA
             LineaTemp = "1DAA|";
             LineaTemp += "Total cargos|";
-            LineaTemp += Helpers.SumarCampos(valor1_1DAA) + "|";
-            LineaTemp += Helpers.SumarCampos(valor2_1DAA) + "|";
-            LineaTemp += Helpers.SumarCampos(valor3_1DAA) + "|";
-            LineaTemp += Helpers.SumarCampos(valor4_1DAA) + "| ";
+            LineaTemp += Helpers.SumarCampos(valor1_1DAA, "G") + "|";
+            LineaTemp += Helpers.SumarCampos(valor2_1DAA, "G") + "|";
+            LineaTemp += Helpers.SumarCampos(valor3_1DAA, "G") + "|";
+            LineaTemp += Helpers.SumarCampos(valor4_1DAA, "G") + "| ";
 
             listResultado.Insert(0, Helpers.ValidarPipePipe(LineaTemp));
 
@@ -6141,8 +6154,8 @@ namespace App.ControlLogicaProcesos
 
                     LineaTemp = "1JBB|";
                     LineaTemp += numeroConexion + "|";
-                    LineaTemp += Helpers.SumarCampos(valor1_1JBB) + "|";
-                    LineaTemp += Helpers.SumarCampos(valor2_1JBB) + "| ";
+                    LineaTemp += Helpers.SumarCampos(valor1_1JBB, "G") + "|";
+                    LineaTemp += Helpers.SumarCampos(valor2_1JBB, "G") + "| ";
 
                     valor1_1JBB.Clear();
                     valor2_1JBB.Clear();
@@ -6157,8 +6170,8 @@ namespace App.ControlLogicaProcesos
             // Se crea el canal 1JAA
             LineaTemp = "1JAA|";
             LineaTemp += "Total por linea|";
-            LineaTemp += Helpers.SumarCampos(valor1_1JAA) + "|";
-            LineaTemp += Helpers.SumarCampos(valor2_1JAA) + "| ";
+            LineaTemp += Helpers.SumarCampos(valor1_1JAA, "G") + "|";
+            LineaTemp += Helpers.SumarCampos(valor2_1JAA, "G") + "| ";
 
             listResultado.Insert(0, Helpers.ValidarPipePipe(LineaTemp));
 

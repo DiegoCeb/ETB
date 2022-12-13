@@ -60,6 +60,7 @@ namespace App.Variables
         public static Dictionary<string, string> NumHojas = new Dictionary<string, string>();
         public static StreamReader Lector;
         public static Dictionary<string, string> ArchivoSalidaFinal = new Dictionary<string, string>();
+        public static Dictionary<string, List<string>> DicDatosSinFormatear = new Dictionary<string, List<string>>();
 
         public static Dictionary<string, CiudadesLLanos> DicCiudadesLlanos = new Dictionary<string, CiudadesLLanos>();
         public static Dictionary<string, string> DicActividadesLlanos = new Dictionary<string, string>();
