@@ -228,6 +228,38 @@ namespace App.ControlLogicaProcesos
                 resultado.AddRange(resultadoFormateoLinea);
             }
 
+            List<string> temp = new List<string>();
+
+            var resultLineasHIS = from busqueda in datosOriginales
+                                  where busqueda.Substring(0, 6).Equals("010000") ||
+                                  busqueda.Substring(0, 6).Equals("070002")
+                                  select busqueda;
+
+            temp.AddRange(resultLineasHIS.ToList());
+
+            resultadoFormateoLinea = MapeoCanal1PPD(temp);
+
+            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            {
+                resultado.Add(resultadoFormateoLinea);
+            }
+
+            temp = new List<string>();
+
+            var resultLineasHDT = from busqueda in datosOriginales
+                                  where busqueda.Substring(0, 6).Equals("010000") ||
+                                  busqueda.Substring(0, 6).Equals("070001")
+                                  select busqueda;
+
+            temp.AddRange(resultLineasHDT.ToList());
+
+            resultadoFormateoLinea = MapeoCanal1PPV(temp);
+
+            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
+            {
+                resultado.Add(resultadoFormateoLinea);
+            }
+
             resultadoFormateoLinea = MapeoGrupo1DAA(datosOriginales);
 
             if (((IEnumerable<string>)resultadoFormateoLinea).Any())
@@ -404,42 +436,7 @@ namespace App.ControlLogicaProcesos
                 resultado.Add(resultadoFormateoLinea);
             }
 
-            resultadoFormateoLinea = FormateoCanalNTC0(datosOriginales);
-
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
-
-            resultadoFormateoLinea = FormateoCanalNTC1(datosOriginales);
-
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
-
-            resultadoFormateoLinea = MapeoCanalNTC2(datosOriginales);
-
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
-
-            resultadoFormateoLinea = MapeoCanalNTC3(datosOriginales);
-
-            if (!string.IsNullOrEmpty(resultadoFormateoLinea))
-            {
-                resultado.Add(resultadoFormateoLinea);
-            }
-
-            resultadoFormateoLinea = MapeoCanalNTC4(datosOriginales);
-
-            if (((IEnumerable<string>)resultadoFormateoLinea).Any())
-            {
-                resultado.AddRange(resultadoFormateoLinea);
-            }
-
-            resultadoFormateoLinea = MapeoCanalNTC5(datosOriginales);
+            resultadoFormateoLinea = FormateoPaqueteNTC(datosOriginales);
 
             if (((IEnumerable<string>)resultadoFormateoLinea).Any())
             {
@@ -3407,9 +3404,17 @@ namespace App.ControlLogicaProcesos
 
             if (linea40000.Any())
             {
-                if (IsLte || IsLteCorporativo && GetTipo(linea40000.FirstOrDefault().Substring(6, 20).Trim()) != "Cuenta")
+                foreach (var item in linea40000)
                 {
-                    resultado = $"ADNC|{linea40000.FirstOrDefault().Substring(26, 49).Trim()}";
+                    if (IsLte || IsLteCorporativo && GetTipo(item.Substring(6, 20).Trim()) != "Cuenta")
+                    {
+                        resultado = $"ADNC|{linea40000.FirstOrDefault().Substring(26, 49).Trim()}";
+
+                        if (!string.IsNullOrEmpty(resultado))
+                        {
+                            break;
+                        }
+                    }
                 }
             }
 
@@ -3490,40 +3495,40 @@ namespace App.ControlLogicaProcesos
             }
             #endregion
 
-            if (paquetesInformacion888888.Count == 2)
-            {
-                #region Reordenamiento
-                //Se reordena 
-                foreach (var item in paquetesInformacion)
-                {
-                    if (paquetesInformacionFinal.ContainsKey("1"))
-                    {
-                        paquetesInformacionFinal["1"].AddRange(item.Value);
-                    }
-                    else
-                    {
-                        paquetesInformacionFinal.Add("1", item.Value);
-                    }
-                }
+            //if (paquetesInformacion888888.Count == 2)
+            //{
+            //    #region Reordenamiento
+            //    //Se reordena 
+            //    foreach (var item in paquetesInformacion)
+            //    {
+            //        if (paquetesInformacionFinal.ContainsKey("1"))
+            //        {
+            //            paquetesInformacionFinal["1"].AddRange(item.Value);
+            //        }
+            //        else
+            //        {
+            //            paquetesInformacionFinal.Add("1", item.Value);
+            //        }
+            //    }
 
-                foreach (var item in paquetesInformacion888888)
-                {
-                    if (paquetesInformacion888888Final.ContainsKey("1"))
-                    {
-                        paquetesInformacion888888Final["1"].AddRange(item.Value);
-                    }
-                    else
-                    {
-                        paquetesInformacion888888Final.Add("1", item.Value);
-                    }
-                }
-                #endregion
-            }
-            else
-            {
+            //    foreach (var item in paquetesInformacion888888)
+            //    {
+            //        if (paquetesInformacion888888Final.ContainsKey("1"))
+            //        {
+            //            paquetesInformacion888888Final["1"].AddRange(item.Value);
+            //        }
+            //        else
+            //        {
+            //            paquetesInformacion888888Final.Add("1", item.Value);
+            //        }
+            //    }
+            //    #endregion
+            //}
+            //else
+            //{
                 paquetesInformacionFinal = paquetesInformacion;
                 paquetesInformacion888888Final = paquetesInformacion888888;
-            }
+            //}
 
             foreach (var llaveCuentaConexion in paquetesInformacion888888)
             {
@@ -3614,40 +3619,6 @@ namespace App.ControlLogicaProcesos
                             resultadoTemporal[lineaODCIndice] = lineaODC;
                             #endregion
                         }
-                    }
-
-                    temp = new List<string>();
-
-                    var resultLineasHIS = from busqueda in datosOriginales
-                                          where busqueda.Substring(0, 6).Equals("010000") ||
-                                          busqueda.Substring(0, 6).Equals("070001")
-                                          select busqueda;
-
-                    temp.AddRange(paquetesInformacion[llaveCuentaConexion.Key]);
-                    temp.AddRange(resultLineasHIS.ToList());
-
-                    resultadoFormateo = MapeoCanal1PPD(temp);
-
-                    if (!string.IsNullOrEmpty(resultadoFormateo))
-                    {
-                        resultadoTemporal.Add(resultadoFormateo);
-                    }
-
-                    temp = new List<string>();
-
-                    var resultLineasHDT = from busqueda in datosOriginales
-                                          where busqueda.Substring(0, 6).Equals("010000") ||
-                                          busqueda.Substring(0, 6).Equals("070002")
-                                          select busqueda;
-
-                    temp.AddRange(paquetesInformacion[llaveCuentaConexion.Key]);
-                    temp.AddRange(resultLineasHDT.ToList());
-
-                    resultadoFormateo = MapeoCanal1PPV(temp);
-
-                    if (!string.IsNullOrEmpty(resultadoFormateo))
-                    {
-                        resultadoTemporal.Add(resultadoFormateo);
                     }
 
                     resultadoFormateo = FormateoCanal1OOO(paquetesInformacion[llaveCuentaConexion.Key]);
@@ -4669,14 +4640,18 @@ namespace App.ControlLogicaProcesos
             #region MapeoCanal1PPV
             string resultado = string.Empty;
             string numeroConexion = string.Empty;
+            double mesActual = 0;
+            double promedio = 0;
+            double valormes1 = 0;
+            double valormes2 = 0;
+            double valormes3 = 0;
+            double valormes4 = 0;
+            double valormes5 = 0;
+            double valormes6 = 0;
 
             var linea10000 = from busqueda in datosOriginales
                              where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("010000")
                              select busqueda;
-
-            var linea040000 = from busqueda in datosOriginales
-                              where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("040000")
-                              select busqueda;
 
             var linea070001 = from busqueda in datosOriginales
                               where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("070001")
@@ -4684,24 +4659,29 @@ namespace App.ControlLogicaProcesos
 
             if (IsLte || IsLteCorporativo)
             {
-                #region Busqueda Numero Conexion
-                foreach (var lineaDatos in linea040000)
-                {
-                    if (lineaDatos.Substring(6, 20).Trim() != Cuenta)
-                    {
-                        numeroConexion = lineaDatos.Substring(6, 20).Trim();
-                        break;
-                    }
-                }
-                #endregion
-
                 if (linea070001.Any())
                 {
-                    string mesActual = (Convert.ToDouble(Helpers.FormatearCampos(TiposFormateo.Decimal02, linea070001.FirstOrDefault().Substring(6, 8).Trim())) * 60 / 10).ToString();
-                    string promedio = (Convert.ToDouble(Helpers.FormatearCampos(TiposFormateo.Decimal02, linea070001.FirstOrDefault().Substring(62, 8).Trim())) * 60 / 10).ToString();
+                    foreach (var item in linea070001)
+                    {
+                        mesActual += (Convert.ToDouble(Helpers.FormatearCampos(TiposFormateo.Decimal02, item.Substring(6, 8).Trim())) * 60 / 10);
+                        promedio += (Convert.ToDouble(Helpers.FormatearCampos(TiposFormateo.Decimal02, item.Substring(62, 8).Trim())) * 60 / 10);
+                        valormes1 += Convert.ToDouble(item.Substring(14, 8).Trim());
+                        valormes2 += Convert.ToDouble(item.Substring(22, 8).Trim());
+                        valormes3 += Convert.ToDouble(item.Substring(30, 8).Trim());
+                        valormes4 += Convert.ToDouble(item.Substring(38, 8).Trim());
+                        valormes5 += Convert.ToDouble(item.Substring(46, 8).Trim());
+                        valormes6 += Convert.ToDouble(item.Substring(54, 8).Trim());
+                    }
+
+                    string lineaMeses = $"XXXXXXXXXXXXXX{valormes1.ToString().PadLeft(8, '0')}" +
+                        $"{valormes2.ToString().PadLeft(8, '0')}" +
+                        $"{valormes3.ToString().PadLeft(8, '0')}" +
+                        $"{valormes4.ToString().PadLeft(8, '0')}" +
+                        $"{valormes5.ToString().PadLeft(8, '0')}" +
+                        $"{valormes6.ToString().PadLeft(8, '0')}";
 
                     resultado = Helpers.ValidarPipePipe($"1PPV|Mes Actual: {mesActual}|{ArmarMesesHistograma(Helpers.FormatearCampos(TiposFormateo.Fecha01, linea10000.FirstOrDefault().Substring(168, 8)))}|" +
-                        $"{ArmarValoresHistograma(linea070001.FirstOrDefault(), "2")}|Promedio: {promedio}| ");
+                        $"{ArmarValoresHistograma(lineaMeses, "2")}|Promedio: {promedio}| ");
                 }
             }
 
@@ -4718,14 +4698,18 @@ namespace App.ControlLogicaProcesos
             #region MapeoCanal1PPD
             string resultado = string.Empty;
             string numeroConexion = string.Empty;
+            double mesActual = 0;
+            double promedio = 0;
+            double valormes1 = 0;
+            double valormes2 = 0;
+            double valormes3 = 0;
+            double valormes4 = 0;
+            double valormes5 = 0;
+            double valormes6 = 0;
 
             var linea10000 = from busqueda in datosOriginales
                              where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("010000")
                              select busqueda;
-
-            var linea040000 = from busqueda in datosOriginales
-                              where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("040000")
-                              select busqueda;
 
             var linea070002 = from busqueda in datosOriginales
                               where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("070002")
@@ -4733,24 +4717,29 @@ namespace App.ControlLogicaProcesos
 
             if (IsLte || IsLteCorporativo)
             {
-                #region Busqueda Numero Conexion
-                foreach (var lineaDatos in linea040000)
-                {
-                    if (lineaDatos.Substring(6, 20).Trim() != Cuenta)
-                    {
-                        numeroConexion = lineaDatos.Substring(6, 20).Trim();
-                        break;
-                    }
-                }
-                #endregion
-
                 if (linea070002.Any())
                 {
-                    string mesActual = (Convert.ToDouble(Helpers.FormatearCampos(TiposFormateo.Decimal02, linea070002.FirstOrDefault().Substring(6, 6).Trim())) / 10).ToString();
-                    string promedio = (Convert.ToDouble(Helpers.FormatearCampos(TiposFormateo.Decimal02, linea070002.FirstOrDefault().Substring(48, 6).Trim())) / 10).ToString();
+                    foreach (var item in linea070002)
+                    {
+                        mesActual += (Convert.ToDouble(item.Substring(6, 6).Trim()) / 10);
+                        promedio += (Convert.ToDouble(item.Substring(48, 6).Trim()) / 10);
+                        valormes1 += Convert.ToDouble(item.Substring(12, 6).Trim());
+                        valormes2 += Convert.ToDouble(item.Substring(18, 6).Trim());
+                        valormes3 += Convert.ToDouble(item.Substring(24, 6).Trim());
+                        valormes4 += Convert.ToDouble(item.Substring(30, 6).Trim());
+                        valormes5 += Convert.ToDouble(item.Substring(36, 6).Trim());
+                        valormes6 += Convert.ToDouble(item.Substring(42, 6).Trim());
+                    }
 
-                    resultado = Helpers.ValidarPipePipe($"1PPD|Mes Actual: {mesActual}|{ArmarMesesHistograma(Helpers.FormatearCampos(TiposFormateo.Fecha01, linea10000.FirstOrDefault().Substring(168, 8)))}|" +
-                        $"{ArmarValoresHistograma(linea070002.FirstOrDefault(), "3")}|Promedio: {promedio}| ");
+                    string lineaMeses = $"XXXXXXXXXXXX{valormes1.ToString().PadLeft(6, '0')}" +
+                        $"{valormes2.ToString().PadLeft(6, '0')}" +
+                        $"{valormes3.ToString().PadLeft(6, '0')}" +
+                        $"{valormes4.ToString().PadLeft(6, '0')}" +
+                        $"{valormes5.ToString().PadLeft(6, '0')}" +
+                        $"{valormes6.ToString().PadLeft(6, '0')}";
+
+                    resultado = Helpers.ValidarPipePipe($"1PPD|Mes Actual: {mesActual.ToString().Replace(".", string.Empty)}|{ArmarMesesHistograma(Helpers.FormatearCampos(TiposFormateo.Fecha01, linea10000.FirstOrDefault().Substring(168, 8)))}|" +
+                        $"{ArmarValoresHistograma(lineaMeses, "3")}|Promedio: {promedio.ToString().Replace(".", string.Empty)}| ");
                 }
             }
 
@@ -5206,12 +5195,12 @@ namespace App.ControlLogicaProcesos
                     break;
 
                 case "3": //1HDT
-                    valor1 = (Convert.ToDouble(Helpers.FormatearCampos(TiposFormateo.Decimal02, pLineaDatos.Substring(12, 6).Trim())) / 10).ToString();
-                    valor2 = (Convert.ToDouble(Helpers.FormatearCampos(TiposFormateo.Decimal02, pLineaDatos.Substring(18, 6).Trim())) / 10).ToString();
-                    valor3 = (Convert.ToDouble(Helpers.FormatearCampos(TiposFormateo.Decimal02, pLineaDatos.Substring(24, 6).Trim())) / 10).ToString();
-                    valor4 = (Convert.ToDouble(Helpers.FormatearCampos(TiposFormateo.Decimal02, pLineaDatos.Substring(30, 6).Trim())) / 10).ToString();
-                    valor5 = (Convert.ToDouble(Helpers.FormatearCampos(TiposFormateo.Decimal02, pLineaDatos.Substring(36, 6).Trim())) / 10).ToString();
-                    valor6 = (Convert.ToDouble(Helpers.FormatearCampos(TiposFormateo.Decimal02, pLineaDatos.Substring(42, 6).Trim())) / 10).ToString();
+                    valor1 = (Convert.ToDouble(pLineaDatos.Substring(12, 6).Trim())).ToString().Replace(".", string.Empty);
+                    valor2 = (Convert.ToDouble(pLineaDatos.Substring(18, 6).Trim())).ToString().Replace(".", string.Empty);
+                    valor3 = (Convert.ToDouble(pLineaDatos.Substring(24, 6).Trim())).ToString().Replace(".", string.Empty);
+                    valor4 = (Convert.ToDouble(pLineaDatos.Substring(30, 6).Trim())).ToString().Replace(".", string.Empty);
+                    valor5 = (Convert.ToDouble(pLineaDatos.Substring(36, 6).Trim())).ToString().Replace(".", string.Empty);
+                    valor6 = (Convert.ToDouble(pLineaDatos.Substring(42, 6).Trim())).ToString().Replace(".", string.Empty);
                     break;
             }
 
@@ -5278,10 +5267,13 @@ namespace App.ControlLogicaProcesos
                              where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("040000")
                              select busqueda;
 
-            if (IsLte || IsLteCorporativo && GetTipo(linea40000.FirstOrDefault().Substring(6, 20).Trim()) != "Cuenta")
+            if (linea40000.Any())
             {
-                resultado.Add(Helpers.ValidarPipePipe($"ADN1|{linea40000.FirstOrDefault().Substring(6, 20).Trim()}|{GetTipo(linea40000.FirstOrDefault().Substring(6, 20).Trim())}|" +
-                    $"{Helpers.FormatearCampos(TiposFormateo.LetraCapital, linea40000.FirstOrDefault().Substring(76, 39).Trim())}| | | "));
+                if (IsLte || IsLteCorporativo)
+                {
+                    resultado.Add(Helpers.ValidarPipePipe($"ADN1|{linea40000.FirstOrDefault().Substring(6, 20).Trim()}|{GetTipo(linea40000.FirstOrDefault().Substring(6, 20).Trim())}|" +
+                        $"{Helpers.FormatearCampos(TiposFormateo.LetraCapital, linea40000.FirstOrDefault().Substring(76, 39).Trim())}| | | "));
+                }
             }
 
             return resultado;
@@ -5391,6 +5383,55 @@ namespace App.ControlLogicaProcesos
             if (linea28000.Any())
             {
                 resultado = Helpers.ValidarPipePipe($"NTC0|{linea28000.FirstOrDefault().Substring(5, 12).Trim()}|{linea28000.FirstOrDefault().Substring(21, 15).Trim()}|{linea28000.FirstOrDefault().Substring(50).Trim()}| ");
+            }
+
+            return resultado;
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="datosOriginales"></param>
+        /// <returns></returns>
+        private IEnumerable<string> FormateoPaqueteNTC(List<string> datosOriginales)
+        {
+            #region FormateoPaqueteNTC
+            List<string> resultado = new List<string>();
+
+            int indiceBusquedaInicio = datosOriginales.FindIndex(x => x.Substring(0, 5).Equals("28000"));
+
+            for (int i = indiceBusquedaInicio; i < datosOriginales.Count; i++)
+            {
+                string linea = datosOriginales.ElementAt(i);
+                string canal = datosOriginales.ElementAt(i).Substring(0, 5);
+
+                switch (canal)
+                {
+                    case "28000":
+                        resultado.Add(FormateoCanalNTC0(new List<string> { linea }));
+                        break;
+
+                    case "29000":
+                        resultado.Add(FormateoCanalNTC1(new List<string> { linea }));
+                        break;
+
+                    case "30000":
+                        resultado.Add(MapeoCanalNTC2(new List<string> { linea }));
+                        break;
+
+                    case "30001":
+                        resultado.Add(MapeoCanalNTC3(new List<string> { linea }));
+                        break;
+
+                    case "30002":
+                        resultado.AddRange(MapeoCanalNTC4(new List<string> { linea }));
+                        break;
+
+                    case "30003":
+                        resultado.AddRange(MapeoCanalNTC5(new List<string> { linea }));
+                        break;
+                }
             }
 
             return resultado;

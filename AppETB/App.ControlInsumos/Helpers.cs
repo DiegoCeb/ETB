@@ -2176,7 +2176,14 @@ namespace App.ControlInsumos
         private static string FormatearPrimeraMayuscula(string pCampo)
         {
             #region FormatearPrimeraMayuscula
-            return pCampo.First().ToString().ToUpper() + pCampo.Substring(1).ToLower();
+            if (!string.IsNullOrEmpty(pCampo))
+            {
+                return pCampo.First().ToString().ToUpper() + pCampo.Substring(1).ToLower();
+            }
+            else
+            {
+                return string.Empty;
+            }
             #endregion
         }
 
