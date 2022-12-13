@@ -1456,7 +1456,7 @@ namespace App.ControlLogicaProcesos
 
                 if (!string.IsNullOrEmpty(linea29000))
                 {
-                    lineaNotasCredito = $"1BBB|Notas Crédito|{Helpers.FormatearCampos(TiposFormateo.Decimal05, linea29000.Substring(29, 20).TrimStart('0'))}| ";
+                    lineaNotasCredito = $"1BBB|Notas crédito|{Helpers.FormatearCampos(TiposFormateo.Decimal05, linea29000.Substring(29, 20).TrimStart('0'))}| ";
                     SubTotal1BBB += Convert.ToInt64(linea29000.Substring(29, 20));
                 }
 
@@ -1496,7 +1496,7 @@ namespace App.ControlLogicaProcesos
 
                     llave = detalle.Substring(0, 6).Trim();
                     descripcion = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"CODT{detalle.Substring(0, 6).Trim()}")?.FirstOrDefault() ?? string.Empty;
-                    descripcion = descripcion.Substring(10).Trim();
+                    descripcion = Helpers.FormatearCampos(TiposFormateo.PrimeraMayuscula, descripcion.Substring(10).Trim());
 
                     if (llave == "02T304" || llave == "02T309")
                     {
@@ -1513,7 +1513,7 @@ namespace App.ControlLogicaProcesos
                     {
                         if (!string.IsNullOrEmpty(detalle.Substring(20, 14).Trim()) && Convert.ToInt64(detalle.Substring(20, 14)) != 0)
                         {
-                            Lineas1BBB.Add($"1BBB|Traslado de Saldos|{Helpers.FormatearCampos(TiposFormateo.Decimal05, detalle.Substring(20, 14).TrimStart('0'))}| ");
+                            Lineas1BBB.Add($"1BBB|Traslado de saldos|{Helpers.FormatearCampos(TiposFormateo.Decimal05, detalle.Substring(20, 14).TrimStart('0'))}| ");
                             SubTotal1BBB += Convert.ToInt64(detalle.Substring(20, 14));
                         }
 
@@ -1528,7 +1528,7 @@ namespace App.ControlLogicaProcesos
 
                         if (!string.IsNullOrEmpty(detalle.Substring(34, 14).Trim()) && Convert.ToInt64(detalle.Substring(34, 14)) != 0)
                         {
-                            Lineas1BBB.Add($"1BBB|Ajuste De Pagos|{Helpers.FormatearCampos(TiposFormateo.Decimal05, detalle.Substring(34, 14).TrimStart('0'))}| ");
+                            Lineas1BBB.Add($"1BBB|Ajuste de pagos|{Helpers.FormatearCampos(TiposFormateo.Decimal05, detalle.Substring(34, 14).TrimStart('0'))}| ");
                             SubTotal1BBB += Convert.ToInt64(detalle.Substring(34, 14));
                         }
                     }
@@ -1583,7 +1583,7 @@ namespace App.ControlLogicaProcesos
                             }
                             else if (llave == "02T020" || llave == "02T050")
                             { // Req 11052015 Campo Financiacion Mes
-                                lineasFinanciacion.Add($"1BBF|$Descripcion|{sumatoria}| ");
+                                lineasFinanciacion.Add($"1BBF|{descripcion}|{sumatoria}| ");
                                 continue;
                             }
 
