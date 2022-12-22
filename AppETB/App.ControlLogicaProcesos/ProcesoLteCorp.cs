@@ -4370,7 +4370,6 @@ namespace App.ControlLogicaProcesos
             string periodo = string.Empty;
             string primerFecha = string.Empty;
             string segundaFecha = string.Empty;
-            bool primerReg1DET = true;
 
             if (Is1ODC)
             {

@@ -633,8 +633,6 @@ namespace App.ControlLogicaProcesos
 
             }
 
-
-
             listaFechas.Add(fechaPago);
             listaFechas.Add(fechaLimitePago);
             listaFechas.Add(fechaExpedicion);
