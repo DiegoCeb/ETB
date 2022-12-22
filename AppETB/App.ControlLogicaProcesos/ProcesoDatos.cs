@@ -1581,7 +1581,7 @@ namespace App.ControlLogicaProcesos
 
                     llave = detalle.Substring(0, 6).Trim();
                     descripcion = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"CODT{detalle.Substring(0, 6).Trim()}")?.FirstOrDefault() ?? string.Empty;
-                    descripcion = descripcion.Substring(10).Trim();
+                    descripcion = Helpers.FormatearCampos(TiposFormateo.PrimeraMayuscula, descripcion.Substring(10).Trim());
 
                     if (llave == "02T304" || llave == "02T309")
                     {
@@ -1592,7 +1592,7 @@ namespace App.ControlLogicaProcesos
                         descripcion = descripcion.Substring(0, 31);
                     }
 
-                    if (descripcion == "Otros Operadores y Alianzas con IVA") // Regla especifica de este detalle
+                    if (descripcion == "Otros Operadores y Alianzas con IVA" || descripcion == "Otros operadores y alianzas con iva") // Regla especifica de este detalle
                     {
                         descripcion = descripcion.Replace("Otros", "").Trim();
                     }
@@ -1606,7 +1606,7 @@ namespace App.ControlLogicaProcesos
 
                         if (!string.IsNullOrEmpty(detalle.Substring(20, 14).Trim()) && Convert.ToInt64(detalle.Substring(20, 14)) != 0)
                         {
-                            Lineas1BBB.Add($"1BBB|Traslado de Saldos|{Helpers.FormatearCampos(TiposFormateo.Decimal05, detalle.Substring(20, 14).TrimStart('0'))}| ");
+                            Lineas1BBB.Add($"1BBB|Traslado de saldos|{Helpers.FormatearCampos(TiposFormateo.Decimal05, detalle.Substring(20, 14).TrimStart('0'))}| ");
                             SubTotal1BBB += Convert.ToInt64(detalle.Substring(20, 14));
                         }
 
@@ -1621,7 +1621,7 @@ namespace App.ControlLogicaProcesos
 
                         if (!string.IsNullOrEmpty(detalle.Substring(34, 14).Trim()) && Convert.ToInt64(detalle.Substring(34, 14)) != 0)
                         {
-                            Lineas1BBB.Add($"1BBB|Ajuste De Pagos|{Helpers.FormatearCampos(TiposFormateo.Decimal05, detalle.Substring(34, 14).TrimStart('0'))}| ");
+                            Lineas1BBB.Add($"1BBB|Ajuste de pagos|{Helpers.FormatearCampos(TiposFormateo.Decimal05, detalle.Substring(34, 14).TrimStart('0'))}| ");
                             SubTotal1BBB += Convert.ToInt64(detalle.Substring(34, 14));
                         }
                     }

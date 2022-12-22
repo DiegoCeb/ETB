@@ -55,3 +55,4 @@ C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.GestionProcesos\obj\
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.GestionProcesos\obj\Debug\App.ControlProcesos.csproj.CopyComplete
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.GestionProcesos\obj\Debug\App.ControlProcesos.dll
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.GestionProcesos\obj\Debug\App.ControlProcesos.pdb
+C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.GestionProcesos\bin\Debug\DLL_Utilidades.pdb

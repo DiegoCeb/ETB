@@ -173,6 +173,13 @@ namespace App.ControlLogicaProcesos
             if (listReporte.Count > 0)
                 EscribirReporteEstadistico(listReporte);
             listReporte.Clear();
+
+            // Rpt Recaudo Esperado
+            listReporte = GetReporteRecaudoEsperado();
+            if (listReporte.Count > 0)
+                EscribirReporteEstadistico(listReporte);
+            listReporte.Clear();
+
             #endregion
         }
 
@@ -237,6 +244,21 @@ namespace App.ControlLogicaProcesos
             List<string> lineaMaestraResumen = new List<string>();
 
             lineaMaestraResumen = GetLineaEstadistico();
+
+            return lineaMaestraResumen;
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private List<string> GetReporteRecaudoEsperado()
+        {
+            #region GetReporteRecaudoEsperado
+            List<string> lineaMaestraResumen = new List<string>();
+
+            lineaMaestraResumen = GetLineaRepartoEsperado();
 
             return lineaMaestraResumen;
             #endregion
@@ -572,6 +594,23 @@ namespace App.ControlLogicaProcesos
 
 
             return lineasEstadistico;
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private List<string> GetLineaRepartoEsperado()
+        {
+            #region GetLineaRepartoEsperado
+
+            List<string> lineasRepartoEsperado = new List<string>();
+
+            
+
+
+            return lineasRepartoEsperado;
             #endregion
         }
 

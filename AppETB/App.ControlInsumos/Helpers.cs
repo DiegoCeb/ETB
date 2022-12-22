@@ -2318,6 +2318,50 @@ namespace App.ControlInsumos
         }
 
         /// <summary>
+        /// Metodo para tomar la fecha mas reciente
+        /// </summary>
+        /// <param name="ListaFechas"></param>
+        /// <returns></returns>
+        public static string GetFechaMasAntigua(List<string> ListaFechas)
+        {
+            #region GetFechaMasReciente
+
+            DateTime fechaUno, fechaDos;
+            DateTime fechaUnoTem = new DateTime(), fechaDosTem = new DateTime();
+            bool PrimeraVez = false;
+
+            string fechaReciente = string.Empty;
+
+            foreach (string valorActual in ListaFechas)
+            {
+                if (!string.IsNullOrEmpty(valorActual.Trim()) && valorActual.Contains("-"))
+                {
+                    fechaUno = Convert.ToDateTime(valorActual.Substring(0, 4) + "/" + valorActual.Substring(4, 2) + "/" + valorActual.Substring(6, 2));
+                    fechaDos = Convert.ToDateTime(valorActual.Substring(11, 4) + "/" + valorActual.Substring(15, 2) + "/" + valorActual.Substring(17, 2));
+
+                    if (PrimeraVez == false)
+                    {
+                        fechaUnoTem = fechaUno;
+                        fechaDosTem = fechaDos;
+                        fechaReciente = fechaUno.ToString("yyyyMMdd") + "-" + fechaDos.ToString("yyyyMMdd");
+                        PrimeraVez = true;
+                    }
+
+                    if (DateTime.Compare(fechaUno, fechaUnoTem) < 0 && DateTime.Compare(fechaDos, fechaDosTem) < 0)
+                    {
+                        fechaReciente = fechaUno.ToString("yyyyMMdd") + "-" + fechaDos.ToString("yyyyMMdd");
+                        fechaUnoTem = fechaUno;
+                        fechaDosTem = fechaDos;
+                    }
+                }
+
+            }
+
+            return fechaReciente;
+            #endregion
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="listaFechas"></param>
