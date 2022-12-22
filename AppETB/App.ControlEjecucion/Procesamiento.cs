@@ -60,7 +60,7 @@ namespace App.ControlEjecucion
         {
             #region EjecutarProcesoMasivo
             var archivos = from busqueda in Directory.GetFiles(pRutaArchivosProcesar)
-                           where !busqueda.Contains("CONTEO") && !busqueda.Contains("IDENTIFICACION") && !busqueda.Contains("premaestra") //TODO: se omiten estos archivos peor ahi que revisar para que sirven
+                           where !busqueda.Contains("CONTEO") && !busqueda.Contains("IDENTIFICACION") && !busqueda.ToLower().Contains("premaestra") //TODO: se omiten estos archivos peor ahi que revisar para que sirven
                            select busqueda;
 
             var archivoPeriodo = from busqueda in Directory.GetFiles(pRutaArchivosProcesar)
@@ -1325,7 +1325,7 @@ namespace App.ControlEjecucion
 
                     if (objDatos.Any())
                     {
-                        ProcesoSalidasImpresion(objDatos, pRuta, pNombreArchivo, pLote);
+                        ProcesoSalidasImpresionLLanos(objDatos, pRuta, pNombreArchivo, pLote);
                     }
                     break;
 
@@ -1380,6 +1380,65 @@ namespace App.ControlEjecucion
                 }
 
                 Variables.Variables.DiccionarioExtractosFormateados[datoCuenta.Key][0] = Variables.Variables.DiccionarioExtractosFormateados[datoCuenta.Key][0].Replace("KitXXXX", nuevoConsecutivo);
+
+                resultado.AddRange(datoCuenta.Value);
+
+                consecutivo++;
+            }
+
+            Helpers.EscribirEnArchivo(archivoActual, resultado);
+            //Helpers.EscribirEnArchivo($"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}_{consecutivoInternoArchivo.ToString().PadLeft(3, '0')}.sal", resultado);
+
+            resultado.Clear();
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pDatos"></param>
+        /// <param name="pRuta"></param>
+        /// <param name="pNombreArchivo"></param>
+        /// <param name="pLote"></param>
+        private void ProcesoSalidasImpresionLLanos(IEnumerable<KeyValuePair<string, List<string>>> pDatos, string pRuta, string pNombreArchivo, string pLote)
+        {
+            #region ProcesoSalidasImpresion
+            List<string> resultado = new List<string>();
+            int consecutivo = 1;
+            int consecutivoInternoDivision = 0;
+            int consecutivoInternoArchivo = 1;
+            string cuenta = string.Empty;
+            string archivoActual = string.Empty;
+
+            foreach (var datoCuenta in pDatos)
+            {
+                string nuevoConsecutivo = $"{pLote}_{consecutivo.ToString().PadLeft(6, '0')}";
+
+                var nuevo1AAA = from n in datoCuenta.Value
+                                where n.Substring(0, 4) == "1AAA"
+                                select n.Replace("KitXXXX", nuevoConsecutivo);
+
+                if (datoCuenta.Value.FirstOrDefault().Substring(0, 4) == "1AAA")
+                {
+                    consecutivoInternoDivision++;
+                    cuenta = datoCuenta.Value.FirstOrDefault().Split('|')[1].Substring(1).Trim();
+                    archivoActual = $"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}_{consecutivoInternoArchivo.ToString().PadLeft(3, '0')}.sal";
+
+                    // Se agrega la cuenta en el archivo final                                
+                    if (!Variables.Variables.ArchivoSalidaFinal.ContainsKey(cuenta))
+                        Variables.Variables.ArchivoSalidaFinal.Add(cuenta, archivoActual);
+
+                    if (consecutivoInternoDivision == 8001)
+                    {
+                        //Helpers.EscribirEnArchivo($"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}_{consecutivoInternoArchivo.ToString().PadLeft(3, '0')}.sal", resultado);
+                        Helpers.EscribirEnArchivo(archivoActual, resultado);
+                        consecutivoInternoArchivo++;
+                        consecutivoInternoDivision = 1;
+                        resultado.Clear();
+                    }
+                }
+
+                Variables.Variables.DiccionarioExtractosFormateados[cuenta][0] = Variables.Variables.DiccionarioExtractosFormateados[cuenta][0].Replace("KitXXXX", nuevoConsecutivo);
 
                 resultado.AddRange(datoCuenta.Value);
 

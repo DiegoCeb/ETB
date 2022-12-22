@@ -641,7 +641,7 @@ namespace App.ControlLogicaProcesos
                 string[] campos = fechaPagoFijo.Split('|');
                 int diasCorte = Convert.ToInt32(campos[1]);
 
-                DateTime fechaReferencia = Convert.ToDateTime(fechaExpedicionInsumo.Substring(0, 10));
+                DateTime fechaReferencia = Convert.ToDateTime(fechaExpedicionInsumo.Substring(0, 10), new CultureInfo("es-CO"));
 
                 int año = fechaReferencia.Year;
                 int mes = fechaReferencia.Month;
@@ -2091,6 +2091,10 @@ namespace App.ControlLogicaProcesos
             string impuestoFormateado = String.Empty;
             decimal iva = 0;
 
+            if (Cuenta == "7473227281")
+            {
+
+            }
 
 
             dicValores.Add("1", new List<string>());    // Telefonia Local
@@ -2162,12 +2166,20 @@ namespace App.ControlLogicaProcesos
 
                             if (identificadorCanal == "02T582" || identificadorCanal == "02T507" || identificadorCanal == "02T510" || identificadorCanal == "02T511" ||
                                 identificadorCanal == "02T517" || identificadorCanal == "02T502" || identificadorCanal == "02T504" || identificadorCanal == "02T505" || identificadorCanal == "02T118")
-                            {
+                            {                     
                                 impuestoProducto = Convert.ToDecimal($"{lineaActual.Substring(34, 12)}.{lineaActual.Substring(44, 2)}");
                                 impuestoProducto = impuestoProducto * Convert.ToDecimal(Utilidades.LeerAppConfig("porcentajeImpuestoConsumo"));
                                 impuestoProducto = Decimal.Round(impuestoProducto);
-                                impuestoFormateado = impuestoProducto.ToString().Split('.')[0] + impuestoProducto.ToString().Split('.')[1].Substring(0, 2);
-                                dicValores["IMPUESTOS"].Add(impuestoFormateado);
+
+                                if (impuestoProducto == 0)
+                                {
+                                    dicValores["IMPUESTOS"].Add("0");
+                                }
+                                else
+                                {
+                                    impuestoFormateado = impuestoProducto.ToString().Split('.')[0] + impuestoProducto.ToString().Split('.')[1].Substring(0, 2);
+                                    dicValores["IMPUESTOS"].Add(impuestoFormateado);
+                                }
                             }
                         }
                     }
@@ -4365,7 +4377,7 @@ namespace App.ControlLogicaProcesos
                         sumaValoresTotal.AddRange(sumaValoresIva);
 
                         resultado.Add(Helpers.ValidarPipePipe($"1GGA|Total {descripcionSubProducto}|{Helpers.SumarCampos(sumaValoresBase, "D")}|" +
-                            $"{Helpers.SumarCampos(sumaValoresIva)}|{Helpers.SumarCampos(sumaValoresTotal)}| "));
+                            $"{Helpers.SumarCampos(sumaValoresIva, "D")}|{Helpers.SumarCampos(sumaValoresTotal, "D")}| "));
 
                         resultado.Add(Helpers.ValidarPipePipe($"1GGB|Total {descripcionProducto}")); //Se deja asi solo el canal para al final del formateo de los paquetes agregar la inforamcion real de la suma de paquetes.
                         #endregion
