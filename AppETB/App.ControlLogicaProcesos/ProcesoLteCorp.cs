@@ -953,7 +953,7 @@ namespace App.ControlLogicaProcesos
                 string[] campos = fechaPagoFijo.Split('|');
                 int diasCorte = Convert.ToInt32(campos[1]);
 
-                DateTime fechaReferencia = Convert.ToDateTime(fechaExpedicionInsumo.Substring(0, 10));
+                DateTime fechaReferencia = Convert.ToDateTime(fechaExpedicionInsumo.Substring(0, 10), new CultureInfo("es-CO"));
 
                 int año = fechaReferencia.Year;
                 int mes = fechaReferencia.Month;
@@ -1749,35 +1749,63 @@ namespace App.ControlLogicaProcesos
                 string fechaCorteFinal = string.Empty;
                 if (fechaExpedicion != "")
                 {
-                    DateTime dt = Convert.ToDateTime(fechaExpedicion);
-                    dt.AddMonths(1);
+                    DateTime dt = Convert.ToDateTime(fechaExpedicion, new CultureInfo("es-CO"));
                     string[] array_exp = fechaExpedicion.Split('/');
                     DateTime fecha = new DateTime();
 
                     if (Ciclo == "90")
                     {
+                        if (dt.Month == 12)
+                        {
+                            dt = dt.AddMonths(1);
+                        }
+
                         fecha = new DateTime(dt.Year, dt.Month, 1, 0, 0, 0);
-                        fecha = new DateTime(Convert.ToInt32(array_exp[2]), Convert.ToInt32(array_exp[1]) + 1, 1, 0, 0, 0);
                     }
                     else if (Ciclo == "91")
                     {
-                        fecha = new DateTime(Convert.ToInt32(array_exp[2]), Convert.ToInt32(array_exp[1]) + 1, 5, 0, 0, 0);
+                        if (dt.Month == 12)
+                        {
+                            dt = dt.AddMonths(1);
+                        }
+
+                        fecha = new DateTime(dt.Year, dt.Month, 1, 5, 0, 0);
                     }
                     else if (Ciclo == "92")
                     {
-                        fecha = new DateTime(Convert.ToInt32(array_exp[2]), Convert.ToInt32(array_exp[1]) + 1, 10, 0, 0, 0);
+                        if (dt.Month == 12)
+                        {
+                            dt = dt.AddMonths(1);
+                        }
+
+                        fecha = new DateTime(dt.Year, dt.Month, 1, 10, 0, 0);
                     }
                     else if (Ciclo == "93")
                     {
-                        fecha = new DateTime(Convert.ToInt32(array_exp[2]), Convert.ToInt32(array_exp[1]) + 1, 15, 0, 0, 0);
+                        if (dt.Month == 12)
+                        {
+                            dt = dt.AddMonths(1);
+                        }
+
+                        fecha = new DateTime(dt.Year, dt.Month, 1, 15, 0, 0);
                     }
                     else if (Ciclo == "94")
                     {
-                        fecha = new DateTime(Convert.ToInt32(array_exp[2]), Convert.ToInt32(array_exp[1]) + 1, 20, 0, 0, 0);
+                        if (dt.Month == 12)
+                        {
+                            dt = dt.AddMonths(1);
+                        }
+
+                        fecha = new DateTime(dt.Year, dt.Month, 1, 20, 0, 0);
                     }
                     else if (Ciclo == "95")
                     {
-                        fecha = new DateTime(Convert.ToInt32(array_exp[2]), Convert.ToInt32(array_exp[1]) + 1, 25, 0, 0, 0);
+                        if (dt.Month == 12)
+                        {
+                            dt = dt.AddMonths(1);
+                        }
+
+                        fecha = new DateTime(dt.Year, dt.Month, 1, 25, 0, 0);
                     }
 
                     fechaCorte = fecha.ToString("ddMMyyyy");
@@ -4342,7 +4370,6 @@ namespace App.ControlLogicaProcesos
             string periodo = string.Empty;
             string primerFecha = string.Empty;
             string segundaFecha = string.Empty;
-            bool primerReg1DET = true;
 
             if (Is1ODC)
             {
@@ -5110,7 +5137,7 @@ namespace App.ControlLogicaProcesos
             string resultado = string.Empty;
 
             var linea13M317 = from busqueda in datosOriginales
-                              where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("13M317")
+                              where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("13M317") || busqueda.Substring(0, 6).Equals("13M311")
                               select busqueda;
 
             if (linea13M317.Any())
@@ -6054,7 +6081,7 @@ namespace App.ControlLogicaProcesos
             List<string> resultado = new List<string>();
 
             var linea13M317 = from busqueda in datosOriginales
-                              where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("13M317")
+                              where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("13M317") || busqueda.Substring(0, 6).Equals("13M311")
                               select busqueda;
 
             if (linea13M317.Any())
@@ -6065,7 +6092,7 @@ namespace App.ControlLogicaProcesos
                 string total = linea13M317.FirstOrDefault().Substring(42, 14).Trim();
                 string subtotal = linea13M317.FirstOrDefault().Substring(56, 14).Trim();
 
-                resultado.Add(Helpers.ValidarPipePipe($"1FFF|{concepto}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, total)}" +
+                resultado.Add(Helpers.ValidarPipePipe($"1FFF|{Helpers.FormatearCampos(TiposFormateo.PrimeraMayuscula, concepto)}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, total)}" +
                     $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, subtotal)}|{Helpers.SumarCampos(new List<string> { total, subtotal })}| | "));
 
                 resultado.Add("1FFF| | | | | | ");

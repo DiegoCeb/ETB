@@ -86,7 +86,7 @@ namespace App.ControlLogicaProcesos
 
                     if (extractoCompleto)
                     {
-                        llaveCruce = datosExtractoFormateo.Find(x => x.Contains("*p2000x190Y")).Substring(11).Trim();
+                        llaveCruce = datosExtractoFormateo.Find(x => x.Contains("*p2000x190Y")).Substring(12).Trim();
 
                         if (!string.IsNullOrEmpty(Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoCuentasExtraer, llaveCruce)))
                         {
@@ -102,18 +102,18 @@ namespace App.ControlLogicaProcesos
                         }
                     }
 
-                    datosExtractoFormateo.Add(linea.Trim());
+                    datosExtractoFormateo.Add(linea.Trim().Replace("|", string.Empty));
                 }
                 else
                 {
-                    datosExtractoFormateo.Add(linea.Trim());
+                    datosExtractoFormateo.Add(linea.Trim().Replace("|", string.Empty));
                 }
             }
 
             //Ultimo Extracto
             if (datosExtractoFormateo.Count > 1)
             {
-                llaveCruce = datosExtractoFormateo.Find(x => x.Contains("*p2000x190Y")).Substring(11).Trim();
+                llaveCruce = datosExtractoFormateo.Find(x => x.Contains("*p2000x190Y")).Substring(12).Trim();
 
                 if (!string.IsNullOrEmpty(Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoCuentasExtraer, llaveCruce)))
                 {
@@ -924,7 +924,7 @@ namespace App.ControlLogicaProcesos
             {
                 if (detalles.Count == 8)
                 {
-                    dateTime = Convert.ToDateTime($"{DateTime.Now.Year.ToString()}/{detalles[0]} {detalles[1]}");
+                    dateTime = Convert.ToDateTime($"{DateTime.Now.Year.ToString()}/{detalles[0]} {detalles[1]}", new CultureInfo("es-CO"));
                     lineaDetalle = String.Empty;
 
                     foreach (var campo in detalles)
@@ -957,7 +957,7 @@ namespace App.ControlLogicaProcesos
             {
                 if (detalles.Count == 8)
                 {
-                    dateTime = Convert.ToDateTime($"{DateTime.Now.Year.ToString()}/{detalles[0]} {detalles[1]}");
+                    dateTime = Convert.ToDateTime($"{DateTime.Now.Year.ToString()}/{detalles[0]} {detalles[1]}", new CultureInfo("es-CO"));
                     lineaDetalle = String.Empty;
 
                     foreach (var campo in detalles)
@@ -988,7 +988,7 @@ namespace App.ControlLogicaProcesos
             {
                 if (detalles.Count == 8)
                 {
-                    dateTime = Convert.ToDateTime($"{DateTime.Now.Year.ToString()}/{detalles[0]} {detalles[1]}");
+                    dateTime = Convert.ToDateTime($"{DateTime.Now.Year.ToString()}/{detalles[0]} {detalles[1]}", new CultureInfo("es-CO"));
                     lineaDetalle = String.Empty;
 
                     foreach (var campo in detalles)

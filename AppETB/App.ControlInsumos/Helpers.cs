@@ -1822,12 +1822,12 @@ namespace App.ControlInsumos
                     return string.Format("{0}{1}", pCampo.Substring(2, 4), pCampo.Substring(0, 2));
 
                 case "06":
-                    fechaRetorno = Convert.ToDateTime($"{pCampo.Substring(0, 4)}/{pCampo.Substring(4, 2)}/{pCampo.Substring(6, 2)}").ToString("MMMM dd");
+                    fechaRetorno = Convert.ToDateTime($"{pCampo.Substring(0, 4)}/{pCampo.Substring(4, 2)}/{pCampo.Substring(6, 2)}", new CultureInfo("es-CO")).ToString("MMMM dd");
 
                     return FormatearCampos(TiposFormateo.LetraCapital, fechaRetorno);
 
                 case "07":
-                    fechaRetorno = Convert.ToDateTime($"{pCampo.Substring(0, 4)}/{pCampo.Substring(4, 2)}/{pCampo.Substring(6, 2)}").ToString("MMM dd").Replace(".", "");
+                    fechaRetorno = Convert.ToDateTime($"{pCampo.Substring(0, 4)}/{pCampo.Substring(4, 2)}/{pCampo.Substring(6, 2)}", new CultureInfo("es-CO")).ToString("MMM dd").Replace(".", "");
 
                     return FormatearCampos(TiposFormateo.LetraCapital, fechaRetorno);
 
@@ -1861,7 +1861,7 @@ namespace App.ControlInsumos
                     }
 
                 case "12":
-                    fechaRetorno = Convert.ToDateTime($"{pCampo.Substring(0, 4)}/{pCampo.Substring(4, 2)}/{pCampo.Substring(6, 2)}").ToString("ddMMMyyyy").Replace(".", "");
+                    fechaRetorno = Convert.ToDateTime($"{pCampo.Substring(0, 4)}/{pCampo.Substring(4, 2)}/{pCampo.Substring(6, 2)}", new CultureInfo("es-CO")).ToString("ddMMMyyyy").Replace(".", "");
 
                     return FormatearCampos(TiposFormateo.LetraCapital, fechaRetorno);
 
@@ -2292,8 +2292,8 @@ namespace App.ControlInsumos
             {
                 if (!string.IsNullOrEmpty(valorActual.Trim()) && valorActual.Contains("-"))
                 {
-                    fechaUno = Convert.ToDateTime(valorActual.Substring(0, 4) + "/" + valorActual.Substring(4, 2) + "/" + valorActual.Substring(6, 2));
-                    fechaDos = Convert.ToDateTime(valorActual.Substring(11, 4) + "/" + valorActual.Substring(15, 2) + "/" + valorActual.Substring(17, 2));
+                    fechaUno = Convert.ToDateTime(valorActual.Substring(0, 4) + "/" + valorActual.Substring(4, 2) + "/" + valorActual.Substring(6, 2), new CultureInfo("es-CO"));
+                    fechaDos = Convert.ToDateTime(valorActual.Substring(11, 4) + "/" + valorActual.Substring(15, 2) + "/" + valorActual.Substring(17, 2), new CultureInfo("es-CO"));
 
                     if (PrimeraVez == false)
                     {
@@ -2304,50 +2304,6 @@ namespace App.ControlInsumos
                     }
 
                     if (DateTime.Compare(fechaUno, fechaUnoTem) >= 0 && DateTime.Compare(fechaDos, fechaDosTem) >= 0)
-                    {
-                        fechaReciente = fechaUno.ToString("yyyyMMdd") + "-" + fechaDos.ToString("yyyyMMdd");
-                        fechaUnoTem = fechaUno;
-                        fechaDosTem = fechaDos;
-                    }
-                }
-
-            }
-
-            return fechaReciente;
-            #endregion
-        }
-
-        /// <summary>
-        /// Metodo para tomar la fecha mas reciente
-        /// </summary>
-        /// <param name="ListaFechas"></param>
-        /// <returns></returns>
-        public static string GetFechaMasAntigua(List<string> ListaFechas)
-        {
-            #region GetFechaMasReciente
-
-            DateTime fechaUno, fechaDos;
-            DateTime fechaUnoTem = new DateTime(), fechaDosTem = new DateTime();
-            bool PrimeraVez = false;
-
-            string fechaReciente = string.Empty;
-
-            foreach (string valorActual in ListaFechas)
-            {
-                if (!string.IsNullOrEmpty(valorActual.Trim()) && valorActual.Contains("-"))
-                {
-                    fechaUno = Convert.ToDateTime(valorActual.Substring(0, 4) + "/" + valorActual.Substring(4, 2) + "/" + valorActual.Substring(6, 2));
-                    fechaDos = Convert.ToDateTime(valorActual.Substring(11, 4) + "/" + valorActual.Substring(15, 2) + "/" + valorActual.Substring(17, 2));
-
-                    if (PrimeraVez == false)
-                    {
-                        fechaUnoTem = fechaUno;
-                        fechaDosTem = fechaDos;
-                        fechaReciente = fechaUno.ToString("yyyyMMdd") + "-" + fechaDos.ToString("yyyyMMdd");
-                        PrimeraVez = true;
-                    }
-
-                    if (DateTime.Compare(fechaUno, fechaUnoTem) < 0 && DateTime.Compare(fechaDos, fechaDosTem) < 0)
                     {
                         fechaReciente = fechaUno.ToString("yyyyMMdd") + "-" + fechaDos.ToString("yyyyMMdd");
                         fechaUnoTem = fechaUno;
@@ -2378,7 +2334,7 @@ namespace App.ControlInsumos
             {
                 if (!string.IsNullOrEmpty(registroActual.Trim()))
                 {
-                    fecha = Convert.ToDateTime(registroActual.Substring(0, 4) + "/" + registroActual.Substring(4, 2) + "/" + registroActual.Substring(6, 2));
+                    fecha = Convert.ToDateTime(registroActual.Substring(0, 4) + "/" + registroActual.Substring(4, 2) + "/" + registroActual.Substring(6, 2), new CultureInfo("es-CO"));
 
                     if (PrimeraVez == false)
                     {
@@ -2434,7 +2390,7 @@ namespace App.ControlInsumos
             {
                 if (!string.IsNullOrEmpty(registroActual.Trim()) && registroActual.Length == 8)
                 {
-                    fecha = Convert.ToDateTime(registroActual.Substring(0, 4) + "/" + registroActual.Substring(4, 2) + "/" + registroActual.Substring(6, 2));
+                    fecha = Convert.ToDateTime(registroActual.Substring(0, 4) + "/" + registroActual.Substring(4, 2) + "/" + registroActual.Substring(6, 2), new CultureInfo("es-CO"));
 
                     if (PrimeraVez == false)
                     {

@@ -615,7 +615,7 @@ namespace App.ControlLogicaProcesos
                 string[] campos = fechaPagoFijo.Split('|');
                 int diasCorte = Convert.ToInt32(campos[1]);
 
-                DateTime fechaReferencia = Convert.ToDateTime(fechaExpedicionInsumo.Substring(0, 10));
+                DateTime fechaReferencia = Convert.ToDateTime(fechaExpedicionInsumo.Substring(0, 10), new CultureInfo("es-CO"));
 
                 int año = fechaReferencia.Year;
                 int mes = fechaReferencia.Month;
@@ -632,8 +632,6 @@ namespace App.ControlLogicaProcesos
                 fechaLimitePago = fechaCorteLimite.ToString("dd/MM/yyyy");
 
             }
-
-
 
             listaFechas.Add(fechaPago);
             listaFechas.Add(fechaLimitePago);
@@ -4647,12 +4645,11 @@ namespace App.ControlLogicaProcesos
 
                     Canal1FFA = Helpers.ValidarPipePipe($"1FFA|Total|{Helpers.FormatearCampos(TiposFormateo.Decimal05, sumatoriaTotal.ToString())}" +
                         $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, sumatoriaSubTotal.ToString())}|{Helpers.SumarCampos(new List<string> { sumatoriaTotal.ToString(), sumatoriaSubTotal.ToString() }, "G")}| ");
-
-                    resultado.Add(Canal1FFA);
                 }
             }
 
-            
+            resultado.Add(Canal1FFA);
+
             #endregion FormateoCanal1FFA
 
             return resultado;
