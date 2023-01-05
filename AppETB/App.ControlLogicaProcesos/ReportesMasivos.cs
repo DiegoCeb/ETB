@@ -26,6 +26,9 @@ namespace App.ControlLogicaProcesos
         List<string> listaReporteDistrEspecial = new List<string>();
         List<string> listaReporteInsertos = new List<string>();
         List<string> listaReporteSMS = new List<string>();
+
+        // Reporte RecaudoEsperado final
+        Dictionary<string, List<string>> dicRecaudoEsperadoEscribir = new Dictionary<string, List<string>>();
         #endregion
 
         #region Construcctores
@@ -74,6 +77,7 @@ namespace App.ControlLogicaProcesos
         {
             #region Ejecutar
             Helpers.CrearCarpeta(rutaSalida + @"\Reportes");
+            Helpers.CrearCarpeta(rutaSalida + @"\Reportes\RecaudoEsperado");
             CargarDiccionario();
             ExtraccionReportes(DiccionarioExtractosReporte);            
             #endregion
@@ -139,7 +143,13 @@ namespace App.ControlLogicaProcesos
                 if (listReporte.Count > 0)
                     listaReporteSMS.AddRange(listReporte);                    
                 listReporte.Clear();
+
+                //Rpt RecaudoEsperado
+                GetLineaRecaudoEsperado(datosSal.ToList());
             }
+
+            // Escribir Reparto Esperado
+            EscribirReporteRecaudoEsperado();
 
             // Escribir Maestra
             EscribirReporteMaestra(listaReporteMaestra);
@@ -646,7 +656,100 @@ namespace App.ControlLogicaProcesos
 
             return lineaSMS;
             #endregion
-        } 
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pExtracto"></param>
+        /// <returns></returns>
+        private void GetLineaRecaudoEsperado(List<string> pExtracto)
+        {
+            #region GetLineaRecaudoEsperado            
+
+            string lineaReporte = string.Empty;
+
+            #region camposReporte
+
+            string ValorPagarMes = string.Empty;
+            string fecha_pago = string.Empty;
+            string fecha_extemporaneo = string.Empty;
+
+            string tmp_recesp_cuenta = string.Empty;
+            string tmp_recesp_nro_factura = string.Empty;
+            string tmp_recesp_nro_cuota = string.Empty;
+            string tmp_recesp_ciclo = string.Empty;
+            string tmp_recesp_valor_pagar_principal = string.Empty;
+            string tmp_recesp_cod_emp_cobranza = string.Empty;
+            string tmp_recesp_valor_pagar_adicional = string.Empty;
+            string tmp_recesp_fecha_venc = string.Empty;
+            string tmp_recesp_identificacion_EFR = string.Empty;
+            string tmp_recesp_cuenta_cliente_receptor = string.Empty;
+            string tmp_recesp_tipo_cuenta_receptor = string.Empty;
+            string tmp_recesp_nro_identificacion_cliente = string.Empty;
+            string tmp_recesp_nombre_cliente = string.Empty;
+            string tmp_recesp_codigo_entidad_financiera = string.Empty;
+            string tmp_recesp_reserva = string.Empty;
+
+            string llaveDiccionario = string.Empty;
+
+            #endregion
+
+            #region Busqueda
+            var result1AAA = from busqueda in pExtracto
+                             where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("1AAA|")
+                             select busqueda;
+            #endregion
+
+            if (result1AAA.Any())
+            {
+                string[] campos1AAA = result1AAA.FirstOrDefault().Split('|');
+
+                if (campos1AAA[10].Replace("$", "").Replace(".", "").Replace(",", "").Trim() != "000")
+                {
+                    #region Asignacion Valores Reporte
+
+                    tmp_recesp_cuenta = campos1AAA[7].PadLeft(48, '0');
+                    tmp_recesp_nro_factura = campos1AAA[8].PadLeft(30, '0');
+                    tmp_recesp_nro_cuota = campos1AAA[12].PadLeft(2, '0');
+                    tmp_recesp_ciclo = campos1AAA[9].PadLeft(3, ' ');
+                    tmp_recesp_valor_pagar_principal = campos1AAA[31].Replace("$", "").Replace(".", "").Replace(",", "").Trim();
+                    tmp_recesp_valor_pagar_principal = tmp_recesp_valor_pagar_principal.PadLeft(14, '0');
+                    tmp_recesp_cod_emp_cobranza = tmp_recesp_cod_emp_cobranza.PadLeft(13, '0');
+                    tmp_recesp_valor_pagar_adicional = campos1AAA[10].Replace("$", "").Replace(".", "").Replace(",", "").Trim();
+                    tmp_recesp_valor_pagar_adicional = tmp_recesp_valor_pagar_adicional.PadLeft(14, '0');
+                    tmp_recesp_fecha_venc = Convert.ToDateTime(campos1AAA[17]).ToString("yyyyMMdd");
+                    tmp_recesp_identificacion_EFR = tmp_recesp_identificacion_EFR.PadLeft(8, '0');
+                    tmp_recesp_cuenta_cliente_receptor = tmp_recesp_cuenta_cliente_receptor.PadLeft(17, ' ');
+                    tmp_recesp_tipo_cuenta_receptor = tmp_recesp_tipo_cuenta_receptor.PadLeft(2, '0');
+                    tmp_recesp_nro_identificacion_cliente = tmp_recesp_nro_identificacion_cliente.PadLeft(10, ' ');
+                    tmp_recesp_nombre_cliente = tmp_recesp_nombre_cliente.PadLeft(22, ' ');
+                    tmp_recesp_codigo_entidad_financiera = tmp_recesp_codigo_entidad_financiera.PadLeft(3, '0');
+                    tmp_recesp_reserva = Convert.ToDateTime(campos1AAA[18]).ToString("yyyyMMdd");
+
+                    llaveDiccionario = "ETB_" + tmp_recesp_fecha_venc + "_" + campos1AAA[9].PadLeft(2, '0') + "_" + lote + "_FECHAGENERACION" + "_" + tmp_recesp_reserva + ".as";
+
+                    #endregion
+
+
+                    lineaReporte = "06" + tmp_recesp_cuenta + tmp_recesp_nro_factura + tmp_recesp_nro_cuota + tmp_recesp_ciclo + tmp_recesp_valor_pagar_principal +
+                                   tmp_recesp_cod_emp_cobranza + tmp_recesp_valor_pagar_adicional + tmp_recesp_fecha_venc + tmp_recesp_identificacion_EFR +
+                                   tmp_recesp_cuenta_cliente_receptor + tmp_recesp_tipo_cuenta_receptor + tmp_recesp_nro_identificacion_cliente + tmp_recesp_nombre_cliente +
+                                   tmp_recesp_codigo_entidad_financiera + tmp_recesp_reserva;
+
+                    if (dicRecaudoEsperadoEscribir.ContainsKey(llaveDiccionario))
+                    {
+                        dicRecaudoEsperadoEscribir[llaveDiccionario].Add(lineaReporte);
+                    }
+                    else
+                    {
+                        dicRecaudoEsperadoEscribir.Add(llaveDiccionario, new List<string> { lineaReporte });
+                    }
+                }
+            }
+
+            #endregion
+        }
         #endregion
 
         #region Metodos Propios
@@ -1180,7 +1283,140 @@ namespace App.ControlLogicaProcesos
             if (File.Exists(nombreAnterior))
                 File.Move(nombreAnterior, nombreNuevo);
             #endregion
-        } 
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void EscribirReporteRecaudoEsperado()
+        {
+            #region EscribirReporteRecaudoEsperado
+
+            #region Variables
+
+            List<string> lineasReporte = new List<string>();
+            string rutaReportes = string.Empty;
+            string nombreArchivo = string.Empty;
+            string fechaGeneracion = DateTime.Now.ToString("yyyyMMdd");
+
+            List<string> listaSumaServPrincipal = new List<string>();
+            List<string> listaSumaServAdicional = new List<string>();
+
+            string lineaDatos01 = string.Empty;
+            string lineaDatos05 = string.Empty;
+
+            string lineaDatos08 = string.Empty;
+            string lineaDatos09 = string.Empty;
+            string loteReporte = string.Empty;
+
+            List<string> rptControlRecaudo = new List<string>();
+            string lineaControlRecaudo = string.Empty;
+            string fecha1ControlRecaudo = string.Empty;
+            string fecha2ControlRecaudo = string.Empty;
+
+            if (lote.Length == 6)
+            {
+                loteReporte = lote.Substring(2);
+            }
+            else if (lote.Length == 5)
+            {
+                loteReporte = lote.Substring(1);
+            }
+            else
+            {
+                loteReporte = lote;
+            }
+            #endregion
+
+            #region Armo Linea01
+            lineaDatos01 = "01";
+            lineaDatos01 += "8999991158";
+            lineaDatos01 += "0000000000";
+            lineaDatos01 += "000";
+            lineaDatos01 += DateTime.Now.ToString("yyyyMMddHHmm");
+            lineaDatos01 += "A";
+            lineaDatos01 = lineaDatos01.PadRight(220, ' ');
+            #endregion
+
+            #region Armo Linea05
+            lineaDatos05 = "05";
+            lineaDatos05 += "7707181500017";
+            lineaDatos05 += loteReporte.PadLeft(4, '0');
+            lineaDatos05 += "0001TELECOMUNIC";
+            lineaDatos05 = lineaDatos05.PadRight(220, ' ');
+            #endregion
+
+            // Se escribe el Uno a uno
+            foreach (var dicActual in dicRecaudoEsperadoEscribir)
+            {
+                rutaReportes = string.Empty;
+                nombreArchivo = dicActual.Key.Replace("FECHAGENERACION", fechaGeneracion);
+                rutaReportes = Path.Combine(rutaSalida, "Reportes", "RecaudoEsperado", nombreArchivo);
+
+                lineasReporte.Add(lineaDatos01);
+                lineasReporte.Add(lineaDatos05);
+                lineasReporte.AddRange(dicActual.Value);
+
+                foreach (var lineaActual in dicActual.Value)
+                {
+                    listaSumaServPrincipal.Add(lineaActual.Substring(85, 14));
+                    listaSumaServAdicional.Add(lineaActual.Substring(112, 14));
+
+                    fecha1ControlRecaudo = lineaActual.Substring(126, 8);
+                    fecha2ControlRecaudo = lineaActual.Substring(196, 8);
+                }
+
+
+                #region Armo Linea08
+                lineaDatos08 = "08";
+                lineaDatos08 += dicActual.Value.Count().ToString().PadLeft(9, '0');
+                lineaDatos08 += Helpers.SumarCampos(listaSumaServPrincipal).Replace("$", "").Replace(".", "").Replace(",", "").Trim().PadLeft(18, '0');
+                lineaDatos08 += Helpers.SumarCampos(listaSumaServAdicional).Replace("$", "").Replace(".", "").Replace(",", "").Trim().PadLeft(18, '0');
+                lineaDatos08 += loteReporte.PadLeft(4, '0');
+                lineaDatos08 += "".PadLeft(169, ' ');
+                #endregion
+
+                #region Armo Linea09
+                lineaDatos09 = "09";
+                lineaDatos09 += dicActual.Value.Count().ToString().PadLeft(9, '0');
+                lineaDatos09 += Helpers.SumarCampos(listaSumaServPrincipal).Replace("$", "").Replace(".", "").Replace(",", "").Trim().PadLeft(18, '0');
+                lineaDatos09 += Helpers.SumarCampos(listaSumaServAdicional).Replace("$", "").Replace(".", "").Replace(",", "").Trim().PadLeft(18, '0');
+                lineaDatos09 += "".PadLeft(173, ' ');
+                #endregion
+
+                lineasReporte.Add(lineaDatos08);
+                lineasReporte.Add(lineaDatos09);
+
+                Helpers.EscribirEnArchivo(rutaReportes, lineasReporte);
+
+                #region linea Control Recaudo
+                lineaControlRecaudo = dicActual.Key.Replace("FECHAGENERACION", fechaGeneracion).Replace(".as", "") + "|";
+                lineaControlRecaudo += dicActual.Value.Count().ToString().PadLeft(9, '0') + "|";
+                lineaControlRecaudo += Helpers.SumarCampos(listaSumaServPrincipal).Replace("$", "").Replace(".", "").Replace(",", "").Trim().PadLeft(18, '0') + "|";
+                lineaControlRecaudo += Helpers.SumarCampos(listaSumaServAdicional).Replace("$", "").Replace(".", "").Replace(",", "").Trim().PadLeft(18, '0') + "|";
+                lineaControlRecaudo += fecha1ControlRecaudo + "|";
+                lineaControlRecaudo += fecha2ControlRecaudo + "|";
+                lineaControlRecaudo += lote;
+
+                rptControlRecaudo.Add(lineaControlRecaudo);
+                #endregion
+
+                listaSumaServPrincipal.Clear();
+                listaSumaServAdicional.Clear();
+
+                lineasReporte.Clear();
+
+            }
+
+            #region Escribir Rpt Recaudo esperado
+            nombreArchivo = "Control_ReporteRecaurdoEsperado.txt";
+            rutaReportes = Path.Combine(rutaSalida, "Reportes", "RecaudoEsperado", nombreArchivo);
+
+            Helpers.EscribirEnArchivo(rutaReportes, rptControlRecaudo);
+            #endregion
+
+            #endregion
+        }
         #endregion
     }
 }
