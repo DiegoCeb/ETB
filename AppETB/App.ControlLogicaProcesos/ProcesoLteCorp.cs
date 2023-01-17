@@ -3637,6 +3637,23 @@ namespace App.ControlLogicaProcesos
                             #endregion
                         }
                     }
+                    else
+                    {
+                        if (Is1ODC)
+                        {
+                            #region Datos Finales 1ODC
+                            string lineaODC = resultadoTemporal.Find(x => x.Substring(0, 4).Equals("1ODC"));
+                            int lineaODCIndice = resultadoTemporal.FindIndex(x => x.Substring(0, 4).Equals("1ODC"));
+
+                            lineaODC = lineaODC.Replace("***BASE***", Helpers.SumarCampos(new List<string>()));
+                            lineaODC = lineaODC.Replace("***IVA***", Helpers.SumarCampos(new List<string>()));
+                            lineaODC = lineaODC.Replace("***IMPUESTOS***", Helpers.SumarCampos(new List<string>()));
+                            lineaODC = lineaODC.Replace("***TOTAL***", Helpers.SumarCampos(new List<string>()));
+
+                            resultadoTemporal[lineaODCIndice] = lineaODC;
+                            #endregion
+                        }
+                    }
 
                     resultadoFormateo = FormateoCanal1OOO(paquetesInformacion[llaveCuentaConexion.Key]);
 
@@ -6087,14 +6104,27 @@ namespace App.ControlLogicaProcesos
 
             if (linea13M317.Any())
             {
+                List<string> valoresTotal = new List<string>();
+                List<string> valoresSubTotal = new List<string>();
+                List<string> valorFinal = new List<string>();
+
+                foreach (var item in linea13M317)
+                {
+                    valoresTotal.Add(item.Substring(42, 14).Trim());
+                    valoresSubTotal.Add(item.Substring(56, 14).Trim());
+                }
+
+                valorFinal.AddRange(valoresTotal);
+                valorFinal.AddRange(valoresSubTotal);
+
                 string llaveCruce = $"CODF{linea13M317.FirstOrDefault().Substring(32, 10).Trim()}";
                 var concepto = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruce).FirstOrDefault().Substring(14).Trim();
 
-                string total = linea13M317.FirstOrDefault().Substring(42, 14).Trim();
-                string subtotal = linea13M317.FirstOrDefault().Substring(56, 14).Trim();
+                string total = Helpers.SumarCampos(valoresTotal, "G");
+                string subtotal = Helpers.SumarCampos(valoresSubTotal, "G");
 
-                resultado.Add(Helpers.ValidarPipePipe($"1FFF|{Helpers.FormatearCampos(TiposFormateo.PrimeraMayuscula, concepto)}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, total)}" +
-                    $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, subtotal)}|{Helpers.SumarCampos(new List<string> { total, subtotal }, "G")}|" +
+                resultado.Add(Helpers.ValidarPipePipe($"1FFF|{Helpers.FormatearCampos(TiposFormateo.PrimeraMayuscula, concepto)}|{total}" +
+                    $"|{subtotal}|{Helpers.SumarCampos(valorFinal, "G")}|" +
                     $"{linea13M317.FirstOrDefault().Substring(6, 8)} {linea13M317.FirstOrDefault().Substring(14, 8)}| "));
 
                 resultado.Add("1FFF| | | | | | ");
