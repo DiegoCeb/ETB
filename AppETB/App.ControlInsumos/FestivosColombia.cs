@@ -6,15 +6,22 @@ using System.Threading.Tasks;
 
 namespace App.ControlInsumos
 {
+    /// <summary>
+    /// Clase FestivosColombia
+    /// </summary>
     public class FestivosColombia
     {
+        /// <summary>
+        /// Metodo tomar dias festivos
+        /// </summary>
+        /// <param name="Anio">El año a calcular lo días festivos</param>
+        /// <returns></returns>
         public static List<DateTime> DiasFestivos(int Anio)
         {
+            #region DiasFestivos
             DateTime Pascua = calcularPascua(Anio);
 
             List<DateTime> diasFestivos = new List<DateTime>();
-
-
 
             IncluirFecha(ref diasFestivos, new DateTime(Anio, 1, 1)); //Primero de Enero
             IncluirFecha(ref diasFestivos, new DateTime(Anio, 5, 1)); //Dia del Trabajo 1 de Mayo
@@ -37,20 +44,37 @@ namespace App.ControlInsumos
             //IncluirFecha(ref diasFestivos, SiguienteDiaSemana(DayOfWeek.Sunday, Pascua, true, false)); //Domingo de Ramos
             IncluirFecha(ref diasFestivos, SiguienteDiaSemana(DayOfWeek.Thursday, Pascua, true)); //Jueves Santo
             IncluirFecha(ref diasFestivos, SiguienteDiaSemana(DayOfWeek.Friday, Pascua, true)); //Viernes Santo
-            
+
             //IncluirFecha(ref diasFestivos, Pascua); //Pascua
 
-            return diasFestivos;
+            return diasFestivos; 
+            #endregion
         }
 
+        /// <summary>
+        /// Metodo para incluir los días festivos en lista
+        /// </summary>
+        /// <param name="ListaDias"></param>
+        /// <param name="fecha"></param>
         private static void IncluirFecha(ref List<DateTime> ListaDias, DateTime fecha)
         {
+            #region IncluirFecha
             if (ListaDias.Contains(fecha) == false)
-                ListaDias.Add(fecha);
+                ListaDias.Add(fecha); 
+            #endregion
         }
 
+        /// <summary>
+        /// Metodo para calcular el Siguiente Dia Semana
+        /// </summary>
+        /// <param name="DiaSemana">Dia de la semana</param>
+        /// <param name="fecha">Fecha</param>
+        /// <param name="haciaAtras">Bandera para sumar un dia o restar</param>
+        /// <param name="inclusive">Bandera para ver si es Inclusive</param>
+        /// <returns></returns>
         private static DateTime SiguienteDiaSemana(DayOfWeek DiaSemana, DateTime fecha, bool haciaAtras = false, bool inclusive = true)
         {
+            #region SiguienteDiaSemana
             if (inclusive)
             {
                 if (fecha.DayOfWeek == DiaSemana)
@@ -72,11 +96,18 @@ namespace App.ControlInsumos
                 else
                     fecha = fecha.AddDays(1);
 
-            return fecha;
+            return fecha; 
+            #endregion
         }
 
+        /// <summary>
+        /// Metodo para calcular el dia de pascua
+        /// </summary>
+        /// <param name="Anio">Año a calcular</param>
+        /// <returns></returns>
         private static DateTime calcularPascua(int Anio)
         {
+            #region calcularPascua
 
             int a, b, c, d, e;
             int m = 24, n = 5;
@@ -136,7 +167,8 @@ namespace App.ControlInsumos
                     dia -= 9;
 
                 return new DateTime(Anio, 4, dia);
-            }
+            } 
+            #endregion
         }
     }
 }

@@ -812,7 +812,7 @@ namespace App.ControlLogicaProcesos
                     #region Asignacion Valores Reporte
 
                     tmp_recesp_cuenta = campos1AAA[7].PadLeft(48, '0');
-                    tmp_recesp_nro_factura = campos1AAA[8].PadLeft(30, '0');
+                    tmp_recesp_nro_factura = "00000000000000001" + campos1AAA[8].PadLeft(13, '0');
                     tmp_recesp_nro_cuota = campos1AAA[12].PadLeft(2, '0');
                     tmp_recesp_ciclo = campos1AAA[9].PadLeft(3, ' ');
                     tmp_recesp_valor_pagar_principal = campos1AAA[31].Replace("$", "").Replace(".", "").Replace(",", "").Trim();
@@ -829,7 +829,7 @@ namespace App.ControlLogicaProcesos
                     tmp_recesp_codigo_entidad_financiera = tmp_recesp_codigo_entidad_financiera.PadLeft(3, '0');
                     tmp_recesp_reserva = Convert.ToDateTime(campos1AAA[18]).ToString("yyyyMMdd");
 
-                    llaveDiccionario = "ETB_" + tmp_recesp_fecha_venc + "_" + campos1AAA[9].PadLeft(2, '0') + "_" + lote + "_FECHAGENERACION" + "_" + tmp_recesp_reserva + ".as";
+                    llaveDiccionario = "ETB" + tmp_recesp_fecha_venc + "_" + campos1AAA[9].PadLeft(2, '0') + "_" + lote + "_FECHAGENERACION" + ".as";
 
                     #endregion
 

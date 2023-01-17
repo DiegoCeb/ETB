@@ -6,15 +6,17 @@ using System.Threading.Tasks;
 
 namespace App.ControlEjecucion
 {
+    /// <summary>
+    /// Clase Convergencia
+    /// </summary>
     public class Convergencia
     {
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public Convergencia()
         {
 
         }
-
-
-
-
     }
 }

@@ -17,11 +17,15 @@ namespace App.ControlEjecucion
     public class Procesamiento
     {
         /// <summary>
-        /// metodo Procesamiento
+        /// constructor Procesamiento
         /// </summary>
         public Procesamiento()
         { }
 
+        /// <summary>
+        /// Metodo para adecuar el ambiente de trabajo segun proceso
+        /// </summary>
+        /// <param name="pIdentificadorProceso">Identificador del Proceso</param>
         public void AdecuarTrabajoApp(string pIdentificadorProceso)
         {
             #region AdecuarTrabajoApp
@@ -56,6 +60,10 @@ namespace App.ControlEjecucion
             #endregion
         }
 
+        /// <summary>
+        /// Metodo para ejecutar el proceso Masivo
+        /// </summary>
+        /// <param name="pRutaArchivosProcesar">Ruta donde se encuentran los archivos originales</param>
         public void EjecutarProcesoMasivo(string pRutaArchivosProcesar)
         {
             #region EjecutarProcesoMasivo
@@ -93,6 +101,10 @@ namespace App.ControlEjecucion
             #endregion
         }
 
+        /// <summary>
+        /// Metodo para ejecutar el proceso Datos
+        /// </summary>
+        /// <param name="pRutaArchivosProcesar">Ruta donde se encuentran los archivos originales</param>
         public void EjecutarProcesoDatos(string pRutaArchivosProcesar)
         {
             #region EjecutarProcesoDatos
@@ -130,6 +142,10 @@ namespace App.ControlEjecucion
             #endregion
         }
 
+        /// <summary>
+        /// Metodo para ejecutar el proceso Gobierno
+        /// </summary>
+        /// <param name="pRutaArchivosProcesar">Ruta donde se encuentran los archivos originales</param>
         public void EjecutarProcesoGobiernos(string pRutaArchivosProcesar)
         {
             #region EjecutarProcesoGobiernos
@@ -166,6 +182,10 @@ namespace App.ControlEjecucion
             #endregion
         }
 
+        /// <summary>
+        /// Metodo para ejecutar el proceso Llanos
+        /// </summary>
+        /// <param name="pRutaArchivosProcesar">Ruta donde se encuentran los archivos originales</param>
         public void EjecutarProcesoLLanos(string pRutaArchivosProcesar)
         {
             #region EjecutarProcesoGobiernos
@@ -190,6 +210,10 @@ namespace App.ControlEjecucion
             #endregion
         }
 
+        /// <summary>
+        /// Metodo para ejecutar el proceso Credito Hipotecario
+        /// </summary>
+        /// <param name="pRutaArchivosProcesar">Ruta donde se encuentran los archivos originales</param>
         public void EjecutarProcesoCreditoHipotecario(string pRutaArchivosProcesar)
         {
             #region EjecutarProcesoCreditoHipotecario
@@ -218,6 +242,10 @@ namespace App.ControlEjecucion
             #endregion
         }
 
+        /// <summary>
+        /// Metodo para ejecutar el proceso Anexos Verdes
+        /// </summary>
+        /// <param name="pRutaArchivosProcesar">Ruta donde se encuentran los archivos originales</param>
         public void EjecutarProcesoAnexosVerdes(string pRutaArchivosProcesar)
         {
             #region EjecutarProcesoAnexosVerdes
@@ -248,6 +276,10 @@ namespace App.ControlEjecucion
             #endregion
         }
 
+        /// <summary>
+        /// Metodo para ejecutar el proceso LTE Corporativo
+        /// </summary>
+        /// <param name="pRutaArchivosProcesar">Ruta donde se encuentran los archivos originales</param>
         public void EjecutarProcesoLteCorp(string pRutaArchivosProcesar)
         {
             #region EjecutarProcesoMasivo
@@ -285,11 +317,16 @@ namespace App.ControlEjecucion
             #endregion
         }
 
-        public void CargueGeneralInsumos(string Pruta)
+        /// <summary>
+        /// Metodo para Cargar Insumos
+        /// </summary>
+        /// <param name="pRutaArchivosProcesar">Ruta donde se encuentran insumos del proceso</param>
+        public void CargueGeneralInsumos(string pRuta)
         {
-            Helpers.EscribirVentanaMismaLinea($"Cargando Insumos: ");
             #region CargueGeneralInsumos
-            foreach (var Carpeta in Directory.GetDirectories(Pruta))
+            Helpers.EscribirVentanaMismaLinea($"Cargando Insumos: ");
+
+            foreach (var Carpeta in Directory.GetDirectories(pRuta))
             {
                 string NombreCarpeta = Path.GetFileName(Carpeta);
 
@@ -507,6 +544,7 @@ namespace App.ControlEjecucion
         /// <param name="pRutaSalida"></param>
         /// <param name="pDatosImprimir"></param>
         /// <param name="pIdentificadorProceso"></param>
+        /// <param name="pLote"></param>
         private void EscribirSalidasProceso(string pRutaSalida, Dictionary<string, List<string>> pDatosImprimir, string pIdentificadorProceso, string pLote = "")
         {
             #region EscribirSalidasProceso
