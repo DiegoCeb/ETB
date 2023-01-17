@@ -83,7 +83,7 @@ namespace App.ControlInsumos
 
             foreach (var datoLinea in pDatosInsumo)
             {
-                string llaveCruce = datoLinea.Split('|').ElementAt(0);
+                string llaveCruce = datoLinea.Split('|').ElementAt(0).TrimStart('0');
 
                 if (Variables.Variables.DatosInsumoExcluirServiciosAdicionales.ContainsKey(llaveCruce))
                 {

@@ -2836,6 +2836,16 @@ namespace App.ControlLogicaProcesos
                                                 continue;
                                             }
 
+                                            bool estaIncluido = (from busqueda in Variables.Variables.DatosInsumoExcluirServiciosAdicionales[llaveCruce.TrimStart('0')].FirstOrDefault().Split('|')
+                                                                where busqueda.ToLower().Equals("incluido")
+                                                                select busqueda).Any();
+
+                                            if (!estaIncluido) // Si no esta incluido va para los excluidos CFI, si esta incluido continua la siguiente validacion que lo deja en BFI
+                                            {
+                                                datosCFI.Add(lineaDetalle);
+                                                continue;
+                                            }
+
                                             if (!string.IsNullOrEmpty(valorLetra.Trim()))
                                             {
                                                 letrasPaquetes += valorLetra.Split('|')[2];
@@ -4179,7 +4189,7 @@ namespace App.ControlLogicaProcesos
                 }
             }
 
-            return resultado; 
+            return resultado;
             #endregion
         }
 
@@ -4290,7 +4300,7 @@ namespace App.ControlLogicaProcesos
                         totalDispositivosFinanciados++;
                         totalValorFinanciado += valorFinanciado;
                         totalSaldoRestante += saldoRestante;
-                        totalValorPorPagar += valorXPagar;                        
+                        totalValorPorPagar += valorXPagar;
                     }
                     else if (IsResidencial)
                     {
@@ -4834,7 +4844,7 @@ namespace App.ControlLogicaProcesos
             string numeroConexion = string.Empty;
             List<string> camposSumar = new List<string>();
             List<PosCortes> listaCortes = new List<PosCortes>();
-			
+
             Dictionary<string, List<string>> dicAgruNumConexion = new Dictionary<string, List<string>>();
             List<string> paqueteActual = new List<string>();
             string llaveCruve = string.Empty;

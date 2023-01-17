@@ -1880,7 +1880,7 @@ namespace App.ControlLogicaProcesos
             {
                 if (!string.IsNullOrEmpty(cuentasLTE9697))
                 {
-                    periodoDesdeHastaLTE = $"Per lte {fechaInicio} - {fechaFin}";
+                    periodoDesdeHastaLTE = $"Per lte {fechaInicio}-{fechaFin}";
                 }
 
             }
@@ -5146,7 +5146,7 @@ namespace App.ControlLogicaProcesos
                 string subtotal = linea13M317.FirstOrDefault().Substring(56, 14).Trim();
 
                 resultado = Helpers.ValidarPipePipe($"1FFA|Total|{Helpers.FormatearCampos(TiposFormateo.Decimal05, total)}" +
-                    $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, subtotal)}|{Helpers.SumarCampos(new List<string> { total, subtotal })}| ");
+                    $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, subtotal)}|{Helpers.SumarCampos(new List<string> { total, subtotal }, "G")}| ");
             }
 
             return resultado;
@@ -6078,6 +6078,7 @@ namespace App.ControlLogicaProcesos
         private IEnumerable<string> FormateoCanal1FFF(List<string> datosOriginales)
         {
             #region FormateoCanal1FFF
+
             List<string> resultado = new List<string>();
 
             var linea13M317 = from busqueda in datosOriginales
@@ -6093,7 +6094,8 @@ namespace App.ControlLogicaProcesos
                 string subtotal = linea13M317.FirstOrDefault().Substring(56, 14).Trim();
 
                 resultado.Add(Helpers.ValidarPipePipe($"1FFF|{Helpers.FormatearCampos(TiposFormateo.PrimeraMayuscula, concepto)}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, total)}" +
-                    $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, subtotal)}|{Helpers.SumarCampos(new List<string> { total, subtotal })}| | "));
+                    $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, subtotal)}|{Helpers.SumarCampos(new List<string> { total, subtotal }, "G")}|" +
+                    $"{linea13M317.FirstOrDefault().Substring(6, 8)} {linea13M317.FirstOrDefault().Substring(14, 8)}| "));
 
                 resultado.Add("1FFF| | | | | | ");
             }
@@ -6185,7 +6187,6 @@ namespace App.ControlLogicaProcesos
                 {
                     foreach (var linea11CActual in lineas11C)
                     {
-
                         concepto1DBB = linea11CActual.Substring(281).Trim();
 
                         if (Convert.ToDouble(linea11CActual.Substring(30, 14)) != 0)
@@ -6294,6 +6295,33 @@ namespace App.ControlLogicaProcesos
             LineaTemp += Helpers.SumarCampos(valor4_1DAA, "G") + "| ";
 
             listResultado.Insert(0, Helpers.ValidarPipePipe(LineaTemp));
+
+            bool tengoRecargoMora = (from busqueda in listResultado
+                                    where busqueda.Contains("Recargo de mora")
+                                    select busqueda).Any();
+
+            if (tengoRecargoMora) //Si lleva recargo de mora se hace reordenamiento para que quede de ultimas
+            {
+
+                List<string> resultadoOrdenado = new List<string>();
+
+                var detallesSinRecargo = from busqueda in listResultado
+                                          where !busqueda.Contains("Recargo de mora")
+                                          select busqueda;
+
+                foreach (var item in detallesSinRecargo)
+                {
+                    resultadoOrdenado.Add(item);
+                }
+
+                var detalleRecargo = from busqueda in listResultado
+                                         where busqueda.Contains("Recargo de mora")
+                                         select busqueda;
+
+                resultadoOrdenado.Add(detalleRecargo.FirstOrDefault());
+
+                return resultadoOrdenado;
+            }
 
             return listResultado;
             #endregion
