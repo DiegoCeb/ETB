@@ -5159,11 +5159,24 @@ namespace App.ControlLogicaProcesos
 
             if (linea13M317.Any())
             {
-                string total = linea13M317.FirstOrDefault().Substring(42, 14).Trim();
-                string subtotal = linea13M317.FirstOrDefault().Substring(56, 14).Trim();
+                List<string> valoresTotal = new List<string>();
+                List<string> valoresSubTotal = new List<string>();
+                List<string> valorFinal = new List<string>();
 
-                resultado = Helpers.ValidarPipePipe($"1FFA|Total|{Helpers.FormatearCampos(TiposFormateo.Decimal05, total)}" +
-                    $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, subtotal)}|{Helpers.SumarCampos(new List<string> { total, subtotal }, "G")}| ");
+                foreach (var item in linea13M317)
+                {
+                    valoresTotal.Add(item.Substring(42, 14).Trim());
+                    valoresSubTotal.Add(item.Substring(56, 14).Trim());
+                }
+
+                valorFinal.AddRange(valoresTotal);
+                valorFinal.AddRange(valoresSubTotal);
+
+                string total = Helpers.SumarCampos(valoresTotal, "G");
+                string subtotal = Helpers.SumarCampos(valoresSubTotal, "G");
+
+                resultado = Helpers.ValidarPipePipe($"1FFA|Total|{total}" +
+                    $"|{subtotal}|{Helpers.SumarCampos(valorFinal, "G")}| ");
             }
 
             return resultado;
