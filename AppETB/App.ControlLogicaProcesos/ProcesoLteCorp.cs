@@ -1880,7 +1880,7 @@ namespace App.ControlLogicaProcesos
             {
                 if (!string.IsNullOrEmpty(cuentasLTE9697))
                 {
-                    periodoDesdeHastaLTE = $"Per lte {fechaInicio} - {fechaFin}";
+                    periodoDesdeHastaLTE = $"Per lte {fechaInicio}-{fechaFin}";
                 }
 
             }
@@ -3637,6 +3637,23 @@ namespace App.ControlLogicaProcesos
                             #endregion
                         }
                     }
+                    else
+                    {
+                        if (Is1ODC)
+                        {
+                            #region Datos Finales 1ODC
+                            string lineaODC = resultadoTemporal.Find(x => x.Substring(0, 4).Equals("1ODC"));
+                            int lineaODCIndice = resultadoTemporal.FindIndex(x => x.Substring(0, 4).Equals("1ODC"));
+
+                            lineaODC = lineaODC.Replace("***BASE***", Helpers.SumarCampos(new List<string>()));
+                            lineaODC = lineaODC.Replace("***IVA***", Helpers.SumarCampos(new List<string>()));
+                            lineaODC = lineaODC.Replace("***IMPUESTOS***", Helpers.SumarCampos(new List<string>()));
+                            lineaODC = lineaODC.Replace("***TOTAL***", Helpers.SumarCampos(new List<string>()));
+
+                            resultadoTemporal[lineaODCIndice] = lineaODC;
+                            #endregion
+                        }
+                    }
 
                     resultadoFormateo = FormateoCanal1OOO(paquetesInformacion[llaveCuentaConexion.Key]);
 
@@ -5146,7 +5163,7 @@ namespace App.ControlLogicaProcesos
                 string subtotal = linea13M317.FirstOrDefault().Substring(56, 14).Trim();
 
                 resultado = Helpers.ValidarPipePipe($"1FFA|Total|{Helpers.FormatearCampos(TiposFormateo.Decimal05, total)}" +
-                    $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, subtotal)}|{Helpers.SumarCampos(new List<string> { total, subtotal })}| ");
+                    $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, subtotal)}|{Helpers.SumarCampos(new List<string> { total, subtotal }, "G")}| ");
             }
 
             return resultado;
@@ -6078,6 +6095,7 @@ namespace App.ControlLogicaProcesos
         private IEnumerable<string> FormateoCanal1FFF(List<string> datosOriginales)
         {
             #region FormateoCanal1FFF
+
             List<string> resultado = new List<string>();
 
             var linea13M317 = from busqueda in datosOriginales
@@ -6086,14 +6104,28 @@ namespace App.ControlLogicaProcesos
 
             if (linea13M317.Any())
             {
+                List<string> valoresTotal = new List<string>();
+                List<string> valoresSubTotal = new List<string>();
+                List<string> valorFinal = new List<string>();
+
+                foreach (var item in linea13M317)
+                {
+                    valoresTotal.Add(item.Substring(42, 14).Trim());
+                    valoresSubTotal.Add(item.Substring(56, 14).Trim());
+                }
+
+                valorFinal.AddRange(valoresTotal);
+                valorFinal.AddRange(valoresSubTotal);
+
                 string llaveCruce = $"CODF{linea13M317.FirstOrDefault().Substring(32, 10).Trim()}";
                 var concepto = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruce).FirstOrDefault().Substring(14).Trim();
 
-                string total = linea13M317.FirstOrDefault().Substring(42, 14).Trim();
-                string subtotal = linea13M317.FirstOrDefault().Substring(56, 14).Trim();
+                string total = Helpers.SumarCampos(valoresTotal, "G");
+                string subtotal = Helpers.SumarCampos(valoresSubTotal, "G");
 
-                resultado.Add(Helpers.ValidarPipePipe($"1FFF|{Helpers.FormatearCampos(TiposFormateo.PrimeraMayuscula, concepto)}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, total)}" +
-                    $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, subtotal)}|{Helpers.SumarCampos(new List<string> { total, subtotal })}| | "));
+                resultado.Add(Helpers.ValidarPipePipe($"1FFF|{Helpers.FormatearCampos(TiposFormateo.PrimeraMayuscula, concepto)}|{total}" +
+                    $"|{subtotal}|{Helpers.SumarCampos(valorFinal, "G")}|" +
+                    $"{linea13M317.FirstOrDefault().Substring(6, 8)} {linea13M317.FirstOrDefault().Substring(14, 8)}| "));
 
                 resultado.Add("1FFF| | | | | | ");
             }
@@ -6185,7 +6217,6 @@ namespace App.ControlLogicaProcesos
                 {
                     foreach (var linea11CActual in lineas11C)
                     {
-
                         concepto1DBB = linea11CActual.Substring(281).Trim();
 
                         if (Convert.ToDouble(linea11CActual.Substring(30, 14)) != 0)
@@ -6294,6 +6325,33 @@ namespace App.ControlLogicaProcesos
             LineaTemp += Helpers.SumarCampos(valor4_1DAA, "G") + "| ";
 
             listResultado.Insert(0, Helpers.ValidarPipePipe(LineaTemp));
+
+            bool tengoRecargoMora = (from busqueda in listResultado
+                                    where busqueda.Contains("Recargo de mora")
+                                    select busqueda).Any();
+
+            if (tengoRecargoMora) //Si lleva recargo de mora se hace reordenamiento para que quede de ultimas
+            {
+
+                List<string> resultadoOrdenado = new List<string>();
+
+                var detallesSinRecargo = from busqueda in listResultado
+                                          where !busqueda.Contains("Recargo de mora")
+                                          select busqueda;
+
+                foreach (var item in detallesSinRecargo)
+                {
+                    resultadoOrdenado.Add(item);
+                }
+
+                var detalleRecargo = from busqueda in listResultado
+                                         where busqueda.Contains("Recargo de mora")
+                                         select busqueda;
+
+                resultadoOrdenado.Add(detalleRecargo.FirstOrDefault());
+
+                return resultadoOrdenado;
+            }
 
             return listResultado;
             #endregion

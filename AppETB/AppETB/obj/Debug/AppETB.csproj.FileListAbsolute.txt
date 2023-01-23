@@ -71,3 +71,4 @@ C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\obj\Debug\AppETB.
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\obj\Debug\AppETB.exe
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\obj\Debug\AppETB.pdb
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\bin\Debug\App.ControlEjecucion.xml
+C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\bin\Debug\App.ControlEjecucion.xml
