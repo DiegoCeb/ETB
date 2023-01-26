@@ -812,10 +812,10 @@ namespace App.ControlLogicaProcesos
                     #region Asignacion Valores Reporte
 
                     tmp_recesp_cuenta = campos1AAA[7].PadLeft(48, '0');
-                    tmp_recesp_nro_factura = "00000000000000001" + campos1AAA[8].PadLeft(13, '0');
+                    tmp_recesp_nro_factura = campos1AAA[20].Replace("-", string.Empty).PadLeft(13, '0');
                     tmp_recesp_nro_cuota = campos1AAA[12].PadLeft(2, '0');
                     tmp_recesp_ciclo = campos1AAA[9].PadLeft(3, ' ');
-                    tmp_recesp_valor_pagar_principal = campos1AAA[31].Replace("$", "").Replace(".", "").Replace(",", "").Trim();
+                    tmp_recesp_valor_pagar_principal = campos1AAA[10].Replace("$", "").Replace(".", "").Replace(",", "").Trim();
                     tmp_recesp_valor_pagar_principal = tmp_recesp_valor_pagar_principal.PadLeft(14, '0');
                     tmp_recesp_cod_emp_cobranza = tmp_recesp_cod_emp_cobranza.PadLeft(13, '0');
                     tmp_recesp_valor_pagar_adicional = campos1AAA[10].Replace("$", "").Replace(".", "").Replace(",", "").Trim();
@@ -1462,11 +1462,18 @@ namespace App.ControlLogicaProcesos
 
                 foreach (var lineaActual in dicActual.Value)
                 {
-                    listaSumaServPrincipal.Add(lineaActual.Substring(85, 14));
-                    listaSumaServAdicional.Add(lineaActual.Substring(112, 14));
+                    listaSumaServPrincipal.Add(lineaActual.Substring(69, 14));
+                    listaSumaServAdicional.Add(lineaActual.Substring(96, 14));
 
-                    fecha1ControlRecaudo = lineaActual.Substring(126, 8);
-                    fecha2ControlRecaudo = lineaActual.Substring(196, 8);
+                    if (string.IsNullOrEmpty(fecha1ControlRecaudo.Trim()))
+                    {
+                        fecha1ControlRecaudo = lineaActual.Substring(110, 8);
+                    }
+
+                    if (string.IsNullOrEmpty(fecha2ControlRecaudo.Trim()))
+                    {
+                        fecha2ControlRecaudo = lineaActual.Substring(180, 8);
+                    }
                 }
 
 

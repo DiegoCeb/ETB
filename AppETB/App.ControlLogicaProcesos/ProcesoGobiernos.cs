@@ -159,7 +159,7 @@ namespace App.ControlLogicaProcesos
             dynamic resultadoFormateoLinea = null;
 
             //Para Validaciones
-            if (pLLaveCruce == "7272912881")
+            if (pLLaveCruce == "675928994")
             {
 
             }
@@ -1770,6 +1770,11 @@ namespace App.ControlLogicaProcesos
             List<string> resultado = new List<string>();
 
             int indiceBusquedaInicio = datosOriginales.FindIndex(x => x.Substring(0, 5).Equals("28000"));
+
+            if (indiceBusquedaInicio == -1)
+            {
+                return resultado;
+            }
 
             for (int i = indiceBusquedaInicio; i < datosOriginales.Count; i++)
             {
@@ -4648,7 +4653,10 @@ namespace App.ControlLogicaProcesos
                 }
             }
 
-            resultado.Add(Canal1FFA);
+            if (!string.IsNullOrEmpty(Canal1FFA))
+            {
+                resultado.Add(Canal1FFA);
+            }
 
             #endregion FormateoCanal1FFA
 

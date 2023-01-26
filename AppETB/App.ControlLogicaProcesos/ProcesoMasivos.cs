@@ -4156,6 +4156,11 @@ namespace App.ControlLogicaProcesos
 
             int indiceBusquedaInicio = datosOriginales.FindIndex(x => x.Substring(0, 5).Equals("28000"));
 
+            if (indiceBusquedaInicio == -1)
+            {
+                return resultado;
+            }
+
             for (int i = indiceBusquedaInicio; i < datosOriginales.Count; i++)
             {
                 string linea = datosOriginales.ElementAt(i);
@@ -5184,6 +5189,11 @@ namespace App.ControlLogicaProcesos
                 byte mesFacturacion = Convert.ToByte(pFechaReferencia.Split('/').ElementAt(1));
                 mesFacturacion--;
 
+                if (mesFacturacion == 0) //No puede ser 0
+                {
+                    mesFacturacion = 12;
+                }
+
                 for (int i = mesFacturacion; i <= mesFacturacion; i--)
                 {
                     if (i == 0 && meses.LastOrDefault() == "Ene")
@@ -5194,7 +5204,12 @@ namespace App.ControlLogicaProcesos
 
                     meses.Add(Helpers.FormatearCampos(TiposFormateo.LetraCapital, new DateTime(DateTime.Now.Year, i, 1).ToString("MMM", culture).Replace(".", string.Empty)));
                 }
-                meses.RemoveAt(0);
+
+                if (mesFacturacion != 12)
+                {
+                    meses.RemoveAt(0);
+                }
+
                 meses.RemoveAt(meses.Count - 1);
 
                 for (int i = 0; i < meses.Count; i++)
@@ -5208,7 +5223,7 @@ namespace App.ControlLogicaProcesos
 
                 mesesFinal.Reverse();
 
-                resultado = $"{mesesFinal.ElementAt(0)}|{mesesFinal.ElementAt(1)}|{mesesFinal.ElementAt(2)}|{mesesFinal.ElementAt(3)}|{mesesFinal.ElementAt(4)}|{mesesFinal.ElementAt(5)}";
+                resultado = $"{mesesFinal.ElementAt(0).Substring(0, 3)}|{mesesFinal.ElementAt(1).Substring(0, 3)}|{mesesFinal.ElementAt(2).Substring(0, 3)}|{mesesFinal.ElementAt(3).Substring(0, 3)}|{mesesFinal.ElementAt(4).Substring(0, 3)}|{mesesFinal.ElementAt(5).Substring(0, 3)}";
             }
             else
             {
@@ -5597,7 +5612,15 @@ namespace App.ControlLogicaProcesos
                     string nuevaFechaDesde = string.Empty;
                     string nuevaFechaHasta = string.Empty;
 
-                    nuevaFechaDesde = $"{FechaDesde.Substring(0, 2)}{(Convert.ToInt16(FechaDesde.Substring(2, 2)) + 1).ToString().PadLeft(2, '0')}{FechaDesde.Substring(4, 4)}";
+                    if (Convert.ToInt16(FechaDesde.Substring(2, 2)) == 12)
+                    {
+                        nuevaFechaDesde = $"{FechaDesde.Substring(0, 2)}{(Convert.ToInt16("1")).ToString().PadLeft(2, '0')}{DateTime.Now.Year}";
+                    }
+                    else
+                    {
+                        nuevaFechaDesde = $"{FechaDesde.Substring(0, 2)}{(Convert.ToInt16(FechaDesde.Substring(2, 2)) + 1).ToString().PadLeft(2, '0')}{FechaDesde.Substring(4, 4)}";
+                    }
+
                     nuevaFechaHasta = $"{FechaHasta.Substring(0, 2)}{(Convert.ToInt16(FechaHasta.Substring(2, 2)) + 1).ToString().PadLeft(2, '0')}{FechaHasta.Substring(4, 4)}";
 
                     if (Convert.ToInt16(FechaHasta.Substring(2, 2)) == 12)

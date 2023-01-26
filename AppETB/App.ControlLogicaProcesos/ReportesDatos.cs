@@ -805,7 +805,7 @@ namespace App.ControlLogicaProcesos
                     #region Asignacion Valores Reporte
 
                     tmp_recesp_cuenta = campos1AAA[7].PadLeft(48, '0');
-                    tmp_recesp_nro_factura = "00000000000000001" + campos1AAA[8].PadLeft(13, '0');
+                    tmp_recesp_nro_factura = campos1AAA[20].Replace("-", string.Empty).PadLeft(13, '0');
                     tmp_recesp_nro_cuota = campos1AAA[12].PadLeft(2, '0');
                     tmp_recesp_ciclo = campos1AAA[9].PadLeft(3, ' ');
                     tmp_recesp_valor_pagar_principal = campos1AAA[31].Replace("$", "").Replace(".", "").Replace(",", "").Trim();

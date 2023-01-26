@@ -308,7 +308,7 @@ namespace App.ControlLogicaProcesos
             if (((IEnumerable<string>)resultadoFormateoLinea).Any())
             {
                 resultado.AddRange(resultadoFormateoLinea);
-            }            
+            }
 
             resultadoFormateoLinea = MapeoCanal1CPA(datosOriginales);
 
@@ -3543,8 +3543,8 @@ namespace App.ControlLogicaProcesos
             //}
             //else
             //{
-                paquetesInformacionFinal = paquetesInformacion;
-                paquetesInformacion888888Final = paquetesInformacion888888;
+            paquetesInformacionFinal = paquetesInformacion;
+            paquetesInformacion888888Final = paquetesInformacion888888;
             //}
 
             foreach (var llaveCuentaConexion in paquetesInformacion888888)
@@ -4150,7 +4150,7 @@ namespace App.ControlLogicaProcesos
 
                 var lineas040011 = from busqueda in dicActual.Value
                                    where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("040011")
-                                   select busqueda; 
+                                   select busqueda;
                 #endregion
 
                 if (lineas040000.Any())
@@ -4189,7 +4189,7 @@ namespace App.ControlLogicaProcesos
 
                 foreach (var dicPlanValorActual in dicPlanActual.Value)
                 {
-                    if(dicPlanActual.Key == "Consumo voz adicional")
+                    if (dicPlanActual.Key == "Consumo voz adicional")
                     {
                         listaActual = dicPlanValorActual;
                         break;
@@ -4202,13 +4202,13 @@ namespace App.ControlLogicaProcesos
 
 
                 var lineas040011 = from busqueda in listaActual
-                             where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("040011")
-                             select busqueda;                
+                                   where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("040011")
+                                   select busqueda;
 
                 var lineas11C901 = from busqueda in listaActual
                                    where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("11C901")
                                    select busqueda;
-                
+
 
                 if (lineas040011.Any())
                 {
@@ -4227,7 +4227,7 @@ namespace App.ControlLogicaProcesos
 
                     var lineas040011Temp = from busqueda in lineas040011
                                            where busqueda.Length > 6 && busqueda.Substring(76, 8).Equals(fechaMenor)
-                                            select busqueda;
+                                           select busqueda;
 
 
                     listaCortes.Add(new PosCortes(76, 8));
@@ -4259,13 +4259,13 @@ namespace App.ControlLogicaProcesos
 
                     lineaTEMP = "1PLA|";
                     lineaTEMP += dicPlanActual.Key + "|";
-                    lineaTEMP += PeriodoFacturacion.Substring(2,4) + PeriodoFacturacion.Substring(0, 2) + "| | | | | |";
+                    lineaTEMP += PeriodoFacturacion.Substring(2, 4) + PeriodoFacturacion.Substring(0, 2) + "| | | | | |";
 
 
-                    if(lineas11C901.Any())
+                    if (lineas11C901.Any())
                     {
                         foreach (var lineas11C901Actual in lineas11C901)
-                        {                            
+                        {
                             sumaTotal.Add(lineas11C901Actual.Substring(16, 14));
                             sumaTotal.Add(lineas11C901Actual.Substring(30, 14));
                             sumaTotal.Add(lineas11C901Actual.Substring(44, 14));
@@ -4285,10 +4285,10 @@ namespace App.ControlLogicaProcesos
 
                     // Agrega el canal 1PLA
                     listResultado.Add(Helpers.ValidarPipePipe(lineaTEMP));
-                    listResultado.AddRange(DETFinal);                    
+                    listResultado.AddRange(DETFinal);
 
-                }               
-                
+                }
+
             }
 
 
@@ -4475,7 +4475,7 @@ namespace App.ControlLogicaProcesos
                             segundaFecha = Helpers.FormatearCampos(TiposFormateo.Fecha06, segundaFecha);
                         }
 
-                        
+
 
 
 
@@ -4493,7 +4493,7 @@ namespace App.ControlLogicaProcesos
                         Lineas1DET += Helpers.SumarCampos(total) + "|";
                         Lineas1DET += periodo + "| ";
 
-                        if(!string.IsNullOrEmpty(primerFecha) && !string.IsNullOrEmpty(segundaFecha))
+                        if (!string.IsNullOrEmpty(primerFecha) && !string.IsNullOrEmpty(segundaFecha))
                         {
                             Lineas1DET += primerFecha + " a " + segundaFecha + "| ";
                         }
@@ -4501,7 +4501,7 @@ namespace App.ControlLogicaProcesos
                         {
                             Lineas1DET += "| ";
                         }
-                        
+
 
                         suma1PLA1DET.AddRange(total);
 
@@ -4511,7 +4511,7 @@ namespace App.ControlLogicaProcesos
                         valor3.Clear();
                         total.Clear();
 
-                        list1DET.Add(Helpers.ValidarPipePipe(Lineas1DET));                        
+                        list1DET.Add(Helpers.ValidarPipePipe(Lineas1DET));
                     }
 
                     #endregion
@@ -5181,7 +5181,7 @@ namespace App.ControlLogicaProcesos
 
             return resultado;
             #endregion
-        }        
+        }
 
         /// <summary>
         /// Metodo que obtiene las lineas formateadas de Canal 1LLL
@@ -5392,6 +5392,11 @@ namespace App.ControlLogicaProcesos
                 byte mesFacturacion = Convert.ToByte(pFechaReferencia.Split('/').ElementAt(1));
                 mesFacturacion--;
 
+                if (mesFacturacion == 0) //No puede ser 0
+                {
+                    mesFacturacion = 12;
+                }
+
                 for (int i = mesFacturacion; i <= mesFacturacion; i--)
                 {
                     if (i == 0 && meses.LastOrDefault() == "Ene")
@@ -5402,7 +5407,12 @@ namespace App.ControlLogicaProcesos
 
                     meses.Add(Helpers.FormatearCampos(TiposFormateo.LetraCapital, new DateTime(DateTime.Now.Year, i, 1).ToString("MMM", culture).Replace(".", string.Empty)));
                 }
-                meses.RemoveAt(0);
+
+                if (mesFacturacion != 12)
+                {
+                    meses.RemoveAt(0);
+                }
+
                 meses.RemoveAt(meses.Count - 1);
 
                 for (int i = 0; i < meses.Count; i++)
@@ -5666,6 +5676,11 @@ namespace App.ControlLogicaProcesos
 
             int indiceBusquedaInicio = datosOriginales.FindIndex(x => x.Substring(0, 5).Equals("28000"));
 
+            if (indiceBusquedaInicio == -1)
+            {
+                return resultado;
+            }
+
             for (int i = indiceBusquedaInicio; i < datosOriginales.Count; i++)
             {
                 string linea = datosOriginales.ElementAt(i);
@@ -5857,7 +5872,15 @@ namespace App.ControlLogicaProcesos
                     string nuevaFechaDesde = string.Empty;
                     string nuevaFechaHasta = string.Empty;
 
-                    nuevaFechaDesde = $"{FechaDesde.Substring(0, 2)}{(Convert.ToInt16(FechaDesde.Substring(2, 2)) + 1).ToString().PadLeft(2, '0')}{FechaDesde.Substring(4, 4)}";
+                    if (Convert.ToInt16(FechaDesde.Substring(2, 2)) == 12)
+                    {
+                        nuevaFechaDesde = $"{FechaDesde.Substring(0, 2)}{(Convert.ToInt16("1")).ToString().PadLeft(2, '0')}{DateTime.Now.Year}";
+                    }
+                    else
+                    {
+                        nuevaFechaDesde = $"{FechaDesde.Substring(0, 2)}{(Convert.ToInt16(FechaDesde.Substring(2, 2)) + 1).ToString().PadLeft(2, '0')}{FechaDesde.Substring(4, 4)}";
+                    }
+                    
                     nuevaFechaHasta = $"{FechaHasta.Substring(0, 2)}{(Convert.ToInt16(FechaHasta.Substring(2, 2)) + 1).ToString().PadLeft(2, '0')}{FechaHasta.Substring(4, 4)}";
 
                     nuevaFechaDesde = Helpers.FormatearCampos(TiposFormateo.Fecha01, nuevaFechaDesde);
@@ -6321,10 +6344,10 @@ namespace App.ControlLogicaProcesos
                 valor4_1DBB.Clear();
 
                 // Se valida para que no pinte valores en Cero
-                if(!LineaTemp.Contains("|$ 0.00|$ 0.00| |$ 0.00|$ 0.00|"))
+                if (!LineaTemp.Contains("|$ 0.00|$ 0.00| |$ 0.00|$ 0.00|"))
                 {
                     listResultado.Add(Helpers.ValidarPipePipe(LineaTemp));
-                }                
+                }
             }
 
             #endregion
@@ -6340,8 +6363,8 @@ namespace App.ControlLogicaProcesos
             listResultado.Insert(0, Helpers.ValidarPipePipe(LineaTemp));
 
             bool tengoRecargoMora = (from busqueda in listResultado
-                                    where busqueda.Contains("Recargo de mora")
-                                    select busqueda).Any();
+                                     where busqueda.Contains("Recargo de mora")
+                                     select busqueda).Any();
 
             if (tengoRecargoMora) //Si lleva recargo de mora se hace reordenamiento para que quede de ultimas
             {
@@ -6349,8 +6372,8 @@ namespace App.ControlLogicaProcesos
                 List<string> resultadoOrdenado = new List<string>();
 
                 var detallesSinRecargo = from busqueda in listResultado
-                                          where !busqueda.Contains("Recargo de mora")
-                                          select busqueda;
+                                         where !busqueda.Contains("Recargo de mora")
+                                         select busqueda;
 
                 foreach (var item in detallesSinRecargo)
                 {
@@ -6358,8 +6381,8 @@ namespace App.ControlLogicaProcesos
                 }
 
                 var detalleRecargo = from busqueda in listResultado
-                                         where busqueda.Contains("Recargo de mora")
-                                         select busqueda;
+                                     where busqueda.Contains("Recargo de mora")
+                                     select busqueda;
 
                 resultadoOrdenado.Add(detalleRecargo.FirstOrDefault());
 

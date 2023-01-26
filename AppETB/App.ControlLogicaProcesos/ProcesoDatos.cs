@@ -1919,6 +1919,11 @@ namespace App.ControlLogicaProcesos
 
             int indiceBusquedaInicio = datosOriginales.FindIndex(x => x.Substring(0, 5).Equals("28000"));
 
+            if (indiceBusquedaInicio == -1)
+            {
+                return resultado;
+            }
+
             for (int i = indiceBusquedaInicio; i < datosOriginales.Count; i++)
             {
                 string linea = datosOriginales.ElementAt(i);
