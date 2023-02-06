@@ -1925,7 +1925,15 @@ namespace App.ControlLogicaProcesos
 
                     llave = detalle.Substring(0, 6).Trim();
                     descripcion = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"CODT{detalle.Substring(0, 6).Trim()}")?.FirstOrDefault() ?? string.Empty;
-                    descripcion = Helpers.FormatearCampos(TiposFormateo.PrimeraMayuscula, descripcion.Substring(10).Trim());
+
+                    if (IsLte)
+                    {
+                        descripcion = descripcion.Substring(10).Trim();
+                    }
+                    else
+                    {
+                        descripcion = Helpers.FormatearCampos(TiposFormateo.PrimeraMayuscula, descripcion.Substring(10).Trim());
+                    }                   
 
                     if (llave == "02T304" || llave == "02T309")
                     {
@@ -2836,9 +2844,21 @@ namespace App.ControlLogicaProcesos
                                                 continue;
                                             }
 
-                                            bool estaIncluido = (from busqueda in Variables.Variables.DatosInsumoExcluirServiciosAdicionales[llaveCruce.TrimStart('0')].FirstOrDefault().Split('|')
-                                                                where busqueda.ToLower().Equals("incluido")
-                                                                select busqueda).Any();
+                                            //Hay que identificar que tipo de internet es para saber si va incluido o no va incluido.
+
+                                            var verificarInternet = from busqueda in datosPaqueteAgrupado
+                                                                    where busqueda.Substring(186, 9).ToLower().Equals("velocidad")
+                                                                    select busqueda;
+
+                                            string internetMegas = string.Empty;
+
+                                            if (verificarInternet.Any())
+                                            {
+                                                internetMegas = verificarInternet.FirstOrDefault().Substring(211, 4);
+                                            }
+
+                                            bool estaIncluido = GetInfoInclusion(Variables.Variables.DatosInsumoExcluirServiciosAdicionales.Values.FirstOrDefault().First(),
+                                                Variables.Variables.DatosInsumoExcluirServiciosAdicionales[llaveCruce.TrimStart('0')].FirstOrDefault(), internetMegas);
 
                                             if (!estaIncluido) // Si no esta incluido va para los excluidos CFI, si esta incluido continua la siguiente validacion que lo deja en BFI
                                             {
@@ -3341,6 +3361,40 @@ namespace App.ControlLogicaProcesos
             }
 
             return resultadoOrdenado.ToList();
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pEncabezado"></param>
+        /// <param name="pLineaComparacion"></param>
+        /// <param name="pPlanBuscado"></param>
+        /// <returns></returns>
+        private bool GetInfoInclusion(string pEncabezado, string pLineaComparacion, string pPlanBuscado)
+        {
+            #region GetInfoInclusion
+            bool resultado = false;
+            Dictionary<string, string> ValoresInfoPlanes = new Dictionary<string, string>();
+
+            for (int i = 3; i < pEncabezado.Split('|').Length; i++) //Se incia desde el 3 por que hay es donde inician los planes
+            {
+                string item = pEncabezado.Split('|')[i];
+
+                var valoresComp = pLineaComparacion.Split('|');
+
+                ValoresInfoPlanes.Add(item, valoresComp.ElementAt(i));
+            }
+
+            if (ValoresInfoPlanes.ContainsKey(pPlanBuscado))
+            {
+                if (ValoresInfoPlanes[pPlanBuscado].ToLower().Equals("incluido"))
+                {
+                    return true;
+                }
+            }
+
+            return resultado; 
             #endregion
         }
 

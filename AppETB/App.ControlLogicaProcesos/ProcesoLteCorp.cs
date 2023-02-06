@@ -1983,7 +1983,7 @@ namespace App.ControlLogicaProcesos
 
                     llave = detalle.Substring(0, 6).Trim();
                     descripcion = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"CODT{detalle.Substring(0, 6).Trim()}")?.FirstOrDefault() ?? string.Empty;
-                    descripcion = Helpers.FormatearCampos(TiposFormateo.PrimeraMayuscula, descripcion.Substring(10).Trim());
+                    descripcion = descripcion.Substring(10).Trim();
 
                     if (llave == "02T304" || llave == "02T309")
                     {
@@ -2837,6 +2837,7 @@ namespace App.ControlLogicaProcesos
                                 string llaveUno = $"{lineaDetalle.Substring(6, 10)}";
                                 string llaveDos = $"{lineaDetalle.Substring(6, 6)}";
                                 string valorLetra = string.Empty;
+                                descripcionConcepto = string.Empty;
 
                                 valorLetra = Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoParametrizacionPaquetesFibra, llaveUno);
 
@@ -2888,6 +2889,28 @@ namespace App.ControlLogicaProcesos
                                         if (Variables.Variables.DatosInsumoExcluirServiciosAdicionales.ContainsKey(llaveCruce.TrimStart('0')))
                                         {
                                             if (descripcionConcepto.ToLower().Contains("soporte pc") && !lineaDetalle.Substring(137, 1).Contains("-"))
+                                            {
+                                                datosCFI.Add(lineaDetalle);
+                                                continue;
+                                            }
+
+                                            //Hay que identificar que tipo de internet es para saber si va incluido o no va incluido.
+
+                                            var verificarInternet = from busqueda in datosPaqueteAgrupado
+                                                                    where busqueda.Substring(186, 9).ToLower().Equals("velocidad")
+                                                                    select busqueda;
+
+                                            string internetMegas = string.Empty;
+
+                                            if (verificarInternet.Any())
+                                            {
+                                                internetMegas = verificarInternet.FirstOrDefault().Substring(211, 4);
+                                            }
+
+                                            bool estaIncluido = GetInfoInclusion(Variables.Variables.DatosInsumoExcluirServiciosAdicionales.Values.FirstOrDefault().First(),
+                                                Variables.Variables.DatosInsumoExcluirServiciosAdicionales[llaveCruce.TrimStart('0')].FirstOrDefault(), internetMegas);
+
+                                            if (!estaIncluido) // Si no esta incluido va para los excluidos CFI, si esta incluido continua la siguiente validacion que lo deja en BFI
                                             {
                                                 datosCFI.Add(lineaDetalle);
                                                 continue;
@@ -3388,6 +3411,40 @@ namespace App.ControlLogicaProcesos
             }
 
             return resultadoOrdenado.ToList();
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pEncabezado"></param>
+        /// <param name="pLineaComparacion"></param>
+        /// <param name="pPlanBuscado"></param>
+        /// <returns></returns>
+        private bool GetInfoInclusion(string pEncabezado, string pLineaComparacion, string pPlanBuscado)
+        {
+            #region GetInfoInclusion
+            bool resultado = false;
+            Dictionary<string, string> ValoresInfoPlanes = new Dictionary<string, string>();
+
+            for (int i = 3; i < pEncabezado.Split('|').Length; i++) //Se incia desde el 3 por que hay es donde inician los planes
+            {
+                string item = pEncabezado.Split('|')[i];
+
+                var valoresComp = pLineaComparacion.Split('|');
+
+                ValoresInfoPlanes.Add(item, valoresComp.ElementAt(i));
+            }
+
+            if (ValoresInfoPlanes.ContainsKey(pPlanBuscado))
+            {
+                if (ValoresInfoPlanes[pPlanBuscado].ToLower().Equals("incluido"))
+                {
+                    return true;
+                }
+            }
+
+            return resultado;
             #endregion
         }
 
@@ -5880,7 +5937,7 @@ namespace App.ControlLogicaProcesos
                     {
                         nuevaFechaDesde = $"{FechaDesde.Substring(0, 2)}{(Convert.ToInt16(FechaDesde.Substring(2, 2)) + 1).ToString().PadLeft(2, '0')}{FechaDesde.Substring(4, 4)}";
                     }
-                    
+
                     nuevaFechaHasta = $"{FechaHasta.Substring(0, 2)}{(Convert.ToInt16(FechaHasta.Substring(2, 2)) + 1).ToString().PadLeft(2, '0')}{FechaHasta.Substring(4, 4)}";
 
                     nuevaFechaDesde = Helpers.FormatearCampos(TiposFormateo.Fecha01, nuevaFechaDesde);

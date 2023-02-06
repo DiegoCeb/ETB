@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using App.ControlInsumos;
@@ -734,14 +735,14 @@ namespace App.ControlLogicaProcesos
                     tmp_recesp_cod_emp_cobranza = tmp_recesp_cod_emp_cobranza.PadLeft(13, '0');
                     tmp_recesp_valor_pagar_adicional = campos1AAA[10].Replace("$", "").Replace(".", "").Replace(",", "").Trim();
                     tmp_recesp_valor_pagar_adicional = tmp_recesp_valor_pagar_adicional.PadLeft(14, '0');
-                    tmp_recesp_fecha_venc = Convert.ToDateTime(campos1AAA[17]).ToString("yyyyMMdd");
+                    tmp_recesp_fecha_venc = Convert.ToDateTime(campos1AAA[17], new CultureInfo("es-CO")).ToString("yyyyMMdd");
                     tmp_recesp_identificacion_EFR = tmp_recesp_identificacion_EFR.PadLeft(8, '0');
                     tmp_recesp_cuenta_cliente_receptor = tmp_recesp_cuenta_cliente_receptor.PadLeft(17, ' ');
                     tmp_recesp_tipo_cuenta_receptor = tmp_recesp_tipo_cuenta_receptor.PadLeft(2, '0');
                     tmp_recesp_nro_identificacion_cliente = tmp_recesp_nro_identificacion_cliente.PadLeft(10, ' ');
                     tmp_recesp_nombre_cliente = tmp_recesp_nombre_cliente.PadLeft(22, ' ');
                     tmp_recesp_codigo_entidad_financiera = tmp_recesp_codigo_entidad_financiera.PadLeft(3, '0');
-                    tmp_recesp_reserva = Convert.ToDateTime(campos1AAA[18]).ToString("yyyyMMdd");
+                    tmp_recesp_reserva = Convert.ToDateTime(campos1AAA[18], new CultureInfo("es-CO")).ToString("yyyyMMdd");
 
                     llaveDiccionario = "ETB" + tmp_recesp_fecha_venc + "_" + campos1AAA[9].PadLeft(2, '0') + "_" + lote + "_FECHAGENERACION" + ".as";
 

@@ -1494,7 +1494,7 @@ namespace App.ControlLogicaProcesos
 
                     llave = detalle.Substring(0, 6).Trim();
                     descripcion = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"CODT{detalle.Substring(0, 6).Trim()}")?.FirstOrDefault() ?? string.Empty;
-                    descripcion = Helpers.FormatearCampos(TiposFormateo.PrimeraMayuscula, descripcion.Substring(10).Trim());
+                    descripcion = descripcion.Substring(10).Trim();
 
                     if (llave == "02T304" || llave == "02T309")
                     {
@@ -2915,7 +2915,6 @@ namespace App.ControlLogicaProcesos
         /// <returns></returns>
         private IEnumerable<string> FormateoCanal1CCD(List<string> datosOriginales)
         {
-
             #region FormateoCanal1CCD
             List<string> resultado = new List<string>();
             string resultadoTemp = string.Empty;
@@ -3152,7 +3151,7 @@ namespace App.ControlLogicaProcesos
                                 dicValores["SUBTOTAL"].Add(lineaProcesar.Substring(16, 14));
 
                                 // Otros operadores
-                                if (llaveProducto == "5" || llaveProducto == "7")
+                                if ((llaveProducto == "5" || llaveProducto == "7") && !concepto.Contains("Colombia Telec"))
                                 {
                                     impuestoProducto = Convert.ToDecimal($"{lineaProcesar.Substring(16, 12)}.{lineaProcesar.Substring(28, 2)}");
                                     impuestoProducto = impuestoProducto * Convert.ToDecimal(Utilidades.LeerAppConfig("porcentajeImpuestoConsumo"));
@@ -3324,6 +3323,8 @@ namespace App.ControlLogicaProcesos
                 #endregion
 
             }
+
+            //aplicar ordenamiento
 
             return resultado;
             #endregion

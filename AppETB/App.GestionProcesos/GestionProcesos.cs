@@ -73,6 +73,7 @@ namespace App.ControlProcesos
                     //Inicio cargue archivos y proceso de formateo
                     _objProcesamiento.EjecutarProcesoAnexosVerdes(Helpers.RutaOriginales);
                     break;
+
                 case "7": //Anexos Verdes
                     //Se crea carpeta salida se mueven datos de entrada e insumos a originales
                     _objProcesamiento.AdecuarTrabajoApp("LteCorp");
