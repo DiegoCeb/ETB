@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace App.ControlLogicaProcesos
 {
+    /// <summary>
+    /// Interfaz de Proceso
+    /// </summary>
     public interface IProcess
     {
         void Ejecutar(string pArchivo);

@@ -10,8 +10,15 @@ using DLL_Utilidades;
 
 namespace App.ControlLogicaProcesos
 {
+    /// <summary>
+    /// Clase ProcesoCreditoHipotecario
+    /// </summary>
     public class ProcesoCreditoHipotecario : IProcess
     {
+        /// <summary>
+        /// Constructor ProcesoCreditoHipotecario
+        /// </summary>
+        /// <param name="pArchivo"></param>
         public ProcesoCreditoHipotecario(string pArchivo)
         {
             #region ProcesoCreditoHipotecario
@@ -21,14 +28,7 @@ namespace App.ControlLogicaProcesos
             }
             catch (Exception ex)
             {
-                DatosError StructError = new DatosError
-                {
-                    Clase = nameof(ProcesoMasivos),
-                    Metodo = new System.Diagnostics.StackTrace(ex, true).GetFrame(0).GetMethod().ToString(),
-                    LineaError = new System.Diagnostics.StackTrace(ex, true).GetFrame(0).GetFileLineNumber(),
-                    Error = ex.Message
-                };
-
+                DatosError StructError = Helpers.ExtraerExcepcion(ex);
                 Helpers.EscribirLogVentana(StructError, true);
             }
             #endregion
@@ -40,6 +40,10 @@ namespace App.ControlLogicaProcesos
         public ProcesoCreditoHipotecario()
         { }
 
+        /// <summary>
+        /// Metodo CargueFormateoArchivo
+        /// </summary>
+        /// <param name="pArchivo"></param>
         public void CargueFormateoArchivo(string pArchivo)
         {
             #region CargueFormateoArchivo
@@ -86,11 +90,21 @@ namespace App.ControlLogicaProcesos
             #endregion
         }
 
+        /// <summary>
+        /// Metodo Ejecutar
+        /// </summary>
+        /// <param name="pArchivo"></param>
         public void Ejecutar(string pArchivo)
         {
             CargueFormateoArchivo(pArchivo);
         }
 
+        /// <summary>
+        /// Metodo que Formatea Archivo
+        /// </summary>
+        /// <param name="pLLaveCruce"></param>
+        /// <param name="datosOriginales"></param>
+        /// <returns></returns>
         public List<string> FormatearArchivo(string pLLaveCruce, List<string> datosOriginales)
         {
             #region FormatearArchivo
@@ -128,7 +142,7 @@ namespace App.ControlLogicaProcesos
         #region Canales Logica
 
         /// <summary>
-        /// 
+        /// Metodo de Formateo Canal 1AAA
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -214,7 +228,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// 
+        /// Metodo de Formateo Canal 1BBB
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>

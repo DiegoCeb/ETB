@@ -52,3 +52,4 @@ C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.ControlEjecucion\obj
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.ControlEjecucion\bin\Debug\DLL_Utilidades.pdb
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.ControlEjecucion\bin\Debug\App.ControlEjecucion.xml
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\App.ControlEjecucion\bin\Debug\App.ControlEjecucion.xml
+C:\Proyectos\ETB\AppETB\App.ControlEjecucion\bin\Debug\App.ControlEjecucion.xml

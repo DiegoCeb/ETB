@@ -10,6 +10,9 @@ using DLL_Utilidades;
 
 namespace App.ControlLogicaProcesos
 {
+    /// <summary>
+    /// Clase ProcesoAnexosVerdes
+    /// </summary>
     public class ProcesoAnexosVerdes : IProcess
     {
         #region Variables del proceso
@@ -30,14 +33,7 @@ namespace App.ControlLogicaProcesos
             }
             catch (Exception ex)
             {
-                DatosError StructError = new DatosError
-                {
-                    Clase = nameof(ProcesoMasivos),
-                    Metodo = new System.Diagnostics.StackTrace(ex, true).GetFrame(0).GetMethod().ToString(),
-                    LineaError = new System.Diagnostics.StackTrace(ex, true).GetFrame(0).GetFileLineNumber(),
-                    Error = ex.Message
-                };
-
+                DatosError StructError = Helpers.ExtraerExcepcion(ex);
                 Helpers.EscribirLogVentana(StructError, true);
             }
             #endregion
@@ -49,6 +45,10 @@ namespace App.ControlLogicaProcesos
         public ProcesoAnexosVerdes()
         { }
 
+        /// <summary>
+        /// Metodo Cargue Formateo Archivo
+        /// </summary>
+        /// <param name="pRutaArchivo"></param>
         public void CargueFormateoArchivo(string pRutaArchivo)
         {
             #region CargueFormateoArchivo
@@ -107,11 +107,21 @@ namespace App.ControlLogicaProcesos
             #endregion
         }
 
+        /// <summary>
+        /// Metodo Ejecutar
+        /// </summary>
+        /// <param name="pRutaArchivo"></param>
         public void Ejecutar(string pRutaArchivo)
         {
             CargueFormateoArchivo(pRutaArchivo);
         }
 
+        /// <summary>
+        /// Metodo Formatear Archivo
+        /// </summary>
+        /// <param name="pLLaveCruce"></param>
+        /// <param name="datosOriginales"></param>
+        /// <returns></returns>
         public List<string> FormatearArchivo(string pLLaveCruce, List<string> datosOriginales)
         {
             #region FormatearArchivo
@@ -144,10 +154,16 @@ namespace App.ControlLogicaProcesos
             #endregion
         }
 
+        /// <summary>
+        /// Metodo Organizar Datos
+        /// </summary>
+        /// <param name="pLLaveCruce"></param>
+        /// <param name="datosOriginales"></param>
         private void OrganizarDatos(string pLLaveCruce, string datosOriginales)
         {
 
-            string linea1AAA = FormateoCanal1AAA(datosOriginales);        
+            #region OrganizarDatos
+            string linea1AAA = FormateoCanal1AAA(datosOriginales);
             string linea1EEE = FormateoCanal1EEE(datosOriginales);
 
             if (dicOrdenExtractos.ContainsKey(Telefono))
@@ -166,11 +182,16 @@ namespace App.ControlLogicaProcesos
                 Dictionary<string, List<string>> dicAux = new Dictionary<string, List<string>>();
                 dicAux.Add(Descripcion, new List<string>() { linea1EEE });
                 dicOrdenExtractos.Add(Telefono, new OrdenAnexosVerdes(linea1AAA, dicAux));
-            }
+            } 
+            #endregion
         }
 
+        /// <summary>
+        /// Metodo que Extrae los Datos Organizados
+        /// </summary>
         private void ExtraerDatosOrganizados()
         {
+            #region ExtraerDatosOrganizados
             List<string> listaExtracto = new List<string>();
             List<string> lista1EEE;
             OrdenAnexosVerdes ordenAnexosVerdes;
@@ -178,7 +199,7 @@ namespace App.ControlLogicaProcesos
             foreach (string extracto in dicOrdenExtractos.Keys)
             {
                 listaExtracto.Clear();
-                ordenAnexosVerdes = dicOrdenExtractos [extracto];
+                ordenAnexosVerdes = dicOrdenExtractos[extracto];
 
                 listaExtracto.Add(ordenAnexosVerdes.Linea1AAA);
 
@@ -191,16 +212,17 @@ namespace App.ControlLogicaProcesos
 
                 }
                 AgregarDiccionario(extracto, listaExtracto);
-            }
+            } 
+            #endregion
         }
 
         #region Canales Logica
 
         /// <summary>
-        /// 
+        /// Metodo de Formateo Canal 1AAA
         /// </summary>
         /// <param name="datosOriginales"></param>
-        /// <returns></returns>
+        /// <returns>Canal Formateado</returns>
         private string FormateoCanal1AAA(string datosOriginales)
         {
             #region FormateoCanal1AAA
@@ -252,10 +274,10 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// 
+        /// Metodo de Formateo Canal 1EEE
         /// </summary>
         /// <param name="datosOriginales"></param>
-        /// <returns></returns>
+        /// <returns>Canal Formateado</returns>
         private string FormateoCanal1EEE(string datosOriginales)
         {
             #region FormateoCanal1EEE
@@ -284,10 +306,10 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// 
+        /// Metodo de Formateo Canal 1EEA
         /// </summary>
         /// <param name="datosOriginales"></param>
-        /// <returns></returns>
+        /// <returns>Canal Formateado</returns>
         private string FormateoCanal1EEA(List<string> pLista1EEE)
         {
             #region FormateoCanal1EEA

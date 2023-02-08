@@ -96,6 +96,9 @@ namespace App.Variables
         public dynamic EstructuraSalida;
     }
 
+    /// <summary>
+    /// Enumerado Insumos
+    /// </summary>
     public enum Insumos
     {
         [System.ComponentModel.Description("ExcluirServiciosAdicionales")]

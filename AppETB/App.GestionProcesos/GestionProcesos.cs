@@ -9,6 +9,9 @@ using DLL_Utilidades;
 
 namespace App.ControlProcesos
 {
+    /// <summary>
+    /// Clase GestionProcesos
+    /// </summary>
     public class GestionProcesos : IControl, IDisposable
     {
         private bool _disposed = false;
@@ -26,66 +29,84 @@ namespace App.ControlProcesos
             #endregion
         }
 
+        /// <summary>
+        /// Metodo Ejecutar
+        /// </summary>
+        /// <param name="pProceso"></param>
         public void Ejecutar(string pProceso)
         {
             #region Ejecutar
-            //Identificar Proceso para enviar a Procesamiento
-            switch (pProceso)
+            try
             {
-                case "1": //Masivos
-                    //Se crea carpeta salida se mueven datos de entrada e insumos a originales
-                    _objProcesamiento.AdecuarTrabajoApp("Masivos");
-                    //Inicio cargue archivos y proceso de formateo
-                     _objProcesamiento.EjecutarProcesoMasivo(Helpers.RutaOriginales);
-                    break;
+                //Identificar Proceso para enviar a Procesamiento
+                switch (pProceso)
+                {
+                    case "1": //Masivos
+                              //Se crea carpeta salida se mueven datos de entrada e insumos a originales
+                        _objProcesamiento.AdecuarTrabajoApp("Masivos");
+                        //Inicio cargue archivos y proceso de formateo
+                        _objProcesamiento.EjecutarProcesoMasivo(Helpers.RutaOriginales);
+                        break;
 
-                case "2": //Datos
-                    //Se crea carpeta salida se mueven datos de entrada e insumos a originales
-                    _objProcesamiento.AdecuarTrabajoApp("Datos");
-                    //Inicio cargue archivos y proceso de formateo
-                    _objProcesamiento.EjecutarProcesoDatos(Helpers.RutaOriginales);
-                    break;
+                    case "2": //Datos
+                              //Se crea carpeta salida se mueven datos de entrada e insumos a originales
+                        _objProcesamiento.AdecuarTrabajoApp("Datos");
+                        //Inicio cargue archivos y proceso de formateo
+                        _objProcesamiento.EjecutarProcesoDatos(Helpers.RutaOriginales);
+                        break;
 
-                case "3": //Gobiernos
-                    //Se crea carpeta salida se mueven datos de entrada e insumos a originales
-                    _objProcesamiento.AdecuarTrabajoApp("Gobiernos");
-                    //Inicio cargue archivos y proceso de formateo
-                    _objProcesamiento.EjecutarProcesoGobiernos(Helpers.RutaOriginales);
-                    break;
+                    case "3": //Gobiernos
+                              //Se crea carpeta salida se mueven datos de entrada e insumos a originales
+                        _objProcesamiento.AdecuarTrabajoApp("Gobiernos");
+                        //Inicio cargue archivos y proceso de formateo
+                        _objProcesamiento.EjecutarProcesoGobiernos(Helpers.RutaOriginales);
+                        break;
 
-                case "4": //LLanos
-                    //Se crea carpeta salida se mueven datos de entrada e insumos a originales
-                    _objProcesamiento.AdecuarTrabajoApp("LLanos");
-                    //Inicio cargue archivos y proceso de formateo
-                    _objProcesamiento.EjecutarProcesoLLanos(Helpers.RutaOriginales);
-                    break;
+                    case "4": //LLanos
+                              //Se crea carpeta salida se mueven datos de entrada e insumos a originales
+                        _objProcesamiento.AdecuarTrabajoApp("LLanos");
+                        //Inicio cargue archivos y proceso de formateo
+                        _objProcesamiento.EjecutarProcesoLLanos(Helpers.RutaOriginales);
+                        break;
 
-                case "5": //Hipotecario
-                    //Se crea carpeta salida se mueven datos de entrada e insumos a originales
-                    _objProcesamiento.AdecuarTrabajoApp("Hipotecario");
-                    //Inicio cargue archivos y proceso de formateo
-                    _objProcesamiento.EjecutarProcesoCreditoHipotecario(Helpers.RutaOriginales);
-                    break;
+                    case "5": //Hipotecario
+                              //Se crea carpeta salida se mueven datos de entrada e insumos a originales
+                        _objProcesamiento.AdecuarTrabajoApp("Hipotecario");
+                        //Inicio cargue archivos y proceso de formateo
+                        _objProcesamiento.EjecutarProcesoCreditoHipotecario(Helpers.RutaOriginales);
+                        break;
 
-                case "6": //Anexos Verdes
-                    //Se crea carpeta salida se mueven datos de entrada e insumos a originales
-                    _objProcesamiento.AdecuarTrabajoApp("AnexosVerdes");
-                    //Inicio cargue archivos y proceso de formateo
-                    _objProcesamiento.EjecutarProcesoAnexosVerdes(Helpers.RutaOriginales);
-                    break;
-                case "7": //Anexos Verdes
-                    //Se crea carpeta salida se mueven datos de entrada e insumos a originales
-                    _objProcesamiento.AdecuarTrabajoApp("LteCorp");
-                    //Inicio cargue archivos y proceso de formateo
-                    _objProcesamiento.EjecutarProcesoLteCorp(Helpers.RutaOriginales);
-                    break;
+                    case "6": //Anexos Verdes
+                              //Se crea carpeta salida se mueven datos de entrada e insumos a originales
+                        _objProcesamiento.AdecuarTrabajoApp("AnexosVerdes");
+                        //Inicio cargue archivos y proceso de formateo
+                        _objProcesamiento.EjecutarProcesoAnexosVerdes(Helpers.RutaOriginales);
+                        break;
+                    case "7": //Anexos Verdes
+                              //Se crea carpeta salida se mueven datos de entrada e insumos a originales
+                        _objProcesamiento.AdecuarTrabajoApp("LteCorp");
+                        //Inicio cargue archivos y proceso de formateo
+                        _objProcesamiento.EjecutarProcesoLteCorp(Helpers.RutaOriginales);
+                        break;
+                }
+
+                Helpers.EscribirVentanaLog("Final Existoso del Proceso, revise la carpeta salidas !!!");
+                Helpers.EscribirVentanaLog($"Ruta Salidas: {Helpers.RutaProceso}");
+
+            }
+            catch (Exception ex)
+            {
+                DatosError StructError = Helpers.ExtraerExcepcion(ex);
+
+                Helpers.EscribirLogVentana(StructError, true);
+            }
+            finally
+            {
+                Helpers.EscribirVentanaLog("Presione una tecla para cerrar...");
             }
 
-            Helpers.EscribirVentanaLog("Final Existoso del Proceso, revise la carpeta salidas !!!");
-            Helpers.EscribirVentanaLog($"Ruta Salidas: {Helpers.RutaProceso}");
-            Helpers.EscribirVentanaLog("Presione una tecla para cerrar...");
             Console.ReadKey();
-            Environment.Exit(1); 
+            Environment.Exit(1);
             #endregion
         }
 
@@ -206,7 +227,7 @@ namespace App.ControlProcesos
                     Menu();
                     break;
             }
-            
+
             #endregion
         }
 

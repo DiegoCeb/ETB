@@ -539,7 +539,7 @@ namespace App.ControlEjecucion
         #region Logica y Escritura de Salidas del proceso
 
         /// <summary>
-        /// 
+        /// Metodo que Escribe Salidas Proceso
         /// </summary>
         /// <param name="pRutaSalida"></param>
         /// <param name="pDatosImprimir"></param>
@@ -604,7 +604,7 @@ namespace App.ControlEjecucion
 
 
         /// <summary>
-        /// 
+        /// Metodo que Escribe Datos Salida Completo
         /// </summary>
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRuta"></param>
@@ -649,7 +649,7 @@ namespace App.ControlEjecucion
         }
 
         /// <summary>
-        /// 
+        /// Metodo que Escribe Datos Salida No Imprimir
         /// </summary>
         /// <param name="pRuta"></param>
         /// <param name="pNombreArchivo"></param>
@@ -753,7 +753,7 @@ namespace App.ControlEjecucion
         }
 
         /// <summary>
-        /// 
+        /// Metodo que Escribe Datos Salida SMS
         /// </summary>
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRuta"></param>
@@ -807,7 +807,7 @@ namespace App.ControlEjecucion
         }
 
         /// <summary>
-        /// 
+        /// Metodo que Escribe Datos Salida Email
         /// </summary>
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRuta"></param>
@@ -896,7 +896,7 @@ namespace App.ControlEjecucion
         }
 
         /// <summary>
-        /// 
+        /// Metodo que Procesa Salidas
         /// </summary>
         /// <param name="pDatos"></param>
         /// <param name="pRuta"></param>
@@ -949,7 +949,7 @@ namespace App.ControlEjecucion
         }
 
         /// <summary>
-        /// 
+        /// Metodo que Escribe Datos Salida Distribucion Especial
         /// </summary>
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRuta"></param>
@@ -1012,7 +1012,7 @@ namespace App.ControlEjecucion
         }
 
         /// <summary>
-        /// 
+        /// Metodo que Procesa Salidas Distribucion Especial
         /// </summary>
         /// <param name="pDatos"></param>
         /// <param name="pDatosImprimir"></param>
@@ -1050,7 +1050,7 @@ namespace App.ControlEjecucion
         }
 
         /// <summary>
-        /// 
+        /// Metodo que Escribe Datos Salida Error Lte
         /// </summary>
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRuta"></param>
@@ -1085,7 +1085,7 @@ namespace App.ControlEjecucion
         }
 
         /// <summary>
-        /// 
+        /// Metodo que Escribe Datos Salida Diferencias
         /// </summary>
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRuta"></param>
@@ -1128,7 +1128,7 @@ namespace App.ControlEjecucion
         }
 
         /// <summary>
-        /// 
+        /// Metodo que Escribe Datos Salida Otros
         /// </summary>
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRuta"></param>
@@ -1196,7 +1196,7 @@ namespace App.ControlEjecucion
         }
 
         /// <summary>
-        /// 
+        /// Metodo que Procesa Salidas Otros Procesos
         /// </summary>
         /// <param name="pDatos"></param>
         /// <param name="pRuta"></param>
@@ -1220,7 +1220,7 @@ namespace App.ControlEjecucion
         }
 
         /// <summary>
-        /// 
+        /// Metodo que Escribe Datos Salida Impresion
         /// </summary>
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRuta"></param>
@@ -1373,7 +1373,7 @@ namespace App.ControlEjecucion
         }
 
         /// <summary>
-        /// 
+        /// Metodo que Procesa Salidas Impresion
         /// </summary>
         /// <param name="pDatos"></param>
         /// <param name="pRuta"></param>
@@ -1432,7 +1432,7 @@ namespace App.ControlEjecucion
         }
 
         /// <summary>
-        /// 
+        /// Metodo que Procesa Salidas Impresion LLanos
         /// </summary>
         /// <param name="pDatos"></param>
         /// <param name="pRuta"></param>
@@ -1491,7 +1491,7 @@ namespace App.ControlEjecucion
         }
 
         /// <summary>
-        /// 
+        /// Metodo que Escribe Datos Salida Num Hojas
         /// </summary>
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRuta"></param>
@@ -1529,7 +1529,7 @@ namespace App.ControlEjecucion
         }
 
         /// <summary>
-        /// 
+        /// Metodo que Escribe Datos Salida Clientes Esepeciales
         /// </summary>
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRuta"></param>
@@ -1573,7 +1573,7 @@ namespace App.ControlEjecucion
         }
 
         /// <summary>
-        /// 
+        /// Metodo que Escribe Datos Salida Impresion Normal
         /// </summary>
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRuta"></param>

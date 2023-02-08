@@ -10,6 +10,9 @@ using DLL_Utilidades;
 
 namespace App.ControlLogicaProcesos
 {
+    /// <summary>
+    /// Clase ProcesoLlanos
+    /// </summary>
     public class ProcesoLlanos : IProcess
     {
         #region Variables del proceso
@@ -19,6 +22,10 @@ namespace App.ControlLogicaProcesos
         private string MesConsumo { get; set; }
         #endregion
 
+        /// <summary>
+        /// Constructor ProcesoLlanos
+        /// </summary>
+        /// <param name="pArchivo"></param>
         public ProcesoLlanos(string pArchivo)
         {
             #region ProcesoLlanos
@@ -28,14 +35,7 @@ namespace App.ControlLogicaProcesos
             }
             catch (Exception ex)
             {
-                DatosError StructError = new DatosError
-                {
-                    Clase = nameof(ProcesoMasivos),
-                    Metodo = new System.Diagnostics.StackTrace(ex, true).GetFrame(0).GetMethod().ToString(),
-                    LineaError = new System.Diagnostics.StackTrace(ex, true).GetFrame(0).GetFileLineNumber(),
-                    Error = ex.Message
-                };
-
+                DatosError StructError = Helpers.ExtraerExcepcion(ex);
                 Helpers.EscribirLogVentana(StructError, true);
             }
             #endregion
@@ -47,6 +47,10 @@ namespace App.ControlLogicaProcesos
         public ProcesoLlanos()
         { }
 
+        /// <summary>
+        /// Metodo CargueFormateoArchivo
+        /// </summary>
+        /// <param name="pArchivo"></param>
         public void CargueFormateoArchivo(string pArchivo)
         {
             if (pArchivo.Contains("desktop.ini"))
@@ -153,6 +157,10 @@ namespace App.ControlLogicaProcesos
             #endregion
         }
 
+        /// <summary>
+        /// Metodo Ejecutar
+        /// </summary>
+        /// <param name="pArchivo"></param>
         public void Ejecutar(string pArchivo)
         {
             CargarCiudades();
@@ -160,6 +168,12 @@ namespace App.ControlLogicaProcesos
             CargueFormateoArchivo(pArchivo);
         }
 
+        /// <summary>
+        /// Metodo FormatearArchivo
+        /// </summary>
+        /// <param name="pLLaveCruce"></param>
+        /// <param name="datosOriginales"></param>
+        /// <returns></returns>
         public List<string> FormatearArchivo(string pLLaveCruce, List<string> datosOriginales)
         {
             #region FormatearArchivo
@@ -279,7 +293,7 @@ namespace App.ControlLogicaProcesos
         #region Canales Logica
 
         /// <summary>
-        /// 
+        /// Metodo de FormateoCanal1AAA
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -344,6 +358,11 @@ namespace App.ControlLogicaProcesos
         }
 
         #region Metodos 1AAA
+        /// <summary>
+        /// Metodo que obtiene CuentaSinLetras
+        /// </summary>
+        /// <param name="pCampo"></param>
+        /// <returns></returns>
         private string GetCuentaSinLetras(string pCampo)
         {
             #region GetCuentaSinLetras
@@ -358,6 +377,12 @@ namespace App.ControlLogicaProcesos
             #endregion
         }
 
+        /// <summary>
+        /// Metodo que obtiene ZonaPostal
+        /// </summary>
+        /// <param name="pZonaPostal"></param>
+        /// <param name="separado"></param>
+        /// <returns></returns>
         private string GetZonaPostal(string pZonaPostal, bool separado)
         {
             #region GetZonaPostal
@@ -384,6 +409,11 @@ namespace App.ControlLogicaProcesos
             #endregion
         }
 
+        /// <summary>
+        /// Metodo que obtiene CiudadDepto
+        /// </summary>
+        /// <param name="pZonaPostal"></param>
+        /// <returns></returns>
         private List<string> GetCiudadDepto(string pZonaPostal)
         {
             #region GetCiudadDepto
@@ -415,6 +445,11 @@ namespace App.ControlLogicaProcesos
             #endregion
         }
 
+        /// <summary>
+        /// Metodo que obtiene Actividad
+        /// </summary>
+        /// <param name="pActividad"></param>
+        /// <returns></returns>
         private string GetActividad(string pActividad)
         {
             #region GetActividad
@@ -436,6 +471,10 @@ namespace App.ControlLogicaProcesos
             #endregion
         }
 
+        /// <summary>
+        /// Metodo que obtiene Email
+        /// </summary>
+        /// <returns></returns>
         private List<string> GetEmail()
         {
             #region GetActividad
@@ -474,11 +513,11 @@ namespace App.ControlLogicaProcesos
 
             return resultado;
             #endregion
-        } 
+        }
         #endregion
 
         /// <summary>
-        /// 
+        /// Metodo de 
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -499,8 +538,8 @@ namespace App.ControlLogicaProcesos
             ListaCanal1BBA.Add(Helpers.GetCamposLlanos(datosOriginales, camposllanos));
 
             string mesConsumo = Helpers.GetCampoLLanos(datosOriginales, 11, "*p1100x290Y");
-            ListaCanal1BBA.Add(GetVlrMinInt(Helpers.GetCampoLLanos(datosOriginales,11, "*p1130x435Y", "0.00"),mesConsumo));  // vlr_min_int
-            
+            ListaCanal1BBA.Add(GetVlrMinInt(Helpers.GetCampoLLanos(datosOriginales, 11, "*p1130x435Y", "0.00"), mesConsumo));  // vlr_min_int
+
             camposllanos.Clear();
             //camposllanos.Add(new CamposLLanos(11, "*p1130x475Y", "0.00")); // vlr_min_adic
             //camposllanos.Add(new CamposLLanos(11, "*p1250x550Y")); // ciclo
@@ -509,12 +548,18 @@ namespace App.ControlLogicaProcesos
 
             resultado = Helpers.ValidarPipePipe(Helpers.ListaCamposToLinea(ListaCanal1BBA, '|'));
 
-            MesConsumo = Helpers.GetCampoLLanos(datosOriginales,11, "*p1100x290Y");
+            MesConsumo = Helpers.GetCampoLLanos(datosOriginales, 11, "*p1100x290Y");
 
             return resultado;
             #endregion
         }
 
+        /// <summary>
+        /// Metodo que Obtiene VlrMinInt
+        /// </summary>
+        /// <param name="pVlrMinInt"></param>
+        /// <param name="pMesConsumo"></param>
+        /// <returns></returns>
         private string GetVlrMinInt(string pVlrMinInt, string pMesConsumo)
         {
             #region GetVlrMinInt
@@ -533,7 +578,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// 
+        /// Metodo de FormateoCanal1BBB
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -601,7 +646,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// 
+        /// Metodo de FormateoCanal1CCC
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -662,13 +707,18 @@ namespace App.ControlLogicaProcesos
                 valorTotal = lineas1CCC[0].Trim();
             }
 
-            resultado.Add($"1CCC|VALOR CARGOS ETB|{valorTotal}"); 
+            resultado.Add($"1CCC|VALOR CARGOS ETB|{valorTotal}");
             #endregion
 
             return resultado;
             #endregion
         }
 
+        /// <summary>
+        /// Metodo de LlenarDiccionario1CCC
+        /// </summary>
+        /// <param name="pDiccionario1CCC"></param>
+        /// <param name="plinea1CCC"></param>
         private void LlenarDiccionario1CCC(Dictionary<string, List<string>> pDiccionario1CCC, List<string> plinea1CCC)
         {
             string llave = string.Empty;
@@ -676,7 +726,7 @@ namespace App.ControlLogicaProcesos
             foreach (string linea in plinea1CCC)
             {
                 llave = linea.Substring(0, linea.IndexOf("Y")).Trim();
-                datos = linea.Substring(linea.IndexOf("Y")+1).Trim();
+                datos = linea.Substring(linea.IndexOf("Y") + 1).Trim();
 
                 if (llave != "1074" && llave != "1138")
                 {
@@ -693,7 +743,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// 
+        /// /// Metodo de FormateoCanal1DDD
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -738,7 +788,7 @@ namespace App.ControlLogicaProcesos
             lineas1DDD = Helpers.GetListaCampoLLanos(datosOriginales, 12, "*p1390x1074Y"); // valor_iva
             if (lineas1DDD.Count > 0 && conceptoIva)
             {
-                
+
                 lineaIva += $"{lineas1DDD[0].Trim()}";
             }
             if (conceptoIva)
@@ -754,7 +804,7 @@ namespace App.ControlLogicaProcesos
             {
                 valorTotal = lineas1DDD[0].Trim();
             }
-            
+
             resultado.Add($"1DDD|PAGAR EMPRESAS LD Y MÓVIL|{valorTotal}");
             #endregion
 
@@ -763,7 +813,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// 
+        /// Metodo de FormateoCanal1EEE
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -782,7 +832,7 @@ namespace App.ControlLogicaProcesos
             lineas1EEE = Helpers.GetListaCampoLLanos(datosOriginales, 7, "*p2150x"); // valor
             LlenarDiccionario1CCC(diccionario1EEE, lineas1EEE);
 
-            diccionario1EEE = diccionario1EEE.Reverse().ToDictionary(x=>x.Key, x=>x.Value);
+            diccionario1EEE = diccionario1EEE.Reverse().ToDictionary(x => x.Key, x => x.Value);
             string concepto = string.Empty;
             foreach (var detalles in diccionario1EEE.Values)
             {
@@ -811,7 +861,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// 
+        /// Metodo de FormateoCanal1FFF
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -948,7 +998,7 @@ namespace App.ControlLogicaProcesos
                         detallesOrdenados[dateTime].Add(lineaDetalle);
                     }
 
-                    
+
                 }
 
             }
@@ -1032,7 +1082,7 @@ namespace App.ControlLogicaProcesos
                     {
                         resultado.Add($"1FFB|{detalle}");
                     }
-                    
+
                 }
             }
             #endregion
@@ -1042,7 +1092,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// 
+        /// Metodo de FormateoCanal1FFA
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -1056,7 +1106,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// 
+        /// Metodo de FormateoCanal1FFB
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -1070,7 +1120,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// 
+        /// Metodo de FormateoCanal1HHH
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -1106,7 +1156,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// 
+        /// /// Metodo de FormarPaqueteCPC
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -1115,17 +1165,17 @@ namespace App.ControlLogicaProcesos
             #region FormarPaqueteCPC
             List<string> resultado = new List<string>();
 
-            string titulo = Helpers.GetCampoLLanos(datosOriginales,11, "*p250x2500Y"); // TituloClausulaPermanencia
+            string titulo = Helpers.GetCampoLLanos(datosOriginales, 11, "*p250x2500Y"); // TituloClausulaPermanencia
 
             if (!string.IsNullOrEmpty(titulo))
             {
                 resultado.Add($"1CPC|{titulo}");
-                
+
                 List<string> linea1CPC;
                 Dictionary<string, List<string>> diccionario1CPC = new Dictionary<string, List<string>>();
 
                 linea1CPC = Helpers.GetListaCampoLLanos(datosOriginales, 5, "*p35x"); // Servicio
-                LlenarDiccionario1CPC(diccionario1CPC,linea1CPC);
+                LlenarDiccionario1CPC(diccionario1CPC, linea1CPC);
 
                 linea1CPC = Helpers.GetListaCampoLLanos(datosOriginales, 6, "*p155x"); // FechaInicio
                 LlenarDiccionario1CPC(diccionario1CPC, linea1CPC);
@@ -1152,14 +1202,20 @@ namespace App.ControlLogicaProcesos
 
                 resultado.Add(Helpers.ValidarPipePipe($"1CPM|{Helpers.GetCampoLLanos(datosOriginales, 10, "*p35x2660Y")}")); // MensajeClausulaPermanencia
             }
-            
+
 
             return resultado;
             #endregion
         }
 
+        /// <summary>
+        /// Metodo de LlenarDiccionario1CPC
+        /// </summary>
+        /// <param name="pDiccionario1CPC"></param>
+        /// <param name="plinea1CPC"></param>
         private void LlenarDiccionario1CPC(Dictionary<string, List<string>> pDiccionario1CPC, List<string> plinea1CPC)
         {
+            #region LlenarDiccionario1CPC
             string llave = string.Empty;
 
             foreach (string linea in plinea1CPC)
@@ -1174,9 +1230,15 @@ namespace App.ControlLogicaProcesos
                     pDiccionario1CPC.Add(llave, new List<string>() { GetCampoValor1CPC(linea.Substring(5).Trim()) });
                 }
 
-            }
+            } 
+            #endregion
         }
 
+        /// <summary>
+        /// Metodo que Obtiene Valor1CPC
+        /// </summary>
+        /// <param name="pCampo"></param>
+        /// <returns></returns>
         private string GetCampoValor1CPC(string pCampo)
         {
             string resultado = pCampo;
@@ -1194,7 +1256,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// 
+        /// Metodo de FormateoCanal1MEN
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -1228,7 +1290,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// 
+        /// Metodo de FormateoCanal1LMP
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -1253,7 +1315,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// 
+        /// Metodo de FormateoCanal1LSP
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -1265,7 +1327,7 @@ namespace App.ControlLogicaProcesos
             List<string> linea1LSP = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoLlanosSuple, $"{Cuenta}{Telefono}");
 
             string[] campos;
-            
+
             foreach (var item in linea1LSP)
             {
                 campos = item.Split('|');
@@ -1281,6 +1343,9 @@ namespace App.ControlLogicaProcesos
 
         #endregion
 
+        /// <summary>
+        /// Metodo Cargar Ciudades
+        /// </summary>
         private void CargarCiudades()
         {
             Variables.Variables.DicCiudadesLlanos.Add("01", new Variables.CiudadesLLanos("VILLAVICENCIO", "META"));
@@ -1295,6 +1360,9 @@ namespace App.ControlLogicaProcesos
             Variables.Variables.DicCiudadesLlanos.Add("31", new Variables.CiudadesLLanos("BOGOTA", "C / MARCA"));
         }
 
+        /// <summary>
+        /// Metodo Cargar Actividades
+        /// </summary>
         private void CargarActividades()
         {
             Variables.Variables.DicActividadesLlanos.Add("-1", "");
