@@ -59,4 +59,3 @@ C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.GestionProcesos\bin\
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\App.GestionProcesos\bin\Debug\App.ControlEjecucion.xml
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\App.GestionProcesos\bin\Debug\App.ControlEjecucion.xml
 C:\Proyectos\ETB\AppETB\App.GestionProcesos\bin\Debug\App.ControlEjecucion.xml
-C:\Users\adieg\Documents\GitHub\ETB\AppETB\App.GestionProcesos\bin\Debug\App.ControlLogicaProcesos.xml

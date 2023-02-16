@@ -24,6 +24,7 @@ namespace App.Variables
         public static Dictionary<string, List<string>> DatosInsumoVelocidadFibra = new Dictionary<string, List<string>>();
         public static Dictionary<string, string> DatosInsumoParametrizacionPaquetesFibra = new Dictionary<string, string>();
         public static Dictionary<string, string> DatosInsumoCuentasEnvioSms = new Dictionary<string, string>();
+        public static Dictionary<string, string> DatosInsumoCuentasEnvioWhatsapp = new Dictionary<string, string>();
         public static Dictionary<string, string> DatosInsumoCodigosUniverSvas = new Dictionary<string, string>();
         public static Dictionary<string, string> DatosInsumoCuentasSvasFueraBundle = new Dictionary<string, string>();
         public static Dictionary<string, string> DatosInsumoCuentasExtraer = new Dictionary<string, string>();
@@ -96,9 +97,6 @@ namespace App.Variables
         public dynamic EstructuraSalida;
     }
 
-    /// <summary>
-    /// Enumerado Insumos
-    /// </summary>
     public enum Insumos
     {
         [System.ComponentModel.Description("ExcluirServiciosAdicionales")]
@@ -184,7 +182,9 @@ namespace App.Variables
         [System.ComponentModel.Description("Llanos_min_plan")]
         Llanos_min_plan = 40,
         [System.ComponentModel.Description("Llanos_suple")]
-        Llanos_suple = 41
+        Llanos_suple = 41,
+        [System.ComponentModel.Description("cuentas_Envio_Whatsapp")]
+        cuentas_Envio_Whatsapp = 42
 
     }
 

@@ -371,6 +371,10 @@ namespace App.ControlEjecucion
                             {
                                 Helpers.GetCuentasEnvioSms(File.ReadAllLines(Archivo, Encoding.Default).ToList());
                             }
+                            else if (EnumInsumo.ToString() == Variables.Insumos.cuentas_Envio_Whatsapp.ToString())
+                            {
+                                Helpers.GetCuentasEnvioWhatsapp(File.ReadAllLines(Archivo, Encoding.Default).ToList());
+                            }
                             else if (EnumInsumo.ToString() == Variables.Insumos.Codigos_Univer_SVAS.ToString())
                             {
                                 Helpers.GetCodigosUniverSvas(File.ReadAllLines(Archivo, Encoding.Default).ToList());
@@ -539,7 +543,7 @@ namespace App.ControlEjecucion
         #region Logica y Escritura de Salidas del proceso
 
         /// <summary>
-        /// Metodo que Escribe Salidas Proceso
+        /// 
         /// </summary>
         /// <param name="pRutaSalida"></param>
         /// <param name="pDatosImprimir"></param>
@@ -554,6 +558,7 @@ namespace App.ControlEjecucion
                     EscribirDatosSalidaCompleto(pDatosImprimir, $"{pRutaSalida}", $"COMPLETO.sal", pLote, "1");
                     EscribirDatosSalidaNoImprimir(pDatosImprimir, $"{pRutaSalida}", $"I_NO_IMPRIMIR.sal", "1");
                     EscribirDatosSalidaSms(pDatosImprimir, $"{pRutaSalida}", $"I_ENVIO_SMS.sal", "1");
+                    EscribirDatosSalidaWhatsapp(pDatosImprimir, $"{pRutaSalida}", $"I_ENVIO_Whatsapp.sal", "1");
                     EscribirDatosSalidaErrorLte(pDatosImprimir, $"{pRutaSalida}", $"I_ERROR_FACTURA_LTE.sal");
                     EscribirDatosSalidaDiferencias(pDatosImprimir, $"{pRutaSalida}", $"I_DIFERENCIAS.sal");
                     EscribirDatosSalidaDistribucionEspecial(pDatosImprimir, $"{pRutaSalida}", $"I_DISTRIBUCION_ESPECIAL.sal", "1");
@@ -604,7 +609,7 @@ namespace App.ControlEjecucion
 
 
         /// <summary>
-        /// Metodo que Escribe Datos Salida Completo
+        /// 
         /// </summary>
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRuta"></param>
@@ -649,7 +654,7 @@ namespace App.ControlEjecucion
         }
 
         /// <summary>
-        /// Metodo que Escribe Datos Salida No Imprimir
+        /// 
         /// </summary>
         /// <param name="pRuta"></param>
         /// <param name="pNombreArchivo"></param>
@@ -753,7 +758,7 @@ namespace App.ControlEjecucion
         }
 
         /// <summary>
-        /// Metodo que Escribe Datos Salida SMS
+        /// 
         /// </summary>
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRuta"></param>
@@ -807,7 +812,36 @@ namespace App.ControlEjecucion
         }
 
         /// <summary>
-        /// Metodo que Escribe Datos Salida Email
+        /// 
+        /// </summary>
+        /// <param name="pDatosImprimir"></param>
+        /// <param name="pRuta"></param>
+        /// <param name="pNombreArchivo"></param>
+        private void EscribirDatosSalidaWhatsapp(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo, string pTipoProceso)
+        {
+            #region EscribirDatosSalidaWhtasapp
+            IEnumerable<KeyValuePair<string, List<string>>> objDatos = null;
+
+            switch (pTipoProceso)
+            {
+                case "1":
+
+                    objDatos = from busqueda in pDatosImprimir
+                               where Variables.Variables.DatosInsumoCuentasEnvioWhatsapp.ContainsKey(busqueda.Key) &&
+                               !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key)
+                               select busqueda;
+
+                    if (objDatos.Any())
+                    {
+                        ProcesarSalidas(objDatos, pRuta, pNombreArchivo);
+                    }
+                    break;
+            }
+            #endregion
+        }
+
+        /// <summary>
+        /// 
         /// </summary>
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRuta"></param>
@@ -825,6 +859,7 @@ namespace App.ControlEjecucion
                                where Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key) &&
                                !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
                                !Variables.Variables.DatosInsumoCuentasEnvioSms.ContainsKey(busqueda.Key) &&
+                               !Variables.Variables.DatosInsumoCuentasEnvioWhatsapp.ContainsKey(busqueda.Key) &&
                                !Variables.Variables.DatosErrorLTE.ContainsKey(busqueda.Key) &&
                                !Variables.Variables.Diferencias.ContainsKey(busqueda.Key) &&
                                !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key)
@@ -896,7 +931,7 @@ namespace App.ControlEjecucion
         }
 
         /// <summary>
-        /// Metodo que Procesa Salidas
+        /// 
         /// </summary>
         /// <param name="pDatos"></param>
         /// <param name="pRuta"></param>
@@ -949,7 +984,7 @@ namespace App.ControlEjecucion
         }
 
         /// <summary>
-        /// Metodo que Escribe Datos Salida Distribucion Especial
+        /// 
         /// </summary>
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRuta"></param>
@@ -966,6 +1001,7 @@ namespace App.ControlEjecucion
                                 where Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.DatosInsumoCuentasEnvioSms.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DatosInsumoCuentasEnvioWhatsapp.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.DatosErrorLTE.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.Diferencias.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key)
@@ -1012,7 +1048,7 @@ namespace App.ControlEjecucion
         }
 
         /// <summary>
-        /// Metodo que Procesa Salidas Distribucion Especial
+        /// 
         /// </summary>
         /// <param name="pDatos"></param>
         /// <param name="pDatosImprimir"></param>
@@ -1050,7 +1086,7 @@ namespace App.ControlEjecucion
         }
 
         /// <summary>
-        /// Metodo que Escribe Datos Salida Error Lte
+        /// 
         /// </summary>
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRuta"></param>
@@ -1085,7 +1121,7 @@ namespace App.ControlEjecucion
         }
 
         /// <summary>
-        /// Metodo que Escribe Datos Salida Diferencias
+        /// 
         /// </summary>
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRuta"></param>
@@ -1128,7 +1164,7 @@ namespace App.ControlEjecucion
         }
 
         /// <summary>
-        /// Metodo que Escribe Datos Salida Otros
+        /// 
         /// </summary>
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRuta"></param>
@@ -1144,6 +1180,7 @@ namespace App.ControlEjecucion
                     objDatos = (from busqueda in pDatosImprimir
                                 where !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.DatosInsumoCuentasEnvioSms.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DatosInsumoCuentasEnvioWhatsapp.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.DatosErrorLTE.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.Diferencias.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
@@ -1196,7 +1233,7 @@ namespace App.ControlEjecucion
         }
 
         /// <summary>
-        /// Metodo que Procesa Salidas Otros Procesos
+        /// 
         /// </summary>
         /// <param name="pDatos"></param>
         /// <param name="pRuta"></param>
@@ -1220,7 +1257,7 @@ namespace App.ControlEjecucion
         }
 
         /// <summary>
-        /// Metodo que Escribe Datos Salida Impresion
+        /// 
         /// </summary>
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRuta"></param>
@@ -1239,6 +1276,7 @@ namespace App.ControlEjecucion
                                 where Variables.Variables.DatosInsumoProcuni.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.DatosInsumoCuentasEnvioSms.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DatosInsumoCuentasEnvioWhatsapp.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.DatosErrorLTE.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.Diferencias.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
@@ -1255,6 +1293,7 @@ namespace App.ControlEjecucion
                                 where Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.DatosInsumoCuentasEnvioSms.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DatosInsumoCuentasEnvioWhatsapp.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.DatosErrorLTE.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.Diferencias.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key)
@@ -1373,7 +1412,7 @@ namespace App.ControlEjecucion
         }
 
         /// <summary>
-        /// Metodo que Procesa Salidas Impresion
+        /// 
         /// </summary>
         /// <param name="pDatos"></param>
         /// <param name="pRuta"></param>
@@ -1432,7 +1471,7 @@ namespace App.ControlEjecucion
         }
 
         /// <summary>
-        /// Metodo que Procesa Salidas Impresion LLanos
+        /// 
         /// </summary>
         /// <param name="pDatos"></param>
         /// <param name="pRuta"></param>
@@ -1491,7 +1530,7 @@ namespace App.ControlEjecucion
         }
 
         /// <summary>
-        /// Metodo que Escribe Datos Salida Num Hojas
+        /// 
         /// </summary>
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRuta"></param>
@@ -1529,7 +1568,7 @@ namespace App.ControlEjecucion
         }
 
         /// <summary>
-        /// Metodo que Escribe Datos Salida Clientes Esepeciales
+        /// 
         /// </summary>
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRuta"></param>
@@ -1573,7 +1612,7 @@ namespace App.ControlEjecucion
         }
 
         /// <summary>
-        /// Metodo que Escribe Datos Salida Impresion Normal
+        /// 
         /// </summary>
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRuta"></param>

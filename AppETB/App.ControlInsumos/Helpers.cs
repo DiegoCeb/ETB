@@ -537,6 +537,28 @@ namespace App.ControlInsumos
             #endregion
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pDatosInsumo"></param>
+        public static void GetCuentasEnvioWhatsapp(List<string> pDatosInsumo)
+        {
+            #region GetCuentasEnvioWhatsapp
+
+            foreach (var datoLinea in pDatosInsumo)
+            {
+                string llaveCruce = datoLinea;
+
+                if (!Variables.Variables.DatosInsumoCuentasEnvioWhatsapp.ContainsKey(llaveCruce))
+                {
+                    Variables.Variables.DatosInsumoCuentasEnvioWhatsapp.Add(llaveCruce, datoLinea);
+                }
+            }
+
+            #endregion
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -1672,7 +1694,7 @@ namespace App.ControlInsumos
         /// </summary>
         /// <param name="pFormateoTipo"></param>
         /// <param name="pCampo"></param>
-        /// <returns>Campo Formateado</returns>
+        /// <returns></returns>
         public static string FormatearCampos(TiposFormateo? pFormateoTipo, string pCampo)
         {
             switch (pFormateoTipo)
@@ -1766,10 +1788,10 @@ namespace App.ControlInsumos
         }
 
         /// <summary>
-        /// Metodo que Formatea Fecha
+        /// FormateaFecha
         /// </summary>
         /// <param name="pCampo"></param>
-        /// <returns>Campo Formateado</returns>
+        /// <returns></returns>
         private static string FormatearFecha(string pFormatoFechaTipo, string pCampo)
         {
             #region FormatearFecha
@@ -1980,10 +2002,10 @@ namespace App.ControlInsumos
         }
 
         /// <summary>
-        /// Metodo que Formatea Decimal
+        /// FormateaFecha
         /// </summary>
         /// <param name="pCampo"></param>
-        /// <returns>Campo Formateado</returns>
+        /// <returns></returns>
         private static string FormatearDecimal(string pFormatoDecimalTipo, string pCampo)
         {
             string transformado = string.Empty;
@@ -2150,10 +2172,10 @@ namespace App.ControlInsumos
         }
 
         /// <summary>
-        /// Metodo que Formatea Letra Capital
+        /// 
         /// </summary>
         /// <param name="pCampo"></param>
-        /// <returns>Campo Formateado</returns>
+        /// <returns></returns>
         private static string FormatearLetraCapital(string pCampo)
         {
             #region FormatearLetraCapital
@@ -2169,10 +2191,10 @@ namespace App.ControlInsumos
         }
 
         /// <summary>
-        ///  Metodo que Formatea Primera Mayuscula
+        /// 
         /// </summary>
         /// <param name="pCampo"></param>
-        /// <returns>Campo Formateado</returns>
+        /// <returns></returns>
         private static string FormatearPrimeraMayuscula(string pCampo)
         {
             #region FormatearPrimeraMayuscula
@@ -2188,10 +2210,10 @@ namespace App.ControlInsumos
         }
 
         /// <summary>
-        ///  Metodo que Redondea Campo
+        /// 
         /// </summary>
         /// <param name="pCampo"></param>
-        /// <returns>Campo Formateado</returns>
+        /// <returns></returns>
         private static string FormatearRedondeo(string pFormatoRedondeoTipo, string pCampo)
         {
             #region FormatearRedondeo
@@ -2220,11 +2242,12 @@ namespace App.ControlInsumos
             #endregion
         }
 
+
         /// <summary>
-        ///  Metodo que Formatea Hora Minuto
+        /// 
         /// </summary>
         /// <param name="pCampo"></param>
-        /// <returns>Campo Formateado</returns>
+        /// <returns></returns>
         private static string FormatearHoraMinuto(string pCampo)
         {
             #region FormatearHoraMinuto
@@ -2233,10 +2256,10 @@ namespace App.ControlInsumos
         }
 
         /// <summary>
-        ///  Metodo que Formatea Cadena
+        /// 
         /// </summary>
         /// <param name="pCampo"></param>
-        /// <returns>Campo Formateado</returns>
+        /// <returns></returns>
         private static string FormatearCadena(string pFormatoCadenaTipo, string pCampo)
         {
             #region FormatearCadena
@@ -2261,10 +2284,10 @@ namespace App.ControlInsumos
         }
 
         /// <summary>
-        ///  Metodo que Formatea Hora Minuto Segundo
+        /// 
         /// </summary>
-        /// <param name="pCampo">Campo</param>
-        /// <returns>Campo Formateado</returns>
+        /// <param name="pCampo"></param>
+        /// <returns></returns>
         private static string FormatearHoraMinutoSegundo(string pCampo)
         {
             #region FormatearHoraMinuto
@@ -2275,8 +2298,8 @@ namespace App.ControlInsumos
         /// <summary>
         /// Metodo para tomar la fecha mas reciente
         /// </summary>
-        /// <param name="ListaFechas">Lista Fechas</param>
-        /// <returns>Fecha</returns>
+        /// <param name="ListaFechas"></param>
+        /// <returns></returns>
         public static string GetFechaMasReciente(List<string> ListaFechas)
         {
             #region GetFechaMasReciente
@@ -2317,11 +2340,11 @@ namespace App.ControlInsumos
         }
 
         /// <summary>
-        /// Metodo que Obtiene la Fecha Maxima O Minima
+        /// 
         /// </summary>
-        /// <param name="listaFechas">Lista Fechas</param>
+        /// <param name="listaFechas"></param>
         /// <param name="accion">1 = Maxima -- 2 = Minima</param>
-        /// <returns>Fecha</returns>
+        /// <returns></returns>
         public static string GetFechaMaximaOMinima(List<string> listaFechas, int accion)
         {
             DateTime fecha;
@@ -2373,11 +2396,11 @@ namespace App.ControlInsumos
         }
 
         /// <summary>
-        /// Metodo que Obtiene la Fecha Maxima O Minima
+        /// 
         /// </summary>
-        /// <param name="listaFechas">Lista Fechas</param>
+        /// <param name="listaFechas"></param>
         /// <param name="accion">1 = Maxima -- 2 = Minima</param>
-        /// <returns>Fecha</returns>
+        /// <returns></returns>
         public static string GetFechaMaximaMinima(List<string> listaFechas, int accion)
         {
             DateTime fecha;
@@ -2428,11 +2451,6 @@ namespace App.ControlInsumos
             return fechaResultado;
         }
 
-        /// <summary>
-        /// Metodo que Verifica si la cadena tiene Letras
-        /// </summary>
-        /// <param name="pCampo">Campo</param>
-        /// <returns>True - False</returns>
         public static bool GetContieneLetras(string pCampo)
         {
             if (!pCampo.Contains('-'))
@@ -2448,7 +2466,7 @@ namespace App.ControlInsumos
         /// </summary>
         /// <param name="linea">Liea</param>
         /// <param name="cantPosiciones"> Posiciones que se necesitan</param>
-        /// <returns>Campo Formateado</returns>
+        /// <returns></returns>
         public static string CompletarEspaciosLinea(string linea, int cantPosiciones)
         {
             #region CompletarEspaciosLinea
@@ -2680,21 +2698,11 @@ namespace App.ControlInsumos
         public static void EscribirLogVentana(DatosError strucDatosError, bool finalizaProceso = false)
         {
             #region EscribirLogVentana
-            //string Error = $"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} Error en proceso: {System.Environment.NewLine}{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}Clase: {strucDatosError.Clase} -|- Metodo:{strucDatosError.Metodo} -|- linea Error: {strucDatosError.LineaError} {System.Environment.NewLine}{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} Mensaje Error: {strucDatosError.Error}";
-            string Error = $"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} ERROR EN PROCESO";
-            Error += $"{System.Environment.NewLine}{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} Traza del Error:";
-            foreach (DatosLineaError dle in strucDatosError.LineasError)
-            {
-                Error += $"{System.Environment.NewLine}{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} Clase: {dle.Clase} | Metodo:{dle.Metodo} | linea Error: {dle.LineaError}";
-
-            }
-
-            Error += $"{System.Environment.NewLine}{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} Mensaje Error: {strucDatosError.Error}";
+            string Error = $"Clase: {strucDatosError.Clase} -|- Metodo:{strucDatosError.Metodo} -|- linea Error: {strucDatosError.LineaError} -|- Mensaje: {strucDatosError.Error}";
 
             if (!string.IsNullOrEmpty(strucDatosError.Error))
             {
-                //Console.WriteLine(string.Format("{0} {1}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), Error));
-                Console.WriteLine(Error);
+                Console.WriteLine(string.Format("{0} {1}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), Error));
                 Utilidades.EscribirLog(string.Format("{0} {1}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), Error), Utilidades.LeerAppConfig("RutaLog"));
             }
 
@@ -2705,43 +2713,6 @@ namespace App.ControlInsumos
                 Console.ReadKey();
                 Environment.Exit(1);
             }
-            #endregion
-        }
-
-        /// <summary>
-        /// Metodo que extrae los datos de la excepcion
-        /// </summary>
-        /// <param name="pExcepcion"></param>
-        /// <returns></returns>
-        public static DatosError ExtraerExcepcion(Exception pExcepcion)
-        {
-            #region ExtraerExcepcion
-
-            System.Diagnostics.StackTrace st = new System.Diagnostics.StackTrace(pExcepcion, true);
-
-            DatosError StructError = new DatosError
-            {
-                LineasError = new List<DatosLineaError>(),
-                Error = pExcepcion.Message
-            };
-
-            for (int i = 0; i < st.FrameCount; i++)
-            {
-                System.Diagnostics.StackFrame sf = st.GetFrame(i);
-                if (sf.GetFileLineNumber() > 0)
-                {
-                    StructError.LineasError.Add(new DatosLineaError 
-                    {
-                        Clase = Path.GetFileNameWithoutExtension(st.GetFrame(i).GetFileName()),
-                        Metodo = st.GetFrame(i).GetMethod().ToString(),
-                        LineaError = st.GetFrame(i).GetFileLineNumber()
-                    });
-                }
-            }
-
-            StructError.LineasError.Reverse();
-
-            return StructError; 
             #endregion
         }
 
@@ -2898,7 +2869,7 @@ namespace App.ControlInsumos
         }
 
         /// <summary>
-        /// Metodo que Copia los archivos de un directorio completo
+        /// 
         /// </summary>
         /// <param name="pDirectorioOrigen"></param>
         /// <param name="pDirectorioDestino"></param>
@@ -3024,11 +2995,10 @@ namespace App.ControlInsumos
             #endregion
         }
 
-        /// Metodo que Obtienen los campos enviados en la lista de identificadores
+        /// Obtienen los camposenviados en la lista de identificadores
         /// </summary>
         /// <param name="datosOriginales">Lista de datos del extracto</param>
         /// <param name="pIdentificadores">Diccionario Int => caracteres del indentificador, String texto identificador</param>
-        /// <returns>LInea con Campos</returns>
         public static string GetCamposLlanos(List<string> pDatosOriginales, List<CamposLLanos> pIdentificadores)
         {
             string resultado = string.Empty;
@@ -3057,14 +3027,6 @@ namespace App.ControlInsumos
             return ValidarPipePipe(resultado);
         }
 
-        /// <summary>
-        /// Metodo que Obtienen un campo
-        /// </summary>
-        /// <param name="datosOriginales"></param>
-        /// <param name="pCantidadCaracteres"></param>
-        /// <param name="pIdentificador"></param>
-        /// <param name="pValorDefault"></param>
-        /// <returns>Campo</returns>
         public static string GetCampoLLanos(List<string> datosOriginales, int pCantidadCaracteres, string pIdentificador, string pValorDefault = null)
         {
             string resultado = string.Empty;
@@ -3085,13 +3047,6 @@ namespace App.ControlInsumos
             return resultado;
         }
 
-        /// <summary>
-        /// /// Metodo que Obtienen los campos de una lista por un identificador
-        /// </summary>
-        /// <param name="datosOriginales"></param>
-        /// <param name="pCantidadCaracteres"></param>
-        /// <param name="pIdentificador"></param>
-        /// <returns>Lista Campos</returns>
         public static List<string> GetListaCampoLLanos(List<string> datosOriginales, int pCantidadCaracteres, string pIdentificador)
         {
             List<string> resultado = new List<string>();
@@ -3242,9 +3197,6 @@ namespace App.ControlInsumos
         }
     }
 
-    /// <summary>
-    /// Estructura de Posiciones de Corte
-    /// </summary>
     public struct PosCortes
     {
         public Int32? PosInicial;
@@ -3280,9 +3232,6 @@ namespace App.ControlInsumos
         }
     }
 
-    /// <summary>
-    /// Estructura de Posiciones de Corte Llanos
-    /// </summary>
     public struct CamposLLanos
     {
         public Int32 CantCaracteres;
@@ -3316,35 +3265,16 @@ namespace App.ControlInsumos
     }
 
     /// <summary>
-    /// Estructura de datos Error para las Exception
+    /// Structura de datos Error para las Exception
     /// </summary>
     public struct DatosError
     {
-        public List<DatosLineaError> LineasError;
-        public string Error;
-        
-    }
-
-    /// <summary>
-    /// Estructura de datos Linea Traza Error para las Exception
-    /// </summary>
-    public struct DatosLineaError
-    {
         public string Metodo;
         public string Clase;
+        public string Error;
         public int? LineaError;
-
-        public DatosLineaError(string pMetodo, string pClase, int? pLineaError)
-        {
-            Metodo = pMetodo;
-            Clase = pClase;
-            LineaError = pLineaError;
-        }
     }
 
-    /// <summary>
-    /// Enumerado de Tipos de Formateo
-    /// </summary>
     public enum TiposFormateo
     {
         Fecha01,

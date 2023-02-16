@@ -10,9 +10,6 @@ using DLL_Utilidades;
 
 namespace App.ControlLogicaProcesos
 {
-    /// <summary>
-    /// Clase ProcesoGobiernos
-    /// </summary>
     public class ProcesoGobiernos : IProcess
     {
         #region Variables del proceso
@@ -29,10 +26,7 @@ namespace App.ControlLogicaProcesos
         private bool ban1CTF { get; set; }
         #endregion
 
-        /// <summary>
-        /// Constructor ProcesoGobiernos
-        /// </summary>
-        /// <param name="pArchivo"></param>
+
         public ProcesoGobiernos(string pArchivo)
         {
             #region ProcesoGobiernos
@@ -42,7 +36,14 @@ namespace App.ControlLogicaProcesos
             }
             catch (Exception ex)
             {
-                DatosError StructError = Helpers.ExtraerExcepcion(ex);
+                DatosError StructError = new DatosError
+                {
+                    Clase = nameof(ProcesoMasivos),
+                    Metodo = new System.Diagnostics.StackTrace(ex, true).GetFrame(0).GetMethod().ToString(),
+                    LineaError = new System.Diagnostics.StackTrace(ex, true).GetFrame(0).GetFileLineNumber(),
+                    Error = ex.Message
+                };
+
                 Helpers.EscribirLogVentana(StructError, true);
             }
             #endregion
@@ -54,10 +55,6 @@ namespace App.ControlLogicaProcesos
         public ProcesoGobiernos()
         { }
 
-        /// <summary>
-        /// Metodo CargueFormateoArchivo
-        /// </summary>
-        /// <param name="pArchivo"></param>
         public void CargueFormateoArchivo(string pArchivo)
         {
             if (pArchivo.Contains("desktop.ini"))
@@ -150,21 +147,11 @@ namespace App.ControlLogicaProcesos
             #endregion
         }
 
-        /// <summary>
-        /// Metodo Ejecutar
-        /// </summary>
-        /// <param name="pArchivo"></param>
         public void Ejecutar(string pArchivo)
         {
             CargueFormateoArchivo(pArchivo);
         }
 
-        /// <summary>
-        /// Metodo FormatearArchivo
-        /// </summary>
-        /// <param name="pLLaveCruce"></param>
-        /// <param name="datosOriginales"></param>
-        /// <returns></returns>
         public List<string> FormatearArchivo(string pLLaveCruce, List<string> datosOriginales)
         {
             #region FormatearArchivo
@@ -344,7 +331,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo de FormatearPropiedadesExtracto
+        /// 
         /// </summary>
         private void FormatearPropiedadesExtracto()
         {
@@ -363,7 +350,7 @@ namespace App.ControlLogicaProcesos
         #region Canales Logica
 
         /// <summary>
-        /// Metodo de 
+        /// 
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -1138,6 +1125,13 @@ namespace App.ControlLogicaProcesos
                 tipoEmail = "ENVIO_SMS";
             }
 
+            string lineaWhatsapp = Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoCuentasEnvioWhatsapp, $"{Cuenta}") ?? string.Empty;
+
+            if (!string.IsNullOrEmpty(lineaWhatsapp))
+            {
+                tipoEmail = "ENVIO_Whatsapp";
+            }
+
             emailTipoEmail.Add(email);
             emailTipoEmail.Add(tipoEmail);
 
@@ -1298,7 +1292,7 @@ namespace App.ControlLogicaProcesos
             #endregion
         }
 
-        /// <summary>
+        // <summary>
         /// Metodo que Obtiene CuentaVencidaAnticipada
         /// </summary>
         /// <returns></returns>
@@ -1318,7 +1312,7 @@ namespace App.ControlLogicaProcesos
             #endregion
         }
 
-        /// <summary>
+        // <summary>
         /// Metodo que Obtiene Marca Parafiscales
         /// </summary>
         /// <returns></returns>
@@ -1347,7 +1341,7 @@ namespace App.ControlLogicaProcesos
             #endregion
         }
 
-        /// <summary>
+        // <summary>
         /// Metodo que Obtiene Localizacion
         /// </summary>
         /// <returns></returns>
@@ -1382,7 +1376,7 @@ namespace App.ControlLogicaProcesos
             #endregion
         }
 
-        /// <summary>
+        // <summary>
         /// Metodo que Obtiene QR
         /// </summary>
         /// <returns></returns>
@@ -1421,11 +1415,12 @@ namespace App.ControlLogicaProcesos
             #endregion
         }
 
-        #endregion Metodos 1AAA
 
+        #endregion Metodos 1AAA
+        #endregion
 
         /// <summary>
-        /// Metodo de FormateoCanal1BBB
+        /// 
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -1438,12 +1433,6 @@ namespace App.ControlLogicaProcesos
             #endregion
         }
 
-        /// <summary>
-        /// Metodo que Obtiene Datos Canal1BBB
-        /// </summary>
-        /// <param name="datosOriginales"></param>
-        /// <param name="sumatorias"></param>
-        /// <returns></returns>
         private IEnumerable<string> ObtenerDatosCanal1BBB(List<string> datosOriginales, bool sumatorias)
         {
             #region ObtenerDatosCanal1BBB
@@ -1678,7 +1667,7 @@ namespace App.ControlLogicaProcesos
 
 
         /// <summary>
-        /// Metodo de FormateoCanal1KKK
+        /// 
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -1734,7 +1723,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo que Obtiene la oficina de PQR a partir de la tabla de sustitucion
+        /// Obtiene la oficina de PQR a partir de la tabla de sustitucion
         /// </summary>
         /// <param name="pLlave"></param>
         /// <returns></returns>
@@ -1755,7 +1744,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo de FormateoCanalNTC0
+        /// 
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -1778,7 +1767,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo de FormateoPaqueteNTC
+        /// 
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -1832,7 +1821,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo de FormateoCanalNTC1
+        /// 
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -1856,7 +1845,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo de FormateoCanalNTC2
+        /// 
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -1880,7 +1869,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo de FormateoCanalNTC3
+        /// 
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -1903,7 +1892,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo de FormateoCanalNTC4
+        /// 
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -1927,7 +1916,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo de FormateoCanalNTC5
+        /// 
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -1951,7 +1940,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo de FormateoCanal1CTF
+        /// 
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -2012,7 +2001,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo de FormateoCanal1CRM
+        /// 
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -2160,7 +2149,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo de FormateoCanal1CTT
+        /// 
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -2383,7 +2372,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo de FormateoCanal1CIM
+        /// 
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -2583,7 +2572,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo de FormateoCanal1CIV
+        /// 
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -2804,7 +2793,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo de FormateoCanal1CST
+        /// 
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -2927,7 +2916,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo de FormateoCanal1CCD
+        /// 
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -3349,7 +3338,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo de FormarPaqueteADN1
+        /// 
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -3372,7 +3361,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo de 
+        /// 
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -3877,11 +3866,6 @@ namespace App.ControlLogicaProcesos
             #endregion
         }
 
-        /// <summary>
-        /// Metodo que Obtiene el tipo 
-        /// </summary>
-        /// <param name="pConexion"></param>
-        /// <returns></returns>
         private string GetTipo(string pConexion)
         {
             #region GetTipo
@@ -3901,7 +3885,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo de FormarPaqueteSERV
+        /// 
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -4404,11 +4388,6 @@ namespace App.ControlLogicaProcesos
             #endregion
         }
 
-        /// <summary>
-        /// Metodo que Obtiene Calculo1GGB
-        /// </summary>
-        /// <param name="pDatos"></param>
-        /// <returns></returns>
         private Dictionary<string, string> GetCalculo1GGB(Dictionary<int, List<string>> pDatos)
         {
             #region GenerarTotales
@@ -4458,7 +4437,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo de FormateoCanal1JJJ
+        /// 
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -4472,7 +4451,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo de FormateoCanal1JJA
+        /// 
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -4486,7 +4465,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo de FormateoCanal1LLL
+        /// 
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -4609,7 +4588,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo de FormateoCanal1CDP
+        /// 
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -4623,7 +4602,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo de FormateoCanal1FFF
+        /// 
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -4694,7 +4673,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo de FormateoCanal1III
+        /// 
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -4765,7 +4744,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo de FormateoGrupoTPNC
+        /// 
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -4849,7 +4828,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo de FormateoCanal1MMM
+        /// 
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -4891,7 +4870,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo de FormateoCanalCUFE
+        /// 
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
@@ -4920,7 +4899,5 @@ namespace App.ControlLogicaProcesos
             return Helpers.ValidarPipePipe(resultado);
             #endregion
         }
-        
-        #endregion
     }
 }

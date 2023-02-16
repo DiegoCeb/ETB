@@ -7,9 +7,6 @@ using App.ControlInsumos;
 
 namespace App.ControlLogicaProcesos
 {
-    /// <summary>
-    /// Clase ReportesGobiernos
-    /// </summary>
     public class ReportesGobiernos
     {
         #region Variables
@@ -24,10 +21,16 @@ namespace App.ControlLogicaProcesos
         string nombreArchivoDetSMS = string.Empty;
         List<string> lisCiclosSMS = new List<string>();
 
+        // Variables Whatsapp
+        int contadorRegistrosWhatsapp = 0;
+        string nombreArchivoDetWhatsapp = string.Empty;
+        List<string> lisCiclosWhatsapp = new List<string>();
+
         // Listas Reportes
         List<string> listaReporteMaestra = new List<string>();
         List<string> listaReporteDistrEspecial = new List<string>();
         List<string> listaReporteInsertos = new List<string>();
+
 
         // Reporte RecaudoEsperado final
         Dictionary<string, List<string>> dicRecaudoEsperadoEscribir = new Dictionary<string, List<string>>();
@@ -58,7 +61,14 @@ namespace App.ControlLogicaProcesos
             }
             catch (Exception ex)
             {
-                DatosError StructError = Helpers.ExtraerExcepcion(ex);
+                DatosError StructError = new DatosError
+                {
+                    Clase = nameof(ProcesoMasivos),
+                    Metodo = new System.Diagnostics.StackTrace(ex, true).GetFrame(0).GetMethod().ToString(),
+                    LineaError = new System.Diagnostics.StackTrace(ex, true).GetFrame(0).GetFileLineNumber(),
+                    Error = ex.Message
+                };
+
                 Helpers.EscribirLogVentana(StructError, true);
             }
             #endregion
@@ -66,7 +76,7 @@ namespace App.ControlLogicaProcesos
         #endregion
 
         /// <summary>
-        /// Metodo Ejectutar
+        /// 
         /// </summary>
         /// <param name="pDatosImprimir"></param>
         public void Ejecutar(Dictionary<string, List<string>> pDatosImprimir)
@@ -80,7 +90,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo Cargar Diccionario
+        /// 
         /// </summary>
         private void CargarDiccionario()
         {
@@ -106,7 +116,7 @@ namespace App.ControlLogicaProcesos
         #region Obtener Reporte
 
         /// <summary>
-        /// Metodo de Extraccion Reportes
+        /// 
         /// </summary>
         /// <param name="pDatosProcesados"></param>
         private void ExtraccionReportes(Dictionary<string, List<string>> pDatosProcesados)
@@ -169,7 +179,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo que obtiene Reporte Maestra
+        /// 
         /// </summary>
         /// <param name="pDatosImprimir"></param>
         /// <returns></returns>
@@ -184,7 +194,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo que obtiene Reporte Maestra Inserto
+        /// 
         /// </summary>
         /// <param name="pDatosImprimir"></param>
         /// <returns></returns>
@@ -204,7 +214,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo que obtiene Reporte Resumen Maestra
+        /// 
         /// </summary>
         /// <param name="pDatosImprimir"></param>
         /// <returns></returns>
@@ -220,7 +230,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo que obtiene Reporte Estadistico
+        /// 
         /// </summary>
         /// <returns></returns>
         private List<string> GetReporteEstadistico()
@@ -235,7 +245,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo que obtiene Reporte Distribucion Especial
+        /// 
         /// </summary>
         /// <param name="pExtracto"></param>
         /// <returns></returns>
@@ -256,13 +266,13 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo que obtiene Reporte SMS
+        /// 
         /// </summary>
         /// <param name="pExtracto"></param>
         /// <returns></returns>
         private List<string> GetReporteSMS(List<string> pExtracto)
         {
-            #region GetReporteMSM
+            #region GetReporteSMS
             List<string> lineaReporte = new List<string>();
             string lineaTem = string.Empty;
 
@@ -275,11 +285,12 @@ namespace App.ControlLogicaProcesos
             return lineaReporte;
             #endregion
         }
+
         #endregion
 
         #region Obtener Lineas Reporte 
         /// <summary>
-        /// Metodo que obtiene Linea Maestra
+        /// 
         /// </summary>
         /// <param name="pExtracto"></param>
         /// <returns></returns>
@@ -395,7 +406,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo que obtiene Linea Maestra Inserto
+        /// 
         /// </summary>
         /// <param name="pExtracto"></param>
         /// <returns></returns>
@@ -439,7 +450,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo que obtiene Linea Resumen Maestra
+        /// 
         /// </summary>
         /// <param name="pDatosImprimir"></param>
         /// <returns></returns>
@@ -640,7 +651,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo que obtiene Linea Estadistico
+        /// 
         /// </summary>
         /// <returns></returns>
         private List<string> GetLineaEstadistico()
@@ -671,7 +682,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo que obtiene Linea Distribucion Especial
+        /// 
         /// </summary>
         /// <param name="pExtracto"></param>
         /// <returns></returns>
@@ -701,7 +712,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo que obtiene Linea SMS
+        /// 
         /// </summary>
         /// <param name="pExtracto"></param>
         /// <returns></returns>
@@ -758,7 +769,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo que obtiene Linea Recaudo Esperado
+        /// 
         /// </summary>
         /// <param name="pExtracto"></param>
         /// <returns></returns>
@@ -853,7 +864,7 @@ namespace App.ControlLogicaProcesos
 
         #region Metodos Propios
         /// <summary>
-        /// Metodo que obtiene Archivo Salida
+        /// 
         /// </summary>
         /// <returns></returns>
         private string GetArchivoSalida()
@@ -876,7 +887,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo que obtiene Total Iva
+        /// 
         /// </summary>
         /// <param name="pExtracto"></param>
         /// <returns></returns>
@@ -911,7 +922,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo que obtiene Valor Factura Anterior
+        /// 
         /// </summary>
         /// <param name="pExtracto"></param>
         /// <returns></returns>
@@ -934,7 +945,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo que obtiene Gracias Pago
+        /// 
         /// </summary>
         /// <param name="pExtracto"></param>
         /// <returns></returns>
@@ -957,7 +968,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo que obtiene Leyenda Carta
+        /// 
         /// </summary>
         /// <param name="pExtracto"></param>
         /// <returns></returns>
@@ -1010,7 +1021,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo que obtiene Contador 12M
+        /// 
         /// </summary>
         /// <param name="pExtracto"></param>
         /// <returns></returns>
@@ -1033,7 +1044,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo que obtiene Minutos Con Mes
+        /// 
         /// </summary>
         /// <param name="pExtracto"></param>
         /// <returns></returns>
@@ -1056,7 +1067,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo que obtiene Courrier Asignado
+        /// 
         /// </summary>
         /// <returns></returns>
         private string GetCourrierAsignado()
@@ -1086,7 +1097,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo que obtiene Order Courrier
+        /// 
         /// </summary>
         /// <returns></returns>
         private string GetOrderCourrier()
@@ -1104,7 +1115,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo que obtiene Plan Actual
+        /// 
         /// </summary>
         /// <param name="pExtracto"></param>
         /// <returns></returns>
@@ -1127,7 +1138,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo que obtiene Marca Paquete HBO
+        /// 
         /// </summary>
         /// <param name="pExtracto"></param>
         /// <returns></returns>
@@ -1150,7 +1161,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo que obtiene Distribucion Especial
+        /// 
         /// </summary>
         /// <returns></returns>
         private string GetDistribucionEspecial()
@@ -1168,7 +1179,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo que obtiene Retencion
+        /// 
         /// </summary>
         /// <param name="pExtracto"></param>
         /// <returns></returns>
@@ -1197,7 +1208,7 @@ namespace App.ControlLogicaProcesos
 
         #region Escribir Archivos
         /// <summary>
-        /// Metodo que Escribe Reporte Maestra 
+        /// 
         /// </summary>
         /// <param name="pDatosImprimir"></param>
         private void EscribirReporteMaestra(List<string> pDatosImprimir)
@@ -1222,7 +1233,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo que Escribe Reporte Maestra Inserto 
+        /// 
         /// </summary>
         /// <param name="pDatosImprimir"></param>
         /// <param name="pNombreArchivo"></param>
@@ -1248,7 +1259,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo que Escribe Reporte Resumen Maestra 
+        /// 
         /// </summary>
         /// <param name="pDatosImprimir"></param>
         /// <param name="pNombreArchivo"></param>
@@ -1273,7 +1284,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo que Escribe Reporte Estadistico 
+        /// 
         /// </summary>
         /// <param name="pDatosImprimir"></param>
         /// <param name="pNombreArchivo"></param>
@@ -1299,7 +1310,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo que Escribe Reporte Distribucion Especial 
+        /// 
         /// </summary>
         /// <param name="pDatosImprimir"></param>
         /// <param name="pNombreArchivo"></param>
@@ -1321,7 +1332,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo que Escribe Reporte SMS 
+        /// 
         /// </summary>
         /// <param name="pDatosImprimir"></param>
         /// <param name="pNombreArchivo"></param>
@@ -1346,7 +1357,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo que Escribe Reporte SMS Total 
+        /// 
         /// </summary>
         /// <param name="pDatosImprimir"></param>
         /// <param name="pNombreArchivo"></param>
@@ -1365,7 +1376,7 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo que Renombra Archivo SMS Det 
+        /// 
         /// </summary>
         private void RenombrarArchivoSMSDet()
         {
@@ -1386,7 +1397,13 @@ namespace App.ControlLogicaProcesos
         }
 
         /// <summary>
-        /// Metodo que Escribe Reporte Recaudo Esperado 
+        /// 
+        /// </summary>
+        /// <param name="pDatosImprimir"></param>
+        /// <param name="pNombreArchivo"></param>
+
+        /// <summary>
+        /// 
         /// </summary>
         private void EscribirReporteRecaudoEsperado()
         {
