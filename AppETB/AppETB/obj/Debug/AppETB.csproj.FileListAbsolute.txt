@@ -73,3 +73,5 @@ C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\obj\Debug\AppETB.
 C:\Users\g18le\Documents\Proyecto\ETB\Codigo\ETB\AppETB\AppETB\bin\Debug\App.ControlEjecucion.xml
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\bin\Debug\App.ControlEjecucion.xml
 C:\Proyectos\ETB\AppETB\AppETB\bin\Debug\App.ControlEjecucion.xml
+C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\bin\Debug\AppETB.xml
+C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\bin\Debug\App.ControlLogicaProcesos.xml

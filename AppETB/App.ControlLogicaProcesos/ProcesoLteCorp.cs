@@ -1786,7 +1786,7 @@ namespace App.ControlLogicaProcesos
                             dt = dt.AddMonths(1);
                         }
 
-                        fecha = new DateTime(dt.Year, dt.Month, 1, 5, 0, 0);
+                        fecha = new DateTime(dt.Year, dt.Month, 5, 0, 0, 0);
                     }
                     else if (Ciclo == "92")
                     {
@@ -1795,7 +1795,7 @@ namespace App.ControlLogicaProcesos
                             dt = dt.AddMonths(1);
                         }
 
-                        fecha = new DateTime(dt.Year, dt.Month, 1, 10, 0, 0);
+                        fecha = new DateTime(dt.Year, dt.Month, 10, 0, 0, 0);
                     }
                     else if (Ciclo == "93")
                     {
@@ -1804,7 +1804,7 @@ namespace App.ControlLogicaProcesos
                             dt = dt.AddMonths(1);
                         }
 
-                        fecha = new DateTime(dt.Year, dt.Month, 1, 15, 0, 0);
+                        fecha = new DateTime(dt.Year, dt.Month, 15, 0, 0, 0);
                     }
                     else if (Ciclo == "94")
                     {
@@ -1813,7 +1813,7 @@ namespace App.ControlLogicaProcesos
                             dt = dt.AddMonths(1);
                         }
 
-                        fecha = new DateTime(dt.Year, dt.Month, 1, 20, 0, 0);
+                        fecha = new DateTime(dt.Year, dt.Month, 20, 0, 0, 0);
                     }
                     else if (Ciclo == "95")
                     {
@@ -1822,7 +1822,7 @@ namespace App.ControlLogicaProcesos
                             dt = dt.AddMonths(1);
                         }
 
-                        fecha = new DateTime(dt.Year, dt.Month, 1, 25, 0, 0);
+                        fecha = new DateTime(dt.Year, dt.Month, 25, 0, 0, 0);
                     }
 
                     fechaCorte = fecha.ToString("ddMMyyyy");
@@ -5507,7 +5507,6 @@ namespace App.ControlLogicaProcesos
             #region ArmarMesesHistograma
             string resultado = string.Empty;
             List<string> meses = new List<string>();
-            List<string> mesesFinal = new List<string>();
             CultureInfo culture = new CultureInfo("es-CO");
 
             if (!string.IsNullOrEmpty(pFechaReferencia))
@@ -5515,41 +5514,33 @@ namespace App.ControlLogicaProcesos
                 byte mesFacturacion = Convert.ToByte(pFechaReferencia.Split('/').ElementAt(1));
                 mesFacturacion--;
 
-                if (mesFacturacion == 0) //No puede ser 0
-                {
-                    mesFacturacion = 12;
-                }
-
                 for (int i = mesFacturacion; i <= mesFacturacion; i--)
                 {
-                    if (i == 0 && meses.LastOrDefault() == "Ene")
+                    if (meses.Count == 6)
                     {
-                        meses.Add(Helpers.FormatearCampos(TiposFormateo.LetraCapital, new DateTime(DateTime.Now.Year, 12, 1).ToString("MMM", culture).Replace(".", string.Empty)));
+                        break;
+                    }
+
+                    if (i == 0 && meses.Count != 6)
+                    {
+                        int total = 6 - meses.Count;
+                        int mesFinal = 12;
+
+                        while (total != 0)
+                        {
+                            meses.Add(Helpers.FormatearCampos(TiposFormateo.LetraCapital, new DateTime(DateTime.Now.Year, mesFinal, 1).ToString("MMM", culture).Replace(".", string.Empty)));
+                            mesFinal--;
+                            total--;
+                        }
                         break;
                     }
 
                     meses.Add(Helpers.FormatearCampos(TiposFormateo.LetraCapital, new DateTime(DateTime.Now.Year, i, 1).ToString("MMM", culture).Replace(".", string.Empty)));
                 }
 
-                if (mesFacturacion != 12)
-                {
-                    meses.RemoveAt(0);
-                }
+                meses.Reverse();
 
-                meses.RemoveAt(meses.Count - 1);
-
-                for (int i = 0; i < meses.Count; i++)
-                {
-                    if (i == 6)
-                    {
-                        break;
-                    }
-                    mesesFinal.Add(meses[i]);
-                }
-
-                mesesFinal.Reverse();
-
-                resultado = $"{mesesFinal.ElementAt(0).Substring(0, 3)}|{mesesFinal.ElementAt(1).Substring(0, 3)}|{mesesFinal.ElementAt(2).Substring(0, 3)}|{mesesFinal.ElementAt(3).Substring(0, 3)}|{mesesFinal.ElementAt(4).Substring(0, 3)}|{mesesFinal.ElementAt(5).Substring(0, 3)}";
+                resultado = $"{meses.ElementAt(0).Substring(0, 3)}|{meses.ElementAt(1).Substring(0, 3)}|{meses.ElementAt(2).Substring(0, 3)}|{meses.ElementAt(3).Substring(0, 3)}|{meses.ElementAt(4).Substring(0, 3)}|{meses.ElementAt(5).Substring(0, 3)}";
             }
             else
             {
