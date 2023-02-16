@@ -1695,7 +1695,7 @@ namespace App.ControlLogicaProcesos
                             dt = dt.AddMonths(1);
                         }
 
-                        fecha = new DateTime(dt.Year, dt.Month, 0, 1, 0, 0);
+                        fecha = new DateTime(dt.Year, dt.Month, 1, 1, 0, 0);
                     }
                     else if (Ciclo == "91")
                     {

@@ -1766,7 +1766,7 @@ namespace App.ControlLogicaProcesos
                             dt = dt.AddMonths(1);
                         }
 
-                        fecha = new DateTime(dt.Year, dt.Month, 1, 0, 0, 0);
+                        fecha = new DateTime(dt.Year, dt.Month, 1, 1, 0, 0);
                     }
                     else if (Ciclo == "91")
                     {
@@ -1775,7 +1775,7 @@ namespace App.ControlLogicaProcesos
                             dt = dt.AddMonths(1);
                         }
 
-                        fecha = new DateTime(dt.Year, dt.Month, 1, 5, 0, 0);
+                        fecha = new DateTime(dt.Year, dt.Month, 5, 1, 0, 0);
                     }
                     else if (Ciclo == "92")
                     {
@@ -1784,7 +1784,7 @@ namespace App.ControlLogicaProcesos
                             dt = dt.AddMonths(1);
                         }
 
-                        fecha = new DateTime(dt.Year, dt.Month, 1, 10, 0, 0);
+                        fecha = new DateTime(dt.Year, dt.Month, 10, 1, 0, 0);
                     }
                     else if (Ciclo == "93")
                     {
@@ -1793,7 +1793,7 @@ namespace App.ControlLogicaProcesos
                             dt = dt.AddMonths(1);
                         }
 
-                        fecha = new DateTime(dt.Year, dt.Month, 1, 15, 0, 0);
+                        fecha = new DateTime(dt.Year, dt.Month, 15, 1, 0, 0);
                     }
                     else if (Ciclo == "94")
                     {
@@ -1802,7 +1802,7 @@ namespace App.ControlLogicaProcesos
                             dt = dt.AddMonths(1);
                         }
 
-                        fecha = new DateTime(dt.Year, dt.Month, 1, 20, 0, 0);
+                        fecha = new DateTime(dt.Year, dt.Month, 20, 1, 0, 0);
                     }
                     else if (Ciclo == "95")
                     {
@@ -1811,7 +1811,7 @@ namespace App.ControlLogicaProcesos
                             dt = dt.AddMonths(1);
                         }
 
-                        fecha = new DateTime(dt.Year, dt.Month, 1, 25, 0, 0);
+                        fecha = new DateTime(dt.Year, dt.Month, 25, 1, 0, 0);
                     }
 
                     fechaCorte = fecha.ToString("ddMMyyyy");
