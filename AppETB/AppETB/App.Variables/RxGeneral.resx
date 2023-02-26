@@ -189,6 +189,9 @@
   <data name="36_FACTURA_ELECTRONICA" xml:space="preserve">
     <value>36_FACTURA_ELECTRONICA</value>
   </data>
+  <data name="38_ENVIO_WHATSAPP" xml:space="preserve">
+    <value>38_ENVIO_WHATSAPP</value>
+  </data>
   <data name="3_CUENTAS_RETENIDAS" xml:space="preserve">
     <value>3_CUENTAS_RETENIDAS</value>
   </data>

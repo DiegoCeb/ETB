@@ -24,6 +24,7 @@ namespace App.Variables
         public static Dictionary<string, List<string>> DatosInsumoVelocidadFibra = new Dictionary<string, List<string>>();
         public static Dictionary<string, string> DatosInsumoParametrizacionPaquetesFibra = new Dictionary<string, string>();
         public static Dictionary<string, string> DatosInsumoCuentasEnvioSms = new Dictionary<string, string>();
+        public static Dictionary<string, string> DatosInsumoCuentasEnvioWhatsapp = new Dictionary<string, string>();
         public static Dictionary<string, string> DatosInsumoCodigosUniverSvas = new Dictionary<string, string>();
         public static Dictionary<string, string> DatosInsumoCuentasSvasFueraBundle = new Dictionary<string, string>();
         public static Dictionary<string, string> DatosInsumoCuentasExtraer = new Dictionary<string, string>();
@@ -54,6 +55,7 @@ namespace App.Variables
         public static Dictionary<string, string> DatosInsumoConformacionPaquetes = new Dictionary<string, string>();
         public static Dictionary<string, string> DatosInsumoConfiguracionLLavesDoc1 = new Dictionary<string, string>();
         public static Dictionary<string, List<string>> CuentasNoImprimir = new Dictionary<string, List<string>>();
+        public static Dictionary<string, List<string>> CuentasSinCufe = new Dictionary<string, List<string>>();
         public static Dictionary<string, string> DatosInsumoETBFacturaElectronica = new Dictionary<string, string>();
         public static Dictionary<string, List<string>> DatosErrorLTE = new Dictionary<string, List<string>>();
         public static Dictionary<string, string> Diferencias = new Dictionary<string, string>();
@@ -184,7 +186,9 @@ namespace App.Variables
         [System.ComponentModel.Description("Llanos_min_plan")]
         Llanos_min_plan = 40,
         [System.ComponentModel.Description("Llanos_suple")]
-        Llanos_suple = 41
+        Llanos_suple = 41,
+        [System.ComponentModel.Description("cuentas_Envio_Whatsapp")]
+        cuentas_Envio_Whatsapp = 42,
 
     }
 

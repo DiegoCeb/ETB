@@ -2108,12 +2108,24 @@ namespace App.ControlLogicaProcesos
                                 impuestoProducto = Convert.ToDecimal($"{lineaActual.Substring(34, 12)}.{lineaActual.Substring(46, 2)}");
                                 impuestoProducto = impuestoProducto * Convert.ToDecimal(Utilidades.LeerAppConfig("porcentajeImpuestoConsumo"));
                                 impuestoProducto = Decimal.Round(impuestoProducto);
-                                if (impuestoProducto == 0 || !impuestoProducto.ToString().Contains("."))
+
+                                if (impuestoProducto == 0)
                                 {
-                                    impuestoProducto = 0.00m;
+                                    dicValores["IMPUESTOS"].Add("0");
                                 }
-                                impuestoFormateado = impuestoProducto.ToString().Split('.')[0] + impuestoProducto.ToString().Split('.')[1].Substring(0, 2);
-                                dicValores["IMPUESTOS"].Add(impuestoFormateado);
+                                else
+                                {
+                                    if (!impuestoProducto.ToString().Contains("."))
+                                    {
+                                        impuestoFormateado = $"{impuestoProducto}.00";
+                                    }
+                                    else
+                                    {
+                                        impuestoFormateado = impuestoProducto.ToString().Split('.')[0] + impuestoProducto.ToString().Split('.')[1].Substring(0, 2);
+                                    }
+
+                                    dicValores["IMPUESTOS"].Add(impuestoFormateado);
+                                }
                             }
                         }
                     }

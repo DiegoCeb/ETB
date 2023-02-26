@@ -59,6 +59,7 @@ namespace App.ControlInsumos
         {
             #region GetValueInsumoCadena
             string resultado = string.Empty;
+            
 
 
 
@@ -536,6 +537,28 @@ namespace App.ControlInsumos
 
             #endregion
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pDatosInsumo"></param>
+        public static void GetCuentasEnvioWhatsapp(List<string> pDatosInsumo)
+        {
+            #region GetCuentasEnvioWhatsapp
+
+            foreach (var datoLinea in pDatosInsumo)
+            {
+                string llaveCruce = datoLinea;
+
+                if (!Variables.Variables.DatosInsumoCuentasEnvioWhatsapp.ContainsKey(llaveCruce))
+                {
+                    Variables.Variables.DatosInsumoCuentasEnvioWhatsapp.Add(llaveCruce, datoLinea);
+                }
+            }
+
+            #endregion
+        }
+
 
         /// <summary>
         /// 
@@ -2949,7 +2972,9 @@ namespace App.ControlInsumos
             {
                 foreach (string numeroActual in pCamposSumar)
                 {
+                    
                     numeroSuma = numeroActual;
+                    if (numeroSuma == "-") { numeroSuma = "0"; }
 
                     if (string.IsNullOrEmpty(numeroSuma))
                     {

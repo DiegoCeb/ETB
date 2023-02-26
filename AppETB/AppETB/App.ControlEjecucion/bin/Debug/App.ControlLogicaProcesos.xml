@@ -1587,6 +1587,14 @@
             <param name="datosOriginales"></param>
             <returns></returns>
         </member>
+        <member name="M:App.ControlLogicaProcesos.ProcesoLteCorp.GetInfoAgrupada(System.Collections.Generic.List{System.String},System.Boolean)">
+            <summary>
+            Metodo que organiza la informacion en el formato de salida que se necesita
+            </summary>
+            <param name="pResultadoOrdenado">Informacion PreOrdenada</param>
+            <param name="pAdicionarInfoInicio">Bandera</param>
+            <returns>Lista Ordenada</returns>
+        </member>
         <member name="M:App.ControlLogicaProcesos.ProcesoLteCorp.GetInfoInclusion(System.String,System.String,System.String)">
             <summary>
             Metodo que obtiene información para saber si el paquete esta inlcuido o no
@@ -2210,6 +2218,14 @@
             </summary>
             <param name="datosOriginales"></param>
             <returns></returns>
+        </member>
+        <member name="M:App.ControlLogicaProcesos.ProcesoMasivos.GetInfoAgrupada(System.Collections.Generic.List{System.String},System.Boolean)">
+            <summary>
+            Metodo que organiza la informacion en el formato de salida que se necesita
+            </summary>
+            <param name="pResultadoOrdenado">Informacion PreOrdenada</param>
+            <param name="pAdicionarInfoInicio">Bandera</param>
+            <returns>Lista Ordenada</returns>
         </member>
         <member name="M:App.ControlLogicaProcesos.ProcesoMasivos.GetInfoInclusion(System.String,System.String,System.String)">
             <summary>
@@ -2986,7 +3002,9 @@
             <summary>
             Metodo que Escribe Reporte Maestra 
             </summary>
-            <param name="pDatosImprimir"></param>
+            <param name="
+            
+            "></param>
         </member>
         <member name="M:App.ControlLogicaProcesos.ReportesGobiernos.EscribirReporteMaestraInserto(System.Collections.Generic.List{System.String})">
             <summary>

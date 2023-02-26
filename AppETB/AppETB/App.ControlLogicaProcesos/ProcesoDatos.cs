@@ -2203,7 +2203,15 @@ namespace App.ControlLogicaProcesos
                                 }
                                 else
                                 {
-                                    impuestoFormateado = impuestoProducto.ToString().Split('.')[0] + impuestoProducto.ToString().Split('.')[1].Substring(0, 2);
+                                    if (!impuestoProducto.ToString().Contains("."))
+                                    {
+                                        impuestoFormateado = $"{impuestoProducto}.00";
+                                    }
+                                    else
+                                    {
+                                        impuestoFormateado = impuestoProducto.ToString().Split('.')[0] + impuestoProducto.ToString().Split('.')[1].Substring(0, 2);
+                                    }
+                                    
                                     dicValores["IMPUESTOS"].Add(impuestoFormateado);
                                 }
                             }

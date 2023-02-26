@@ -95,6 +95,14 @@
             <param name="pRuta"></param>
             <param name="pNombreArchivo"></param>
         </member>
+        <member name="M:App.ControlEjecucion.Procesamiento.EscribirDatosSalidaSinCufe(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.String,System.String,System.String)">
+            <summary>
+            Metodo que Escribe Datos Salida SMS
+            </summary>
+            <param name="pDatosImprimir"></param>
+            <param name="pRuta"></param>
+            <param name="pNombreArchivo"></param>
+        </member>
         <member name="M:App.ControlEjecucion.Procesamiento.EscribirDatosSalidaNoImprimir(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.String,System.String,System.String)">
             <summary>
             Metodo que Escribe Datos Salida No Imprimir
@@ -105,6 +113,14 @@
         <member name="M:App.ControlEjecucion.Procesamiento.EscribirDatosSalidaSms(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.String,System.String,System.String)">
             <summary>
             Metodo que Escribe Datos Salida SMS
+            </summary>
+            <param name="pDatosImprimir"></param>
+            <param name="pRuta"></param>
+            <param name="pNombreArchivo"></param>
+        </member>
+        <member name="M:App.ControlEjecucion.Procesamiento.EscribirDatosSalidaWhatsapp(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.String,System.String,System.String)">
+            <summary>
+            Metodo que Escribe Datos Salida Whatsapp
             </summary>
             <param name="pDatosImprimir"></param>
             <param name="pRuta"></param>

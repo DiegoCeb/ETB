@@ -1199,7 +1199,9 @@ namespace App.ControlLogicaProcesos
         /// <summary>
         /// Metodo que Escribe Reporte Maestra 
         /// </summary>
-        /// <param name="pDatosImprimir"></param>
+        /// <param name="
+        /// 
+        /// "></param>
         private void EscribirReporteMaestra(List<string> pDatosImprimir)
         {
             #region EscribirReporteMaestra
