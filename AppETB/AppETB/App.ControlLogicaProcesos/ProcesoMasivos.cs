@@ -1695,6 +1695,11 @@ namespace App.ControlLogicaProcesos
             string fechaFactura = Helpers.FormatearCampos(TiposFormateo.Fecha02, pLinea010000.Substring(168, 8));
             string fechaCorte = string.Empty;
 
+            if (Cuenta == "12054594693")
+            {
+
+            }
+
             if (IsLte || IsLteCorporativo)
             {
                 string fechaExpedicion = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"FECX{Helpers.FormatearCampos(TiposFormateo.Fecha02, pLinea010000.Substring(168, 8).Trim())}{pLinea010000.Substring(151, 3).Trim().TrimStart('0')}").FirstOrDefault()?.Substring(12).Trim() ?? string.Empty;
@@ -1713,7 +1718,7 @@ namespace App.ControlLogicaProcesos
                             dt = dt.AddMonths(1);
                         }
 
-                        fecha = new DateTime(dt.Year, dt.Month, 1, 0, 0, 0);
+                        fecha = new DateTime(dt.Year, dt.Month + 1, 1, 0, 0, 0);
                     }
                     else if (Ciclo == "91")
                     {
@@ -1722,7 +1727,7 @@ namespace App.ControlLogicaProcesos
                             dt = dt.AddMonths(1);
                         }
 
-                        fecha = new DateTime(dt.Year, dt.Month, 5, 0, 0, 0);
+                        fecha = new DateTime(dt.Year, dt.Month + 1, 5, 0, 0, 0);
                     }
                     else if (Ciclo == "92")
                     {
@@ -1731,7 +1736,7 @@ namespace App.ControlLogicaProcesos
                             dt = dt.AddMonths(1);
                         }
 
-                        fecha = new DateTime(dt.Year, dt.Month, 10, 0, 0, 0);
+                        fecha = new DateTime(dt.Year, dt.Month + 1, 10, 0, 0, 0);
                     }
                     else if (Ciclo == "93")
                     {
@@ -1740,7 +1745,7 @@ namespace App.ControlLogicaProcesos
                             dt = dt.AddMonths(1);
                         }
 
-                        fecha = new DateTime(dt.Year, dt.Month, 15, 0, 0, 0);
+                        fecha = new DateTime(dt.Year, dt.Month + 1, 15, 0, 0, 0);
                     }
                     else if (Ciclo == "94")
                     {
@@ -1749,7 +1754,7 @@ namespace App.ControlLogicaProcesos
                             dt = dt.AddMonths(1);
                         }
 
-                        fecha = new DateTime(dt.Year, dt.Month, 20, 0, 0, 0);
+                        fecha = new DateTime(dt.Year, dt.Month + 1, 20, 0, 0, 0);
                     }
                     else if (Ciclo == "95")
                     {
@@ -1758,7 +1763,7 @@ namespace App.ControlLogicaProcesos
                             dt = dt.AddMonths(1);
                         }
 
-                        fecha = new DateTime(dt.Year, dt.Month, 25, 0, 0, 0);
+                        fecha = new DateTime(dt.Year, dt.Month + 1, 25, 0, 0, 0);
                     }
 
                     fechaCorte = fecha.ToString("ddMMyyyy");
@@ -1953,6 +1958,11 @@ namespace App.ControlLogicaProcesos
                     if (IsLte)
                     {
                         descripcion = Helpers.FormatearCampos(TiposFormateo.PrimeraMayuscula, descripcion.Substring(10).Trim());
+
+                        if (descripcion.Substring(descripcion.Length - 3).ToLower() == "iva")
+                        {
+                            descripcion = descripcion.Replace("iva", "IVA");
+                        }
                     }
                     else
                     {
@@ -2154,7 +2164,14 @@ namespace App.ControlLogicaProcesos
                 }
                 else
                 {
-                    Lineas1BBB.Add($"1BBA|Total de la Factura ETB|{Helpers.FormatearCampos(TiposFormateo.Decimal01, SubTotal1BBB.ToString())}| ");
+                    if (IsLte)
+                    {
+                        Lineas1BBB.Add($"1BBA|Total de la factura etb|{Helpers.FormatearCampos(TiposFormateo.Decimal01, SubTotal1BBB.ToString())}| ");
+                    }
+                    else
+                    {
+                        Lineas1BBB.Add($"1BBA|Total de la Factura ETB|{Helpers.FormatearCampos(TiposFormateo.Decimal01, SubTotal1BBB.ToString())}| ");
+                    }
                 }
             }
             else
@@ -3068,9 +3085,21 @@ namespace App.ControlLogicaProcesos
                         if (datosCFI.Any())
                         {
                             #region Logica CFI
-                            var lineasDetallePaqueteAgrupadoPeriodo = from busqueda in datosCFI
+
+                            IEnumerable<IGrouping<string, string>> lineasDetallePaqueteAgrupadoPeriodo = null;
+
+                            if (string.IsNullOrEmpty(datosPaqueteAgrupado.Key.Trim())) // Si no tiene fecha hay que agrupar por llave de concepto de lo contrario se pueden mexclar coneptos y valores en uno solo
+                            {
+                                lineasDetallePaqueteAgrupadoPeriodo = from busqueda in datosCFI
+                                                                      group busqueda by busqueda.Substring(6, 10).Trim() into busqueda
+                                                                      select busqueda;
+                            }
+                            else
+                            {
+                                lineasDetallePaqueteAgrupadoPeriodo = from busqueda in datosCFI
                                                                       group busqueda by busqueda.Substring(128, 5).Trim() into busqueda
                                                                       select busqueda;
+                            }
 
                             foreach (var lineaDetalleAgrupPeriodo in lineasDetallePaqueteAgrupadoPeriodo.Select(x => x))
                             {
@@ -3196,7 +3225,7 @@ namespace App.ControlLogicaProcesos
                         {
                             if (buscarAFI.Any())
                             {
-                                if (buscarAFI.FirstOrDefault().Split('|').ElementAt(1).Substring(0, 5) != datosPaqueteAgrupado.Key.Substring(0, 5))
+                                if (buscarAFI.FirstOrDefault().Split('|').ElementAt(1).Substring(0, 6) != datosPaqueteAgrupado.Key.Substring(0, 6))
                                 {
                                     banderaAFI = true;
                                 }
@@ -3356,6 +3385,7 @@ namespace App.ControlLogicaProcesos
             List<string> sumaValoresImpuestos = new List<string>();
             List<string> sumaValoresTotal = new List<string>();
             Dictionary<string, List<string>> validarDuplicados = new Dictionary<string, List<string>>();
+            List<string> resultadoFinal = new List<string>();
             List<string> resultadoFinalOrdenado = new List<string>();
             bool banderaDuplicados = false;
 
@@ -3367,9 +3397,9 @@ namespace App.ControlLogicaProcesos
                            where busqueda.Substring(0, 4).Equals("1TFI")
                            select busqueda;
 
-            var lineasIniciales = from busqueda in pResultadoOrdenado 
-                                  where !busqueda.Substring(0, 4).Equals("1TFI") && 
-                                  !busqueda.Substring(0, 4).Equals("1CFI") 
+            var lineasIniciales = from busqueda in pResultadoOrdenado
+                                  where !busqueda.Substring(0, 4).Equals("1TFI") &&
+                                  !busqueda.Substring(0, 4).Equals("1CFI")
                                   select busqueda;
 
             foreach (var linea in lineasCFI)
@@ -3434,8 +3464,44 @@ namespace App.ControlLogicaProcesos
 
                 #endregion
             }
+            else
+            {
+                resultadoFinalOrdenado = pResultadoOrdenado;
+            }
 
-            return resultadoFinalOrdenado;
+            //Ordenamiento de conceptos
+
+            #region Ordenamiento
+            lineasIniciales = from busqueda in resultadoFinalOrdenado
+                              where !busqueda.Substring(0, 4).Equals("1TFI") &&
+                              !busqueda.Substring(0, 4).Equals("1CFI")
+                              select busqueda;
+
+            lineasCFI = from busqueda in resultadoFinalOrdenado
+                        where !busqueda.Split('|').ElementAt(2).ToLower().Equals("recargo de mora") &&
+                        !busqueda.Split('|').ElementAt(2).ToLower().Equals("ajuste decena") &&
+                        busqueda.Substring(0, 4).Equals("1CFI")
+                        select busqueda;
+
+
+            lineaTFI = from busqueda in resultadoFinalOrdenado
+                       where busqueda.Substring(0, 4).Equals("1TFI")
+                       select busqueda;
+
+            var lineasFinales = from busqueda in resultadoFinalOrdenado
+                                where busqueda.Split('|').ElementAt(2).ToLower().Equals("recargo de mora") ||
+                                busqueda.Split('|').ElementAt(2).ToLower().Equals("ajuste decena") &&
+                                busqueda.Substring(0, 4).Equals("1CFI")
+                                select busqueda;
+
+
+            resultadoFinal.AddRange(lineasIniciales.ToList());
+            resultadoFinal.AddRange(lineasCFI.ToList());
+            resultadoFinal.AddRange(lineasFinales.ToList());
+            resultadoFinal.AddRange(lineaTFI.ToList()); 
+            #endregion
+
+            return resultadoFinal;
 
             #endregion
         }

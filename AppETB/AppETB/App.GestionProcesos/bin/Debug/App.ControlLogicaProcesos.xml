@@ -956,6 +956,13 @@
             <param name="datosOriginales"></param>
             <returns></returns>
         </member>
+        <member name="M:App.ControlLogicaProcesos.ProcesoGobiernos.GetOrdenamientoConceptos(System.Collections.Generic.List{System.String})">
+            <summary>
+            
+            </summary>
+            <param name="pDatos"></param>
+            <returns></returns>
+        </member>
         <member name="M:App.ControlLogicaProcesos.ProcesoGobiernos.FormateoCanalADNC(System.Collections.Generic.List{System.String})">
             <summary>
             Metodo de FormarPaqueteADN1
@@ -982,6 +989,13 @@
             Metodo de FormarPaqueteSERV
             </summary>
             <param name="datosOriginales"></param>
+            <returns></returns>
+        </member>
+        <member name="M:App.ControlLogicaProcesos.ProcesoGobiernos.GetOrdenamientoPaquete(System.Collections.Generic.List{System.String})">
+            <summary>
+            
+            </summary>
+            <param name="pDatos"></param>
             <returns></returns>
         </member>
         <member name="M:App.ControlLogicaProcesos.ProcesoGobiernos.GetCalculo1GGB(System.Collections.Generic.Dictionary{System.Int32,System.Collections.Generic.List{System.String}})">

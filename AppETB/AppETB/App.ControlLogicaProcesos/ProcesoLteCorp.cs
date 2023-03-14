@@ -1784,7 +1784,7 @@ namespace App.ControlLogicaProcesos
                             dt = dt.AddMonths(1);
                         }
 
-                        fecha = new DateTime(dt.Year, dt.Month, 1, 0, 0, 0);
+                        fecha = new DateTime(dt.Year, dt.Month + 1, 1, 0, 0, 0);
                     }
                     else if (Ciclo == "91")
                     {
@@ -1793,7 +1793,7 @@ namespace App.ControlLogicaProcesos
                             dt = dt.AddMonths(1);
                         }
 
-                        fecha = new DateTime(dt.Year, dt.Month, 5, 0, 0, 0);
+                        fecha = new DateTime(dt.Year, dt.Month + 1, 5, 0, 0, 0);
                     }
                     else if (Ciclo == "92")
                     {
@@ -1802,7 +1802,7 @@ namespace App.ControlLogicaProcesos
                             dt = dt.AddMonths(1);
                         }
 
-                        fecha = new DateTime(dt.Year, dt.Month, 10, 0, 0, 0);
+                        fecha = new DateTime(dt.Year, dt.Month + 1, 10, 0, 0, 0);
                     }
                     else if (Ciclo == "93")
                     {
@@ -1811,7 +1811,7 @@ namespace App.ControlLogicaProcesos
                             dt = dt.AddMonths(1);
                         }
 
-                        fecha = new DateTime(dt.Year, dt.Month, 15, 0, 0, 0);
+                        fecha = new DateTime(dt.Year, dt.Month + 1, 15, 0, 0, 0);
                     }
                     else if (Ciclo == "94")
                     {
@@ -1820,7 +1820,7 @@ namespace App.ControlLogicaProcesos
                             dt = dt.AddMonths(1);
                         }
 
-                        fecha = new DateTime(dt.Year, dt.Month, 20, 0, 0, 0);
+                        fecha = new DateTime(dt.Year, dt.Month + 1, 20, 0, 0, 0);
                     }
                     else if (Ciclo == "95")
                     {
@@ -1829,7 +1829,7 @@ namespace App.ControlLogicaProcesos
                             dt = dt.AddMonths(1);
                         }
 
-                        fecha = new DateTime(dt.Year, dt.Month, 25, 0, 0, 0);
+                        fecha = new DateTime(dt.Year, dt.Month + 1, 25, 0, 0, 0);
                     }
 
                     fechaCorte = fecha.ToString("ddMMyyyy");
@@ -2007,7 +2007,13 @@ namespace App.ControlLogicaProcesos
 
                     llave = detalle.Substring(0, 6).Trim();
                     descripcion = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"CODT{detalle.Substring(0, 6).Trim()}")?.FirstOrDefault() ?? string.Empty;
-                    descripcion = descripcion.Substring(10).Trim();
+                    
+                    descripcion = Helpers.FormatearCampos(TiposFormateo.PrimeraMayuscula, descripcion.Substring(10).Trim());
+
+                    if (descripcion.Substring(descripcion.Length - 3).ToLower() == "iva")
+                    {
+                        descripcion = descripcion.Replace("iva", "IVA");
+                    }
 
                     if (llave == "02T304" || llave == "02T309")
                     {
@@ -3118,9 +3124,20 @@ namespace App.ControlLogicaProcesos
                         if (datosCFI.Any())
                         {
                             #region Logica CFI
-                            var lineasDetallePaqueteAgrupadoPeriodo = from busqueda in datosCFI
+                            IEnumerable<IGrouping<string, string>> lineasDetallePaqueteAgrupadoPeriodo = null;
+
+                            if (string.IsNullOrEmpty(datosPaqueteAgrupado.Key.Trim())) // Si no tiene fecha hay que agrupar por llave de concepto de lo contrario se pueden mexclar coneptos y valores en uno solo
+                            {
+                                lineasDetallePaqueteAgrupadoPeriodo = from busqueda in datosCFI
+                                                                      group busqueda by busqueda.Substring(6, 10).Trim() into busqueda
+                                                                      select busqueda;
+                            }
+                            else
+                            {
+                                lineasDetallePaqueteAgrupadoPeriodo = from busqueda in datosCFI
                                                                       group busqueda by busqueda.Substring(128, 5).Trim() into busqueda
                                                                       select busqueda;
+                            }
 
                             foreach (var lineaDetalleAgrupPeriodo in lineasDetallePaqueteAgrupadoPeriodo.Select(x => x))
                             {
@@ -3246,7 +3263,7 @@ namespace App.ControlLogicaProcesos
                         {
                             if (buscarAFI.Any())
                             {
-                                if (buscarAFI.FirstOrDefault().Split('|').ElementAt(1).Substring(0, 5) != datosPaqueteAgrupado.Key.Substring(0, 5))
+                                if (buscarAFI.FirstOrDefault().Split('|').ElementAt(1).Substring(0, 6) != datosPaqueteAgrupado.Key.Substring(0, 6))
                                 {
                                     banderaAFI = true;
                                 }

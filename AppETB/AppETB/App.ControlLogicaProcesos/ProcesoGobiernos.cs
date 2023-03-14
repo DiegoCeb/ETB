@@ -73,6 +73,11 @@ namespace App.ControlLogicaProcesos
 
             foreach (var linea in DatosArchivo)
             {
+                if (string.IsNullOrEmpty(linea))
+                {
+                    continue;
+                }
+
                 if (linea.Substring(0, 6) == "000000") //Inicio Extracto
                 {
                     extractoCompleto = false;
@@ -172,7 +177,7 @@ namespace App.ControlLogicaProcesos
             dynamic resultadoFormateoLinea = null;
 
             //Para Validaciones
-            if (pLLaveCruce == "675928994")
+            if (pLLaveCruce == "")
             {
 
             }
@@ -1472,7 +1477,7 @@ namespace App.ControlLogicaProcesos
 
                 if (!string.IsNullOrEmpty(linea29000))
                 {
-                    lineaNotasCredito = $"1BBB|Notas crédito|{Helpers.FormatearCampos(TiposFormateo.Decimal05, linea29000.Substring(29, 20).TrimStart('0'))}| ";
+                    lineaNotasCredito = $"1BBB|Notas Crédito|{Helpers.FormatearCampos(TiposFormateo.Decimal05, linea29000.Substring(29, 20).TrimStart('0'))}| ";
                     SubTotal1BBB += Convert.ToInt64(linea29000.Substring(29, 20));
                 }
 
@@ -2946,6 +2951,7 @@ namespace App.ControlLogicaProcesos
         private IEnumerable<string> FormateoCanal1CCD(List<string> datosOriginales)
         {
             #region FormateoCanal1CCD
+
             List<string> resultado = new List<string>();
             string resultadoTemp = string.Empty;
             Dictionary<string, List<string>> dicAgrupado = new Dictionary<string, List<string>>();
@@ -3331,8 +3337,13 @@ namespace App.ControlLogicaProcesos
                 // Se valida si esta vacio el concepto para no pintarlo
                 if (!Helpers.ValidarPipePipe(resultadoTemp).Replace("$ 0.00", "-").Contains("|-|-|-|-|-|-|-|-|-|-|-|"))
                 {
-                    resultado.Add(Helpers.ValidarPipePipe(resultadoTemp).Replace("$ 0.00", "-"));
+                    if (!resultadoTemp.Split('|').ElementAt(12).Substring(0, 1).Equals("-")) // Se valida que el total no sea negativo para qu eno se imprima
+                    {
+                        resultado.Add(Helpers.ValidarPipePipe(resultadoTemp).Replace("$ 0.00", "-"));
+                    }
                 }
+
+                
 
                 #endregion
 
@@ -3354,7 +3365,40 @@ namespace App.ControlLogicaProcesos
 
             }
 
-            //aplicar ordenamiento
+            return GetOrdenamientoConceptos(resultado);
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pDatos"></param>
+        /// <returns></returns>
+        private List<string> GetOrdenamientoConceptos(List<string> pDatos)
+        {
+            #region GetOrdenamientoConceptos
+            List<string> resultado = new List<string>();
+            SortedDictionary<string, List<string>> ordenamientoDatos = new SortedDictionary<string, List<string>>();
+            string datoAlfabetico = string.Empty;
+
+            foreach (var item in pDatos)
+            {
+                datoAlfabetico = item.Split('|').ElementAt(1).Substring(0, 1);
+
+                if (ordenamientoDatos.ContainsKey(datoAlfabetico))
+                {
+                    ordenamientoDatos[datoAlfabetico].Add(item);
+                }
+                else
+                {
+                    ordenamientoDatos.Add(datoAlfabetico, new List<string> { item });
+                }          
+            }
+
+            foreach (var item in ordenamientoDatos)
+            {
+                resultado.AddRange(item.Value);
+            }
 
             return resultado;
             #endregion
@@ -4412,9 +4456,49 @@ namespace App.ControlLogicaProcesos
 
             #endregion
 
+            return GetOrdenamientoPaquete(resultado);
+            #endregion
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pDatos"></param>
+        /// <returns></returns>
+        private List<string> GetOrdenamientoPaquete(List<string> pDatos)
+        {
+            #region GetOrdenamientoPaquete
+            List<string> resultado = new List<string>();
+            SortedDictionary<string, List<string>> ordenamientoDatos = new SortedDictionary<string, List<string>>();
+            string datoAlfabetico = string.Empty;
+
+            foreach (var item in pDatos)
+            {
+                if (item.Substring(0, 4).Equals("SERV"))
+                {
+                    datoAlfabetico = item.Split('|').ElementAt(1).Substring(0, 1);
+                }
+
+                if (ordenamientoDatos.ContainsKey(datoAlfabetico))
+                {
+                    ordenamientoDatos[datoAlfabetico].Add(item);
+                }
+                else
+                {
+                    ordenamientoDatos.Add(datoAlfabetico, new List<string> { item });
+                }
+            }
+
+            foreach (var item in ordenamientoDatos)
+            {
+                resultado.AddRange(item.Value);
+            }
+
             return resultado;
             #endregion
         }
+
 
         /// <summary>
         /// Metodo que Obtiene Calculo1GGB
@@ -4932,7 +5016,7 @@ namespace App.ControlLogicaProcesos
             return Helpers.ValidarPipePipe(resultado);
             #endregion
         }
-        
+
         #endregion
     }
 }
