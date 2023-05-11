@@ -922,8 +922,9 @@ namespace App.ControlEjecucion
                                !Variables.Variables.DatosInsumoCuentasEnvioWhatsapp.ContainsKey(busqueda.Key) &&
                                !Variables.Variables.DatosErrorLTE.ContainsKey(busqueda.Key) &&
                                !Variables.Variables.Diferencias.ContainsKey(busqueda.Key) &&
-                               !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key)&&
-                               Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey(busqueda.Key)
+                               !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
+                               Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey(busqueda.Key) &&
+                               !Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key)
                                select busqueda;
 
                     if (objDatos.Any())
@@ -938,8 +939,9 @@ namespace App.ControlEjecucion
                                !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
                                !Variables.Variables.NumHojas.ContainsKey(busqueda.Key) &&
                                !Variables.Variables.DatosInsumoClientesEspecialesDatos.ContainsKey($"{busqueda.Key}-{busqueda.Value.FirstOrDefault().Split('|').ElementAt(9)}") &&
-                               !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key)&&
-                               Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey(busqueda.Key)
+                               !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
+                               Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey(busqueda.Key) &&
+                               !Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key)
                                select busqueda;
 
                     if (objDatos.Any())
@@ -953,8 +955,9 @@ namespace App.ControlEjecucion
                                where Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key) &&
                                !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
                                !Variables.Variables.NumHojas.ContainsKey(busqueda.Key) &&
-                               !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key)&&
-                               Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey(busqueda.Key)
+                               !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
+                               Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey(busqueda.Key) &&
+                               !Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key)
                                select busqueda;
 
                     if (objDatos.Any())
@@ -980,7 +983,8 @@ namespace App.ControlEjecucion
                     objDatos = from busqueda in datosOrdenadosTelefono
                                where Variables.Variables.DatosInsumoDistribucionEmailLlanos.ContainsKey(busqueda.Key) &&
                                !Variables.Variables.DatosInsumoExtraerLlanos.ContainsKey(busqueda.Key) &&
-                               !Variables.Variables.DatosInsumoLlanosEnvioSMS.ContainsKey(busqueda.Key)
+                               !Variables.Variables.DatosInsumoLlanosEnvioSMS.ContainsKey(busqueda.Key) &&
+                               !Variables.Variables.DatosInsumoDualLlanos.ContainsKey(busqueda.Key)
                                select busqueda;
 
                     if (objDatos.Any())

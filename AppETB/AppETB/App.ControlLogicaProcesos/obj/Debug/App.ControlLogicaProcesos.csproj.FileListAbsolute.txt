@@ -50,7 +50,6 @@ C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\App.ControlLogicaProcesos\bin\
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\App.ControlLogicaProcesos\bin\Debug\App.Variables.dll
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\App.ControlLogicaProcesos\bin\Debug\SharpCompress.dll
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\App.ControlLogicaProcesos\bin\Debug\Excel.dll
-C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\App.ControlLogicaProcesos\bin\Debug\ICSharpCode.SharpZipLib.dll
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\App.ControlLogicaProcesos\bin\Debug\App.ControlInsumos.pdb
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\App.ControlLogicaProcesos\bin\Debug\App.Variables.pdb
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaProcesos.csproj.AssemblyReference.cache

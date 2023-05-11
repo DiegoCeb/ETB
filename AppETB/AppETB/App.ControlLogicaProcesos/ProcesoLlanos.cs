@@ -163,9 +163,12 @@ namespace App.ControlLogicaProcesos
         /// <param name="pArchivo"></param>
         public void Ejecutar(string pArchivo)
         {
-            CargarCiudades();
-            CargarActividades();
-            CargueFormateoArchivo(pArchivo);
+            if (!Path.GetFileName(pArchivo).Contains("desktop.ini"))
+            {
+                CargarCiudades();
+                CargarActividades();
+                CargueFormateoArchivo(pArchivo);
+            }
         }
 
         /// <summary>
@@ -1348,16 +1351,46 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         private void CargarCiudades()
         {
-            Variables.Variables.DicCiudadesLlanos.Add("01", new Variables.CiudadesLLanos("VILLAVICENCIO", "META"));
-            Variables.Variables.DicCiudadesLlanos.Add("1", new Variables.CiudadesLLanos("VILLAVICENCIO", "META"));
-            Variables.Variables.DicCiudadesLlanos.Add("50", new Variables.CiudadesLLanos("ACACIAS", "META"));
-            Variables.Variables.DicCiudadesLlanos.Add("51", new Variables.CiudadesLLanos("GRANADA", "META"));
-            Variables.Variables.DicCiudadesLlanos.Add("52", new Variables.CiudadesLLanos("SAN MARTIN", "META"));
-            Variables.Variables.DicCiudadesLlanos.Add("53", new Variables.CiudadesLLanos("GUAMAL", "META"));
-            Variables.Variables.DicCiudadesLlanos.Add("54", new Variables.CiudadesLLanos("CASTILLA LA NUEVA", "META"));
-            Variables.Variables.DicCiudadesLlanos.Add("55", new Variables.CiudadesLLanos("CUMARAL", "META"));
-            Variables.Variables.DicCiudadesLlanos.Add("56", new Variables.CiudadesLLanos("PUERTO LOPEZ", "META"));
-            Variables.Variables.DicCiudadesLlanos.Add("31", new Variables.CiudadesLLanos("BOGOTA", "C / MARCA"));
+            if (!Variables.Variables.DicCiudadesLlanos.ContainsKey("01"))
+            {
+                Variables.Variables.DicCiudadesLlanos.Add("01", new Variables.CiudadesLLanos("VILLAVICENCIO", "META"));
+            }
+            if (!Variables.Variables.DicCiudadesLlanos.ContainsKey("1"))
+            {
+                Variables.Variables.DicCiudadesLlanos.Add("1", new Variables.CiudadesLLanos("VILLAVICENCIO", "META"));
+            }
+            if (!Variables.Variables.DicCiudadesLlanos.ContainsKey("50"))
+            {
+                Variables.Variables.DicCiudadesLlanos.Add("50", new Variables.CiudadesLLanos("ACACIAS", "META"));
+            }
+            if (!Variables.Variables.DicCiudadesLlanos.ContainsKey("51"))
+            {
+                Variables.Variables.DicCiudadesLlanos.Add("51", new Variables.CiudadesLLanos("GRANADA", "META"));
+            }
+            if (!Variables.Variables.DicCiudadesLlanos.ContainsKey("52"))
+            {
+                Variables.Variables.DicCiudadesLlanos.Add("52", new Variables.CiudadesLLanos("SAN MARTIN", "META"));
+            }
+            if (!Variables.Variables.DicCiudadesLlanos.ContainsKey("53"))
+            {
+                Variables.Variables.DicCiudadesLlanos.Add("53", new Variables.CiudadesLLanos("GUAMAL", "META"));
+            }
+            if (!Variables.Variables.DicCiudadesLlanos.ContainsKey("54"))
+            {
+                Variables.Variables.DicCiudadesLlanos.Add("54", new Variables.CiudadesLLanos("CASTILLA LA NUEVA", "META"));
+            }
+            if (!Variables.Variables.DicCiudadesLlanos.ContainsKey("55"))
+            {
+                Variables.Variables.DicCiudadesLlanos.Add("55", new Variables.CiudadesLLanos("CUMARAL", "META"));
+            }
+            if (!Variables.Variables.DicCiudadesLlanos.ContainsKey("56"))
+            {
+                Variables.Variables.DicCiudadesLlanos.Add("56", new Variables.CiudadesLLanos("PUERTO LOPEZ", "META"));
+            }
+            if (!Variables.Variables.DicCiudadesLlanos.ContainsKey("31"))
+            {
+                Variables.Variables.DicCiudadesLlanos.Add("31", new Variables.CiudadesLLanos("BOGOTA", "C / MARCA"));
+            }
         }
 
         /// <summary>

@@ -505,6 +505,13 @@
             <param name="datosOriginales"></param>
             <returns></returns>
         </member>
+        <member name="M:App.ControlLogicaProcesos.ProcesoDatos.GetOrdenamientoConceptos(System.Collections.Generic.List{System.String})">
+            <summary>
+            
+            </summary>
+            <param name="pDatos"></param>
+            <returns></returns>
+        </member>
         <member name="M:App.ControlLogicaProcesos.ProcesoDatos.FormateoCanalADNC(System.Collections.Generic.List{System.String})">
             <summary>
             Metodo de FormateoCanalADNC
@@ -528,9 +535,27 @@
         </member>
         <member name="M:App.ControlLogicaProcesos.ProcesoDatos.FormarPaqueteSERV(System.Collections.Generic.List{System.String})">
             <summary>
-            Metodo de 
+            Metodo de FormarPaqueteSERV
             </summary>
             <param name="datosOriginales"></param>
+            <returns></returns>
+        </member>
+        <member name="M:App.ControlLogicaProcesos.ProcesoDatos.GetPaquetes(System.String,System.String,System.String,System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}}}}}@)">
+            <summary>
+            
+            </summary>
+            <param name="pCuentaConexion"></param>
+            <param name="pPeriodo"></param>
+            <param name="pCodigo"></param>
+            <param name="pGrupo"></param>
+            <param name="pLineaDetalle"></param>
+            <param name="pPaquetes"></param>
+        </member>
+        <member name="M:App.ControlLogicaProcesos.ProcesoDatos.GetOrdenamientoPaquete(System.Collections.Generic.List{System.String})">
+            <summary>
+            
+            </summary>
+            <param name="pDatos"></param>
             <returns></returns>
         </member>
         <member name="M:App.ControlLogicaProcesos.ProcesoDatos.FormateoCanal1JJK(System.Collections.Generic.List{System.String})">
@@ -990,6 +1015,17 @@
             </summary>
             <param name="datosOriginales"></param>
             <returns></returns>
+        </member>
+        <member name="M:App.ControlLogicaProcesos.ProcesoGobiernos.GetPaquetes(System.String,System.String,System.String,System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}}}}}@)">
+            <summary>
+            
+            </summary>
+            <param name="pCuentaConexion"></param>
+            <param name="pPeriodo"></param>
+            <param name="pCodigo"></param>
+            <param name="pGrupo"></param>
+            <param name="pLineaDetalle"></param>
+            <param name="pPaquetes"></param>
         </member>
         <member name="M:App.ControlLogicaProcesos.ProcesoGobiernos.GetOrdenamientoPaquete(System.Collections.Generic.List{System.String})">
             <summary>
@@ -1815,11 +1851,12 @@
             <param name="datosOriginales"></param>
             <returns></returns>
         </member>
-        <member name="M:App.ControlLogicaProcesos.ProcesoLteCorp.ArmarMesesHistograma(System.String)">
+        <member name="M:App.ControlLogicaProcesos.ProcesoLteCorp.ArmarMesesHistograma(System.String,System.Boolean)">
             <summary>
             Metodo que obtiene Meses Histograma
             </summary>
             <param name="pFechaReferencia"></param>
+            <param name="pRestarMes"></param>
             <returns></returns>
         </member>
         <member name="M:App.ControlLogicaProcesos.ProcesoLteCorp.ArmarValoresHistograma(System.String,System.String)">
@@ -2447,11 +2484,12 @@
             <param name="datosOriginales"></param>
             <returns></returns>
         </member>
-        <member name="M:App.ControlLogicaProcesos.ProcesoMasivos.ArmarMesesHistograma(System.String)">
+        <member name="M:App.ControlLogicaProcesos.ProcesoMasivos.ArmarMesesHistograma(System.String,System.Boolean)">
             <summary>
             Metodo que obtiene Meses Histograma
             </summary>
             <param name="pFechaReferencia"></param>
+            <param name="pRestarMes"></param>
             <returns></returns>
         </member>
         <member name="M:App.ControlLogicaProcesos.ProcesoMasivos.ArmarValoresHistograma(System.String,System.String)">

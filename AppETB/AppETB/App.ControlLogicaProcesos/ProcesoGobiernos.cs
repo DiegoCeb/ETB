@@ -2953,9 +2953,11 @@ namespace App.ControlLogicaProcesos
             #region FormateoCanal1CCD
 
             List<string> resultado = new List<string>();
+            List<string> dataProcesarOrdenados = new List<string>();
             string resultadoTemp = string.Empty;
             Dictionary<string, List<string>> dicAgrupado = new Dictionary<string, List<string>>();
             Dictionary<string, List<string>> dic11C9 = new Dictionary<string, List<string>>();
+            Dictionary<string, List<string>> datosAgrupados = new Dictionary<string, List<string>>();
 
             #region Busquedas
 
@@ -2971,6 +2973,53 @@ namespace App.ControlLogicaProcesos
             var result02T9 = from busqueda in datosOriginales
                              where busqueda.Length > 3 && busqueda.Substring(0, 4).Equals("02T9") && !busqueda.Substring(0, 6).Equals("02T942")
                              select busqueda;
+            #endregion
+
+            #region Agrupamiento - Eliminacion de duplicados
+            foreach (var item in dataProcesar)
+            {
+                if (item.Substring(0, 3) == "11C")
+                {
+                    if (!datosAgrupados.ContainsKey(item.Substring(6, 10)))
+                    {
+                        datosAgrupados.Add(item.Substring(6, 10), new List<string> { item });
+                    }
+                    else
+                    {
+                        datosAgrupados[item.Substring(6, 10)].Add(item);
+                    }
+                }
+                else
+                {
+                    //13M
+                    if (!datosAgrupados.ContainsKey(item.Substring(32, 10)))
+                    {
+                        datosAgrupados.Add(item.Substring(32, 10), new List<string> { item });
+                    }
+                    else
+                    {
+                        string llaveConcepto = datosAgrupados[item.Substring(32, 10)].LastOrDefault();
+
+                        if (llaveConcepto.Substring(0, 3) == "11C")//Se prioriza el 13M
+                        {
+                            datosAgrupados[item.Substring(32, 10)].Remove(llaveConcepto);
+
+                            datosAgrupados[item.Substring(32, 10)].Add(item);
+                        }
+                        else
+                        {
+                            datosAgrupados[item.Substring(32, 10)].Add(item);
+                        }
+                    }
+                }
+            }
+
+            foreach (var item in datosAgrupados.SelectMany(item => item.Value))
+            {
+                dataProcesarOrdenados.Add(item);
+            }
+
+            dataProcesar = dataProcesarOrdenados; //Se iguala par ano tener que cambiar las variables del proceso 
             #endregion
 
             #region Agrupaiento Para procesar
@@ -3330,8 +3379,22 @@ namespace App.ControlLogicaProcesos
                 sumarCamposAux.Clear();
 
                 resultadoTemp += Helpers.SumarCampos(dicValores["SUBTOTAL"], "D") + "|";
-                resultadoTemp += Helpers.SumarCampos(dicValores["IVA"], "D") + "|";
+
+                if (Helpers.SumarCampos(dicValores["IVA"], "D").Substring(0, 1) == "-")
+                {
+                    resultadoTemp += "-|";
+
+                    var valorIvaEliminar = $"-{Helpers.SumarCampos(dicValores["IVA"], "D").Replace("$", "").Replace(".", "").Replace(",", "").Replace("-", "").Trim()}";
+
+                    dicValores["TOTAL"].Remove(valorIvaEliminar);
+                }
+                else
+                {
+                    resultadoTemp += Helpers.SumarCampos(dicValores["IVA"], "D") + "|";
+                }
+
                 resultadoTemp += Helpers.SumarCampos(dicValores["IMPUESTOS"], "D") + "|";
+
                 resultadoTemp += Helpers.SumarCampos(dicValores["TOTAL"], "D") + "| ";
 
                 // Se valida si esta vacio el concepto para no pintarlo
@@ -3343,7 +3406,7 @@ namespace App.ControlLogicaProcesos
                     }
                 }
 
-                
+
 
                 #endregion
 
@@ -3392,7 +3455,7 @@ namespace App.ControlLogicaProcesos
                 else
                 {
                     ordenamientoDatos.Add(datoAlfabetico, new List<string> { item });
-                }          
+                }
             }
 
             foreach (var item in ordenamientoDatos)
@@ -3492,6 +3555,11 @@ namespace App.ControlLogicaProcesos
                 }
             }
             #endregion
+
+            if (Cuenta == "675195745")
+            {
+
+            }
 
             if (paquetesInformacion.Any())
             {
@@ -3968,15 +4036,16 @@ namespace App.ControlLogicaProcesos
             #region Variables
             List<string> resultado = new List<string>();
             List<string> sumaValoresBase = new List<string>();
+            List<string> sumaValoresBaseInterno = new List<string>();
             List<string> sumaValoresIva = new List<string>();
+            List<string> sumaValoresIvaInterno = new List<string>();
             List<string> sumaValoresTotal = new List<string>();
             bool banderaPaquete = false;
             string cuentaConexion = string.Empty;
             Dictionary<string, List<string>> paquetesInformacion = new Dictionary<string, List<string>>();
             Dictionary<string, string> TotalesFormateados = new Dictionary<string, string>();
             Dictionary<int, List<string>> paquetesInformacionFormateados = new Dictionary<int, List<string>>();
-            Dictionary<string, Dictionary<string, List<string>>> paquetesInformacionFinales = new Dictionary<string, Dictionary<string, List<string>>>();
-            Dictionary<string, Dictionary<string, List<string>>> paquetesInformacionFinales11C = new Dictionary<string, Dictionary<string, List<string>>>();
+            Dictionary<string, Dictionary<string, Dictionary<string, Dictionary<string, List<string>>>>> Paquetes = new Dictionary<string, Dictionary<string, Dictionary<string, Dictionary<string, List<string>>>>>();
 
             string llaveCruce = string.Empty;
             string descripcionProducto = string.Empty;
@@ -3988,8 +4057,12 @@ namespace App.ControlLogicaProcesos
             string @base = string.Empty;
             string iva = string.Empty;
             string periodo = string.Empty;
-            string canalTotalAnterior = string.Empty;
             int consecutivo = 0;
+            string periodoOrdenamiento = string.Empty;
+            string codigo = string.Empty;
+            string descripcionConcepto = string.Empty;
+            string grupo = string.Empty;
+            bool verificarAgrupacionConceptos = false;
             #endregion
 
             var lineas13M = from busqueda in datosOriginales
@@ -4051,61 +4124,58 @@ namespace App.ControlLogicaProcesos
                     {
                         if (!string.IsNullOrEmpty(detalle.Substring(6, 16).Trim()))
                         {
-                            string llave = $"{detalle.Substring(0, 6)}|{detalle.Substring(32, 10).Trim()}";
+                            periodoOrdenamiento = detalle.Substring(6, 16).Trim();
+                            descripcionConcepto = string.Empty;
+                            codigo = detalle.Substring(32, 10).Trim();
+
+                            if (Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"CODF{codigo}").Any())
+                            {
+                                descripcionConcepto = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"CODF{codigo}").FirstOrDefault().Substring(14).Trim();
+
+                                if (descripcionConcepto.Contains("Soporte pc"))
+                                {
+                                    descripcionConcepto = "Soporte pc";
+                                }
+                            }
+
+                            grupo = "NA";
 
                             @base = detalle.Substring(42, 14).Trim().TrimStart('0');
 
                             if (!string.IsNullOrEmpty(@base))
                             {
-                                if (!paquetesInformacionFinales.ContainsKey(llave))
-                                {
-                                    paquetesInformacionFinales.Add(llave, new Dictionary<string, List<string>> { { lineaPaquete.Key, lineaPaquete.Value } });
-                                }
-                                else
-                                {
-                                    if (!paquetesInformacionFinales[llave].ContainsKey(lineaPaquete.Key))
-                                    {
-                                        paquetesInformacionFinales[llave].Add(lineaPaquete.Key, lineaPaquete.Value);
-                                    }
-                                }
+                                GetPaquetes(lineaPaquete.Key, periodoOrdenamiento, descripcionConcepto, grupo, detalle, ref Paquetes);
                             }
                         }
                     }
                     else if (detalle.Substring(0, 3) == "11C" && !Marca13M)
                     {
-                        string llave = $"{detalle.Substring(0, 6)}|{detalle.Substring(6, 10).Trim()}|{detalle.Substring(274, 7).Trim()}";
+                        if (detalle.Substring(3, 1).Equals("5"))
+                        {
+                            continue;
+                        }
+
+                        periodoOrdenamiento = detalle.Substring(128, 19).Trim();
+                        descripcionConcepto = string.Empty;
+                        codigo = detalle.Substring(6, 10).Trim();
+
+                        if (Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"CODF{codigo}").Any())
+                        {
+                            descripcionConcepto = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"CODF{codigo}").FirstOrDefault().Substring(14).Trim();
+
+                            if (descripcionConcepto.Contains("Soporte pc"))
+                            {
+                                descripcionConcepto = "Soporte pc";
+                            }
+                        }
+
+                        grupo = detalle.Substring(274, 7).Trim();
 
                         @base = detalle.Substring(16, 14).Trim().TrimStart('0');
 
                         if (!string.IsNullOrEmpty(@base))
                         {
-                            if (!paquetesInformacionFinales.ContainsKey(llave) && !paquetesInformacionFinales.Keys.Where(x => x.Contains(detalle.Substring(274, 7).Trim()) && x.Contains(detalle.Substring(6, 10).Trim())).Any())
-                            {
-                                paquetesInformacionFinales.Add(llave, new Dictionary<string, List<string>> { { lineaPaquete.Key, new List<string> { detalle } } });
-                            }
-                            else
-                            {
-                                if (!paquetesInformacionFinales.ContainsKey(llave))
-                                {
-                                    var llaveCanal = paquetesInformacionFinales.Keys.Where(x => x.Contains(detalle.Substring(274, 7).Trim()) && x.Contains(detalle.Substring(6, 10).Trim()));
-
-                                    if (paquetesInformacionFinales[llaveCanal.FirstOrDefault()].ContainsKey(lineaPaquete.Key))
-                                    {
-                                        paquetesInformacionFinales[llaveCanal.FirstOrDefault()][lineaPaquete.Key].Add(detalle);
-                                    }
-                                    else
-                                    {
-                                        paquetesInformacionFinales[llaveCanal.FirstOrDefault()].Add(lineaPaquete.Key, new List<string> { detalle });
-                                    }
-                                }
-                                else
-                                {
-                                    if (!paquetesInformacionFinales[llave].ContainsKey(lineaPaquete.Key))
-                                    {
-                                        paquetesInformacionFinales[llave].Add(lineaPaquete.Key, new List<string> { detalle });
-                                    }
-                                }
-                            }
+                            GetPaquetes(lineaPaquete.Key, periodoOrdenamiento, descripcionConcepto, grupo, detalle, ref Paquetes);
                         }
                     }
                 }
@@ -4113,162 +4183,41 @@ namespace App.ControlLogicaProcesos
 
             #endregion
 
-            if (paquetesInformacionFinales.Any())
+            if (Paquetes.Any())
             {
-                #region Verificar si son solo 11C para reorganizar
+                #region Logica
+                var agrupacionDatos = from datosPaquete in Paquetes.Values
+                                      from Datos in datosPaquete
+                                      let pe = Datos.Key
+                                      group Datos by pe into Datos
+                                      select Datos;
 
-                bool marca11C = false;
-
-                foreach (var lineaPaquete in paquetesInformacionFinales.Keys)
+                foreach (var itemAgrupadoPeriodo in agrupacionDatos)
                 {
-                    if (lineaPaquete.Substring(0, 3).Equals("11C"))
-                    {
-                        marca11C = true;
-                    }
-                }
+                    var agrupacionConceptos = from busqueda in itemAgrupadoPeriodo
+                                              from Datos in busqueda.Value
+                                              group Datos by Datos.Key into Datos
+                                              select Datos;
 
-                if (marca11C)
-                {
-                    //Agrupar LLaves
-                    foreach (var item in paquetesInformacionFinales)
+                    foreach (var itemAgrupados in agrupacionConceptos)
                     {
-                        string llave = $"{item.Key.Split('|').ElementAt(0)}|{item.Key.Split('|').ElementAt(1)}";
+                        consecutivo++;
+                        sumaValoresBase.Clear();
+                        sumaValoresIva.Clear();
+                        sumaValoresTotal.Clear();
+                        resultado = new List<string>();
+                        verificarAgrupacionConceptos = false;
 
-                        if (!paquetesInformacionFinales11C.ContainsKey(llave))
+                        #region SERV
+                        if (itemAgrupados.FirstOrDefault().Value.FirstOrDefault().Value.FirstOrDefault().Substring(0, 3) == "13M")
                         {
-                            paquetesInformacionFinales11C.Add(llave, item.Value);
+                            llaveCruce = $"{itemAgrupados.FirstOrDefault().Value.FirstOrDefault().Value.FirstOrDefault().Substring(32, 10)}";
                         }
                         else
                         {
-                            foreach (var itemDetalle in item.Value)
-                            {
-                                if (paquetesInformacionFinales11C[llave].ContainsKey(itemDetalle.Key))
-                                {
-                                    paquetesInformacionFinales11C[llave][itemDetalle.Key].AddRange(itemDetalle.Value);
-                                }
-                                else
-                                {
-                                    paquetesInformacionFinales11C[llave].Add(itemDetalle.Key, itemDetalle.Value);
-                                }
-                            }
-                        }
-                    }
-
-                    paquetesInformacionFinales = paquetesInformacionFinales11C; // Se igualan par ano alterar la logica siguiente
-                }
-
-                #endregion
-
-                #region Logica
-                foreach (var lineaDetallePaquete in paquetesInformacionFinales)
-                {
-                    if (lineaDetallePaquete.Key.Substring(3, 1).Equals("5"))
-                    {
-                        continue;
-                    }
-
-                    consecutivo++;
-                    resultado = new List<string>();
-
-                    if (lineaDetallePaquete.Key.Substring(0, 3) == "13M")
-                    {
-                        #region Logica 13M
-                        sumaValoresBase.Clear();
-                        sumaValoresIva.Clear();
-                        sumaValoresTotal.Clear();
-
-                        #region Armar Canal SERV
-                        llaveCruce = $"CODT{lineaDetallePaquete.Key.Split('|').ElementAt(0)}";
-
-                        descripcionProducto = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruce).FirstOrDefault()?.Substring(11).Trim() ?? "";
-
-                        llaveCruce = $"CODF{lineaDetallePaquete.Key.Split('|').ElementAt(1)}";
-
-                        descripcionSubProducto = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruce).FirstOrDefault()?.Substring(14).Trim() ?? "";
-
-                        resultado.Add(Helpers.ValidarPipePipe($"SERV|{descripcionProducto}|{descripcionSubProducto}|MARCA_CANTIDAD_DETALLES| "));
-
-                        #endregion
-
-                        foreach (var lineaDetalle in lineaDetallePaquete.Value)
-                        {
-                            #region Armar Canal 1GGG
-                            lineas13M = from busqueda in lineaDetalle.Value
-                                        where busqueda.Length > 3 && busqueda.Substring(0, 3).Equals("13M") &&
-                                        !string.IsNullOrEmpty(busqueda.Substring(6, 16).Trim())
-                                        where lineaDetallePaquete.Key == $"{busqueda.Substring(0, 6)}|{busqueda.Substring(32, 10)}"
-                                        select busqueda;
-
-                            if (!lineas13M.Any())
-                            {
-                                continue;
-                            }
-
-                            foreach (var lineaDetalleFinal in lineas13M)
-                            {
-                                direccionOrigen = string.Empty;
-                                ciudadOrigen = string.Empty;
-                                direccionDestino = string.Empty;
-                                ciudadDestino = string.Empty;
-
-                                var linea040001 = from busqueda in lineaDetalle.Value
-                                                  where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("040001")
-                                                  select busqueda;
-
-                                if (linea040001.Any())
-                                {
-                                    direccionOrigen = linea040001.FirstOrDefault().Substring(36, 39).Trim();
-
-                                    llaveCruce = $"DANC{linea040001.FirstOrDefault().Substring(75, 5).Trim().PadLeft(5, '0')}";
-
-                                    ciudadOrigen = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruce).FirstOrDefault()?.Substring(10).Trim() ?? "";
-
-                                    direccionDestino = linea040001.FirstOrDefault().Substring(80, 39).Trim();
-
-                                    llaveCruce = $"DANC{linea040001.FirstOrDefault().Substring(119, 5).Trim().PadLeft(5, '0')}";
-
-                                    ciudadDestino = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruce).FirstOrDefault()?.Substring(10).Trim() ?? "";
-                                }
-
-                                @base = lineaDetalleFinal.Substring(42, 14).Trim();
-                                iva = lineaDetalleFinal.Substring(56, 14).Trim();
-
-                                resultado.Add(Helpers.ValidarPipePipe($"1GGG|{descripcionProducto}|{descripcionSubProducto}|{lineaDetalle.Key}| |" +
-                                $"{lineas13M.FirstOrDefault().Substring(112, 12).Replace(" ", "").Trim()}|{lineas13M.FirstOrDefault().Substring(6, 8).Trim()} - {lineas13M.FirstOrDefault().Substring(14, 8).Trim()}|" +
-                                $"{direccionOrigen}|{ciudadOrigen}|{direccionDestino}|{ciudadDestino}| | |" +
-                                $"{Helpers.FormatearCampos(TiposFormateo.Decimal05, @base)}|" +
-                                $"{Helpers.FormatearCampos(TiposFormateo.Decimal05, iva)}| "));
-
-                                sumaValoresBase.Add(lineaDetalleFinal.Substring(42, 14).Trim().TrimStart('0'));
-                                sumaValoresIva.Add(lineaDetalleFinal.Substring(56, 14).Trim().TrimStart('0'));
-                            }
-                            #endregion
+                            llaveCruce = $"{itemAgrupados.FirstOrDefault().Value.FirstOrDefault().Value.FirstOrDefault().Substring(6, 10)}";
                         }
 
-                        #region Armar Canal 1GGA - 1GGB
-                        sumaValoresTotal.AddRange(sumaValoresBase);
-                        sumaValoresTotal.AddRange(sumaValoresIva);
-
-                        resultado.Add(Helpers.ValidarPipePipe($"1GGA|Total {descripcionSubProducto}|{Helpers.SumarCampos(sumaValoresBase, "D")}|" +
-                            $"{Helpers.SumarCampos(sumaValoresIva)}|{Helpers.SumarCampos(sumaValoresTotal)}| "));
-
-                        //resultado.Add(Helpers.ValidarPipePipe($"1GGB|Total {descripcionProducto}|{Helpers.SumarCampos(sumaValoresBase, "D")}|" +
-                        //    $"{Helpers.SumarCampos(sumaValoresIva, "D")}|{Helpers.SumarCampos(sumaValoresTotal, "D")}| "));
-
-                        resultado.Add(Helpers.ValidarPipePipe($"1GGB|Total {descripcionProducto}")); //Se deja asi solo el canal para al final del formateo de los paquetes agregar la inforamcion real de la suma de paquetes.
-                        #endregion
-                        #endregion
-                    }
-
-                    if (lineaDetallePaquete.Key.Substring(0, 3) == "11C")
-                    {
-                        #region Logica 11C
-                        sumaValoresBase.Clear();
-                        sumaValoresIva.Clear();
-                        sumaValoresTotal.Clear();
-
-                        #region Armar Canal SERV
-                        llaveCruce = $"{lineaDetallePaquete.Key.Split('|').ElementAt(1)}";
 
                         if (Variables.Variables.DatosInsumoConfiguracionLLavesDoc1.ContainsKey(llaveCruce))
                         {
@@ -4277,95 +4226,252 @@ namespace App.ControlLogicaProcesos
 
                         descripcionProducto = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruce).FirstOrDefault()?.Substring(11).Trim() ?? "";
 
-                        llaveCruce = $"CODF{lineaDetallePaquete.Key.Split('|').ElementAt(1)}";
-
-                        descripcionSubProducto = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruce).FirstOrDefault()?.Substring(14).Trim() ?? "";
-
-                        if (descripcionSubProducto == "Soporte pc ETB")
-                        {
-                            descripcionSubProducto = "Soporte pc";
-                        }
+                        descripcionSubProducto = itemAgrupados.FirstOrDefault().Key;
 
                         resultado.Add(Helpers.ValidarPipePipe($"SERV|{descripcionProducto}|{descripcionSubProducto}|MARCA_CANTIDAD_DETALLES| "));
 
                         #endregion
 
-                        foreach (var lineaDetalle in lineaDetallePaquete.Value)
+                        foreach (var itemConceptos in itemAgrupados)
                         {
-                            direccionOrigen = string.Empty;
-                            ciudadOrigen = string.Empty;
-                            direccionDestino = string.Empty;
-                            ciudadDestino = string.Empty;
-                            IEnumerable<string> lineasTotalPaquete = null;
-
-                            #region Armar Canal 1GGG
-
-                            if (Variables.Variables.DatosInsumoConfiguracionLLavesDoc1.ContainsKey(lineaDetallePaquete.Key.Split('|').ElementAt(1)))
+                            #region 1GGG
+                            if (itemConceptos.Value.Count >= 2)
                             {
-                                llaveCruce = $"{Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoConfiguracionLLavesDoc1, lineaDetallePaquete.Key.Split('|').ElementAt(1)).Split('|').ElementAt(12)}";
+                                verificarAgrupacionConceptos = true;
+                            }
+                            else if (itemConceptos.Value.FirstOrDefault().Value.Count >= 2)
+                            {
+                                verificarAgrupacionConceptos = true;
                             }
 
-                            if (lineaDetalle.Value.Count == 1)
+                            if (verificarAgrupacionConceptos)
                             {
-                                lineasTotalPaquete = new List<string> { $"xxxxxx{lineaDetalle.Value.FirstOrDefault().Substring(16, 14)}{"x".PadLeft(14, 'x')}{lineaDetalle.Value.FirstOrDefault().Substring(44, 14)}" };
+                                #region Agrupados
+                                //Se agrupan si viene mas de uno
+                                sumaValoresBaseInterno.Clear();
+                                sumaValoresIvaInterno.Clear();
+
+                                foreach (var itemDetalle in itemConceptos.Value.SelectMany(x => x.Value))
+                                {
+                                    var numeroPaquete = from busqueda in paquetesInformacion
+                                                        where busqueda.Value.Contains(itemDetalle)
+                                                        select busqueda.Key;
+
+                                    #region Armar Canal 1GGG
+
+                                    if (itemDetalle.Substring(0, 3) == "13M")
+                                    {
+                                        periodo = $"{itemDetalle.Substring(6, 8).Trim()} - {itemDetalle.Substring(14, 8).Trim()}";
+                                    }
+                                    else
+                                    {
+                                        periodo = itemDetalle.Substring(128, 19).Trim();
+                                    }
+
+                                    #region Obtener datos 40001
+                                    direccionOrigen = string.Empty;
+                                    ciudadOrigen = string.Empty;
+                                    direccionDestino = string.Empty;
+                                    ciudadDestino = string.Empty;
+                                    string numeroPaqueteFinal = string.Empty;
+
+                                    foreach (var itemNumeroPaquete in numeroPaquete)
+                                    {
+                                        var linea040001 = from busqueda in paquetesInformacion[itemNumeroPaquete]
+                                                          where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("040001")
+                                                          select busqueda;
+
+                                        if (linea040001.Any())
+                                        {
+                                            direccionOrigen = linea040001.FirstOrDefault().Substring(36, 39).Trim();
+
+                                            string llaveCruceDirecciones = $"DANC{linea040001.FirstOrDefault().Substring(75, 5).Trim().PadLeft(5, '0')}";
+
+                                            ciudadOrigen = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruceDirecciones).FirstOrDefault()?.Substring(10).Trim() ?? "";
+
+                                            direccionDestino = linea040001.FirstOrDefault().Substring(80, 39).Trim();
+
+                                            llaveCruceDirecciones = $"DANC{linea040001.FirstOrDefault().Substring(119, 5).Trim().PadLeft(5, '0')}";
+
+                                            ciudadDestino = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruceDirecciones).FirstOrDefault()?.Substring(10).Trim() ?? "";
+
+                                            numeroPaqueteFinal = itemNumeroPaquete;
+
+                                            break;
+                                        }
+                                    }
+
+                                    if (string.IsNullOrEmpty(numeroPaqueteFinal))
+                                    {
+                                        foreach (var itemNumeroPaquete in numeroPaquete)
+                                        {
+                                            bool existeNumeroConexion = (from busqueda in resultado.Where(x => x.Substring(0, 4).Equals("1GGG"))
+                                                                         where busqueda.Split('|').ElementAt(3).Equals(itemNumeroPaquete)
+                                                                         select busqueda).Any();
+                                            if (!existeNumeroConexion)
+                                            {
+                                                numeroPaqueteFinal = itemNumeroPaquete;
+                                                break;
+                                            }
+                                        }
+                                    }
+
+                                    #endregion
+
+                                    foreach (var item in itemConceptos.Value.SelectMany(x => x.Value))
+                                    {
+                                        if (item.Substring(0, 3) == "13M")
+                                        {
+                                            @base = item.Substring(42, 14).Trim();
+                                            iva = item.Substring(56, 14).Trim();
+                                        }
+                                        else
+                                        {
+                                            @base = item.Substring(16, 14).Trim();
+                                            iva = item.Substring(44, 14).Trim();
+                                        }
+
+                                        sumaValoresBase.Add(@base);
+                                        sumaValoresIva.Add(iva);
+                                        sumaValoresBaseInterno.Add(@base);
+                                        sumaValoresIvaInterno.Add(iva);
+
+                                        string capacidad = string.Empty;
+
+                                        if (item.Substring(0, 3) == "13M" && string.IsNullOrEmpty(capacidad))
+                                        {
+                                            capacidad = $"{item.Substring(112, 8).Trim()}{item.Substring(120, 5).Trim()}";
+
+                                            if (string.IsNullOrEmpty(capacidad))
+                                            {
+                                                capacidad = "0";
+                                            }
+                                        }
+                                    }
+
+                                    resultado.Add(Helpers.ValidarPipePipe($"1GGG|{descripcionProducto}|{descripcionSubProducto}|{numeroPaqueteFinal}| |" +
+                                        $" |{periodo}|{direccionOrigen}|{ciudadOrigen}|{direccionDestino}|{ciudadDestino}| | |" +
+                                        $"{Helpers.SumarCampos(sumaValoresBaseInterno, "G")}|" +
+                                        $"{Helpers.SumarCampos(sumaValoresIvaInterno, "G")}| "));
+
+                                    break; //Solo debe pasar una vez
+
+                                    #endregion
+                                }
+                                #endregion
                             }
                             else
                             {
-                                List<string> baseInterna = new List<string>();
-                                List<string> ivaInterna = new List<string>();
-
-                                foreach (var item in lineaDetalle.Value)
+                                #region Sencillos
+                                foreach (var itemGrupos in itemConceptos.Value)
                                 {
-                                    if (item.Substring(3, 1) == "5")
+                                    foreach (var itemDetalle in itemGrupos.Value)
                                     {
-                                        continue;
+                                        var numeroPaquete = from busqueda in paquetesInformacion
+                                                            where busqueda.Value.Contains(itemDetalle)
+                                                            select busqueda.Key;
+
+                                        #region Armar Canal 1GGG
+
+                                        if (itemDetalle.Substring(0, 3) == "13M")
+                                        {
+                                            periodo = $"{itemDetalle.Substring(6, 8).Trim()} - {itemDetalle.Substring(14, 8).Trim()}";
+                                        }
+                                        else
+                                        {
+                                            periodo = itemDetalle.Substring(128, 19).Trim();
+                                        }
+
+
+                                        foreach (var item in itemGrupos.Value)
+                                        {
+                                            #region Obtener datos 40001
+                                            direccionOrigen = string.Empty;
+                                            ciudadOrigen = string.Empty;
+                                            direccionDestino = string.Empty;
+                                            ciudadDestino = string.Empty;
+                                            string numeroPaqueteFinal = string.Empty;
+
+                                            foreach (var itemNumeroPaquete in numeroPaquete)
+                                            {
+                                                var linea040001 = from busqueda in paquetesInformacion[itemNumeroPaquete]
+                                                                  where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("040001")
+                                                                  select busqueda;
+
+                                                if (linea040001.Any())
+                                                {
+                                                    direccionOrigen = linea040001.FirstOrDefault().Substring(36, 39).Trim();
+
+                                                    string llaveCruceDirecciones = $"DANC{linea040001.FirstOrDefault().Substring(75, 5).Trim().PadLeft(5, '0')}";
+
+                                                    ciudadOrigen = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruceDirecciones).FirstOrDefault()?.Substring(10).Trim() ?? "";
+
+                                                    direccionDestino = linea040001.FirstOrDefault().Substring(80, 39).Trim();
+
+                                                    llaveCruceDirecciones = $"DANC{linea040001.FirstOrDefault().Substring(119, 5).Trim().PadLeft(5, '0')}";
+
+                                                    ciudadDestino = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruceDirecciones).FirstOrDefault()?.Substring(10).Trim() ?? "";
+
+                                                    numeroPaqueteFinal = itemNumeroPaquete;
+
+                                                    break;
+                                                }
+                                            }
+
+                                            if (string.IsNullOrEmpty(numeroPaqueteFinal))
+                                            {
+                                                foreach (var itemNumeroPaquete in numeroPaquete)
+                                                {
+                                                    bool existeNumeroConexion = (from busqueda in resultado.Where(x => x.Substring(0, 4).Equals("1GGG"))
+                                                                                 where busqueda.Split('|').ElementAt(3).Equals(itemNumeroPaquete)
+                                                                                 select busqueda).Any();
+                                                    if (!existeNumeroConexion)
+                                                    {
+                                                        numeroPaqueteFinal = itemNumeroPaquete;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+
+                                            #endregion
+
+                                            if (item.Substring(0, 3) == "13M")
+                                            {
+                                                @base = item.Substring(42, 14).Trim();
+                                                iva = item.Substring(56, 14).Trim();
+                                            }
+                                            else
+                                            {
+                                                @base = item.Substring(16, 14).Trim();
+                                                iva = item.Substring(44, 14).Trim();
+                                            }
+
+                                            string capacidad = string.Empty;
+
+                                            if (item.Substring(0, 3) == "13M")
+                                            {
+                                                capacidad = $"{item.Substring(112, 8).Trim()}{item.Substring(120, 5).Trim()}";
+
+                                                if (string.IsNullOrEmpty(capacidad))
+                                                {
+                                                    capacidad = "0";
+                                                }
+                                            }
+
+                                            resultado.Add(Helpers.ValidarPipePipe($"1GGG|{descripcionProducto}|{descripcionSubProducto}|{numeroPaqueteFinal}| |" +
+                                            $"{capacidad}|{periodo}|{direccionOrigen}|{ciudadOrigen}|{direccionDestino}|{ciudadDestino}| | |" +
+                                            $"{Helpers.FormatearCampos(TiposFormateo.Decimal05, @base)}|" +
+                                            $"{Helpers.FormatearCampos(TiposFormateo.Decimal05, iva)}| "));
+
+                                            sumaValoresBase.Add(@base);
+                                            sumaValoresIva.Add(iva);
+
+                                        }
+                                        #endregion
                                     }
-
-                                    baseInterna.Add(item.Substring(16, 14).Trim());
-                                    ivaInterna.Add(item.Substring(44, 14).Trim());
                                 }
-
-                                lineasTotalPaquete = new List<string> { $"xxxxxx{Helpers.SumarCampos(baseInterna, "D").Replace("$ ", "").Replace(",", "").Replace(".", "").PadLeft(14, '0')}{"x".PadLeft(14, 'x')}{Helpers.SumarCampos(ivaInterna, "D").Replace("$ ", "").Replace(",", "").Replace(".", "").PadLeft(14, '0')}" };
+                                #endregion
                             }
-
-                            var lineaPeriodo = from busqueda in lineaDetalle.Value
-                                               where busqueda.Substring(0, 3) == "11C"
-                                               select busqueda;
-
-                            if (lineaPeriodo.Any())
-                            {
-                                periodo = lineaPeriodo.FirstOrDefault().Substring(128, 19).Trim();
-                            }
-
-                            var linea040001 = from busqueda in paquetesInformacion[lineaDetalle.Key]
-                                              where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("040001")
-                                              select busqueda;
-
-                            if (linea040001.Any())
-                            {
-                                direccionOrigen = linea040001.FirstOrDefault().Substring(36, 39).Trim();
-
-                                string llaveCruceDirecciones = $"DANC{linea040001.FirstOrDefault().Substring(75, 5).Trim().PadLeft(5, '0')}";
-
-                                ciudadOrigen = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruce).FirstOrDefault()?.Substring(10).Trim() ?? "";
-
-                                direccionDestino = linea040001.FirstOrDefault().Substring(80, 39).Trim();
-
-                                llaveCruceDirecciones = $"DANC{linea040001.FirstOrDefault().Substring(119, 5).Trim().PadLeft(5, '0')}";
-
-                                ciudadDestino = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruce).FirstOrDefault()?.Substring(10).Trim() ?? "";
-                            }
-
-                            @base = lineasTotalPaquete.FirstOrDefault().Substring(6, 14).Trim();
-                            iva = lineasTotalPaquete.FirstOrDefault().Substring(34, 14).Trim();
-
-                            resultado.Add(Helpers.ValidarPipePipe($"1GGG|{descripcionProducto}|{descripcionSubProducto}|{lineaDetalle.Key}| |" +
-                            $" |{periodo}|{direccionOrigen}|{ciudadOrigen}|{direccionDestino}|{ciudadDestino}| | |" +
-                            $"{Helpers.FormatearCampos(TiposFormateo.Decimal05, @base)}|" +
-                            $"{Helpers.FormatearCampos(TiposFormateo.Decimal05, iva)}| "));
-
-                            sumaValoresBase.Add(lineasTotalPaquete.FirstOrDefault().Substring(6, 14).Trim().TrimStart('0'));
-                            sumaValoresIva.Add(lineasTotalPaquete.FirstOrDefault().Substring(34, 14).Trim().TrimStart('0'));
                             #endregion
                         }
 
@@ -4374,14 +4480,13 @@ namespace App.ControlLogicaProcesos
                         sumaValoresTotal.AddRange(sumaValoresIva);
 
                         resultado.Add(Helpers.ValidarPipePipe($"1GGA|Total {descripcionSubProducto}|{Helpers.SumarCampos(sumaValoresBase, "D")}|" +
-                            $"{Helpers.SumarCampos(sumaValoresIva)}|{Helpers.SumarCampos(sumaValoresTotal)}| "));
+                            $"{Helpers.SumarCampos(sumaValoresIva, "D")}|{Helpers.SumarCampos(sumaValoresTotal, "D")}| "));
 
                         resultado.Add(Helpers.ValidarPipePipe($"1GGB|Total {descripcionProducto}")); //Se deja asi solo el canal para al final del formateo de los paquetes agregar la inforamcion real de la suma de paquetes.
                         #endregion
-                        #endregion
-                    }
 
-                    paquetesInformacionFormateados.Add(consecutivo, resultado);
+                        paquetesInformacionFormateados.Add(consecutivo, resultado);
+                    }
                 }
                 #endregion
             }
@@ -4460,6 +4565,49 @@ namespace App.ControlLogicaProcesos
             #endregion
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pCuentaConexion"></param>
+        /// <param name="pPeriodo"></param>
+        /// <param name="pCodigo"></param>
+        /// <param name="pGrupo"></param>
+        /// <param name="pLineaDetalle"></param>
+        /// <param name="pPaquetes"></param>
+        private void GetPaquetes(string pCuentaConexion, string pPeriodo, string pCodigo, string pGrupo, string pLineaDetalle, ref Dictionary<string, Dictionary<string, Dictionary<string, Dictionary<string, List<string>>>>> pPaquetes)
+        {
+            #region GetPaquetes
+            if (pPaquetes.ContainsKey(pCuentaConexion)) //CuentaConexion
+            {
+                if (pPaquetes[pCuentaConexion].ContainsKey(pPeriodo)) // periodoOrdenamiento
+                {
+                    if (pPaquetes[pCuentaConexion][pPeriodo].ContainsKey(pCodigo)) //Codigo
+                    {
+                        if (pPaquetes[pCuentaConexion][pPeriodo][pCodigo].ContainsKey(pGrupo)) //Grupo
+                        {
+                            pPaquetes[pCuentaConexion][pPeriodo][pCodigo][pGrupo].Add(pLineaDetalle);
+                        }
+                        else
+                        {
+                            pPaquetes[pCuentaConexion][pPeriodo][pCodigo].Add(pGrupo, new List<string> { pLineaDetalle });
+                        }
+                    }
+                    else
+                    {
+                        pPaquetes[pCuentaConexion][pPeriodo].Add(pCodigo, new Dictionary<string, List<string>> { { pGrupo, new List<string> { pLineaDetalle } } });
+                    }
+                }
+                else
+                {
+                    pPaquetes[pCuentaConexion].Add(pPeriodo, new Dictionary<string, Dictionary<string, List<string>>> { { pCodigo, new Dictionary<string, List<string>> { { pGrupo, new List<string> { pLineaDetalle } } } } });
+                }
+            }
+            else
+            {
+                pPaquetes.Add(pCuentaConexion, new Dictionary<string, Dictionary<string, Dictionary<string, List<string>>>> { { pPeriodo, new Dictionary<string, Dictionary<string, List<string>>> { { pCodigo, new Dictionary<string, List<string>> { { pGrupo, new List<string> { pLineaDetalle } } } } } } });
+            }
+            #endregion
+        }
 
         /// <summary>
         /// 

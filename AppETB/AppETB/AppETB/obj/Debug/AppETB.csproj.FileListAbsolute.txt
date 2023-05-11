@@ -87,12 +87,10 @@ C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\AppETB\bin\Debug\SharpCompress
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\AppETB\bin\Debug\Excel.dll
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\AppETB\bin\Debug\DLL_Utilidades.dll
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\AppETB\bin\Debug\App.ControlEjecucion.dll
-C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\AppETB\bin\Debug\ICSharpCode.SharpZipLib.dll
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\AppETB\bin\Debug\App.ControlLogicaProcesos.dll
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\AppETB\bin\Debug\App.ControlInsumos.pdb
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\AppETB\bin\Debug\App.ControlProcesos.pdb
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\AppETB\bin\Debug\App.Variables.pdb
-C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\AppETB\bin\Debug\DLL_Utilidades.pdb
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\AppETB\bin\Debug\App.ControlEjecucion.pdb
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\AppETB\bin\Debug\App.ControlEjecucion.xml
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\AppETB\bin\Debug\App.ControlLogicaProcesos.pdb

@@ -2007,7 +2007,7 @@ namespace App.ControlLogicaProcesos
 
                     llave = detalle.Substring(0, 6).Trim();
                     descripcion = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"CODT{detalle.Substring(0, 6).Trim()}")?.FirstOrDefault() ?? string.Empty;
-                    
+
                     descripcion = Helpers.FormatearCampos(TiposFormateo.PrimeraMayuscula, descripcion.Substring(10).Trim());
 
                     if (descripcion.Substring(descripcion.Length - 3).ToLower() == "iva")
@@ -3135,7 +3135,7 @@ namespace App.ControlLogicaProcesos
                             else
                             {
                                 lineasDetallePaqueteAgrupadoPeriodo = from busqueda in datosCFI
-                                                                      group busqueda by busqueda.Substring(128, 5).Trim() into busqueda
+                                                                      group busqueda by busqueda.Substring(128, 8).Trim() into busqueda
                                                                       select busqueda;
                             }
 
@@ -3167,7 +3167,7 @@ namespace App.ControlLogicaProcesos
 
                                     descripcionConcepto = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruce).FirstOrDefault()?.Substring(14).Trim() ?? string.Empty;
 
-                                    if (descripcionConcepto == "Cargo fijo llamada en espera" && lineaDetalleAgrupado.FirstOrDefault().Substring(3, 1) == "0" && !banderaMarcarOfertaValor)
+                                    if (descripcionConcepto == "Identif. De llamadas" && lineaDetalleAgrupado.FirstOrDefault().Substring(3, 1) == "0" && !banderaMarcarOfertaValor)
                                     {
                                         descripcionConcepto = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"FACLIN0").FirstOrDefault()?.Substring(8).Trim() ?? string.Empty;
                                         banderaMarcarOfertaValor = true;
@@ -4606,26 +4606,29 @@ namespace App.ControlLogicaProcesos
                         {
                             foreach (var linea11CActual in lineas11C901)
                             {
-                                if (lineas040000.FirstOrDefault().Substring(6, 17).Trim() == Cuenta)
+                                if (!string.IsNullOrEmpty(linea11CActual.Substring(16, 14).Trim().TrimStart('0')))
                                 {
-                                    valor1.Add(linea11CActual.Substring(16, 14));
-                                    valor1.Add(linea11CActual.Substring(30, 14));
-                                    valor2.Add(linea11CActual.Substring(44, 14));
-                                    valor3.Add(linea11CActual.Substring(172, 14));
-
-                                    periodo = PeriodoFacturacion.Substring(2, 4) + PeriodoFacturacion.Substring(0, 2);
-                                }
-                                else
-                                {
-                                    valor1.Add(linea11CActual.Substring(16, 14));
-                                    valor2.Add(linea11CActual.Substring(44, 14));
-                                    valor3.Add(linea11CActual.Substring(172, 14));
-
-                                    if (linea11CActual.Substring(128, 19).Contains("-"))
+                                    if (lineas040000.FirstOrDefault().Substring(6, 17).Trim() == Cuenta)
                                     {
-                                        periodo = linea11CActual.Substring(128, 6);
-                                        listPrimeraFecha.Add(linea11CActual.Substring(128, 8));
-                                        listSegundaFecha.Add(linea11CActual.Substring(139, 8));
+                                        valor1.Add(linea11CActual.Substring(16, 14));
+                                        valor1.Add(linea11CActual.Substring(30, 14));
+                                        valor2.Add(linea11CActual.Substring(44, 14));
+                                        valor3.Add(linea11CActual.Substring(172, 14));
+
+                                        periodo = PeriodoFacturacion.Substring(2, 4) + PeriodoFacturacion.Substring(0, 2);
+                                    }
+                                    else
+                                    {
+                                        valor1.Add(linea11CActual.Substring(16, 14));
+                                        valor2.Add(linea11CActual.Substring(44, 14));
+                                        valor3.Add(linea11CActual.Substring(172, 14));
+
+                                        if (linea11CActual.Substring(128, 19).Contains("-"))
+                                        {
+                                            periodo = linea11CActual.Substring(128, 6);
+                                            listPrimeraFecha.Add(linea11CActual.Substring(128, 8));
+                                            listSegundaFecha.Add(linea11CActual.Substring(139, 8));
+                                        }
                                     }
                                 }
                             }
@@ -4639,10 +4642,6 @@ namespace App.ControlLogicaProcesos
                             primerFecha = Helpers.FormatearCampos(TiposFormateo.Fecha06, primerFecha);
                             segundaFecha = Helpers.FormatearCampos(TiposFormateo.Fecha06, segundaFecha);
                         }
-
-
-
-
 
                         // sumar el total
                         total.AddRange(valor1);
@@ -4756,6 +4755,12 @@ namespace App.ControlLogicaProcesos
                     descripcion = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"CODF{item.Substring(6, 10).Trim()}")?.FirstOrDefault().Substring(14).Trim() ?? string.Empty;
 
                     camposFinanciacion = item.Substring(136, 100).Split('&');
+
+                    if (camposFinanciacion.Length < 8)
+                    {
+                        continue;
+                    }
+
                     camposPlanPago = camposFinanciacion[1].Split(',');
 
                     if (camposFinanciacion.Length > 1 && camposFinanciacion[0] == "F" && item.Substring(123, 1).Trim() != "P")
@@ -4841,6 +4846,9 @@ namespace App.ControlLogicaProcesos
         {
             #region FormarPaqueteEEE
             List<string> resultado = new List<string>();
+            List<string> sumaValoresBase = new List<string>();
+            List<string> sumaValoresIva = new List<string>();
+            List<string> sumaValoresTotal = new List<string>();
             string llaveConcepto = string.Empty;
             string llaveBusquedaDescripcion = string.Empty;
             string descripcionTitulo = string.Empty;
@@ -4868,6 +4876,10 @@ namespace App.ControlLogicaProcesos
                                       where !string.IsNullOrEmpty(busqueda.Substring(16, 14).Trim().TrimStart('0'))
                                       select busqueda;
 
+                var lineasAnexosETBAgrupados = from busqueda in lineasAnexosETB
+                                               group busqueda by busqueda.Substring(274, 10).Trim() into busqueda
+                                               select busqueda;
+
                 var lineas12MAnexosETB = from busqueda in datosOriginales
                                          where busqueda.Length > 6 &&
                                          busqueda.Substring(0, 6).Equals("12M123") ||
@@ -4877,25 +4889,31 @@ namespace App.ControlLogicaProcesos
                                          busqueda.Substring(0, 6).Equals("12M116")
                                          select busqueda;
 
-                if (lineasAnexosETB.Any() && lineas12MAnexosETB.Any())
+                if (lineasAnexosETBAgrupados.Any() && lineas12MAnexosETB.Any())
                 {
-                    foreach (var linea in lineasAnexosETB)
+                    foreach (var linea in lineasAnexosETBAgrupados)
                     {
                         resultado.Add($"ADN1|-|ANEXO ETB| | | | ");
 
                         #region Datos 1EE1
-                        llaveConcepto = linea.Substring(6, 10);
+                        llaveConcepto = linea.FirstOrDefault().Substring(6, 10);
 
                         llaveBusquedaDescripcion = $"CODT{Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoConfiguracionLLavesDoc1, llaveConcepto).Split('|').ElementAt(13)}";
 
                         descripcionTitulo = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveBusquedaDescripcion).FirstOrDefault()?.Substring(11).Trim() ?? "";
 
-                        @base = linea.Substring(16, 14).Trim().TrimStart('0');
-                        iva = linea.Substring(44, 14).Trim().TrimStart('0');
+                        foreach (var item in linea)
+                        {
+                            sumaValoresBase.Add(item.Substring(16, 14).Trim().TrimStart('0'));
+                            sumaValoresIva.Add(item.Substring(44, 14).Trim().TrimStart('0'));
+                        }
+
+                        sumaValoresTotal.AddRange(sumaValoresBase);
+                        sumaValoresTotal.AddRange(sumaValoresIva);
 
                         resultado.Add(Helpers.ValidarPipePipe($"1EE1|-|{descripcionTitulo}" +
-                            $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, @base)}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, iva)}|" +
-                            $"{Helpers.SumarCampos(new List<string> { @base, iva })}| | | "));
+                            $"|{Helpers.SumarCampos(sumaValoresBase)}|{Helpers.SumarCampos(sumaValoresIva)}|" +
+                            $"{Helpers.SumarCampos(sumaValoresTotal)}| | | "));
                         #endregion
 
                         #region Datos 1EE2
@@ -4909,7 +4927,7 @@ namespace App.ControlLogicaProcesos
                         #region Datos 1EE3
 
                         var datosDetalles = from busqueda in lineas12MAnexosETB
-                                            where busqueda.Substring(3, 3) == linea.Substring(3, 3)
+                                            where busqueda.Substring(3, 3) == linea.FirstOrDefault().Substring(3, 3)
                                             select busqueda;
 
                         foreach (var lineaDet in datosDetalles)
@@ -4921,8 +4939,8 @@ namespace App.ControlLogicaProcesos
                         }
 
                         resultado.Add(Helpers.ValidarPipePipe($"1EE3|-|{Helpers.FormatearCampos(TiposFormateo.LetraCapital, descripcionTitulo)}" +
-                            $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, @base)}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, iva)}|" +
-                            $"{Helpers.SumarCampos(new List<string> { @base, iva })}| | | "));
+                            $"|{Helpers.SumarCampos(sumaValoresBase)}|{Helpers.SumarCampos(sumaValoresIva)}|" +
+                            $"{Helpers.SumarCampos(sumaValoresTotal)}| | | "));
 
                         #endregion
                     }
@@ -5241,7 +5259,7 @@ namespace App.ControlLogicaProcesos
                         $"{valormes5.ToString().PadLeft(8, '0')}" +
                         $"{valormes6.ToString().PadLeft(8, '0')}";
 
-                    resultado = Helpers.ValidarPipePipe($"1PPV|Mes Actual: {mesActual}|{ArmarMesesHistograma(Helpers.FormatearCampos(TiposFormateo.Fecha01, linea10000.FirstOrDefault().Substring(168, 8)))}|" +
+                    resultado = Helpers.ValidarPipePipe($"1PPV|Mes Actual: {mesActual}|{ArmarMesesHistograma(Helpers.FormatearCampos(TiposFormateo.Fecha01, linea10000.FirstOrDefault().Substring(168, 8)), false)}|" +
                         $"{ArmarValoresHistograma(lineaMeses, "2")}|Promedio: {promedio}| ");
                 }
             }
@@ -5300,7 +5318,7 @@ namespace App.ControlLogicaProcesos
                         $"{valormes5.ToString().PadLeft(6, '0')}" +
                         $"{valormes6.ToString().PadLeft(6, '0')}";
 
-                    resultado = Helpers.ValidarPipePipe($"1PPD|Mes Actual: {mesActual.ToString().Replace(".", string.Empty)}|{ArmarMesesHistograma(Helpers.FormatearCampos(TiposFormateo.Fecha01, linea10000.FirstOrDefault().Substring(168, 8)))}|" +
+                    resultado = Helpers.ValidarPipePipe($"1PPD|Mes Actual: {mesActual.ToString().Replace(".", string.Empty)}|{ArmarMesesHistograma(Helpers.FormatearCampos(TiposFormateo.Fecha01, linea10000.FirstOrDefault().Substring(168, 8)), false)}|" +
                         $"{ArmarValoresHistograma(lineaMeses, "3")}|Promedio: {promedio.ToString().Replace(".", string.Empty)}| ");
                 }
             }
@@ -5547,7 +5565,7 @@ namespace App.ControlLogicaProcesos
                     var valorPromedio = linea60000.FirstOrDefault().Substring(78, 8).TrimStart('0').Trim() == "" ? "0" : linea60000.FirstOrDefault().Substring(78, 8).TrimStart('0').Trim();
 
                     resultado += Helpers.ValidarPipePipe($"1PPP|Promedio Historico|{valorPromedio}| |" +
-                        $"{ArmarMesesHistograma(Helpers.FormatearCampos(TiposFormateo.Fecha01, linea10000.FirstOrDefault().Substring(168, 8)))}| |" +
+                        $"{ArmarMesesHistograma(Helpers.FormatearCampos(TiposFormateo.Fecha01, linea10000.FirstOrDefault().Substring(168, 8)), true)}| |" +
                         $"{ArmarValoresHistograma(linea60000.FirstOrDefault(), "1")}| |{GetValorMinutoPlan(linea40000.FirstOrDefault(), valor)}| ");
                 }
             }
@@ -5560,8 +5578,9 @@ namespace App.ControlLogicaProcesos
         /// Metodo que obtiene Meses Histograma
         /// </summary>
         /// <param name="pFechaReferencia"></param>
+        /// <param name="pRestarMes"></param>
         /// <returns></returns>
-        private string ArmarMesesHistograma(string pFechaReferencia)
+        private string ArmarMesesHistograma(string pFechaReferencia, bool pRestarMes)
         {
             #region ArmarMesesHistograma
             string resultado = string.Empty;
@@ -5571,7 +5590,12 @@ namespace App.ControlLogicaProcesos
             if (!string.IsNullOrEmpty(pFechaReferencia))
             {
                 byte mesFacturacion = Convert.ToByte(pFechaReferencia.Split('/').ElementAt(1));
-                //mesFacturacion--;
+
+                if (pRestarMes)
+                {
+                    mesFacturacion--;
+                }
+
 
                 for (int i = mesFacturacion; i <= mesFacturacion; i--)
                 {
@@ -6494,20 +6518,23 @@ namespace App.ControlLogicaProcesos
                 {
                     foreach (var linea11CActual in lineas11C)
                     {
-                        concepto1DBB = linea11CActual.Substring(281).Trim();
+                        if (!string.IsNullOrEmpty(linea11CActual.Substring(16, 14).Trim().TrimStart('0')))
+                        {
+                            concepto1DBB = linea11CActual.Substring(274).Trim();
 
-                        if (Convert.ToDouble(linea11CActual.Substring(30, 14)) != 0)
-                        {
-                            concepto1DBB = "Recargo de mora";
-                        }
+                            if (Convert.ToDouble(linea11CActual.Substring(30, 14)) != 0)
+                            {
+                                concepto1DBB = "Recargo de mora";
+                            }
 
-                        if (dicAgruPorCargo.ContainsKey(concepto1DBB))
-                        {
-                            dicAgruPorCargo[concepto1DBB].Add(linea11CActual);
-                        }
-                        else
-                        {
-                            dicAgruPorCargo.Add(concepto1DBB, new List<string> { linea11CActual });
+                            if (dicAgruPorCargo.ContainsKey(concepto1DBB))
+                            {
+                                dicAgruPorCargo[concepto1DBB].Add(linea11CActual);
+                            }
+                            else
+                            {
+                                dicAgruPorCargo.Add(concepto1DBB, new List<string> { linea11CActual });
+                            }
                         }
                     }
                 }
@@ -6526,7 +6553,6 @@ namespace App.ControlLogicaProcesos
 
                 foreach (var lineaProcesar in dicAgruPorCargoActual.Value)
                 {
-
                     if (concepto1DBB == "Recargo de mora")
                     {
                         valor1_1DBB.Add(lineaProcesar.Substring(30, 14));
@@ -6537,6 +6563,8 @@ namespace App.ControlLogicaProcesos
                         valor3_1DBB.Add(lineaProcesar.Substring(44, 14));
 
                         valor4_1DBB.Add("0");
+
+                        concepto1DBB = "Recargo de mora";
                     }
                     else
                     {
@@ -6552,6 +6580,8 @@ namespace App.ControlLogicaProcesos
                         valor4_1DBB.Add(lineaProcesar.Substring(172, 14));
 
                     }
+
+                    concepto1DBB = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"CODF{lineaProcesar.Substring(6, 10)}").FirstOrDefault()?.Substring(15).Trim() ?? string.Empty;
                 }
 
                 // Agregar Campos a Totalizar
@@ -6559,7 +6589,6 @@ namespace App.ControlLogicaProcesos
                 valor2_1DAA.AddRange(valor2_1DBB);
                 valor3_1DAA.AddRange(valor3_1DBB);
                 valor4_1DAA.AddRange(valor4_1DBB);
-
 
                 LineaTemp = "1DBB|";
                 LineaTemp += Helpers.FormatearCampos(TiposFormateo.PrimeraMayuscula, concepto1DBB) + "|";
