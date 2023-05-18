@@ -43,3 +43,12 @@ C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\App.ControlInsumos\obj\Debug\A
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\App.ControlInsumos\obj\Debug\App.ControlInsumos.csproj.CopyComplete
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\App.ControlInsumos\obj\Debug\App.ControlInsumos.dll
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\App.ControlInsumos\obj\Debug\App.ControlInsumos.pdb
+C:\Proyectos\ETB\AppETB\AppETB\App.ControlInsumos\bin\Debug\App.ControlInsumos.dll
+C:\Proyectos\ETB\AppETB\AppETB\App.ControlInsumos\bin\Debug\App.ControlInsumos.pdb
+C:\Proyectos\ETB\AppETB\AppETB\App.ControlInsumos\bin\Debug\App.Variables.dll
+C:\Proyectos\ETB\AppETB\AppETB\App.ControlInsumos\bin\Debug\App.Variables.pdb
+C:\Proyectos\ETB\AppETB\AppETB\App.ControlInsumos\obj\Debug\App.ControlInsumos.csproj.AssemblyReference.cache
+C:\Proyectos\ETB\AppETB\AppETB\App.ControlInsumos\obj\Debug\App.ControlInsumos.csproj.CoreCompileInputs.cache
+C:\Proyectos\ETB\AppETB\AppETB\App.ControlInsumos\obj\Debug\App.ControlInsumos.csproj.CopyComplete
+C:\Proyectos\ETB\AppETB\AppETB\App.ControlInsumos\obj\Debug\App.ControlInsumos.dll
+C:\Proyectos\ETB\AppETB\AppETB\App.ControlInsumos\obj\Debug\App.ControlInsumos.pdb
