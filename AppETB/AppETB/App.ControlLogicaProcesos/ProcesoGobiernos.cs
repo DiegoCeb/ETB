@@ -3556,7 +3556,7 @@ namespace App.ControlLogicaProcesos
             }
             #endregion
 
-            if (Cuenta == "675195745")
+            if (Cuenta == "675146422")
             {
 
             }
@@ -3991,6 +3991,30 @@ namespace App.ControlLogicaProcesos
                             }
                             #endregion
                         }
+                    }
+                    else if (lineas12MAnexos.Any())
+                    {
+                        #region lineas12MAnexos
+                        resultado.Add(Helpers.ValidarPipePipe($"1EE1|{lineaDetalle.Key}| " +
+                                                $"|0.00|0.00|0.00|0.00| "));
+
+                        if (Variables.Variables.DatosInsumoConfiguracionLLavesDoc1.ContainsKey(llaveCruce))
+                        {
+                            llaveBusquedaDescripcion = $"CODT{Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoConfiguracionLLavesDoc1, llaveCruce).Split('|').ElementAt(7)}";
+                        }
+
+                        descripcionSubtitulo = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveBusquedaDescripcion).FirstOrDefault()?.Substring(11).Trim() ?? "";
+
+                        resultado.Add(Helpers.ValidarPipePipe($"1EE2|{lineaDetalle.Key}|{Helpers.FormatearCampos(TiposFormateo.LetraCapital, descripcionSubtitulo)}|LD| "));
+
+                        foreach (var linea in lineas12MAnexos)
+                        {
+                            resultado.Add(Helpers.ValidarPipePipe($"1EE3|{lineaDetalle.Key}|{Helpers.FormatearCampos(TiposFormateo.Fecha12, linea.Substring(6, 10))}|" +
+                                $"{Helpers.FormatearCampos(TiposFormateo.HoraMinutoSegundo, linea.Substring(14, 6))}|{linea.Substring(20, 10).Trim()}|" +
+                                $"{linea.Substring(33, 10).Trim()}|{linea.Substring(96, 11).Trim()}|{linea.Substring(66, 2).TrimStart('0')}:00|{Helpers.FormatearCampos(TiposFormateo.Decimal05, linea.Substring(47, 9)).Replace("$", "").Trim()}|" +
+                                $"{Helpers.FormatearCampos(TiposFormateo.Decimal05, linea.Substring(56, 9)).Replace("$", "").Trim()}| "));
+                        } 
+                        #endregion
                     }
                     #endregion
                 }
