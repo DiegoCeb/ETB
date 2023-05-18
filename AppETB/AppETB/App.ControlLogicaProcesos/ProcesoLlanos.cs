@@ -490,6 +490,15 @@ namespace App.ControlLogicaProcesos
             string email = string.Empty;
             string prevalidador = string.Empty;
 
+            if (!string.IsNullOrEmpty(insumoEmail))
+            {
+                tipoEmail = "solo_email";
+                string[] campos = insumoEmail.Split('|');
+                if (campos.Length > 1)
+                {
+                    email = $"{campos[1]}";
+                }
+            }
 
             if (!string.IsNullOrEmpty(insumoDual))
             {
@@ -501,12 +510,13 @@ namespace App.ControlLogicaProcesos
             {
                 if (!string.IsNullOrEmpty(email))
                 {
-                    string[] campos = email.Split('|');
+                    string[] campos = insumoEmail.Split('|');
                     if (campos.Length > 1)
                     {
                         email = $"{campos[1]}";
                     }
                 }
+                else { tipoEmail = string.Empty; }
             }
 
             resultado.Add(email);

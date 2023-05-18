@@ -30,3 +30,11 @@ C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\App.Variables\obj\Debug\App.Va
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\App.Variables\obj\Debug\App.Variables.csproj.CoreCompileInputs.cache
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\App.Variables\obj\Debug\App.Variables.dll
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\App.Variables\obj\Debug\App.Variables.pdb
+C:\Proyectos\ETB\AppETB\AppETB\App.Variables\bin\Debug\App.Variables.dll
+C:\Proyectos\ETB\AppETB\AppETB\App.Variables\bin\Debug\App.Variables.pdb
+C:\Proyectos\ETB\AppETB\AppETB\App.Variables\obj\Debug\App.Variables.csproj.AssemblyReference.cache
+C:\Proyectos\ETB\AppETB\AppETB\App.Variables\obj\Debug\App.Variables.RxGeneral.resources
+C:\Proyectos\ETB\AppETB\AppETB\App.Variables\obj\Debug\App.Variables.csproj.GenerateResource.cache
+C:\Proyectos\ETB\AppETB\AppETB\App.Variables\obj\Debug\App.Variables.csproj.CoreCompileInputs.cache
+C:\Proyectos\ETB\AppETB\AppETB\App.Variables\obj\Debug\App.Variables.dll
+C:\Proyectos\ETB\AppETB\AppETB\App.Variables\obj\Debug\App.Variables.pdb

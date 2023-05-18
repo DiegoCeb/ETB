@@ -61,6 +61,7 @@
     <Compile Include="ReportesDatos.cs" />
     <Compile Include="ReportesLteCorporativo.cs" />
     <Compile Include="ReportesMasivos.cs" />
+    <Compile Include="ReportesLlanos.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\App.ControlInsumos\App.ControlInsumos.csproj">
