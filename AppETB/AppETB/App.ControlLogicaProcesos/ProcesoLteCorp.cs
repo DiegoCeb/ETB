@@ -1881,7 +1881,7 @@ namespace App.ControlLogicaProcesos
 
                     if (listaFechaInicio.Count != 0 && listaFechaFin.Count != 0)
                     {
-                        fechaInicio = Helpers.GetFechaMaximaMinima(listaFechaInicio, 2);
+                        fechaInicio = Helpers.GetFechaMaximaMinima(listaFechaInicio, 1);
                         fechaFin = Helpers.GetFechaMaximaMinima(listaFechaFin, 1);
                     }
                     else
@@ -1898,6 +1898,10 @@ namespace App.ControlLogicaProcesos
                 }
             }
 
+            if (Cuenta == "12054697465")
+            {
+
+            }
             string cuentasLTE9697 = Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoCuentasLte, $"{Cuenta}") ?? string.Empty;
 
             if (!string.IsNullOrEmpty(fechaInicio) && !string.IsNullOrEmpty(fechaFin))
@@ -2344,7 +2348,7 @@ namespace App.ControlLogicaProcesos
                                     camposSumar.Add(registroActual.Substring(6, 14));
                                     camposSumar.Add(registroActual.Substring(34, 14));
 
-                                    CCA_Total = Helpers.SumarCampos(camposSumar);
+                                    CCA_Total = Helpers.SumarCampos(camposSumar, "G");
                                     camposSumar.Clear();
                                     linea1CCATemp += CCA_Total + "| ";
 
@@ -2363,7 +2367,7 @@ namespace App.ControlLogicaProcesos
 
                                     camposSumar.Add(registroActual.Substring(6, 14));
 
-                                    CCA_Total = Helpers.SumarCampos(camposSumar);
+                                    CCA_Total = Helpers.SumarCampos(camposSumar, "G");
                                     camposSumar.Clear();
                                     linea1CCATemp += CCA_Total + "| ";
 
@@ -2389,7 +2393,7 @@ namespace App.ControlLogicaProcesos
                                         camposSumar.Add(result02T054.FirstOrDefault().Substring(6, 14));
                                         camposSumar.Add(result02T054.FirstOrDefault().Substring(34, 14));
 
-                                        CCA_Total = Helpers.SumarCampos(camposSumar);
+                                        CCA_Total = Helpers.SumarCampos(camposSumar, "G");
                                         camposSumar.Clear();
                                         linea1CCATemp += CCA_Total + "| ";
 
@@ -2439,7 +2443,7 @@ namespace App.ControlLogicaProcesos
                                         }
 
                                         // Si llena los campos 
-                                        CCA_Total = Helpers.SumarCampos(camposSumar);
+                                        CCA_Total = Helpers.SumarCampos(camposSumar, "G");
                                         camposSumar.Clear();
                                         linea1CCATemp += CCA_Total + "| ";
                                         Linea1CCA.Add(Helpers.ValidarPipePipe(linea1CCATemp));
@@ -2557,7 +2561,7 @@ namespace App.ControlLogicaProcesos
                         camposSumar.Add("-" + linea.Substring(119, 13));
 
                         linea1CCC = "1CCC|Iva|";
-                        linea1CCC += Helpers.SumarCampos(camposSumar) + "||| ";
+                        linea1CCC += Helpers.SumarCampos(camposSumar, "G") + "||| ";
                         list.Add(Helpers.ValidarPipePipe(linea1CCC));
                     }
 
@@ -3182,13 +3186,13 @@ namespace App.ControlLogicaProcesos
 
                                     if (string.IsNullOrEmpty(lineaDetalleAgrupado.FirstOrDefault().Substring(132, 4).Trim()) || !lineaDetalleAgrupado.FirstOrDefault().Substring(128, 19).Trim().Contains("-") || !lineaDetalleAgrupado.FirstOrDefault().Substring(137, 1).Trim().Contains("-"))
                                     {
-                                        lineaCfi = Helpers.ValidarPipePipe($"1CFI| |{descripcionConcepto}|{Helpers.SumarCampos(sumaValoresBase)}|{Helpers.SumarCampos(sumaValoresIva)}|" +
-                                            $"{Helpers.SumarCampos(sumaValoresTotal)}|{Helpers.SumarCampos(sumaValoresImpuestos)}| ");
+                                        lineaCfi = Helpers.ValidarPipePipe($"1CFI| |{descripcionConcepto}|{Helpers.SumarCampos(sumaValoresBase, "G")}|{Helpers.SumarCampos(sumaValoresIva, "G")}|" +
+                                            $"{Helpers.SumarCampos(sumaValoresTotal, "G")}|{Helpers.SumarCampos(sumaValoresImpuestos, "G")}| ");
                                     }
                                     else
                                     {
                                         lineaCfi = Helpers.ValidarPipePipe($"1CFI|{lineaDetalleAgrupado.FirstOrDefault().Substring(128, 6)}|{descripcionConcepto} ({Helpers.FormatearCampos(TiposFormateo.Fecha04, lineaDetalleAgrupado.FirstOrDefault().Substring(132, 4))} - {Helpers.FormatearCampos(TiposFormateo.Fecha04, lineaDetalleAgrupado.FirstOrDefault().Substring(143, 4))})" +
-                                        $"|{Helpers.SumarCampos(sumaValoresBase)}|{Helpers.SumarCampos(sumaValoresIva)}|{Helpers.SumarCampos(sumaValoresTotal)}|{Helpers.SumarCampos(sumaValoresImpuestos)}| ");
+                                        $"|{Helpers.SumarCampos(sumaValoresBase, "G")}|{Helpers.SumarCampos(sumaValoresIva, "G")}|{Helpers.SumarCampos(sumaValoresTotal, "G")}|{Helpers.SumarCampos(sumaValoresImpuestos, "G")}| ");
                                     }
 
                                     if (ordenSalidaInformacion.ContainsKey(3))
@@ -3318,8 +3322,8 @@ namespace App.ControlLogicaProcesos
                                 string FechaHastaReciente = Helpers.GetFechaMaximaMinima(fechasHasta.ToList(), 1);
                                 #endregion
 
-                                string lineaAfi = Helpers.ValidarPipePipe($"1AFI|{Corte.Substring(0, 6).Trim()}|{nombrePaquete}|{Helpers.SumarCampos(sumaValoresBase)}|" +
-                                    $"{Helpers.SumarCampos(sumaValoresIva)}|{Helpers.SumarCampos(sumaValoresTotal)}| |" +
+                                string lineaAfi = Helpers.ValidarPipePipe($"1AFI|{Corte.Substring(0, 6).Trim()}|{nombrePaquete}|{Helpers.SumarCampos(sumaValoresBase, "G")}|" +
+                                    $"{Helpers.SumarCampos(sumaValoresIva, "G")}|{Helpers.SumarCampos(sumaValoresTotal, "G")}| |" +
                                     $"({Helpers.FormatearCampos(TiposFormateo.Fecha04, periodo.Split('-').ElementAt(0).Trim().Substring(4, 4))} - {Helpers.FormatearCampos(TiposFormateo.Fecha04, periodo.Split('-').ElementAt(1).Trim().Substring(4, 4))})" +
                                     $"| |{FechaDesdeAntigua}|{FechaHastaReciente}| ");
 
@@ -3368,8 +3372,8 @@ namespace App.ControlLogicaProcesos
 
                     if (sumaValoresTotal.Any())
                     {
-                        string lineaTfi = Helpers.ValidarPipePipe($"1TFI| |TOTAL|{Helpers.SumarCampos(sumaValoresBase)}|" +
-                            $"{Helpers.SumarCampos(sumaValoresIva)}|{Helpers.FormatearCampos(TiposFormateo.Redondear, Helpers.SumarCampos(sumaValoresTotal))}| | ");
+                        string lineaTfi = Helpers.ValidarPipePipe($"1TFI| |TOTAL|{Helpers.SumarCampos(sumaValoresBase, "G")}|" +
+                            $"{Helpers.SumarCampos(sumaValoresIva, "G")}|{Helpers.FormatearCampos(TiposFormateo.Redondear, Helpers.SumarCampos(sumaValoresTotal, "G"))}| | ");
 
                         resultado.Add(lineaTfi);
                     }
@@ -3486,10 +3490,10 @@ namespace App.ControlLogicaProcesos
                         resultadoFinalOrdenado.Add(Helpers.ValidarPipePipe($"{detallesDuplicados.Value.FirstOrDefault().Split('|').ElementAt(0)}|" +
                             $"{detallesDuplicados.Value.FirstOrDefault().Split('|').ElementAt(1)}|" +
                             $"{detallesDuplicados.Value.FirstOrDefault().Split('|').ElementAt(2)}|" +
-                            $"{Helpers.SumarCampos(sumaValoresBase)}|" +
-                            $"{Helpers.SumarCampos(sumaValoresIva)}|" +
-                            $"{Helpers.SumarCampos(sumaValoresTotal)}|" +
-                            $"{Helpers.SumarCampos(sumaValoresImpuestos)}| "));
+                            $"{Helpers.SumarCampos(sumaValoresBase, "G")}|" +
+                            $"{Helpers.SumarCampos(sumaValoresIva, "G")}|" +
+                            $"{Helpers.SumarCampos(sumaValoresTotal, "G")}|" +
+                            $"{Helpers.SumarCampos(sumaValoresImpuestos, "G")}| "));
                     }
                     else
                     {
@@ -3784,10 +3788,10 @@ namespace App.ControlLogicaProcesos
                             string lineaODC = resultadoTemporal.Find(x => x.Substring(0, 4).Equals("1ODC"));
                             int lineaODCIndice = resultadoTemporal.FindIndex(x => x.Substring(0, 4).Equals("1ODC"));
 
-                            lineaODC = lineaODC.Replace("***BASE***", Helpers.SumarCampos(sumaValoresBase));
-                            lineaODC = lineaODC.Replace("***IVA***", Helpers.SumarCampos(sumaValoresIva));
-                            lineaODC = lineaODC.Replace("***IMPUESTOS***", Helpers.SumarCampos(sumaValoresImpuestos));
-                            lineaODC = lineaODC.Replace("***TOTAL***", Helpers.SumarCampos(sumaValoresTotal));
+                            lineaODC = lineaODC.Replace("***BASE***", Helpers.SumarCampos(sumaValoresBase, "G"));
+                            lineaODC = lineaODC.Replace("***IVA***", Helpers.SumarCampos(sumaValoresIva, "G"));
+                            lineaODC = lineaODC.Replace("***IMPUESTOS***", Helpers.SumarCampos(sumaValoresImpuestos, "G"));
+                            lineaODC = lineaODC.Replace("***TOTAL***", Helpers.SumarCampos(sumaValoresTotal, "G"));
 
                             resultadoTemporal[lineaODCIndice] = lineaODC;
                             #endregion
@@ -3801,10 +3805,10 @@ namespace App.ControlLogicaProcesos
                             string lineaODC = resultadoTemporal.Find(x => x.Substring(0, 4).Equals("1ODC"));
                             int lineaODCIndice = resultadoTemporal.FindIndex(x => x.Substring(0, 4).Equals("1ODC"));
 
-                            lineaODC = lineaODC.Replace("***BASE***", Helpers.SumarCampos(new List<string>()));
-                            lineaODC = lineaODC.Replace("***IVA***", Helpers.SumarCampos(new List<string>()));
-                            lineaODC = lineaODC.Replace("***IMPUESTOS***", Helpers.SumarCampos(new List<string>()));
-                            lineaODC = lineaODC.Replace("***TOTAL***", Helpers.SumarCampos(new List<string>()));
+                            lineaODC = lineaODC.Replace("***BASE***", Helpers.SumarCampos(new List<string>(), "G"));
+                            lineaODC = lineaODC.Replace("***IVA***", Helpers.SumarCampos(new List<string>(), "G"));
+                            lineaODC = lineaODC.Replace("***IMPUESTOS***", Helpers.SumarCampos(new List<string>(), "G"));
+                            lineaODC = lineaODC.Replace("***TOTAL***", Helpers.SumarCampos(new List<string>(), "G"));
 
                             resultadoTemporal[lineaODCIndice] = lineaODC;
                             #endregion
@@ -4651,10 +4655,10 @@ namespace App.ControlLogicaProcesos
                         Lineas1DET = "1DET|";
                         Lineas1DET += numeroConexion + "|";
                         Lineas1DET += "Total|";
-                        Lineas1DET += Helpers.SumarCampos(valor1) + "|";
-                        Lineas1DET += Helpers.SumarCampos(valor2) + "|";
-                        Lineas1DET += Helpers.SumarCampos(valor3) + "|";
-                        Lineas1DET += Helpers.SumarCampos(total) + "|";
+                        Lineas1DET += Helpers.SumarCampos(valor1, "G") + "|";
+                        Lineas1DET += Helpers.SumarCampos(valor2, "G") + "|";
+                        Lineas1DET += Helpers.SumarCampos(valor3, "G") + "|";
+                        Lineas1DET += Helpers.SumarCampos(total, "G") + "|";
                         Lineas1DET += periodo + "| ";
 
                         if (!string.IsNullOrEmpty(primerFecha) && !string.IsNullOrEmpty(segundaFecha))
@@ -4912,8 +4916,8 @@ namespace App.ControlLogicaProcesos
                         sumaValoresTotal.AddRange(sumaValoresIva);
 
                         resultado.Add(Helpers.ValidarPipePipe($"1EE1|-|{descripcionTitulo}" +
-                            $"|{Helpers.SumarCampos(sumaValoresBase)}|{Helpers.SumarCampos(sumaValoresIva)}|" +
-                            $"{Helpers.SumarCampos(sumaValoresTotal)}| | | "));
+                            $"|{Helpers.SumarCampos(sumaValoresBase, "G")}|{Helpers.SumarCampos(sumaValoresIva, "G")}|" +
+                            $"{Helpers.SumarCampos(sumaValoresTotal, "G")}| | | "));
                         #endregion
 
                         #region Datos 1EE2
@@ -4939,8 +4943,8 @@ namespace App.ControlLogicaProcesos
                         }
 
                         resultado.Add(Helpers.ValidarPipePipe($"1EE3|-|{Helpers.FormatearCampos(TiposFormateo.LetraCapital, descripcionTitulo)}" +
-                            $"|{Helpers.SumarCampos(sumaValoresBase)}|{Helpers.SumarCampos(sumaValoresIva)}|" +
-                            $"{Helpers.SumarCampos(sumaValoresTotal)}| | | "));
+                            $"|{Helpers.SumarCampos(sumaValoresBase, "G")}|{Helpers.SumarCampos(sumaValoresIva, "G")}|" +
+                            $"{Helpers.SumarCampos(sumaValoresTotal, "G")}| | | "));
 
                         #endregion
                     }
@@ -5043,8 +5047,8 @@ namespace App.ControlLogicaProcesos
                     }
 
                     resultado.Add(Helpers.ValidarPipePipe($"1EE1|-|{Helpers.FormatearCampos(TiposFormateo.LetraCapital, lineaNegocio)}" +
-                        $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, @base)}|{Helpers.SumarCampos(new List<string> { iva, restaImpuesto })}|" +
-                        $"{Helpers.SumarCampos(new List<string> { @base, iva, restaImpuesto, impuesto })}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, impuesto)}| | "));
+                        $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, @base)}|{Helpers.SumarCampos(new List<string> { iva, restaImpuesto }, "G")}|" +
+                        $"{Helpers.SumarCampos(new List<string> { @base, iva, restaImpuesto, impuesto }, "G")}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, impuesto)}| | "));
                     #endregion
 
                     #region Datos 1EE2
@@ -5062,8 +5066,8 @@ namespace App.ControlLogicaProcesos
                     }
 
                     resultado.Add(Helpers.ValidarPipePipe($"1EE3|-|{Helpers.FormatearCampos(TiposFormateo.LetraCapital, lineaNegocio)}" +
-                        $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, @base)}|{Helpers.SumarCampos(new List<string> { iva, restaImpuesto })}|" +
-                        $"{Helpers.SumarCampos(new List<string> { @base, iva, restaImpuesto, impuesto })}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, impuesto)}| | "));
+                        $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, @base)}|{Helpers.SumarCampos(new List<string> { iva, restaImpuesto }, "G")}|" +
+                        $"{Helpers.SumarCampos(new List<string> { @base, iva, restaImpuesto, impuesto }, "G")}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, impuesto)}| | "));
 
                     #endregion
 
@@ -5086,7 +5090,7 @@ namespace App.ControlLogicaProcesos
 
                     resultado.Add(Helpers.ValidarPipePipe($"1EE1|-|{descripcionTitulo}" +
                         $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, @base)}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, iva)}|" +
-                        $"{Helpers.SumarCampos(new List<string> { @base, iva })}| | | "));
+                        $"{Helpers.SumarCampos(new List<string> { @base, iva }, "G")}| | | "));
                     #endregion
 
                     #region Datos 1EE2
@@ -5105,7 +5109,7 @@ namespace App.ControlLogicaProcesos
 
                     resultado.Add(Helpers.ValidarPipePipe($"1EE3|-|{Helpers.FormatearCampos(TiposFormateo.LetraCapital, descripcionTitulo)}" +
                         $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, @base)}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, iva)}|" +
-                        $"{Helpers.SumarCampos(new List<string> { @base, iva })}| | | "));
+                        $"{Helpers.SumarCampos(new List<string> { @base, iva }, "G")}| | | "));
 
                     #endregion
                 }
@@ -5133,8 +5137,8 @@ namespace App.ControlLogicaProcesos
                     impuesto = "00";
 
                     resultado.Add(Helpers.ValidarPipePipe($"1EE1|-|{Helpers.FormatearCampos(TiposFormateo.LetraCapital, lineaNegocio)}" +
-                        $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, @base)}|{Helpers.SumarCampos(new List<string> { iva, restaImpuesto })}|" +
-                        $"{Helpers.SumarCampos(new List<string> { @base, iva, restaImpuesto, impuesto })}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, impuesto)}| | "));
+                        $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, @base)}|{Helpers.SumarCampos(new List<string> { iva, restaImpuesto }, "G")}|" +
+                        $"{Helpers.SumarCampos(new List<string> { @base, iva, restaImpuesto, impuesto }, "G")}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, impuesto)}| | "));
                     #endregion
 
                     #region Datos 1EE2
@@ -5152,8 +5156,8 @@ namespace App.ControlLogicaProcesos
                     }
 
                     resultado.Add(Helpers.ValidarPipePipe($"1EE3|-|{Helpers.FormatearCampos(TiposFormateo.LetraCapital, lineaNegocio)}" +
-                        $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, @base)}|{Helpers.SumarCampos(new List<string> { iva, restaImpuesto })}|" +
-                        $"{Helpers.SumarCampos(new List<string> { @base, iva, restaImpuesto, impuesto })}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, impuesto)}| | "));
+                        $"|{Helpers.FormatearCampos(TiposFormateo.Decimal05, @base)}|{Helpers.SumarCampos(new List<string> { iva, restaImpuesto }, "G")}|" +
+                        $"{Helpers.SumarCampos(new List<string> { @base, iva, restaImpuesto, impuesto }, "G")}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, impuesto)}| | "));
 
                     #endregion
                 }
@@ -5455,7 +5459,7 @@ namespace App.ControlLogicaProcesos
 
                 resultado = Helpers.ValidarPipePipe($"1RRT|Total|{Helpers.FormatearCampos(TiposFormateo.Decimal05, @base)}|" +
                     $"{Helpers.FormatearCampos(TiposFormateo.Decimal05, iva)}|{Helpers.FormatearCampos(TiposFormateo.Decimal05, impuesto)}|" +
-                    $"{Helpers.SumarCampos(new List<string> { @base, iva, impuesto })}|{producto}|{subProducto}| ");
+                    $"{Helpers.SumarCampos(new List<string> { @base, iva, impuesto }, "G")}|{producto}|{subProducto}| ");
             }
 
             return resultado;
@@ -5855,13 +5859,13 @@ namespace App.ControlLogicaProcesos
                             }
                             else
                             {
-                                camposValores = "$ 0,00|$ 0,00|$ 0,00|$ 0,00";
+                                camposValores = "$ 0.00|$ 0.00|$ 0.00|$ 0.00";
                             }
                         }
                     }
 
                     resultado += camposValores + "|";
-                    resultado += Helpers.SumarCampos(camposSumar) + "|";
+                    resultado += Helpers.SumarCampos(camposSumar, "G") + "|";
                     resultado += "Etb| ";
                 }
             }
@@ -6200,7 +6204,7 @@ namespace App.ControlLogicaProcesos
 
                                 resultado.Add(Helpers.ValidarPipePipe($"1ODD|{Helpers.FormatearCampos(TiposFormateo.Fecha06, periodo.Split('-').ElementAt(0).Trim())} a {Helpers.FormatearCampos(TiposFormateo.Fecha06, periodo.Split('-').ElementAt(1).Trim())}|" +
                                     $"{conceptoPrimario} ({Helpers.FormatearCampos(TiposFormateo.Fecha07, periodo.Split('-').ElementAt(0).Trim())} - {Helpers.FormatearCampos(TiposFormateo.Fecha07, periodo.Split('-').ElementAt(1).Trim())})|" +
-                                    $"{Helpers.SumarCampos(sumaValoresBase)}|{Helpers.SumarCampos(sumaValoresIva)}|{Helpers.SumarCampos(sumaValoresImpuestos)}|{Helpers.SumarCampos(sumaValoresTotal)}|" +
+                                    $"{Helpers.SumarCampos(sumaValoresBase, "G")}|{Helpers.SumarCampos(sumaValoresIva, "G")}|{Helpers.SumarCampos(sumaValoresImpuestos, "G")}|{Helpers.SumarCampos(sumaValoresTotal, "G")}|" +
                                     $"{Helpers.FormatearCampos(TiposFormateo.Fecha05, PeriodoFacturacion)}|{Helpers.FormatearCampos(TiposFormateo.Fecha05, PeriodoFacturacion)}|" +
                                     $"{cuentaConexion}| "));
                             }
@@ -6249,7 +6253,7 @@ namespace App.ControlLogicaProcesos
 
                                 resultado.Add(Helpers.ValidarPipePipe($"1ODD|{Helpers.FormatearCampos(TiposFormateo.Fecha06, periodo.Split('-').ElementAt(0).Trim())} a {Helpers.FormatearCampos(TiposFormateo.Fecha06, periodo.Split('-').ElementAt(1).Trim())}|" +
                                     $"{concepto} ({Helpers.FormatearCampos(TiposFormateo.Fecha07, periodo.Split('-').ElementAt(0).Trim())} - {Helpers.FormatearCampos(TiposFormateo.Fecha07, periodo.Split('-').ElementAt(1).Trim())})|" +
-                                    $"{Helpers.SumarCampos(sumaValoresBase)}|{Helpers.SumarCampos(sumaValoresIva)}|{Helpers.SumarCampos(sumaValoresImpuestos)}|{Helpers.SumarCampos(sumaValoresTotal)}|" +
+                                    $"{Helpers.SumarCampos(sumaValoresBase, "G")}|{Helpers.SumarCampos(sumaValoresIva, "G")}|{Helpers.SumarCampos(sumaValoresImpuestos, "G")}|{Helpers.SumarCampos(sumaValoresTotal, "G")}|" +
                                     $"{Helpers.FormatearCampos(TiposFormateo.Fecha05, PeriodoFacturacion)}|{Helpers.FormatearCampos(TiposFormateo.Fecha05, PeriodoFacturacion)}|" +
                                     $"{cuentaConexion}| "));
                             }
@@ -6330,12 +6334,12 @@ namespace App.ControlLogicaProcesos
                 case "1":
                     resultado = $"1ODD|{Helpers.FormatearCampos(TiposFormateo.Fecha06, pPeriodo.Split('-').ElementAt(0).Trim())} a {Helpers.FormatearCampos(TiposFormateo.Fecha06, pPeriodo.Split('-').ElementAt(1).Trim())}|" +
                         $"Recargo de Mora ({Helpers.FormatearCampos(TiposFormateo.Fecha07, pPeriodo.Split('-').ElementAt(0).Trim())} - {Helpers.FormatearCampos(TiposFormateo.Fecha07, pPeriodo.Split('-').ElementAt(1).Trim())})|" +
-                        $"{Helpers.SumarCampos(sumaValoresBase)}|{Helpers.SumarCampos(sumaValoresIva)}|{Helpers.SumarCampos(sumaValoresImpuestos)}|{Helpers.SumarCampos(sumaValoresTotal)}|{Helpers.FormatearCampos(TiposFormateo.Fecha05, PeriodoFacturacion)}|{Helpers.FormatearCampos(TiposFormateo.Fecha05, PeriodoFacturacion)}|" +
+                        $"{Helpers.SumarCampos(sumaValoresBase, "G")}|{Helpers.SumarCampos(sumaValoresIva, "G")}|{Helpers.SumarCampos(sumaValoresImpuestos, "G")}|{Helpers.SumarCampos(sumaValoresTotal, "G")}|{Helpers.FormatearCampos(TiposFormateo.Fecha05, PeriodoFacturacion)}|{Helpers.FormatearCampos(TiposFormateo.Fecha05, PeriodoFacturacion)}|" +
                         $"{pNumeroConexion}| ";
                     break;
 
                 case "2":
-                    resultado = $"1CFI| |Recargo Mora|{Helpers.SumarCampos(sumaValoresBase)}|{Helpers.SumarCampos(sumaValoresIva)}|{Helpers.SumarCampos(sumaValoresTotal)}| | ";
+                    resultado = $"1CFI| |Recargo Mora|{Helpers.SumarCampos(sumaValoresBase, "G")}|{Helpers.SumarCampos(sumaValoresIva, "G")}|{Helpers.SumarCampos(sumaValoresTotal, "G")}| | ";
                     break;
             }
 

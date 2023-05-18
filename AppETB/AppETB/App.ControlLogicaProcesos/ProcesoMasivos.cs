@@ -3225,7 +3225,14 @@ namespace App.ControlLogicaProcesos
                         {
                             if (buscarAFI.Any())
                             {
-                                if (buscarAFI.FirstOrDefault().Split('|').ElementAt(1).Substring(0, 6) != datosPaqueteAgrupado.Key.Substring(0, 6))
+                                if (!string.IsNullOrEmpty(buscarAFI.FirstOrDefault().Split('|').ElementAt(1).Trim()))
+                                {
+                                    if (buscarAFI.FirstOrDefault().Split('|').ElementAt(1).Substring(0, 6) != datosPaqueteAgrupado.Key.Substring(0, 6))
+                                    {
+                                        banderaAFI = true;
+                                    }
+                                }
+                                else
                                 {
                                     banderaAFI = true;
                                 }
@@ -3264,7 +3271,7 @@ namespace App.ControlLogicaProcesos
                                     periodo = "99999999-99999999";
                                 }
 
-                                string Corte = string.IsNullOrEmpty(datosPaqueteAgrupado.Key.Trim()) ? "       " : datosPaqueteAgrupado.FirstOrDefault().Substring(128, 6).Trim();
+                                string Corte = string.IsNullOrEmpty(datosPaqueteAgrupado.Key.Trim()) || !char.IsNumber(datosPaqueteAgrupado.Key.Trim().First()) ? "       " : datosPaqueteAgrupado.FirstOrDefault().Substring(128, 6).Trim();
 
                                 var fechasDesde = from busqueda in lineas11C
                                                   where busqueda.Substring(137, 1).Trim().Contains("-") &&
