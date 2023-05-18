@@ -57,3 +57,17 @@ C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\App.ControlLogicaProcesos\obj\
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaProcesos.csproj.CopyComplete
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaProcesos.dll
 C:\Users\adieg\Documents\GitHub\ETB\AppETB\AppETB\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaProcesos.pdb
+C:\Proyectos\ETB\AppETB\AppETB\App.ControlLogicaProcesos\bin\Debug\App.ControlLogicaProcesos.xml
+C:\Proyectos\ETB\AppETB\AppETB\App.ControlLogicaProcesos\bin\Debug\App.ControlLogicaProcesos.dll
+C:\Proyectos\ETB\AppETB\AppETB\App.ControlLogicaProcesos\bin\Debug\App.ControlLogicaProcesos.pdb
+C:\Proyectos\ETB\AppETB\AppETB\App.ControlLogicaProcesos\bin\Debug\App.ControlInsumos.dll
+C:\Proyectos\ETB\AppETB\AppETB\App.ControlLogicaProcesos\bin\Debug\App.Variables.dll
+C:\Proyectos\ETB\AppETB\AppETB\App.ControlLogicaProcesos\bin\Debug\SharpCompress.dll
+C:\Proyectos\ETB\AppETB\AppETB\App.ControlLogicaProcesos\bin\Debug\Excel.dll
+C:\Proyectos\ETB\AppETB\AppETB\App.ControlLogicaProcesos\bin\Debug\App.ControlInsumos.pdb
+C:\Proyectos\ETB\AppETB\AppETB\App.ControlLogicaProcesos\bin\Debug\App.Variables.pdb
+C:\Proyectos\ETB\AppETB\AppETB\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaProcesos.csproj.AssemblyReference.cache
+C:\Proyectos\ETB\AppETB\AppETB\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaProcesos.csproj.CoreCompileInputs.cache
+C:\Proyectos\ETB\AppETB\AppETB\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaProcesos.csproj.CopyComplete
+C:\Proyectos\ETB\AppETB\AppETB\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaProcesos.dll
+C:\Proyectos\ETB\AppETB\AppETB\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaProcesos.pdb

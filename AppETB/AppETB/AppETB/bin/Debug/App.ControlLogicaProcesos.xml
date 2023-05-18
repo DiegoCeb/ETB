@@ -3924,5 +3924,163 @@
             Metodo que Escribe Reporte Recaudo Esperado
             </summary>
         </member>
+        <member name="T:App.ControlLogicaProcesos.ReportesLlanos">
+            <summary>
+            Clase RepotrtesLlanos
+            </summary>
+        </member>
+        <member name="M:App.ControlLogicaProcesos.ReportesLlanos.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:App.ControlLogicaProcesos.ReportesLlanos.#ctor(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="pDatosImprimir"></param>
+            <param name="pRutaSalida"></param>
+            <param name="pNombreArchivo"></param>
+        </member>
+        <member name="M:App.ControlLogicaProcesos.ReportesLlanos.Ejecutar(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.String)">
+            <summary>
+            Metodo Ejectutar
+            </summary>
+            <param name="pDatosImprimir"></param>
+            <param name="pNombreArchivo"></param>
+        </member>
+        <member name="M:App.ControlLogicaProcesos.ReportesLlanos.CargarDiccionario">
+            <summary>
+            Metodo Cargar Diccionario
+            </summary>
+        </member>
+        <member name="M:App.ControlLogicaProcesos.ReportesLlanos.ExtraccionReportes(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.String)">
+            <summary>
+            Metodo de Extraccion Reportes
+            </summary>
+            <param name="pDatosProcesados"></param>
+            <param name="pNombreArchivo"></param>
+        </member>
+        <member name="M:App.ControlLogicaProcesos.ReportesLlanos.GetReporteMaestra(System.Collections.Generic.List{System.String})">
+            <summary>
+            Metodo que obtiene Reporte Maestra
+            </summary>
+            <param name="pDatosImprimir"></param>
+            <returns></returns>
+        </member>
+        <member name="M:App.ControlLogicaProcesos.ReportesLlanos.GetReporteTotalIVR(System.Collections.Generic.List{System.String})">
+            <summary>
+            Metodo que obtiene Reporte Maestra Inserto
+            </summary>
+            <param name="pDatosImprimir"></param>
+            <returns></returns>
+        </member>
+        <member name="M:App.ControlLogicaProcesos.ReportesLlanos.GetReporteResumenMaestra(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}})">
+            <summary>
+            Metodo que obtiene Reporte Resumen Maestra
+            </summary>
+            <param name="pDatosImprimir"></param>
+            <returns></returns>
+        </member>
+        <member name="M:App.ControlLogicaProcesos.ReportesLlanos.GetLineaRecaudoEsperado(System.Collections.Generic.List{System.String})">
+            <summary>
+            Metodo que obtiene Linea Recaudo Esperado
+            </summary>
+            <param name="pExtracto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:App.ControlLogicaProcesos.ReportesLlanos.GetLineaMaestra(System.Collections.Generic.List{System.String})">
+            <summary>
+            Metodo que obtiene Linea Maestra
+            </summary>
+            <param name="pExtracto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:App.ControlLogicaProcesos.ReportesLlanos.GetLineaTotalIVR(System.Collections.Generic.List{System.String})">
+            <summary>
+            Metodo que obtiene Linea Maestra Inserto
+            </summary>
+            <param name="pExtracto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:App.ControlLogicaProcesos.ReportesLlanos.GetValorPagar(System.String)">
+            <summary>
+            Metodo que obtiene el Valor Pagar
+            </summary>
+            <param name="pCampo"></param>
+            <returns></returns>
+        </member>
+        <member name="M:App.ControlLogicaProcesos.ReportesLlanos.GetSinLetras(System.String)">
+            <summary>
+            Metodo que obtiene CuentaSinLetras
+            </summary>
+            <param name="pCampo"></param>
+            <returns></returns>
+        </member>
+        <member name="M:App.ControlLogicaProcesos.ReportesLlanos.GetCodSuscriptor(System.String)">
+            <summary>
+            Metodo que obtiene El Codigo del Suscriptor
+            </summary>
+            <param name="pCampo"></param>
+            <returns></returns>
+        </member>
+        <member name="M:App.ControlLogicaProcesos.ReportesLlanos.GetFechaPago(System.String)">
+            <summary>
+            Metodo que obtiene la Fecha Pago
+            </summary>
+            <param name="pCampo"></param>
+            <returns></returns>
+        </member>
+        <member name="M:App.ControlLogicaProcesos.ReportesLlanos.GetFechaPagoRecaudoEsperado(System.String)">
+            <summary>
+            Metodo que obtiene la Fecha Pago
+            </summary>
+            <param name="pCampo"></param>
+            <returns></returns>
+        </member>
+        <member name="M:App.ControlLogicaProcesos.ReportesLlanos.GetDiferencia(System.Collections.Generic.List{System.String},System.String)">
+            <summary>
+            Metodo que verifica si hay diferencia
+            </summary>
+            <param name="pExtracto"></param>
+            <param name="pTotalPago"></param>
+            <returns></returns>
+        </member>
+        <member name="M:App.ControlLogicaProcesos.ReportesLlanos.GetFechaPeriodo(System.String)">
+            <summary>
+            Metodo que obtiene la Fecha Periodo
+            </summary>
+            <param name="pCampo"></param>
+            <returns></returns>
+        </member>
+        <member name="M:App.ControlLogicaProcesos.ReportesLlanos.GetTipoEnvio(System.String)">
+            <summary>
+            Metodo que obtiene Tipo de Envio
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:App.ControlLogicaProcesos.ReportesLlanos.EscribirReporteMaestra(System.Collections.Generic.List{App.ControlLogicaProcesos.LineaMaestra},System.String)">
+            <summary>
+            Metodo que Escribe Reporte Maestra 
+            </summary>
+            <param name="pDatosImprimir"></param>
+            <param name="pNombreArchivo"></param>
+        </member>
+        <member name="M:App.ControlLogicaProcesos.ReportesLlanos.EscribirReporteTotalIVR(System.Collections.Generic.List{System.String})">
+            <summary>
+            Metodo que Escribe Reporte Maestra Inserto 
+            </summary>
+            <param name="pDatosImprimir"></param>
+        </member>
+        <member name="M:App.ControlLogicaProcesos.ReportesLlanos.EscribirReporteRecaudoEsperado">
+            <summary>
+            Metodo que Escribe Reporte Recaudo Esperado 
+            </summary>
+        </member>
+        <member name="T:App.ControlLogicaProcesos.LineaMaestra">
+            <summary>
+            Estructura de Linea Maestra
+            </summary>
+        </member>
     </members>
 </doc>

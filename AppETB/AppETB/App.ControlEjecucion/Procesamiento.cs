@@ -200,13 +200,16 @@ namespace App.ControlEjecucion
             foreach (var archivo in archivos)
             {
                 _ = new ProcesoLlanos(archivo);
+
+
+                //Escribir Diccionario Formateados llamando a un metodo de cracion de salidas donde se realice la segmentacion
+                Helpers.EscribirVentanaLog($"Inicia Escritura de Salidas");
+                EscribirSalidasProceso($"{App.ControlInsumos.Helpers.RutaProceso}", Variables.Variables.DiccionarioExtractosFormateados, "4");
+
+                // Se crean los reportes
+                Helpers.EscribirVentanaLog($"Inicia Proceso Reportes");
+                _ = new ReportesLlanos(Variables.Variables.DiccionarioExtractosFormateados, App.ControlInsumos.Helpers.RutaProceso, Path.GetFileNameWithoutExtension(archivo));
             }
-
-            //Escribir Diccionario Formateados llamando a un metodo de cracion de salidas donde se realice la segmentacion
-            Helpers.EscribirVentanaLog($"Inicia Escritura de Salidas");
-            EscribirSalidasProceso($"{App.ControlInsumos.Helpers.RutaProceso}", Variables.Variables.DiccionarioExtractosFormateados, "4");
-
-            Helpers.EscribirVentanaLog($"Inicia Proceso Reportes");
             #endregion
         }
 
@@ -778,8 +781,7 @@ namespace App.ControlEjecucion
                     }
 
                     var objDatos = from busqueda in datosOrdenadosTelefono
-                                   where Variables.Variables.DatosInsumoExtraerLlanos.ContainsKey(busqueda.Key)&&
-                                   Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey(busqueda.Key)
+                                   where Variables.Variables.DatosInsumoExtraerLlanos.ContainsKey(busqueda.Key)
                                    select busqueda;
 
                     if (objDatos.Any())
@@ -831,8 +833,7 @@ namespace App.ControlEjecucion
 
                     objDatos = from busqueda in pDatosImprimir
                                where Variables.Variables.DatosInsumoCuentasEnvioSms.ContainsKey(busqueda.Key) &&
-                               !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key)&&
-                               Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey(busqueda.Key)
+                               !Variables.Variables.DatosInsumoExtraerLlanos.ContainsKey(busqueda.Key)
                                select busqueda;
 
                     if (objDatos.Any())
@@ -1473,10 +1474,11 @@ namespace App.ControlEjecucion
                     }
 
                     objDatos = (from busqueda in datosOrdenadosTelefono
-                                where Variables.Variables.DatosInsumoDualLlanos.ContainsKey(busqueda.Key) &&
+                                where 
                                 !Variables.Variables.DatosInsumoExtraerLlanos.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.DatosInsumoLlanosEnvioSMS.ContainsKey(busqueda.Key) &&
-                                !Variables.Variables.DatosInsumoDistribucionEmailLlanos.ContainsKey(busqueda.Key)
+                                (!Variables.Variables.DatosInsumoDistribucionEmailLlanos.ContainsKey(busqueda.Key) ||
+                                (Variables.Variables.DatosInsumoDistribucionEmailLlanos.ContainsKey(busqueda.Key) && Variables.Variables.DatosInsumoDualLlanos.ContainsKey(busqueda.Key)))
                                 select busqueda).ToDictionary(x => x.Key).Values;
 
                     if (objDatos.Any())
