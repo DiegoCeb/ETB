@@ -24,6 +24,7 @@ namespace App.ControlLogicaProcesos
         private bool IsLteCorporativo { get; set; }
         private bool IsAnexoFibra { get; set; }
         private string Cuenta { get; set; }
+        private string Factura { get; set; }
         private string Ciclo { get; set; }
         private string Estrato { get; set; }
         private string PeriodoFacturacion { get; set; }
@@ -468,9 +469,10 @@ namespace App.ControlLogicaProcesos
                 // Se consulta antes de todo porque se requiere para validaciones
                 string etapas = GetTipoEtapas(Linea010000.Substring(151, 3));
                 Cuenta = Linea010000.Substring(117, 20).Trim();// Cuenta
+                Factura = Linea010000.Substring(139, 12).Trim().TrimStart('0');// Numero Factura
                 Ciclo = Linea010000.Substring(151, 3).Trim().TrimStart('0'); // Asignamos Ciclo a variable Global
 
-                if (Cuenta == "7798926091")
+                if (Cuenta == "12051962700")
                 {
 
                 }
@@ -486,7 +488,7 @@ namespace App.ControlLogicaProcesos
 
                 listaCortes.Clear();
                 listaCortes.Add(new PosCortes(117, 20));
-                listaCortes.Add(new PosCortes(139, 12));
+                listaCortes.Add(new PosCortes(139, 12)); //Numero Factura
                 ListaCanal1AAA.Add(Helpers.ExtraccionCamposSpool(listaCortes, Linea010000));
 
                 ListaCanal1AAA.Add(Ciclo);
@@ -2700,9 +2702,9 @@ namespace App.ControlLogicaProcesos
 
             LineaCUFE = "CUFE|";
 
-            if (Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey(Cuenta))
+            if (Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey($"{Cuenta} {Factura}"))
             {
-                valor = Variables.Variables.DatosInsumoETBFacturaElectronica[Cuenta];
+                valor = Variables.Variables.DatosInsumoETBFacturaElectronica[$"{Cuenta} {Factura}"];
             }
 
             if (string.IsNullOrEmpty(valor))
@@ -4171,19 +4173,19 @@ namespace App.ControlLogicaProcesos
                             switch (registroActual.Substring(3, 1))
                             {
                                 case "A":
-                                    lineaTemp1OOB = "1OOB|" + numeroConexion + "|Facebook|" + registroActual.Substring(101, 11).Trim() + "| ";
+                                    lineaTemp1OOB = "1OOB|" + numeroConexion + "|facebook|" + registroActual.Substring(101, 11).Trim().ToLower() + "| ";
                                     break;
                                 case "B":
-                                    lineaTemp1OOB = "1OOB|" + numeroConexion + "|Whatsapp|" + registroActual.Substring(101, 11).Trim() + "| ";
+                                    lineaTemp1OOB = "1OOB|" + numeroConexion + "|whatsapp|" + registroActual.Substring(101, 11).Trim().ToLower() + "| ";
                                     break;
                                 case "C":
-                                    lineaTemp1OOB = "1OOB|" + numeroConexion + "|Email|" + registroActual.Substring(101, 11).Trim() + "| ";
+                                    lineaTemp1OOB = "1OOB|" + numeroConexion + "|email|" + registroActual.Substring(101, 11).Trim().ToLower() + "| ";
                                     break;
                                 case "D":
-                                    lineaTemp1OOB = "1OOB|" + numeroConexion + "|Spotify|" + registroActual.Substring(101, 11).Trim() + "| ";
+                                    lineaTemp1OOB = "1OOB|" + numeroConexion + "|spotify|" + registroActual.Substring(101, 11).Trim().ToLower() + "| ";
                                     break;
                                 case "E":
-                                    lineaTemp1OOB = "1OOB|" + numeroConexion + "|" + registroActual.Substring(101, 129).Trim() + "| | ";
+                                    lineaTemp1OOB = "1OOB|" + numeroConexion + "|" + registroActual.Substring(101, 129).Trim().ToLower() + "| | ";
                                     break;
                                 default:
                                     break;
@@ -4228,7 +4230,7 @@ namespace App.ControlLogicaProcesos
                 Int64 impuesto = Convert.ToInt64(Linea3000401.Substring(12, 20).Trim());
                 if (impuesto > 0)
                 {
-                    Linea3000401 = $"CONS|IVA|{Linea3000401.Substring(8, 3).Trim()}|{Linea3000401.Substring(12, 20).Trim()}| ";
+                    Linea3000401 = $"CONS|Iva|{Linea3000401.Substring(8, 3).Trim()}|{Linea3000401.Substring(12, 20).Trim()}| ";
                 }
                 else
                 {
@@ -4925,8 +4927,8 @@ namespace App.ControlLogicaProcesos
 
                     resultado = Helpers.ValidarPipePipe($"1OOA|{numeroConexion}|{Helpers.FormatearCampos(TiposFormateo.LetraCapital, linea040011.FirstOrDefault().Substring(6, 35).Trim())}|" +
                         $"{linea040011.FirstOrDefault().Substring(76, 8).Trim()}|{linea040011.FirstOrDefault().Substring(84, 8).Trim()}|" +
-                        $"{Helpers.FormatearCampos(TiposFormateo.LetraCapital, linea040011.FirstOrDefault().Substring(92, 25).Trim())}|" +
-                        $"{Helpers.FormatearCampos(TiposFormateo.LetraCapital, linea040011.FirstOrDefault().Substring(117, 50).Trim())}|" +
+                        $"{linea040011.FirstOrDefault().Substring(92, 25).Trim().ToLower()}|" +
+                        $"{linea040011.FirstOrDefault().Substring(117, 50).Trim().ToLower()}|" +
                         $"{linea040011.FirstOrDefault().Substring(167, 10).Trim()}| ");
                 }
             }
@@ -5728,7 +5730,7 @@ namespace App.ControlLogicaProcesos
 
             if (linea28000.Any())
             {
-                resultado = Helpers.ValidarPipePipe($"NTC0|{linea28000.FirstOrDefault().Substring(5, 12).Trim()}|{linea28000.FirstOrDefault().Substring(21, 15).Trim()}|{linea28000.FirstOrDefault().Substring(50).Trim()}| ");
+                resultado = Helpers.ValidarPipePipe($"NTC0|{linea28000.FirstOrDefault().Substring(5, 12).Trim()}|{linea28000.FirstOrDefault().Substring(21, 18).Trim()}|{linea28000.FirstOrDefault().Substring(50).Trim()}| ");
             }
 
             return resultado;

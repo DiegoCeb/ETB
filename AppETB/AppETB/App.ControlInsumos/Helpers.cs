@@ -1235,7 +1235,7 @@ namespace App.ControlInsumos
 
             foreach (var datoLinea in pDatosInsumo)
             {
-                string llaveCruce = datoLinea.Split(' ').ElementAt(0).Trim();
+                string llaveCruce = datoLinea.Split('|').ElementAt(0).Trim().Replace("EB","").Trim();
 
                 if (!Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey(llaveCruce))
                 {

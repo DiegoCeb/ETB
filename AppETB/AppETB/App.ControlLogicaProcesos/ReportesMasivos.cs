@@ -312,6 +312,10 @@ namespace App.ControlLogicaProcesos
             var resultCUFE = from busqueda in pExtracto
                              where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("CUFE|")
                              select busqueda;
+
+            var resultNTC0 = from busqueda in pExtracto
+                             where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("NTC0|")
+                             select busqueda;
             #endregion
 
             if (result1AAA.Any())
@@ -336,7 +340,8 @@ namespace App.ControlLogicaProcesos
                 camposLinea.Add(campos1AAA[10].Split(',')[0].Replace("$", "").Replace(".", "").Trim()); // TotalFactura
                 camposLinea.Add(campos1AAA[9]);  // Ciclo
                 camposLinea.Add(campos1AAA[1].Split('_')[0]); // Lote
-                camposLinea.Add(campos1AAA[19]); // Fecx
+                camposLinea.Add(campos1AAA[19]); // Fecx>	App.ControlLogicaProcesos.dll!App.ControlLogicaProcesos.ReportesMasivos.GetLineaMaestra(System.Collections.Generic.List<string> pExtracto) Línea 321	C#
+
                 camposLinea.Add(campos1AAA[17]); // Fecp
                 camposLinea.Add(string.Empty); // Fecb
                 camposLinea.Add(string.Empty); // Fecc
@@ -357,7 +362,16 @@ namespace App.ControlLogicaProcesos
                 camposLinea.Add(campos1AAA[20].Replace("-", string.Empty)); // ReferenciaPago
                 camposLinea.Add(campos1AAA[39]); // ProcedimientoReclamacion
                 camposLinea.Add(GetLeyendaCarta(pExtracto)); // LeyendaCartera
-                camposLinea.Add(campos1AAA[3]); // NIT/CED
+
+                if (resultNTC0.Any())
+                {
+                    camposLinea.Add(resultNTC0.FirstOrDefault().Split('|').ElementAt(2)); // NIT/CED
+                }
+                else
+                {
+                    camposLinea.Add(campos1AAA[3]); // NIT/CED
+                }
+                
                 camposLinea.Add(campos1AAA[23]); // TipoProducto
 
                 camposLinea.Add(campos1AAA[1]); // PlanPrimarioLTE

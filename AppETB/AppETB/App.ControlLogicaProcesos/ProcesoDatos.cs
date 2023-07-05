@@ -18,6 +18,7 @@ namespace App.ControlLogicaProcesos
         #region Variables del proceso
         private bool IsDatos { get; set; }
         private string Cuenta { get; set; }
+        private string Factura { get; set; }
         private string Ciclo { get; set; }
         private string Estrato { get; set; }
         private string PeriodoFacturacion { get; set; }
@@ -423,6 +424,7 @@ namespace App.ControlLogicaProcesos
                 Linea040000 = result040000.FirstOrDefault();
 
                 Cuenta = Linea010000.Substring(117, 20).Trim();// Cuenta
+                Factura = Linea010000.Substring(139, 12).Trim().TrimStart('0');// Numero Factura
                 Ciclo = Linea010000.Substring(151, 3).Trim().TrimStart('0'); // Asignamos Ciclo a variable Global
 
                 cE = CargarClientesEspeciales(Cuenta, Ciclo);
@@ -3602,6 +3604,7 @@ namespace App.ControlLogicaProcesos
             Dictionary<string, List<string>> llavesLineasNegocio = new Dictionary<string, List<string>>();
             Dictionary<string, List<string>> llavesDatosEEE = new Dictionary<string, List<string>>();
             bool banderaPaquete = false;
+            bool marcaCanalADN1 = false;
             string cuentaConexion = string.Empty;
             string busquedaPlanMinutos = string.Empty;
             string planMinutos = string.Empty;
@@ -3672,45 +3675,11 @@ namespace App.ControlLogicaProcesos
 
                     if (lineasNegocioFactura.Any())
                     {
+                        marcaCanalADN1 = true;
+
                         llavesLineasNegocio = new Dictionary<string, List<string>>();
 
-                        #region Busqueda Informacion
-                        var linea040000 = from busqueda in lineaDetalle.Value
-                                          where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("040000")
-                                          select busqueda;
-
-                        var linea090000 = from busqueda in lineaDetalle.Value
-                                          where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("090000")
-                                          select busqueda;
-
-                        busquedaPlanMinutos = linea040000.FirstOrDefault().Substring(133, 10).Trim();
-
-                        if (!string.IsNullOrEmpty(busquedaPlanMinutos))
-                        {
-                            llaveCruce = $"PL{busquedaPlanMinutos}";
-                            planMinutos = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruce).FirstOrDefault()?.Substring(13).Trim() ?? string.Empty;
-
-                            llaveCruce = $"VMIN{busquedaPlanMinutos}";
-
-                            string valorminuto = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruce).FirstOrDefault()?.Substring(14).Trim() ?? string.Empty;
-
-                            if (!string.IsNullOrEmpty(valorminuto))
-                            {
-                                planMinutos += $" - Valor Minuto Adicional {Helpers.FormatearCampos(TiposFormateo.Decimal05, valorminuto.Substring(0, 10))}";
-                            }
-                        }
-
-                        #endregion
-
-                        string valor090000 = string.Empty;
-
-                        if (linea090000.Any())
-                        {
-                            valor090000 = linea090000.FirstOrDefault().Substring(26, 27).Trim();
-                        }
-
-                        resultado.Add(Helpers.ValidarPipePipe($"ADN1|{lineaDetalle.Key}|{GetTipo(lineaDetalle.Key)}|{linea040000.FirstOrDefault().Substring(76, 30).Trim()}|" +
-                            $"{planMinutos}|{valor090000}| | "));
+                        resultado.Add(GetCanalADN1(lineaDetalle));
 
                         #region ObtenerLineasNegocio
 
@@ -3897,9 +3866,9 @@ namespace App.ControlLogicaProcesos
                     }
                     else
                     {
-                        //No Aplica Hasta el momento
+                        //Se reinicia para la validacion que se hace despues con esta variable
+                        marcaCanalADN1 = false;
                     }
-
 
                     #region Datos paquete EEE
                     var lineas11CAnexos = from busqueda in lineaDetalle.Value
@@ -4080,12 +4049,92 @@ namespace App.ControlLogicaProcesos
                             #endregion
                         }
                     }
+                    else if (lineas12MAnexos.Any())
+                    {
+                        #region lineas12MAnexos
+
+                        if (!marcaCanalADN1) //si es falso se debe poner el canal padre ADN1
+                        {
+                            resultado.Add(GetCanalADN1(lineaDetalle));
+                        }
+
+                        resultado.Add(Helpers.ValidarPipePipe($"1EE1|{lineaDetalle.Key}| " +
+                                                $"|0.00|0.00|0.00|0.00| "));
+
+                        if (Variables.Variables.DatosInsumoConfiguracionLLavesDoc1.ContainsKey(llaveCruce))
+                        {
+                            llaveBusquedaDescripcion = $"CODT{Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoConfiguracionLLavesDoc1, llaveCruce).Split('|').ElementAt(7)}";
+                        }
+
+                        descripcionSubtitulo = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveBusquedaDescripcion).FirstOrDefault()?.Substring(11).Trim() ?? "";
+
+                        resultado.Add(Helpers.ValidarPipePipe($"1EE2|{lineaDetalle.Key}|{Helpers.FormatearCampos(TiposFormateo.LetraCapital, descripcionSubtitulo)}|LD| "));
+
+                        foreach (var linea in lineas12MAnexos)
+                        {
+                            resultado.Add(Helpers.ValidarPipePipe($"1EE3|{lineaDetalle.Key}|{Helpers.FormatearCampos(TiposFormateo.Fecha12, linea.Substring(6, 10))}|" +
+                                $"{Helpers.FormatearCampos(TiposFormateo.HoraMinutoSegundo, linea.Substring(14, 6))}|{linea.Substring(20, 10).Trim()}|" +
+                                $"{linea.Substring(33, 10).Trim()}|{linea.Substring(96, 11).Trim()}|{linea.Substring(66, 2).TrimStart('0')}:00|{Helpers.FormatearCampos(TiposFormateo.Decimal05, linea.Substring(47, 9)).Replace("$", "").Trim()}|" +
+                                $"{Helpers.FormatearCampos(TiposFormateo.Decimal05, linea.Substring(56, 9)).Replace("$", "").Trim()}| "));
+                        }
+                        #endregion
+                    }
                     #endregion
                 }
                 #endregion
             }
 
             return resultado;
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pLineaDetalle"></param>
+        /// <returns></returns>
+        private string GetCanalADN1(KeyValuePair<string, List<string>> pLineaDetalle)
+        {
+            #region GetCanalADN1
+            #region Busqueda Informacion
+            var planMinutos = string.Empty;
+
+            var linea040000 = from busqueda in pLineaDetalle.Value
+                              where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("040000")
+                              select busqueda;
+
+            var linea090000 = from busqueda in pLineaDetalle.Value
+                              where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("090000")
+                              select busqueda;
+
+            var busquedaPlanMinutos = linea040000.FirstOrDefault().Substring(133, 10).Trim();
+
+            if (!string.IsNullOrEmpty(busquedaPlanMinutos))
+            {
+                var llaveCruce = $"PL{busquedaPlanMinutos}";
+                planMinutos = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruce).FirstOrDefault()?.Substring(13).Trim() ?? string.Empty;
+
+                llaveCruce = $"VMIN{busquedaPlanMinutos}";
+
+                string valorminuto = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruce).FirstOrDefault()?.Substring(14).Trim() ?? string.Empty;
+
+                if (!string.IsNullOrEmpty(valorminuto))
+                {
+                    planMinutos += $" - Valor Minuto Adicional {Helpers.FormatearCampos(TiposFormateo.Decimal05, valorminuto.Substring(0, 10))}";
+                }
+            }
+
+            #endregion
+
+            string valor090000 = string.Empty;
+
+            if (linea090000.Any())
+            {
+                valor090000 = linea090000.FirstOrDefault().Substring(26, 27).Trim();
+            }
+
+            return Helpers.ValidarPipePipe($"ADN1|{pLineaDetalle.Key}|{GetTipo(pLineaDetalle.Key)}|{linea040000.FirstOrDefault().Substring(76, 30).Trim()}|" +
+                $"{planMinutos}|{valor090000}| | ");
             #endregion
         }
 
@@ -4266,10 +4315,45 @@ namespace App.ControlLogicaProcesos
                             GetPaquetes(lineaPaquete.Key, periodoOrdenamiento, descripcionConcepto, grupo, detalle, ref Paquetes);
                         }
                     }
+                    else if (detalle.Substring(0, 3) == "11C" && Marca13M)
+                    {
+                        if (detalle.Substring(3, 1).Equals("5"))
+                        {
+                            continue;
+                        }
+
+                        periodoOrdenamiento = detalle.Substring(128, 19).Trim();
+                        descripcionConcepto = string.Empty;
+                        codigo = detalle.Substring(6, 10).Trim();
+
+                        if (Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"CODF{codigo}").Any())
+                        {
+                            descripcionConcepto = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"CODF{codigo}").FirstOrDefault().Substring(14).Trim();
+
+                            if (descripcionConcepto.Contains("Soporte pc"))
+                            {
+                                descripcionConcepto = "Soporte pc";
+                            }
+                        }
+
+                        grupo = detalle.Substring(274, 7).Trim();
+
+                        @base = detalle.Substring(16, 14).Trim().TrimStart('0');
+
+                        if (!string.IsNullOrEmpty(@base))
+                        {
+                            GetPaquetes(lineaPaquete.Key, periodoOrdenamiento, descripcionConcepto, grupo, detalle, ref Paquetes);
+                        }
+                    }
                 }
             }
 
             #endregion
+
+            if (Cuenta == "")
+            {
+
+            }
 
             if (Paquetes.Any())
             {
@@ -4312,7 +4396,16 @@ namespace App.ControlLogicaProcesos
                             llaveCruce = $"CODT{Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoConfiguracionLLavesDoc1, llaveCruce).Split('|').ElementAt(13)}";
                         }
 
-                        descripcionProducto = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruce).FirstOrDefault()?.Substring(11).Trim() ?? "";
+                        if (!lineas11C.Any())//si no existe registros 11C se invalida el proceso anterios para la descripcion del producto de lo contrario sigue su logica normal
+                        {
+                            llaveCruce = $"CODT02T{itemAgrupados.FirstOrDefault().Value.FirstOrDefault().Value.FirstOrDefault().Substring(3,3)}";
+
+                            descripcionProducto = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruce).FirstOrDefault()?.Substring(11).Trim() ?? "";
+                        }
+                        else
+                        {
+                            descripcionProducto = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruce).FirstOrDefault()?.Substring(11).Trim() ?? "";
+                        }
 
                         descripcionSubProducto = itemAgrupados.FirstOrDefault().Key;
 
@@ -4367,6 +4460,7 @@ namespace App.ControlLogicaProcesos
                                     {
                                         var linea040001 = from busqueda in paquetesInformacion[itemNumeroPaquete]
                                                           where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("040001")
+                                                          && !resultado.Where(x => x.Contains(itemNumeroPaquete)).Any()
                                                           select busqueda;
 
                                         if (linea040001.Any())
@@ -4484,6 +4578,7 @@ namespace App.ControlLogicaProcesos
                                             {
                                                 var linea040001 = from busqueda in paquetesInformacion[itemNumeroPaquete]
                                                                   where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("040001")
+                                                                  && !resultado.Where(x => x.Contains(itemNumeroPaquete)).Any()
                                                                   select busqueda;
 
                                                 if (linea040001.Any())
@@ -5182,9 +5277,9 @@ namespace App.ControlLogicaProcesos
 
             LineaCUFE = "CUFE|";
 
-            if (Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey(Cuenta))
+            if (Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey($"{Cuenta} {Factura}"))
             {
-                valor = Variables.Variables.DatosInsumoETBFacturaElectronica[Cuenta];
+                valor = Variables.Variables.DatosInsumoETBFacturaElectronica[$"{Cuenta} {Factura}"];
             }
 
             if (string.IsNullOrEmpty(valor))

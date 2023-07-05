@@ -526,6 +526,13 @@
             <param name="datosOriginales"></param>
             <returns></returns>
         </member>
+        <member name="M:App.ControlLogicaProcesos.ProcesoDatos.GetCanalADN1(System.Collections.Generic.KeyValuePair{System.String,System.Collections.Generic.List{System.String}})">
+            <summary>
+            
+            </summary>
+            <param name="pLineaDetalle"></param>
+            <returns></returns>
+        </member>
         <member name="M:App.ControlLogicaProcesos.ProcesoDatos.GetTipo(System.String)">
             <summary>
             Metodo que obtiene el Tipo 
@@ -1000,6 +1007,13 @@
             Metodo de 
             </summary>
             <param name="datosOriginales"></param>
+            <returns></returns>
+        </member>
+        <member name="M:App.ControlLogicaProcesos.ProcesoGobiernos.GetCanalADN1(System.Collections.Generic.KeyValuePair{System.String,System.Collections.Generic.List{System.String}})">
+            <summary>
+            
+            </summary>
+            <param name="pLineaDetalle"></param>
             <returns></returns>
         </member>
         <member name="M:App.ControlLogicaProcesos.ProcesoGobiernos.GetTipo(System.String)">

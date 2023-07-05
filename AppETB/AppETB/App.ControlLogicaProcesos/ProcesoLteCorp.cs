@@ -24,6 +24,7 @@ namespace App.ControlLogicaProcesos
         private bool IsLteCorporativo { get; set; }
         private bool IsAnexoFibra { get; set; }
         private string Cuenta { get; set; }
+        private string Factura { get; set; }
         private string Ciclo { get; set; }
         private string Estrato { get; set; }
         private string PeriodoFacturacion { get; set; }
@@ -527,6 +528,7 @@ namespace App.ControlLogicaProcesos
                 // Se consulta antes de todo porque se requiere para validaciones
                 string etapas = GetTipoEtapas(Linea010000.Substring(151, 3));
                 Cuenta = Linea010000.Substring(117, 20).Trim();// Cuenta
+                Factura = Linea010000.Substring(139, 12).Trim().TrimStart('0');// Numero Factura
                 Ciclo = Linea010000.Substring(151, 3).Trim().TrimStart('0'); // Asignamos Ciclo a variable Global
 
                 if (Cuenta == "7798926091")
@@ -2743,9 +2745,9 @@ namespace App.ControlLogicaProcesos
 
             LineaCUFE = "CUFE|";
 
-            if (Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey(Cuenta))
+            if (Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey($"{Cuenta} {Factura}"))
             {
-                valor = Variables.Variables.DatosInsumoETBFacturaElectronica[Cuenta];
+                valor = Variables.Variables.DatosInsumoETBFacturaElectronica[$"{Cuenta} {Factura}"];
             }
 
             if (string.IsNullOrEmpty(valor))

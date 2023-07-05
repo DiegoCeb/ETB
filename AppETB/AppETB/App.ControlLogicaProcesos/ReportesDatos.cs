@@ -17,6 +17,7 @@ namespace App.ControlLogicaProcesos
         // Utiles
         public static Dictionary<string, List<string>> DiccionarioExtractosReporte = new Dictionary<string, List<string>>();
         string cuenta = string.Empty;
+        string factura = string.Empty;
         string rutaSalida = string.Empty;
         string lote = string.Empty;
 
@@ -464,11 +465,12 @@ namespace App.ControlLogicaProcesos
                 if (result.Any())
                 {
                     cuenta = result.FirstOrDefault().Split('|')[7];
+                    factura = result.FirstOrDefault().Split('|')[8].TrimStart('0').Trim();
                     tipo = result.FirstOrDefault().Split('|')[45];
                     valorInsumo = false;
 
                     #region Suma Cuentas FE
-                    if (Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey(cuenta))
+                    if (Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey($"{cuenta} {factura}"))
                     {
                         valorInsumo = true;
                     }

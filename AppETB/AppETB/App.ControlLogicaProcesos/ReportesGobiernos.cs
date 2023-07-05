@@ -16,6 +16,7 @@ namespace App.ControlLogicaProcesos
         // Utiles
         public static Dictionary<string, List<string>> DiccionarioExtractosReporte = new Dictionary<string, List<string>>();
         string cuenta = string.Empty;
+        string factura = string.Empty;
         string rutaSalida = string.Empty;
         string lote = string.Empty;
 
@@ -297,6 +298,10 @@ namespace App.ControlLogicaProcesos
             var resultCUFE = from busqueda in pExtracto
                              where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("CUFE|")
                              select busqueda;
+
+            var resultNTC0 = from busqueda in pExtracto
+                             where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("NTC0|")
+                             select busqueda;
             #endregion
 
             if (result1AAA.Any())
@@ -352,7 +357,16 @@ namespace App.ControlLogicaProcesos
                 camposLinea.Add(campos1AAA[20].Replace("-", string.Empty)); // ReferenciaPago
                 camposLinea.Add(campos1AAA[39]); // ProcedimientoReclamacion
                 camposLinea.Add(GetLeyendaCarta(pExtracto)); // LeyendaCartera
-                camposLinea.Add(campos1AAA[3]); // NIT/CED
+
+                if (resultNTC0.Any())
+                {
+                    camposLinea.Add(resultNTC0.FirstOrDefault().Split('|').ElementAt(2)); // NIT/CED
+                }
+                else
+                {
+                    camposLinea.Add(campos1AAA[3]); // NIT/CED
+                }
+
                 camposLinea.Add(campos1AAA[23]); // TipoProducto
                 camposLinea.Add(string.Empty); // PlanPrimarioLTE
                 camposLinea.Add(GetPlanActual(pExtracto)); // PlanActual
@@ -470,12 +484,13 @@ namespace App.ControlLogicaProcesos
                 if (result.Any())
                 {
                     cuenta = result.FirstOrDefault().Split('|')[7];
+                    factura = result.FirstOrDefault().Split('|')[8].TrimStart('0').Trim();
                     tipo = result.FirstOrDefault().Split('|')[46];
                     valorInsumo = false;
                     transpromo = result.FirstOrDefault().Split('|')[33].Trim();
 
                     #region Suma Cuentas FE
-                    if (Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey(cuenta))
+                    if (Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey($"{cuenta} {factura}"))
                     {
                         valorInsumo = true;
                     }
