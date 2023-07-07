@@ -6449,6 +6449,7 @@ namespace App.ControlLogicaProcesos
         {
             #region MapeoGrupo1DAA
 
+            #region Variables
             List<string> listResultado = new List<string>();
             string LineaTemp = string.Empty;
             string numeroConexion = string.Empty;
@@ -6468,7 +6469,8 @@ namespace App.ControlLogicaProcesos
             List<string> valor2_1DAA = new List<string>();
             List<string> valor3_1DAA = new List<string>();
             List<string> valor4_1DAA = new List<string>();
-            string valor02T004 = string.Empty;
+            string valor02T004 = string.Empty; 
+            #endregion
 
             #region Busquea 02T004
 
@@ -6588,6 +6590,17 @@ namespace App.ControlLogicaProcesos
                     }
 
                     concepto1DBB = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"CODF{lineaProcesar.Substring(6, 10)}").FirstOrDefault()?.Substring(15).Trim() ?? string.Empty;
+
+                    if (concepto1DBB != "Cobro de Reconexión" && concepto1DBB != "Recargo de mora")
+                    {
+                        concepto1DBB = dicAgruPorCargoActual.Key;
+                    }
+
+                }
+
+                if (concepto1DBB != "Cobro de Reconexión" && concepto1DBB != "Recargo de mora")
+                {
+                    concepto1DBB = concepto1DBB.Substring(7);
                 }
 
                 // Agregar Campos a Totalizar
@@ -6638,9 +6651,27 @@ namespace App.ControlLogicaProcesos
 
             listResultado.Insert(0, Helpers.ValidarPipePipe(LineaTemp));
 
+            //Agregar Recargo Mora
+
             bool tengoRecargoMora = (from busqueda in listResultado
                                      where busqueda.Contains("Recargo de mora")
                                      select busqueda).Any();
+
+            if (lineas02T004.Any() && !tengoRecargoMora)
+            {
+                if (!string.IsNullOrEmpty(lineas02T004.FirstOrDefault().Substring(20, 14).Trim().TrimStart('0')))
+                {
+                    string valorBase = Helpers.FormatearCampos(TiposFormateo.Decimal03, lineas02T004.FirstOrDefault().Substring(20, 14));
+                    string valorIva = (Convert.ToDouble(valorBase) * 0.19).ToString("N2");
+                    string valorTotal = (Convert.ToDouble(valorBase) + Convert.ToDouble(valorIva)).ToString("N2").Replace(".", ",");
+
+                    listResultado.Add($"1DBB|Recargo de mora|{Helpers.FormatearCampos(TiposFormateo.Decimal05, lineas02T004.FirstOrDefault().Substring(20, 14))}|" +
+                        $"{Helpers.FormatearCampos(TiposFormateo.Decimal05, valorTotal)}| |" +
+                        $"{Helpers.FormatearCampos(TiposFormateo.Decimal05, valorIva.Replace(".", ","))}|$ 0.00|0| ");
+                }
+            }
+
+            
 
             if (tengoRecargoMora) //Si lleva recargo de mora se hace reordenamiento para que quede de ultimas
             {

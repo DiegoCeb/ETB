@@ -3050,6 +3050,7 @@ namespace App.ControlLogicaProcesos
         private IEnumerable<string> FormateoCanal1CCD(List<string> datosOriginales)
         {
             #region FormateoCanal1CCD
+
             List<string> resultado = new List<string>();
             List<string> dataProcesarOrdenados = new List<string>();
             string resultadoTemp = string.Empty;
@@ -3137,6 +3138,13 @@ namespace App.ControlLogicaProcesos
                                 where busqueda.Substring(0, 6).Equals("02T" + lineaActual.Substring(3, 3))
                                 select busqueda;
 
+                if (!cruceTemp.Any())
+                {
+                    cruceTemp = from busqueda in result02Todos
+                                where busqueda.Substring(0, 5).Equals("02T" + lineaActual.Substring(3, 2))
+                                select busqueda;
+                }
+
                 if (llaveAgrupacion == "11C118")
                 {
                     if (dicAgrupado.ContainsKey("02T123"))
@@ -3178,13 +3186,47 @@ namespace App.ControlLogicaProcesos
                         dicAgrupado[ValorDoc].Add(lineaActual);
                     }
                 }
-                else if (!dicAgrupado.ContainsKey("02T" + lineaActual.Substring(3, 3)))
+                else if (cruceTemp.Any() && dicAgrupado.ContainsKey(cruceTemp.FirstOrDefault().Substring(0, 6)))
                 {
-                    dicAgrupado.Add("02T" + lineaActual.Substring(3, 3), new List<string>() { lineaActual });
+                    dicAgrupado[cruceTemp.FirstOrDefault().Substring(0, 6)].Add(lineaActual);
+                }
+                else if (cruceTemp.Any())
+                {
+                    if (llaveAgrupacion.Substring(0, 3) == "13M")
+                    {
+                        if (!dicAgrupado.ContainsKey(lineaActual.Substring(0, 6)))
+                        {
+                            dicAgrupado.Add(lineaActual.Substring(0, 6), new List<string>() { lineaActual });
+                        }
+                        else
+                        {
+                            dicAgrupado[lineaActual.Substring(0, 6)].Add(lineaActual);
+                        }
+                    }
+                    else
+                    {
+                        //11C
+                        if (!dicAgrupado.ContainsKey("02T" + cruceTemp.FirstOrDefault().Substring(3, 3)))
+                        {
+                            dicAgrupado.Add("02T" + cruceTemp.FirstOrDefault().Substring(3, 3), new List<string>() { lineaActual });
+                        }
+                        else
+                        {
+                            dicAgrupado["02T" + cruceTemp.FirstOrDefault().Substring(3, 3)].Add(lineaActual);
+                        }
+                    }
+                   
                 }
                 else
                 {
-                    dicAgrupado["02T" + lineaActual.Substring(3, 3)].Add(lineaActual);
+                    if (!dicAgrupado.ContainsKey("02T" + lineaActual.Substring(3, 3)))
+                    {
+                        dicAgrupado.Add("02T" + lineaActual.Substring(3, 3), new List<string> { lineaActual });
+                    }
+                    else
+                    {
+                        dicAgrupado["02T" + lineaActual.Substring(3, 3)].Add(lineaActual);
+                    }
                 }
             }
             #endregion
@@ -3193,29 +3235,45 @@ namespace App.ControlLogicaProcesos
             if (result02T9.Any())
             {
                 List<string> listSuma11C9 = new List<string>();
+                List<string> detallesTemporales = new List<string>();
+                List<string> detallesGruposTemporales = result02T9.ToList();
+                List<string> detallesGruposTemporalesinternos = new List<string>(detallesGruposTemporales);
 
-                foreach (var grupol11C9 in dic11C9.Values)
+                while (detallesGruposTemporalesinternos.Any())
                 {
-                    foreach (var lineaActaul11C9 in grupol11C9)
+                    foreach (var grupo in detallesGruposTemporales)
                     {
-                        listSuma11C9.Add(lineaActaul11C9.Substring(16, 14));
-                    }
+                        detallesTemporales = new List<string>();
 
-                    string valorSuma = Helpers.SumarCampos(listSuma11C9, "D").Replace(".", "").Replace(",", "").Replace("-", "").Replace("$", "").Trim();
-
-                    foreach (var registros02t9 in result02T9)
-                    {
-                        string valor02T9 = registros02t9.Substring(7, 13).TrimStart('0');
-
-                        if (valor02T9 == valorSuma)
+                        foreach (var detallesLineas in dic11C9)
                         {
-                            if (!dicAgrupado.ContainsKey(registros02t9.Substring(0, 6)))
-                            {
-                                dicAgrupado.Add(registros02t9.Substring(0, 6), grupol11C9);
-                            }
-                            break;
+                            detallesTemporales.AddRange(detallesLineas.Value);
+                        }
+
+                        string valorTotal02T9 = grupo.Substring(7, 13).TrimStart('0');
+
+                        var busquedaDetallesCoincidentes = from busqueda in detallesTemporales
+                                                           where busqueda.Substring(16, 14).Trim().TrimStart('0').Equals(valorTotal02T9)
+                                                           select busqueda;
+
+                        if (busquedaDetallesCoincidentes.Any())
+                        {
+
+                            dicAgrupado.Add(grupo.Substring(0, 6), new List<string> { busquedaDetallesCoincidentes.ElementAt(0) }); // solo se agrega uno por que buscamos la coincidencia exacta
+
+                            detallesTemporales.Remove(busquedaDetallesCoincidentes.ElementAt(0));
+
+                            detallesGruposTemporalesinternos.Remove(grupo);
                         }
                     }
+
+                    if (detallesGruposTemporalesinternos.Any())
+                    {
+                        dicAgrupado.Add(detallesGruposTemporalesinternos.FirstOrDefault().Substring(0, 6), detallesTemporales);
+
+                        detallesGruposTemporalesinternos.Remove(detallesGruposTemporalesinternos.FirstOrDefault());
+                    }
+
                 }
             }
             #endregion
@@ -3295,13 +3353,25 @@ namespace App.ControlLogicaProcesos
 
             #endregion
 
+            if (dicAgrupado.ContainsKey("02T845"))
+            {
+                dicAgrupado.Remove("02T845");
+            }
+
             // Procesar la data Seleccionada
             foreach (var dicPrincipal in dicAgrupado)
             {
+                concepto = string.Empty;
+
                 foreach (var lineaProcesar in dicPrincipal.Value)
                 {
                     llavePrincipal = dicPrincipal.Key;
                     llaveProducto = dicPrincipal.Key.Substring(3, 1);
+
+                    if (llavePrincipal == "02T411")
+                    {
+                        llavePrincipal = "02T410";
+                    }
 
                     impuestoFormateado = string.Empty;
                     ivaFormateado = string.Empty;
@@ -3315,13 +3385,29 @@ namespace App.ControlLogicaProcesos
                     if (Variables.Variables.DatosInsumoTablaSustitucion.ContainsKey("CODT" + llavePrincipal))
                     {
                         concepto = Variables.Variables.DatosInsumoTablaSustitucion["CODT" + llavePrincipal][0].Substring(11).Trim();
+
+                        if (dicPrincipal.Key == "02T411")
+                        {
+                            concepto = "Consumo Fijo Móvil";
+                        }
+
+                    }
+
+                    if (Variables.Variables.DatosInsumoTablaSustitucion.ContainsKey("CODF" + lineaProcesar.Substring(6, 10)) && string.IsNullOrEmpty(concepto))
+                    {
+                        concepto = Variables.Variables.DatosInsumoTablaSustitucion["CODF" + lineaProcesar.Substring(6, 10)][0].Substring(15).Trim();
+
+                        if (concepto.Contains("Revertido"))
+                        {
+                            concepto = "Cobro Revertido";
+                        }
                     }
 
                     //En el caso de que toca reemplazar labels en larga distancia
-                    if (llavePrincipal == "02T204" || llavePrincipal == "02T207")
+                    if (llavePrincipal == "02T204" || llavePrincipal == "02T207" || llavePrincipal == "02T201")
                         concepto = "L.D. Nacional";
 
-                    if (concepto == "L.D. Automática Internacional")
+                    if (concepto == "L.D. Automática Internacional" || llavePrincipal == "02T208")
                         concepto = "L.D. Internacional";
 
                     switch (lineaProcesar.Substring(0, 3))
@@ -3334,7 +3420,7 @@ namespace App.ControlLogicaProcesos
                                 dicValores["SUBTOTAL"].Add(lineaProcesar.Substring(16, 14));
 
                                 // Otros operadores
-                                if (llaveProducto == "5" || llaveProducto == "7")
+                                if ((llaveProducto == "5" || llaveProducto == "7" || llaveProducto == "4") && !concepto.Contains("Colombia Telec") && !concepto.Contains("IPTV"))
                                 {
                                     impuestoProducto = Convert.ToDecimal($"{lineaProcesar.Substring(16, 12)}.{lineaProcesar.Substring(28, 2)}");
                                     impuestoProducto = impuestoProducto * Convert.ToDecimal(Utilidades.LeerAppConfig("porcentajeImpuestoConsumo"));
@@ -3355,9 +3441,16 @@ namespace App.ControlLogicaProcesos
 
                                 dicValores["IVA"].Add(lineaProcesar.Substring(44, 14));
 
+                                var impuestoConsumo = result02Todos.Where(x => x.Substring(0, 6).Equals(dicPrincipal.Key));
+
+                                if (impuestoConsumo.Any() && !dicValores["IMPUESTOS"].Any())
+                                {
+                                    dicValores["IMPUESTOS"].Add(impuestoConsumo.FirstOrDefault().Substring(118, 14)); // Impuesto al consumo
+                                    dicValores["TOTAL"].Add(impuestoConsumo.FirstOrDefault().Substring(118, 14)); // Impuesto al consumo
+                                }
+
                                 dicValores["TOTAL"].Add(lineaProcesar.Substring(16, 14)); // Sub Total
                                 dicValores["TOTAL"].Add(lineaProcesar.Substring(44, 14)); // Iva
-
 
                                 #region Calculo Recargo Mora para restar
 
@@ -3492,6 +3585,7 @@ namespace App.ControlLogicaProcesos
                 }
 
                 resultadoTemp += Helpers.SumarCampos(dicValores["IMPUESTOS"], "D") + "|";
+
                 resultadoTemp += Helpers.SumarCampos(dicValores["TOTAL"], "D") + "| ";
 
                 // Se valida si esta vacio el concepto para no pintarlo
@@ -3502,6 +3596,8 @@ namespace App.ControlLogicaProcesos
                         resultado.Add(Helpers.ValidarPipePipe(resultadoTemp).Replace("$ 0.00", "-"));
                     }
                 }
+
+
 
                 #endregion
 
