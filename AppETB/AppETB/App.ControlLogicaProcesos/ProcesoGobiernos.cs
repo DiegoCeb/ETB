@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using DLL_Utilidades;
 using System.Text.RegularExpressions;
 using System.Security.Cryptography;
+using System.Security.Principal;
 
 namespace App.ControlLogicaProcesos
 {
@@ -3030,7 +3031,7 @@ namespace App.ControlLogicaProcesos
             string llaveAgrupacion = string.Empty;
             string llaveDoc = string.Empty;
             string ValorDoc = string.Empty;
-            string llaveProductoInicio = string.Empty;
+            string llaveProductoInicio = string.Empty; 
 
             #region Agrupar 11C y 13M
             foreach (var lineaActual in dataProcesar)
@@ -3048,6 +3049,20 @@ namespace App.ControlLogicaProcesos
                     cruceTemp = from busqueda in result02Todos
                                 where busqueda.Substring(0, 5).Equals("02T" + lineaActual.Substring(3, 2))
                                 select busqueda;
+
+                    if (dicAgrupado.ContainsKey(cruceTemp.FirstOrDefault().Substring(0, 6)))
+                    {
+                        cruceTemp = new List<string>();
+                    }
+                    else if(Variables.Variables.DatosInsumoTablaSustitucion.ContainsKey("CODF" + llaveDoc))
+                    {
+                        var conceptoValidacion = Variables.Variables.DatosInsumoTablaSustitucion["CODF" + llaveDoc][0].Substring(11).Trim();
+
+                        if (conceptoValidacion.Contains("Revertido"))
+                        {
+                            cruceTemp = new List<string>();
+                        }
+                    }
                 }
 
                 if (llaveAgrupacion == "11C118")
@@ -3298,11 +3313,11 @@ namespace App.ControlLogicaProcesos
 
                     }
 
-                    if (Variables.Variables.DatosInsumoTablaSustitucion.ContainsKey("CODF" + lineaProcesar.Substring(6, 10)) && string.IsNullOrEmpty(concepto))
+                    if (Variables.Variables.DatosInsumoTablaSustitucion.ContainsKey("CODF" + lineaProcesar.Substring(6, 10)))
                     {
-                        concepto = Variables.Variables.DatosInsumoTablaSustitucion["CODF" + lineaProcesar.Substring(6, 10)][0].Substring(15).Trim();
+                       var nuevoConcepto = Variables.Variables.DatosInsumoTablaSustitucion["CODF" + lineaProcesar.Substring(6, 10)][0].Substring(15).Trim();
 
-                        if (concepto.Contains("Revertido"))
+                        if (nuevoConcepto.Contains("Revertido"))
                         {
                             concepto = "Cobro Revertido";
                         }
@@ -4201,6 +4216,7 @@ namespace App.ControlLogicaProcesos
             string descripcionConcepto = string.Empty;
             string grupo = string.Empty;
             bool verificarAgrupacionConceptos = false;
+            bool marcaSolo13M = false;
             #endregion
 
             var lineas13M = from busqueda in datosOriginales
@@ -4242,6 +4258,7 @@ namespace App.ControlLogicaProcesos
             foreach (var lineaPaquete in paquetesInformacion)
             {
                 bool Marca13M = false;
+                bool MarcaMixto = false;
 
                 var busqueda11C9 = from busqueda in lineaPaquete.Value
                                    where busqueda.Substring(0, 4) == "11C9"
@@ -4251,9 +4268,18 @@ namespace App.ControlLogicaProcesos
                                   where busqueda.Substring(0, 3) == "13M"
                                   select busqueda;
 
+                var busqueda11C = from busqueda in lineaPaquete.Value
+                                  where busqueda.Substring(0, 3) == "11C"
+                                  select busqueda;
+
                 if (!busqueda11C9.Any() && busqueda13M.Any())
                 {
                     Marca13M = true;
+                }
+
+                if (busqueda11C.Any() && busqueda13M.Any())
+                {
+                    MarcaMixto = true;
                 }
 
                 foreach (var detalle in lineaPaquete.Value)
@@ -4316,6 +4342,36 @@ namespace App.ControlLogicaProcesos
                             GetPaquetes(lineaPaquete.Key, periodoOrdenamiento, descripcionConcepto, grupo, detalle, ref Paquetes);
                         }
                     }
+                    else if (detalle.Substring(0, 3) == "11C" && Marca13M && !MarcaMixto)
+                    {
+                        if (detalle.Substring(3, 1).Equals("5"))
+                        {
+                            continue;
+                        }
+
+                        periodoOrdenamiento = detalle.Substring(128, 19).Trim();
+                        descripcionConcepto = string.Empty;
+                        codigo = detalle.Substring(6, 10).Trim();
+
+                        if (Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"CODF{codigo}").Any())
+                        {
+                            descripcionConcepto = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, $"CODF{codigo}").FirstOrDefault().Substring(14).Trim();
+
+                            if (descripcionConcepto.Contains("Soporte pc"))
+                            {
+                                descripcionConcepto = "Soporte pc";
+                            }
+                        }
+
+                        grupo = detalle.Substring(274, 7).Trim();
+
+                        @base = detalle.Substring(16, 14).Trim().TrimStart('0');
+
+                        if (!string.IsNullOrEmpty(@base))
+                        {
+                            GetPaquetes(lineaPaquete.Key, periodoOrdenamiento, descripcionConcepto, grupo, detalle, ref Paquetes);
+                        }
+                    }
                 }
             }
 
@@ -4332,10 +4388,12 @@ namespace App.ControlLogicaProcesos
 
                 foreach (var itemAgrupadoPeriodo in agrupacionDatos)
                 {
+
                     var agrupacionConceptos = from busqueda in itemAgrupadoPeriodo
                                               from Datos in busqueda.Value
                                               group Datos by Datos.Key into Datos
                                               select Datos;
+
 
                     foreach (var itemAgrupados in agrupacionConceptos)
                     {
@@ -4345,6 +4403,7 @@ namespace App.ControlLogicaProcesos
                         sumaValoresTotal.Clear();
                         resultado = new List<string>();
                         verificarAgrupacionConceptos = false;
+                        marcaSolo13M = GetMarcaPaquete(itemAgrupados);
 
                         #region SERV
                         if (itemAgrupados.FirstOrDefault().Value.FirstOrDefault().Value.FirstOrDefault().Substring(0, 3) == "13M")
@@ -4362,7 +4421,7 @@ namespace App.ControlLogicaProcesos
                             llaveCruce = $"CODT{Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoConfiguracionLLavesDoc1, llaveCruce).Split('|').ElementAt(13)}";
                         }
 
-                        if (!lineas11C.Any())//si no existe registros 11C se invalida el proceso anterios para la descripcion del producto de lo contrario sigue su logica normal
+                        if (!lineas11C.Any() || marcaSolo13M)//si no existe registros 11C se invalida el proceso anterios para la descripcion del producto de lo contrario sigue su logica normal
                         {
                             llaveCruce = $"CODT02T{itemAgrupados.FirstOrDefault().Value.FirstOrDefault().Value.FirstOrDefault().Substring(3, 3)}";
 
@@ -4372,7 +4431,6 @@ namespace App.ControlLogicaProcesos
                         {
                             descripcionProducto = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruce).FirstOrDefault()?.Substring(11).Trim() ?? "";
                         }
-
 
                         descripcionSubProducto = itemAgrupados.FirstOrDefault().Key;
 
@@ -4712,6 +4770,29 @@ namespace App.ControlLogicaProcesos
             #endregion
 
             return GetOrdenamientoPaquete(resultado);
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pDatos"></param>
+        /// <returns></returns>
+        private bool GetMarcaPaquete(IGrouping<string, KeyValuePair<string, Dictionary<string, List<string>>>> pDatos)
+        {
+            #region GetMarcaPaquete
+            bool resultado = true;
+
+            foreach (var linea in pDatos.SelectMany(linea => linea.Value).SelectMany(linea => linea.Value))
+            {
+                if (linea.Substring(0, 3).Equals("11C"))
+                {
+                    resultado = false;
+                    break;
+                }
+            }
+
+            return resultado;
             #endregion
         }
 

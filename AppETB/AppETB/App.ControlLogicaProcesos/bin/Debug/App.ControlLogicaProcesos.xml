@@ -547,6 +547,13 @@
             <param name="datosOriginales"></param>
             <returns></returns>
         </member>
+        <member name="M:App.ControlLogicaProcesos.ProcesoDatos.GetMarcaPaquete(System.Linq.IGrouping{System.String,System.Collections.Generic.KeyValuePair{System.String,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}}}})">
+            <summary>
+            
+            </summary>
+            <param name="pDatos"></param>
+            <returns></returns>
+        </member>
         <member name="M:App.ControlLogicaProcesos.ProcesoDatos.GetPaquetes(System.String,System.String,System.String,System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}}}}}@)">
             <summary>
             
@@ -1028,6 +1035,13 @@
             Metodo de FormarPaqueteSERV
             </summary>
             <param name="datosOriginales"></param>
+            <returns></returns>
+        </member>
+        <member name="M:App.ControlLogicaProcesos.ProcesoGobiernos.GetMarcaPaquete(System.Linq.IGrouping{System.String,System.Collections.Generic.KeyValuePair{System.String,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}}}})">
+            <summary>
+            
+            </summary>
+            <param name="pDatos"></param>
             <returns></returns>
         </member>
         <member name="M:App.ControlLogicaProcesos.ProcesoGobiernos.GetPaquetes(System.String,System.String,System.String,System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}}}}}@)">

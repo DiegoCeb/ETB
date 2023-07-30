@@ -1900,10 +1900,6 @@ namespace App.ControlLogicaProcesos
                 }
             }
 
-            if (Cuenta == "12054697465")
-            {
-
-            }
             string cuentasLTE9697 = Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoCuentasLte, $"{Cuenta}") ?? string.Empty;
 
             if (!string.IsNullOrEmpty(fechaInicio) && !string.IsNullOrEmpty(fechaFin))

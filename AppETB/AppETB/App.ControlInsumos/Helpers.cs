@@ -2145,6 +2145,11 @@ namespace App.ControlInsumos
                         {
                             transformado = $"{transformado.PadLeft(3, '0')}";
                         }
+
+                        if (transformado.Substring(0, 1) == ",")
+                        {
+                            transformado = $"0{transformado}".Replace(",","");
+                        }
                     }
 
                     if (transformado.Length == 1)
