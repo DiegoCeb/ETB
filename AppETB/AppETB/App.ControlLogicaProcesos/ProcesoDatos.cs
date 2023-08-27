@@ -3144,6 +3144,13 @@ namespace App.ControlLogicaProcesos
                                 where busqueda.Substring(0, 5).Equals("02T" + lineaActual.Substring(3, 2))
                                 select busqueda;
 
+                    if (!cruceTemp.Any())
+                    {
+                        cruceTemp = from busqueda in result02Todos
+                                    where busqueda.Substring(0, 4).Equals("02T" + lineaActual.Substring(3, 1))
+                                    select busqueda;
+                    }
+
                     if (dicAgrupado.ContainsKey(cruceTemp.FirstOrDefault().Substring(0, 6)))
                     {
                         cruceTemp = new List<string>();
@@ -3229,7 +3236,7 @@ namespace App.ControlLogicaProcesos
                             dicAgrupado["02T" + cruceTemp.FirstOrDefault().Substring(3, 3)].Add(lineaActual);
                         }
                     }
-                   
+
                 }
                 else
                 {
@@ -4517,7 +4524,7 @@ namespace App.ControlLogicaProcesos
 
                         if (!lineas11C.Any() || marcaSolo13M)//si no existe registros 11C se invalida el proceso anterios para la descripcion del producto de lo contrario sigue su logica normal
                         {
-                            llaveCruce = $"CODT02T{itemAgrupados.FirstOrDefault().Value.FirstOrDefault().Value.FirstOrDefault().Substring(3,3)}";
+                            llaveCruce = $"CODT02T{itemAgrupados.FirstOrDefault().Value.FirstOrDefault().Value.FirstOrDefault().Substring(3, 3)}";
 
                             descripcionProducto = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruce).FirstOrDefault()?.Substring(11).Trim() ?? "";
                         }
@@ -4619,6 +4626,8 @@ namespace App.ControlLogicaProcesos
 
                                     #endregion
 
+                                    string capacidad = string.Empty;
+
                                     foreach (var item in itemConceptos.Value.SelectMany(x => x.Value))
                                     {
                                         if (item.Substring(0, 3) == "13M")
@@ -4637,11 +4646,9 @@ namespace App.ControlLogicaProcesos
                                         sumaValoresBaseInterno.Add(@base);
                                         sumaValoresIvaInterno.Add(iva);
 
-                                        string capacidad = string.Empty;
-
                                         if (item.Substring(0, 3) == "13M" && string.IsNullOrEmpty(capacidad))
                                         {
-                                            capacidad = $"{item.Substring(112, 8).Trim()}{item.Substring(120, 5).Trim()}";
+                                            capacidad = $"{Convert.ToInt32(item.Substring(112, 8).Trim()).ToString("N0")}{item.Substring(120, 5).Trim()}";
 
                                             if (string.IsNullOrEmpty(capacidad))
                                             {
@@ -4651,7 +4658,7 @@ namespace App.ControlLogicaProcesos
                                     }
 
                                     resultado.Add(Helpers.ValidarPipePipe($"1GGG|{descripcionProducto}|{descripcionSubProducto}|{numeroPaqueteFinal}| |" +
-                                        $" |{periodo}|{direccionOrigen}|{ciudadOrigen}|{direccionDestino}|{ciudadDestino}| | |" +
+                                        $"{capacidad}|{periodo}|{direccionOrigen}|{ciudadOrigen}|{direccionDestino}|{ciudadDestino}| | |" +
                                         $"{Helpers.SumarCampos(sumaValoresBaseInterno, "G")}|" +
                                         $"{Helpers.SumarCampos(sumaValoresIvaInterno, "G")}| "));
 
@@ -4752,7 +4759,7 @@ namespace App.ControlLogicaProcesos
 
                                             if (item.Substring(0, 3) == "13M")
                                             {
-                                                capacidad = $"{item.Substring(112, 8).Trim()}{item.Substring(120, 5).Trim()}";
+                                                capacidad = $"{Convert.ToInt32(item.Substring(112, 8).Trim()).ToString("N0")}{item.Substring(120, 5).Trim()}";
 
                                                 if (string.IsNullOrEmpty(capacidad))
                                                 {
@@ -4886,7 +4893,7 @@ namespace App.ControlLogicaProcesos
                 }
             }
 
-            return resultado; 
+            return resultado;
             #endregion
         }
 

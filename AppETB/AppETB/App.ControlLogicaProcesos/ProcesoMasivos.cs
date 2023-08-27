@@ -472,11 +472,6 @@ namespace App.ControlLogicaProcesos
                 Factura = Linea010000.Substring(139, 12).Trim().TrimStart('0');// Numero Factura
                 Ciclo = Linea010000.Substring(151, 3).Trim().TrimStart('0'); // Asignamos Ciclo a variable Global
 
-                if (Cuenta == "12051962700")
-                {
-
-                }
-
                 listaCortes.Add(new PosCortes(6, 50));
                 listaCortes.Add(new PosCortes(56, 12));
                 listaCortes.Add(new PosCortes(68, 40));
@@ -492,7 +487,8 @@ namespace App.ControlLogicaProcesos
                 ListaCanal1AAA.Add(Helpers.ExtraccionCamposSpool(listaCortes, Linea010000));
 
                 ListaCanal1AAA.Add(Ciclo);
-                ListaCanal1AAA.Add(GetTotalPagar(datosOriginales));
+                //ListaCanal1AAA.Add(GetTotalPagar(datosOriginales));
+                ListaCanal1AAA.Add(Helpers.FormatearCampos(TiposFormateo.Decimal01, Linea010000.Substring(154, 14)));
 
                 listaCortes.Clear();
                 listaCortes.Add(new PosCortes(168, 8, TiposFormateo.Fecha01));
@@ -5836,6 +5832,8 @@ namespace App.ControlLogicaProcesos
             List<string> sumaValoresIva = new List<string>();
             List<string> sumaValoresImpuestos = new List<string>();
             List<string> sumaValoresTotal = new List<string>();
+            List<string> periodosDesde = new List<string>();
+            List<string> periodosHasta = new List<string>();
             string periodo = string.Empty;
             string llaveCruce = string.Empty;
             string CodigoCanalPrimario = string.Empty;
@@ -5894,9 +5892,16 @@ namespace App.ControlLogicaProcesos
                                               where !string.IsNullOrEmpty(comp) && comp.Contains("-")
                                               select n;
 
+                        foreach (var item in busquedaperiodo)
+                        {
+                            periodosDesde.Add(item.Substring(128, 8));
+                            periodosHasta.Add(item.Substring(139, 8));
+                        }
+
                         if (busquedaperiodo.Any())
                         {
-                            periodo = busquedaperiodo.FirstOrDefault() != "" ? busquedaperiodo.FirstOrDefault().Substring(128, 19).Trim() : "";
+                            //periodo = busquedaperiodo.FirstOrDefault() != "" ? busquedaperiodo.FirstOrDefault().Substring(128, 19).Trim() : "";
+                            periodo = $"{Helpers.GetFechaMaximaMinima(periodosDesde, 1)} - {Helpers.GetFechaMaximaMinima(periodosHasta, 1)}";
                         }
                     }
 
@@ -5916,22 +5921,6 @@ namespace App.ControlLogicaProcesos
 
                     nuevaFechaDesde = desde.ToString("ddMMyyyy");
                     nuevaFechaHasta = hasta.ToString("ddMMyyyy");
-
-                    //if (Convert.ToInt16(FechaDesde.Substring(2, 2)) == 12)
-                    //{
-                    //    nuevaFechaDesde = $"{FechaDesde.Substring(0, 2)}{(Convert.ToInt16("1")).ToString().PadLeft(2, '0')}{DateTime.Now.Year}";
-                    //}
-                    //else
-                    //{
-                    //    nuevaFechaDesde = $"{FechaDesde.Substring(0, 2)}{(Convert.ToInt16(FechaDesde.Substring(2, 2)) + 1).ToString().PadLeft(2, '0')}{FechaDesde.Substring(4, 4)}";
-                    //}
-
-                    //nuevaFechaHasta = $"{FechaHasta.Substring(0, 2)}{(Convert.ToInt16(FechaHasta.Substring(2, 2)) + 1).ToString().PadLeft(2, '0')}{FechaHasta.Substring(4, 4)}";
-
-                    //if (Convert.ToInt16(FechaHasta.Substring(2, 2)) == 12)
-                    //{
-                    //    nuevaFechaHasta = $"{FechaHasta.Substring(0, 2)}01{DateTime.Now.Year + 1}";
-                    //}
 
                     nuevaFechaDesde = Helpers.FormatearCampos(TiposFormateo.Fecha01, nuevaFechaDesde);
                     nuevaFechaHasta = Helpers.FormatearCampos(TiposFormateo.Fecha01, nuevaFechaHasta);
@@ -6002,6 +5991,32 @@ namespace App.ControlLogicaProcesos
                                 sumaValoresTotal.AddRange(sumaValoresIva);
                                 sumaValoresTotal.AddRange(sumaValoresImpuestos);
 
+                                #region Verificar Periodos
+
+                                periodosDesde.Clear();
+                                periodosHasta.Clear();
+
+                                foreach (var item in validarConceptoConDatos)
+                                {
+                                    if (item.Substring(128, 19).Contains("-"))
+                                    {
+                                        periodosDesde.Add(item.Substring(128, 8));
+                                        periodosHasta.Add(item.Substring(139, 8));
+                                    }
+                                }
+
+                                string periodoDetalles = $"{Helpers.GetFechaMaximaMinima(periodosDesde, 1)} - {Helpers.GetFechaMaximaMinima(periodosHasta, 1)}";
+
+                                if (periodoDetalles != " - ")
+                                {
+                                    if (periodo != periodoDetalles)
+                                    {
+                                        periodo = periodoDetalles;
+                                    }
+                                }
+
+                                #endregion
+
                                 resultado.Add(Helpers.ValidarPipePipe($"1ODD|{Helpers.FormatearCampos(TiposFormateo.Fecha06, periodo.Split('-').ElementAt(0).Trim())} a {Helpers.FormatearCampos(TiposFormateo.Fecha06, periodo.Split('-').ElementAt(1).Trim())}|" +
                                     $"{conceptoPrimario} ({Helpers.FormatearCampos(TiposFormateo.Fecha07, periodo.Split('-').ElementAt(0).Trim())} - {Helpers.FormatearCampos(TiposFormateo.Fecha07, periodo.Split('-').ElementAt(1).Trim())})|" +
                                     $"{Helpers.SumarCampos(sumaValoresBase)}|{Helpers.SumarCampos(sumaValoresIva)}|{Helpers.SumarCampos(sumaValoresImpuestos)}|{Helpers.SumarCampos(sumaValoresTotal)}|" +
@@ -6050,6 +6065,32 @@ namespace App.ControlLogicaProcesos
                                         concepto = Helpers.FormatearCampos(TiposFormateo.PrimeraMayuscula, Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoTablaSustitucion, llaveCruce).FirstOrDefault()?.Substring(14).Trim() ?? "");
                                     }
                                 }
+
+                                #region Verificar Periodos
+
+                                periodosDesde.Clear();
+                                periodosHasta.Clear();
+
+                                foreach (var item in lineaDetalleAgrupado)
+                                {
+                                    if (item.Substring(128, 19).Contains("-"))
+                                    {
+                                        periodosDesde.Add(item.Substring(128, 8));
+                                        periodosHasta.Add(item.Substring(139, 8));
+                                    }
+                                }
+
+                                string periodoDetalles = $"{Helpers.GetFechaMaximaMinima(periodosDesde, 1)} - {Helpers.GetFechaMaximaMinima(periodosHasta, 1)}";
+
+                                if (periodoDetalles != " - ")
+                                {
+                                    if (periodo != periodoDetalles)
+                                    {
+                                        periodo = periodoDetalles;
+                                    }
+                                }
+
+                                #endregion
 
                                 resultado.Add(Helpers.ValidarPipePipe($"1ODD|{Helpers.FormatearCampos(TiposFormateo.Fecha06, periodo.Split('-').ElementAt(0).Trim())} a {Helpers.FormatearCampos(TiposFormateo.Fecha06, periodo.Split('-').ElementAt(1).Trim())}|" +
                                     $"{concepto} ({Helpers.FormatearCampos(TiposFormateo.Fecha07, periodo.Split('-').ElementAt(0).Trim())} - {Helpers.FormatearCampos(TiposFormateo.Fecha07, periodo.Split('-').ElementAt(1).Trim())})|" +

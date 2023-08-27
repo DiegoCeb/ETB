@@ -59,7 +59,7 @@ namespace App.ControlInsumos
         {
             #region GetValueInsumoCadena
             string resultado = string.Empty;
-            
+
 
 
 
@@ -428,11 +428,11 @@ namespace App.ControlInsumos
             // PERIODOS DE CORTES SERVICIO LTE
 
             var resultesp = from datos in pDatosInsumo
-                           where datos.Length > 12
-                           let comp6 = datos.Substring(0, 6).Trim()
-                           where
-                           comp6 == "PERCOR"
-                           select datos;
+                            where datos.Length > 12
+                            let comp6 = datos.Substring(0, 6).Trim()
+                            where
+                            comp6 == "PERCOR"
+                            select datos;
 
             foreach (var dato in resultesp)
             {
@@ -1235,7 +1235,7 @@ namespace App.ControlInsumos
 
             foreach (var datoLinea in pDatosInsumo)
             {
-                string llaveCruce = datoLinea.Split('|').ElementAt(0).Trim().Replace("EB","").Trim();
+                string llaveCruce = datoLinea.Split('|').ElementAt(0).Trim().Replace("EB", "").Trim();
 
                 if (!Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey(llaveCruce))
                 {
@@ -1418,7 +1418,7 @@ namespace App.ControlInsumos
         public static void GetCartasHipotecario(List<string> pArchivos)
         {
             #region GetAuxAnexosVerdes
-            string[] campos; 
+            string[] campos;
             foreach (var archivo in pArchivos)
             {
                 List<string> datosInsumo = Helpers.ConvertirExcel(archivo);
@@ -2148,7 +2148,7 @@ namespace App.ControlInsumos
 
                         if (transformado.Substring(0, 1) == ",")
                         {
-                            transformado = $"0{transformado}".Replace(",","");
+                            transformado = $"0{transformado}".Replace(",", "");
                         }
                     }
 
@@ -2164,12 +2164,12 @@ namespace App.ControlInsumos
                     {
                         temTransformado = temTransformado * -1;
                         transformado = temTransformado.ToString("N2");
-                        return $"-$ {transformado}";                        
+                        return $"-$ {transformado}";
                     }
                     else
                     {
                         transformado = temTransformado.ToString("N2");
-                        return $"$ {transformado}";                        
+                        return $"$ {transformado}";
                     }
 
                 default:
@@ -2533,24 +2533,31 @@ namespace App.ControlInsumos
         /// <param name="campos">Lista Campos</param>
         /// <param name="separador">Separador</param>
         /// <returns>Linea</returns>
-        public static string ListaCamposToLinea(List<string> campos, char separador)
+        public static string ListaCamposToLinea(List<string> campos, char separador, bool pSinEspacio = false)
         {
             #region ListaCamposToLinea
             string resultado = string.Empty;
 
             foreach (string campo in campos)
             {
-                if (!string.IsNullOrEmpty(resultado))
-                { resultado += separador; }
-
                 if (string.IsNullOrEmpty(campo.Trim()))
                 {
-                    resultado += $" ";
+                    if (pSinEspacio)
+                    {
+                        resultado += $"";
+                    }
+                    else
+                    {
+                        resultado += $" ";
+                    }
                 }
                 else
                 {
                     resultado += $"{campo.Trim()}";
                 }
+
+                resultado += separador;
+
             }
 
             return resultado;
@@ -2758,7 +2765,7 @@ namespace App.ControlInsumos
                 System.Diagnostics.StackFrame sf = st.GetFrame(i);
                 if (sf.GetFileLineNumber() > 0)
                 {
-                    StructError.LineasError.Add(new DatosLineaError 
+                    StructError.LineasError.Add(new DatosLineaError
                     {
                         Clase = Path.GetFileNameWithoutExtension(st.GetFrame(i).GetFileName()),
                         Metodo = st.GetFrame(i).GetMethod().ToString(),
@@ -2769,7 +2776,7 @@ namespace App.ControlInsumos
 
             StructError.LineasError.Reverse();
 
-            return StructError; 
+            return StructError;
             #endregion
         }
 
@@ -2977,7 +2984,7 @@ namespace App.ControlInsumos
             {
                 foreach (string numeroActual in pCamposSumar)
                 {
-                    
+
                     numeroSuma = numeroActual;
                     if (numeroSuma == "-") { numeroSuma = "0"; }
 
@@ -3007,7 +3014,7 @@ namespace App.ControlInsumos
                 default:
                     break;
             }
-            
+
             return ValorSumadoFormateado;
             #endregion
         }
@@ -3244,7 +3251,7 @@ namespace App.ControlInsumos
             else
             {
                 return false;
-            } 
+            }
             #endregion
         }
 
@@ -3257,7 +3264,7 @@ namespace App.ControlInsumos
         {
             #region GetSiguienteDiaHabil
             DateTime fechaResult = pFechaComporbar;
-            
+
             List<DateTime> festivos = ControlInsumos.FestivosColombia.DiasFestivos(pFechaComporbar.Year);
 
             while (EsFestivo(festivos, pFechaComporbar))
@@ -3266,10 +3273,17 @@ namespace App.ControlInsumos
                 pFechaComporbar = fechaResult;
             }
 
-            return fechaResult; 
+            return fechaResult;
             #endregion
 
         }
+
+        public static string GetTextoSinTildes(this string texto) =>
+            new String(texto.Normalize(NormalizationForm.FormD)
+           .Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+           .ToArray())
+           .Normalize(NormalizationForm.FormC);
+
     }
 
     /// <summary>
@@ -3352,7 +3366,7 @@ namespace App.ControlInsumos
     {
         public List<DatosLineaError> LineasError;
         public string Error;
-        
+
     }
 
     /// <summary>

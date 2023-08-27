@@ -318,9 +318,10 @@ namespace App.ControlLogicaProcesos
             if (result1AAA.Any())
             {
                 string[] campos1AAA = result1AAA.FirstOrDefault().Split('|');
+
                 cuenta = campos1AAA[7];
 
-                camposLinea.Add(campos1AAA[16]); // Telefono
+                camposLinea.Add(campos1AAA[15]); // Telefono
                 camposLinea.Add(campos1AAA[7]); // Cuenta                
                 camposLinea.Add(campos1AAA[2]); // Nombre
                 camposLinea.Add(campos1AAA[4]); // Direccion
@@ -343,7 +344,7 @@ namespace App.ControlLogicaProcesos
                 camposLinea.Add(string.Empty); // Fecc
                 camposLinea.Add(GetTotalIva(pExtracto)); // Total Iva
 
-                camposLinea.Add(campos1AAA[1]); // Total IVA Otros Operadores
+                camposLinea.Add(string.Empty); // Total IVA Otros Operadores
 
                 camposLinea.Add(campos1AAA[33]); // Insertos
 
@@ -363,7 +364,7 @@ namespace App.ControlLogicaProcesos
 
                 camposLinea.Add(campos1AAA[27]); // Actividad
 
-                camposLinea.Add(campos1AAA[1]); // Logo TIC
+                camposLinea.Add(string.Empty); // Logo TIC
 
                 camposLinea.Add("$ 0.00"); // Valor Subsidiado
                 camposLinea.Add(campos1AAA[35]); // TipoEnvioCartaEmail
@@ -375,7 +376,7 @@ namespace App.ControlLogicaProcesos
                 camposLinea.Add(campos1AAA[3]); // NIT/CED
                 camposLinea.Add(campos1AAA[23]); // TipoProducto
 
-                camposLinea.Add(campos1AAA[1]); // PlanPrimarioLTE
+                camposLinea.Add(string.Empty); // PlanPrimarioLTE
 
                 camposLinea.Add(GetPlanActual(pExtracto)); // PlanActual
                 camposLinea.Add(string.Empty); // ConceptoFinanciacion
@@ -412,7 +413,7 @@ namespace App.ControlLogicaProcesos
                 LineaMaestra = Helpers.ListaCamposToLinea(camposLinea, '|');
             }
 
-            return LineaMaestra;
+            return Helpers.GetTextoSinTildes(LineaMaestra);
             #endregion
         }
 

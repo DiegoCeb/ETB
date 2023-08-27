@@ -358,7 +358,7 @@ namespace App.ControlLogicaProcesos
                 linea = Helpers.ListaCamposToLinea(camposLinea, '|').Replace('\t', ' ');
                 periodo = GetFechaPeriodo(campos1AAA[9]);
 
-                lineaMaestra = new LineaMaestra(periodo, linea);
+                lineaMaestra = new LineaMaestra(periodo, Helpers.GetTextoSinTildes(linea));
             }
 
             return lineaMaestra;

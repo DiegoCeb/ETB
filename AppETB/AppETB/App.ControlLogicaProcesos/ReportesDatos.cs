@@ -385,7 +385,7 @@ namespace App.ControlLogicaProcesos
                 LineaMaestra = Helpers.ListaCamposToLinea(camposLinea, '|').Replace('\t', ' ');
             }
 
-            return LineaMaestra;
+            return Helpers.GetTextoSinTildes(LineaMaestra);
             #endregion
         }
 
@@ -662,6 +662,38 @@ namespace App.ControlLogicaProcesos
 
 
             return lineasEstadistico;
+            #endregion
+        }
+
+        /// <summary>
+        /// Metodo que obtiene Linea Sin CUFE
+        /// </summary>
+        /// <returns></returns>
+        private List<string> GetLineasSinCUFE()
+        {
+            #region GetLineasSinCUFE
+
+            List<string> lineasSinCUFE = new List<string>();
+
+            foreach (var archivoActual in Directory.GetFiles(rutaSalida))
+            {
+                if (archivoActual.Contains("SIN_CUFE"))
+                    continue;
+
+
+                var result1AAA = from busqueda in File.ReadAllLines(archivoActual)
+                                 where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("1AAA|")
+                                 select busqueda;
+
+                string telefono = result1AAA.FirstOrDefault().Split('|')[15];
+                string Cuenta = result1AAA.LastOrDefault().Split('|')[7];
+                string Nombre = result1AAA.LastOrDefault().Split('|')[2];
+
+                lineasSinCUFE.Add(Path.GetFileName(archivoActual) + "|" + telefono + "|" + Cuenta + "|" + Nombre);
+            }
+
+
+            return lineasSinCUFE;
             #endregion
         }
 
@@ -1312,6 +1344,31 @@ namespace App.ControlLogicaProcesos
             if (!File.Exists(rutaReportes))
             {
                 resultado.Add("Archivo|Tipo|Cantidad");
+            }
+            resultado.AddRange(pDatosImprimir);
+
+            Helpers.EscribirEnArchivo(rutaReportes, resultado);
+
+            #endregion
+        }
+
+        /// <summary>
+        /// Metodo que Escribe Reporte Sin CUFE
+        /// </summary>
+        /// <param name="pDatosImprimir"></param>
+        /// <param name="pNombreArchivo"></param>
+        private void EscribirReporteSinCUFE(List<string> pDatosImprimir)
+        {
+            #region EscribirReporteSinCUFE
+
+            List<string> resultado = new List<string>();
+            string rutaReportes = string.Empty;
+            string nombreArchivo = lote + "_Sin_CUFE.txt";
+            rutaReportes = Path.Combine(rutaSalida, "Reportes", nombreArchivo);
+
+            if (!File.Exists(rutaReportes))
+            {
+                resultado.Add("Telefono|Cuenta|Cliente");
             }
             resultado.AddRange(pDatosImprimir);
 

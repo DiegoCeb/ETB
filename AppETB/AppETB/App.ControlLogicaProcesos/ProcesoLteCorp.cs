@@ -4279,6 +4279,10 @@ namespace App.ControlLogicaProcesos
             string lineaTEMP = string.Empty;
             List<PosCortes> listaCortes = new List<PosCortes>();
 
+            if (Cuenta == "12051992625")
+            {
+
+            }
 
             #region armar paquetes Numero Conexion
             foreach (var lineaActual in datosOriginales)
@@ -6339,6 +6343,12 @@ namespace App.ControlLogicaProcesos
                 case "2":
                     resultado = $"1CFI| |Recargo Mora|{Helpers.SumarCampos(sumaValoresBase, "G")}|{Helpers.SumarCampos(sumaValoresIva, "G")}|{Helpers.SumarCampos(sumaValoresTotal, "G")}| | ";
                     break;
+
+                case "3":
+                    resultado = $"1DBB|Recargo de mora|{Helpers.SumarCampos(sumaValoresBase, "G")}|" +
+                        $"{Helpers.SumarCampos(sumaValoresTotal, "G")}| |" +
+                        $"{Helpers.SumarCampos(sumaValoresIva, "G")}|$ 0.00|0| ";
+                    break;
             }
 
             pBanderaRecargoMora = true;
@@ -6451,6 +6461,7 @@ namespace App.ControlLogicaProcesos
             string numeroConexion = string.Empty;
             Dictionary<string, List<string>> dicAgruNumConexion = new Dictionary<string, List<string>>();
             Dictionary<string, List<string>> dicAgruPorCargo = new Dictionary<string, List<string>>();
+            Dictionary<string, List<string>> dicAgruPorCargoAgruPorConcepto = new Dictionary<string, List<string>>();
             Dictionary<string, int> dicCountPorCargo = new Dictionary<string, int>();
             List<string> paqueteActual = new List<string>();
             string llaveCruve = string.Empty;
@@ -6465,7 +6476,7 @@ namespace App.ControlLogicaProcesos
             List<string> valor2_1DAA = new List<string>();
             List<string> valor3_1DAA = new List<string>();
             List<string> valor4_1DAA = new List<string>();
-            string valor02T004 = string.Empty; 
+            string valor02T004 = string.Empty;
             #endregion
 
             #region Busquea 02T004
@@ -6551,7 +6562,24 @@ namespace App.ControlLogicaProcesos
 
             #region Formatear
 
-            foreach (var dicAgruPorCargoActual in dicAgruPorCargo)
+            var agrupacionConcepto = from busqueda in dicAgruPorCargo
+                                     group busqueda by busqueda.Key.Substring(7).Replace(".", "") into busqueda
+                                     select busqueda.ToDictionary(x => x.Key, x => x.Value);
+
+            foreach (var itemAgrup in agrupacionConcepto.ToList())
+            {
+                List<string> temp = new List<string>();
+
+                foreach (var item in itemAgrup)
+                {
+                    temp.AddRange(item.Value);
+                }
+
+                dicAgruPorCargoAgruPorConcepto.Add(itemAgrup.Keys.FirstOrDefault(), temp);
+            }
+
+
+            foreach (var dicAgruPorCargoActual in dicAgruPorCargoAgruPorConcepto)
             {
                 concepto1DBB = dicAgruPorCargoActual.Key;
 
@@ -6589,15 +6617,14 @@ namespace App.ControlLogicaProcesos
 
                     if (concepto1DBB != "Cobro de Reconexión" && concepto1DBB != "Recargo de mora")
                     {
-                        concepto1DBB = dicAgruPorCargoActual.Key;
+                        if (!string.IsNullOrEmpty(dicAgruPorCargoActual.Key.Substring(7)))
+                        {
+                            concepto1DBB = dicAgruPorCargoActual.Key.Substring(7);
+                        }                     
                     }
 
                 }
-
-                if (concepto1DBB != "Cobro de Reconexión" && concepto1DBB != "Recargo de mora")
-                {
-                    concepto1DBB = concepto1DBB.Substring(7);
-                }
+               
 
                 // Agregar Campos a Totalizar
                 valor1_1DAA.AddRange(valor1_1DBB);
@@ -6655,19 +6682,17 @@ namespace App.ControlLogicaProcesos
 
             if (lineas02T004.Any() && !tengoRecargoMora)
             {
-                if (!string.IsNullOrEmpty(lineas02T004.FirstOrDefault().Substring(20, 14).Trim().TrimStart('0')))
-                {
-                    string valorBase = Helpers.FormatearCampos(TiposFormateo.Decimal03, lineas02T004.FirstOrDefault().Substring(20, 14));
-                    string valorIva = (Convert.ToDouble(valorBase) * 0.19).ToString("N2");
-                    string valorTotal = (Convert.ToDouble(valorBase) + Convert.ToDouble(valorIva)).ToString("N2").Replace(".", ",");
+                var lineas11CRecargoMora = from busqueda in datosOriginales
+                                           where busqueda.Length > 3 && busqueda.Substring(0, 3).Equals("11C") && !string.IsNullOrEmpty(busqueda.Substring(30, 14).Trim().TrimStart('0'))
+                                           select busqueda;
 
-                    listResultado.Add($"1DBB|Recargo de mora|{Helpers.FormatearCampos(TiposFormateo.Decimal05, lineas02T004.FirstOrDefault().Substring(20, 14))}|" +
-                        $"{Helpers.FormatearCampos(TiposFormateo.Decimal05, valorTotal)}| |" +
-                        $"{Helpers.FormatearCampos(TiposFormateo.Decimal05, valorIva.Replace(".", ","))}|$ 0.00|0| ");
+                if (lineas11CRecargoMora.Any())
+                {
+                    bool _descarte = false;
+
+                    listResultado.Add(GetRecargoMora(lineas11CRecargoMora.ToList(), "", "", ref _descarte, "3"));
                 }
             }
-
-            
 
             if (tengoRecargoMora) //Si lleva recargo de mora se hace reordenamiento para que quede de ultimas
             {

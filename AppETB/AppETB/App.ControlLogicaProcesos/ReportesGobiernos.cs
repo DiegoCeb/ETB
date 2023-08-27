@@ -404,7 +404,7 @@ namespace App.ControlLogicaProcesos
                 LineaMaestra = Helpers.ListaCamposToLinea(camposLinea, '|').Replace('\t',' ');
             }
 
-            return LineaMaestra;
+            return Helpers.GetTextoSinTildes(LineaMaestra);
             #endregion
         }
 

@@ -839,7 +839,7 @@ namespace App.ControlEjecucion
 
                     objDatos = from busqueda in pDatosImprimir
                                where Variables.Variables.DatosInsumoCuentasEnvioSms.ContainsKey(busqueda.Key) &&
-                               !Variables.Variables.DatosInsumoExtraerLlanos.ContainsKey(busqueda.Key)
+                               !Variables.Variables.DatosInsumoCuentasEnvioWhatsapp.ContainsKey(busqueda.Key)
                                select busqueda;
 
                     if (objDatos.Any())
@@ -895,7 +895,7 @@ namespace App.ControlEjecucion
                                let cuenta = busqueda.Value.FirstOrDefault().Split('|').ElementAt(7)
                                let factura = busqueda.Value.FirstOrDefault().Split('|').ElementAt(8).TrimStart('0')
                                where Variables.Variables.DatosInsumoCuentasEnvioWhatsapp.ContainsKey(busqueda.Key) &&
-                               !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key)&&
+                               !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
                                Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey($"{cuenta} {factura}")
                                select busqueda;
 
@@ -933,7 +933,6 @@ namespace App.ControlEjecucion
                                !Variables.Variables.DatosInsumoCuentasEnvioWhatsapp.ContainsKey(busqueda.Key) &&
                                !Variables.Variables.DatosErrorLTE.ContainsKey(busqueda.Key) &&
                                !Variables.Variables.Diferencias.ContainsKey(busqueda.Key) &&
-                               !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
                                Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey($"{cuenta} {factura}") &&
                                !Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key)
                                select busqueda;
@@ -952,7 +951,6 @@ namespace App.ControlEjecucion
                                !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
                                !Variables.Variables.NumHojas.ContainsKey(busqueda.Key) &&
                                !Variables.Variables.DatosInsumoClientesEspecialesDatos.ContainsKey($"{busqueda.Key}-{busqueda.Value.FirstOrDefault().Split('|').ElementAt(9)}") &&
-                               !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
                                Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey($"{cuenta} {factura}") &&
                                !Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key)
                                select busqueda;
@@ -970,7 +968,6 @@ namespace App.ControlEjecucion
                                where Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key) &&
                                !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
                                !Variables.Variables.NumHojas.ContainsKey(busqueda.Key) &&
-                               !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
                                Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey($"{cuenta} {factura}") &&
                                !Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key)
                                select busqueda;
@@ -1088,7 +1085,7 @@ namespace App.ControlEjecucion
                                 !Variables.Variables.DatosInsumoCuentasEnvioWhatsapp.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.DatosErrorLTE.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.Diferencias.ContainsKey(busqueda.Key) &&
-                                !Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key)&&
+                                //!Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key) &&
                                 Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey($"{cuenta} {factura}")
                                 select busqueda).ToDictionary(x => x.Key).Values;
 
@@ -1106,7 +1103,7 @@ namespace App.ControlEjecucion
                                 !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.NumHojas.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.DatosInsumoClientesEspecialesDatos.ContainsKey($"{busqueda.Key}-{busqueda.Value.FirstOrDefault().Split('|').ElementAt(9)}") &&
-                                !Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key)&&
+                                //!Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key) &&
                                 Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey($"{cuenta} {factura}")
                                 select busqueda).ToDictionary(x => x.Key).Values;
 
@@ -1123,7 +1120,7 @@ namespace App.ControlEjecucion
                                 where Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.NumHojas.ContainsKey(busqueda.Key) &&
-                                !Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key)&&
+                                //!Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key)&&
                                 Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey($"{cuenta} {factura}")
                                 select busqueda).ToDictionary(x => x.Key).Values;
 
@@ -1154,7 +1151,7 @@ namespace App.ControlEjecucion
             {
                 if (pDatosImprimir.ContainsKey(dato.Key))
                 {
-                    string fechaPeriodoProceso = pDatosImprimir[dato.Key].FirstOrDefault().Split('|').ElementAt(11).Substring(3);
+                    string fechaPeriodoProceso = pDatosImprimir[dato.Key].FirstOrDefault().Split('|').ElementAt(11).Substring(3).Replace("/", "");
                     string fechaPeriodoInsumo = Variables.Variables.DatosInsumoDistribucionEspecial[dato.Key].FirstOrDefault().Split('|').ElementAt(2);
 
                     if (fechaPeriodoProceso == fechaPeriodoInsumo)
@@ -1222,12 +1219,15 @@ namespace App.ControlEjecucion
             #region EscribirDatosSalidaDiferencias
             List<string> resultado = new List<string>();
 
+            //var dfdf = (Convert.ToDecimal(Helpers.FormatearCampos(TiposFormateo.Decimal03, "$ 79.950,00")) - Convert.ToDecimal(Helpers.FormatearCampos(TiposFormateo.Decimal03, "$ 79.947,36"))) > 0.05m;
+
             var busquedaCuentas = (from busqueda in pDatosImprimir
                                    let canal1BBA = busqueda.Value.Find(x => x.Substring(0, 4).Equals("1BBA"))
                                    let total1AAA = busqueda.Value.FirstOrDefault().Split('|').ElementAt(10)
                                    let total1BBA = canal1BBA.Split('|').ElementAt(2)
                                    where total1AAA.Substring(0, 1) != "-" && total1BBA.Substring(0, 1) != "-"
-                                   where !string.IsNullOrEmpty(canal1BBA) && (Convert.ToDecimal(Helpers.FormatearCampos(TiposFormateo.Decimal03, total1AAA)) - Convert.ToDecimal(Helpers.FormatearCampos(TiposFormateo.Decimal03, total1BBA))) > 5 &&
+                                   let RestTotales = (Convert.ToDecimal(Helpers.FormatearCampos(TiposFormateo.Decimal03, total1BBA )) - Convert.ToDecimal(Helpers.FormatearCampos(TiposFormateo.Decimal03, total1AAA)))
+                                   where (RestTotales > 0.05m) &&
                                    !Variables.Variables.DatosErrorLTE.ContainsKey(busqueda.Key)
                                    select busqueda).ToDictionary(x => x.Key).Values;
 
@@ -1366,6 +1366,7 @@ namespace App.ControlEjecucion
         {
             #region EscribirDatosSalidaImpresion
             IEnumerable<KeyValuePair<string, List<string>>> objDatos = null;
+            SortedDictionary<int, KeyValuePair<string, List<string>>> objDatosFinalOrdenado = new SortedDictionary<int, KeyValuePair<string, List<string>>>();
             List<KeyValuePair<string, List<string>>> objDatosFinal = new List<KeyValuePair<string, List<string>>>();
 
             switch (pTipoProceso)
@@ -1410,9 +1411,37 @@ namespace App.ControlEjecucion
                         objDatosFinal.Add(new KeyValuePair<string, List<string>>(item.Key, item.Value));
                     }
 
+                    #region Ordenamiento Procuni
+                    foreach (var item in objDatosFinal)
+                    {
+                        int consecutivoProcuni = 0;
+
+                        if (Variables.Variables.DatosInsumoProcuni.ContainsKey(item.Key))
+                        {
+                            consecutivoProcuni = Convert.ToInt32(Variables.Variables.DatosInsumoProcuni[item.Key].FirstOrDefault().Substring(39, 10).TrimStart('0'));
+
+                            objDatosFinalOrdenado.Add(consecutivoProcuni, item);
+                        }
+                    }
+
+                    if (objDatosFinalOrdenado.Count != objDatosFinal.Count)
+                    {
+                        foreach (var item in objDatosFinal)
+                        {
+                            if (Variables.Variables.DiccionarioDual.ContainsKey(item.Key))
+                            {
+                                int consecutivoProcuni = objDatosFinalOrdenado.Count + 1;
+
+                                objDatosFinalOrdenado.Add(consecutivoProcuni, item);
+                            }
+                        }
+                    }
+                    
+                    #endregion
+
                     if (objDatosFinal.Any())
                     {
-                        ProcesoSalidasImpresion(objDatosFinal, pRuta, pNombreArchivo, pLote);
+                        ProcesoSalidasImpresion(objDatosFinalOrdenado.Values, pRuta, pNombreArchivo, pLote);
                     }
                     break;
 
@@ -1452,9 +1481,36 @@ namespace App.ControlEjecucion
                         objDatosFinal.Add(new KeyValuePair<string, List<string>>(item.Key, item.Value));
                     }
 
+                    #region Ordenamiento Procuni
+                    foreach (var item in objDatosFinal)
+                    {
+                        int consecutivoProcuni = 0;
+
+                        if (Variables.Variables.DatosInsumoProcuni.ContainsKey(item.Key))
+                        {
+                            consecutivoProcuni = Convert.ToInt32(Variables.Variables.DatosInsumoProcuni[item.Key].FirstOrDefault().Substring(39, 10).TrimStart('0'));
+
+                            objDatosFinalOrdenado.Add(consecutivoProcuni, item);
+                        }
+                    }
+
+                    if (objDatosFinalOrdenado.Count != objDatosFinal.Count)
+                    {
+                        foreach (var item in objDatosFinal)
+                        {
+                            if (Variables.Variables.DiccionarioDual.ContainsKey(item.Key))
+                            {
+                                int consecutivoProcuni = objDatosFinalOrdenado.Count + 1;
+
+                                objDatosFinalOrdenado.Add(consecutivoProcuni, item);
+                            }
+                        }
+                    }
+                    #endregion
+
                     if (objDatosFinal.Any())
                     {
-                        ProcesoSalidasImpresion(objDatosFinal, pRuta, pNombreArchivo, pLote);
+                        ProcesoSalidasImpresion(objDatosFinalOrdenado.Values, pRuta, pNombreArchivo, pLote);
                     }
                     break;
 
@@ -1491,9 +1547,36 @@ namespace App.ControlEjecucion
                         objDatosFinal.Add(new KeyValuePair<string, List<string>>(item.Key, item.Value));
                     }
 
+                    #region Ordenamiento Procuni
+                    foreach (var item in objDatosFinal)
+                    {
+                        int consecutivoProcuni = 0;
+
+                        if (Variables.Variables.DatosInsumoProcuni.ContainsKey(item.Key))
+                        {
+                            consecutivoProcuni = Convert.ToInt32(Variables.Variables.DatosInsumoProcuni[item.Key].FirstOrDefault().Substring(39, 10).TrimStart('0'));
+
+                            objDatosFinalOrdenado.Add(consecutivoProcuni, item);
+                        }
+                    }
+
+                    if (objDatosFinalOrdenado.Count != objDatosFinal.Count)
+                    {
+                        foreach (var item in objDatosFinal)
+                        {
+                            if (Variables.Variables.DiccionarioDual.ContainsKey(item.Key))
+                            {
+                                int consecutivoProcuni = objDatosFinalOrdenado.Count + 1;
+
+                                objDatosFinalOrdenado.Add(consecutivoProcuni, item);
+                            }
+                        }
+                    }
+                    #endregion
+
                     if (objDatosFinal.Any())
                     {
-                        ProcesoSalidasImpresion(objDatosFinal, pRuta, pNombreArchivo, pLote);
+                        ProcesoSalidasImpresion(objDatosFinalOrdenado.Values, pRuta, pNombreArchivo, pLote);
                     }
                     break;
 

@@ -370,7 +370,7 @@ namespace App.ControlLogicaProcesos
                 LineaMaestra = Helpers.ListaCamposToLinea(camposLinea, '|');
             }
 
-            return LineaMaestra;
+            return Helpers.GetTextoSinTildes(LineaMaestra);
             #endregion
         }
 
