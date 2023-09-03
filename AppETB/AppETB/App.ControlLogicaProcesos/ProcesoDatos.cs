@@ -851,7 +851,7 @@ namespace App.ControlLogicaProcesos
                 }
                 #endregion
 
-                if (total == 0)
+                if (total == 0 || total.ToString().Length < 2)
                 {
                     CodeBar2 = $"(415){numeroETB}(8020){numReferencia}(3900){total.ToString().PadLeft(10, '0')}(96){fechaPago}";
                 }
@@ -1172,6 +1172,10 @@ namespace App.ControlLogicaProcesos
 
                     }
                 }
+            }
+            if (Cuenta == "12053750434" || Cuenta == "7810605108")
+            {
+
             }
 
             if (!string.IsNullOrEmpty(email))
@@ -3151,7 +3155,14 @@ namespace App.ControlLogicaProcesos
                                     select busqueda;
                     }
 
-                    if (dicAgrupado.ContainsKey(cruceTemp.FirstOrDefault().Substring(0, 6)))
+                    if (lineaActual.Substring(0, 3) == "13M" && !cruceTemp.Any())
+                    {
+                        cruceTemp = from busqueda in result02Todos
+                                    where busqueda.Substring(6, 14).Equals(lineaActual.Substring(42, 14))
+                                    select busqueda;
+                    }
+
+                    if (cruceTemp.Any() && dicAgrupado.ContainsKey(cruceTemp.FirstOrDefault().Substring(0, 6)))
                     {
                         cruceTemp = new List<string>();
                     }
@@ -4648,7 +4659,21 @@ namespace App.ControlLogicaProcesos
 
                                         if (item.Substring(0, 3) == "13M" && string.IsNullOrEmpty(capacidad))
                                         {
-                                            capacidad = $"{Convert.ToInt32(item.Substring(112, 8).Trim()).ToString("N0")}{item.Substring(120, 5).Trim()}";
+                                            string valor = item.Substring(112, 8).Trim();
+                                            string nomenclatura = item.Substring(120, 5).Trim();
+                                            int result = 0;
+
+                                            if (!string.IsNullOrEmpty(valor) && int.TryParse(valor, out result))
+                                            {
+                                                if (valor.Contains(","))
+                                                {
+                                                    capacidad = $"{valor.Replace(",", ".")}{nomenclatura}";
+                                                }
+                                                else
+                                                {
+                                                    capacidad = $"{Convert.ToInt32(valor).ToString("N0")}{nomenclatura}";
+                                                }
+                                            }
 
                                             if (string.IsNullOrEmpty(capacidad))
                                             {
@@ -4757,9 +4782,23 @@ namespace App.ControlLogicaProcesos
 
                                             string capacidad = string.Empty;
 
-                                            if (item.Substring(0, 3) == "13M")
+                                            if (item.Substring(0, 3) == "13M" && string.IsNullOrEmpty(capacidad))
                                             {
-                                                capacidad = $"{Convert.ToInt32(item.Substring(112, 8).Trim()).ToString("N0")}{item.Substring(120, 5).Trim()}";
+                                                string valor = item.Substring(112, 8).Trim();
+                                                string nomenclatura = item.Substring(120, 5).Trim();
+                                                int result = 0;
+                                                
+                                                if (!string.IsNullOrEmpty(valor) && int.TryParse(valor, out result))
+                                                {
+                                                    if (valor.Contains(","))
+                                                    {
+                                                        capacidad = $"{valor.Replace(",", ".")}{nomenclatura}";
+                                                    }
+                                                    else
+                                                    {
+                                                        capacidad = $"{Convert.ToInt32(valor).ToString("N0")}{nomenclatura}";
+                                                    }
+                                                }                                                
 
                                                 if (string.IsNullOrEmpty(capacidad))
                                                 {

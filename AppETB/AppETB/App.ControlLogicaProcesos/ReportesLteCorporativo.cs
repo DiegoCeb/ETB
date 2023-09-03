@@ -410,7 +410,7 @@ namespace App.ControlLogicaProcesos
                     camposLinea.Add(string.Empty); // QR
                 }
 
-                LineaMaestra = Helpers.ListaCamposToLinea(camposLinea, '|');
+                LineaMaestra = Helpers.ListaCamposToLinea(camposLinea, '|', true);
             }
 
             return Helpers.GetTextoSinTildes(LineaMaestra);

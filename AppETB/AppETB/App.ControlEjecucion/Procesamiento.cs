@@ -638,14 +638,14 @@ namespace App.ControlEjecucion
                 case "4":
                     foreach (var datoLinea in datosImprimirFinal)
                     {
-                        string nuevoConsecutivo = $"{pLote}_{consecutivo.ToString().PadLeft(6, '0')}";
+                        //string nuevoConsecutivo = $"{pLote}_{consecutivo.ToString().PadLeft(6, '0')}";
 
-                        var nuevo1AAA = from n in datoLinea.Value
-                                        where n.Substring(0, 4) == "1AAA"
-                                        select n.Replace("KitXXXX", nuevoConsecutivo);
+                        //var nuevo1AAA = from n in datoLinea.Value
+                        //                where n.Substring(0, 4) == "1AAA"
+                        //                select n.Replace("KitXXXX", nuevoConsecutivo);
 
-                        // Se actualiza el Consecutivo del diccionario Original formateado
-                        Variables.Variables.DiccionarioExtractosFormateados[datoLinea.Key][0] = Variables.Variables.DiccionarioExtractosFormateados[datoLinea.Key][0].Replace("KitXXXX", nuevoConsecutivo);
+                        //// Se actualiza el Consecutivo del diccionario Original formateado
+                        //Variables.Variables.DiccionarioExtractosFormateados[datoLinea.Key][0] = Variables.Variables.DiccionarioExtractosFormateados[datoLinea.Key][0].Replace("KitXXXX", nuevoConsecutivo);
                         resultado.AddRange(datoLinea.Value);
                         consecutivo++;
                     }
@@ -928,13 +928,13 @@ namespace App.ControlEjecucion
                                let cuenta = busqueda.Value.FirstOrDefault().Split('|').ElementAt(7)
                                let factura = busqueda.Value.FirstOrDefault().Split('|').ElementAt(8).TrimStart('0')
                                where Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key) &&
+                               Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey($"{cuenta} {factura}") &&
                                !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
                                !Variables.Variables.DatosInsumoCuentasEnvioSms.ContainsKey(busqueda.Key) &&
                                !Variables.Variables.DatosInsumoCuentasEnvioWhatsapp.ContainsKey(busqueda.Key) &&
                                !Variables.Variables.DatosErrorLTE.ContainsKey(busqueda.Key) &&
-                               !Variables.Variables.Diferencias.ContainsKey(busqueda.Key) &&
-                               Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey($"{cuenta} {factura}") &&
-                               !Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key)
+                               !Variables.Variables.Diferencias.ContainsKey(busqueda.Key)
+                               
                                select busqueda;
 
                     if (objDatos.Any())
@@ -948,11 +948,10 @@ namespace App.ControlEjecucion
                                let cuenta = busqueda.Value.FirstOrDefault().Split('|').ElementAt(7)
                                let factura = busqueda.Value.FirstOrDefault().Split('|').ElementAt(8).TrimStart('0')
                                where Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key) &&
+                               Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey($"{cuenta} {factura}") &&
                                !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
                                !Variables.Variables.NumHojas.ContainsKey(busqueda.Key) &&
-                               !Variables.Variables.DatosInsumoClientesEspecialesDatos.ContainsKey($"{busqueda.Key}-{busqueda.Value.FirstOrDefault().Split('|').ElementAt(9)}") &&
-                               Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey($"{cuenta} {factura}") &&
-                               !Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key)
+                               !Variables.Variables.DatosInsumoClientesEspecialesDatos.ContainsKey($"{busqueda.Key}-{busqueda.Value.FirstOrDefault().Split('|').ElementAt(9)}")
                                select busqueda;
 
                     if (objDatos.Any())
@@ -966,10 +965,9 @@ namespace App.ControlEjecucion
                                let cuenta = busqueda.Value.FirstOrDefault().Split('|').ElementAt(7)
                                let factura = busqueda.Value.FirstOrDefault().Split('|').ElementAt(8).TrimStart('0')
                                where Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key) &&
-                               !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
-                               !Variables.Variables.NumHojas.ContainsKey(busqueda.Key) &&
                                Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey($"{cuenta} {factura}") &&
-                               !Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key)
+                               !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
+                               !Variables.Variables.NumHojas.ContainsKey(busqueda.Key)
                                select busqueda;
 
                     if (objDatos.Any())
@@ -1383,8 +1381,8 @@ namespace App.ControlEjecucion
                                 !Variables.Variables.DatosErrorLTE.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.Diferencias.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
-                                !Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key)&&
-                                Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey($"{cuenta} {factura}")
+                                !Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key) &&
+                                !Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key)
                                 select busqueda).ToDictionary(x => x.Key).Values;
 
                     foreach (var item in objDatos)
@@ -1402,8 +1400,7 @@ namespace App.ControlEjecucion
                                 !Variables.Variables.DatosInsumoCuentasEnvioWhatsapp.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.DatosErrorLTE.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.Diferencias.ContainsKey(busqueda.Key) &&
-                                !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key)&&
-                                Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey($"{cuenta} {factura}")
+                                !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key)
                                 select busqueda).ToDictionary(x => x.Key).Values;
 
                     foreach (var item in objDatos)
@@ -1456,7 +1453,7 @@ namespace App.ControlEjecucion
                                 !Variables.Variables.DatosInsumoClientesEspecialesDatos.ContainsKey($"{busqueda.Key}-{busqueda.Value.FirstOrDefault().Split('|').ElementAt(9)}") &&
                                 !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key))&&
-                                Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey($"{cuenta} {factura}")
+                                !Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key)
                                 select busqueda).ToDictionary(x => x.Key).Values;
 
                     foreach (var item in objDatos)
@@ -1472,8 +1469,7 @@ namespace App.ControlEjecucion
                                 !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.NumHojas.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.DatosInsumoClientesEspecialesDatos.ContainsKey($"{busqueda.Key}-{busqueda.Value.FirstOrDefault().Split('|').ElementAt(9)}") &&
-                                !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key)&&
-                                Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey($"{cuenta} {factura}")
+                                !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key)
                                 select busqueda).ToDictionary(x => x.Key).Values;
 
                     foreach (var item in objDatos)
@@ -1523,7 +1519,7 @@ namespace App.ControlEjecucion
                                 !Variables.Variables.NumHojas.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key)&&
-                                Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey($"{cuenta} {factura}")
+                                !Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key)
                                 select busqueda).ToDictionary(x => x.Key).Values;
 
                     foreach (var item in objDatos)
@@ -1538,8 +1534,7 @@ namespace App.ControlEjecucion
                                 where Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.NumHojas.ContainsKey(busqueda.Key) &&
-                                !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key)&&
-                                Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey($"{cuenta} {factura}")
+                                !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key)
                                 select busqueda).ToDictionary(x => x.Key).Values;
 
                     foreach (var item in objDatos)
@@ -1633,10 +1628,6 @@ namespace App.ControlEjecucion
             foreach (var datoCuenta in pDatos)
             {
                 string nuevoConsecutivo = $"{pLote}_{consecutivo.ToString().PadLeft(6, '0')}";
-
-                var nuevo1AAA = from n in datoCuenta.Value
-                                where n.Substring(0, 4) == "1AAA"
-                                select n.Replace("KitXXXX", nuevoConsecutivo);
 
                 if (datoCuenta.Value.FirstOrDefault().Substring(0, 4) == "1AAA")
                 {

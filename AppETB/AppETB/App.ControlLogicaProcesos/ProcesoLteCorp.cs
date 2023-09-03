@@ -6664,21 +6664,14 @@ namespace App.ControlLogicaProcesos
 
             #endregion
 
-            // Se crea el canal 1DAA
-            LineaTemp = "1DAA|";
-            LineaTemp += "Total cargos|";
-            LineaTemp += Helpers.SumarCampos(valor1_1DAA, "G") + "|";
-            LineaTemp += Helpers.SumarCampos(valor2_1DAA, "G") + "|";
-            LineaTemp += Helpers.SumarCampos(valor3_1DAA, "G") + "|";
-            LineaTemp += Helpers.SumarCampos(valor4_1DAA, "G") + "| ";
-
-            listResultado.Insert(0, Helpers.ValidarPipePipe(LineaTemp));
-
             //Agregar Recargo Mora
 
             bool tengoRecargoMora = (from busqueda in listResultado
                                      where busqueda.Contains("Recargo de mora")
                                      select busqueda).Any();
+
+            bool recargoMora = false;
+            string lineaRecargoMora = string.Empty;
 
             if (lineas02T004.Any() && !tengoRecargoMora)
             {
@@ -6688,11 +6681,29 @@ namespace App.ControlLogicaProcesos
 
                 if (lineas11CRecargoMora.Any())
                 {
-                    bool _descarte = false;
+                    lineaRecargoMora = GetRecargoMora(lineas11CRecargoMora.ToList(), "", "", ref recargoMora, "3");
 
-                    listResultado.Add(GetRecargoMora(lineas11CRecargoMora.ToList(), "", "", ref _descarte, "3"));
+                    listResultado.Add(lineaRecargoMora);
                 }
             }
+
+            if (recargoMora)
+            {
+                valor1_1DAA.Add(lineaRecargoMora.Split('|').ElementAt(2).Replace(",","").Replace(".", "").Replace("$", "").Trim());
+                valor2_1DAA.Add(lineaRecargoMora.Split('|').ElementAt(2).Replace(",", "").Replace(".", "").Replace("$", "").Trim());
+                valor2_1DAA.Add(lineaRecargoMora.Split('|').ElementAt(5).Replace(",", "").Replace(".", "").Replace("$", "").Trim());
+                valor3_1DAA.Add(lineaRecargoMora.Split('|').ElementAt(5).Replace(",", "").Replace(".", "").Replace("$", "").Trim());
+            }
+
+            // Se crea el canal 1DAA
+            LineaTemp = "1DAA|";
+            LineaTemp += "Total cargos|";
+            LineaTemp += Helpers.SumarCampos(valor1_1DAA, "G") + "|";
+            LineaTemp += Helpers.SumarCampos(valor2_1DAA, "G") + "|";
+            LineaTemp += Helpers.SumarCampos(valor3_1DAA, "G") + "|";
+            LineaTemp += Helpers.SumarCampos(valor4_1DAA, "G") + "| ";
+
+            listResultado.Insert(0, Helpers.ValidarPipePipe(LineaTemp));
 
             if (tengoRecargoMora) //Si lleva recargo de mora se hace reordenamiento para que quede de ultimas
             {
