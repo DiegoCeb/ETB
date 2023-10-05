@@ -29,6 +29,7 @@ namespace App.ControlLogicaProcesos
         List<string> listaReporteMaestra = new List<string>();
         List<string> listaReporteDistrEspecial = new List<string>();
         List<string> listaReporteInsertos = new List<string>();
+        List<string> listaReporteSinCUFE = new List<string>();
 
         // Reporte RecaudoEsperado final
         Dictionary<string, List<string>> dicRecaudoEsperadoEscribir = new Dictionary<string, List<string>>();
@@ -137,6 +138,12 @@ namespace App.ControlLogicaProcesos
 
                 //Rpt RecaudoEsperado
                 GetLineaRecaudoEsperado(datosSal.ToList());
+
+                // Rpt Resumen SinCUFE
+                listReporte.AddRange(GetReporteSinCUFE(datosSal.ToList()));
+                if (listReporte.Count > 0)
+                    listaReporteSinCUFE.AddRange(listReporte);
+                listReporte.Clear();
             }
 
             // Escribir Reparto Esperado
@@ -154,6 +161,9 @@ namespace App.ControlLogicaProcesos
             EscribirReporteMaestraInserto(listaReporteInsertos);
             listaReporteInsertos.Clear();
 
+            // Escribir SinCUFE
+            EscribirReporteSinCUFE(listaReporteSinCUFE);
+            listaReporteSinCUFE.Clear();
 
             // Rpt Resumen Maestra
             listReporte = GetLineaResumenMaestra(DiccionarioExtractosReporte);
@@ -253,6 +263,26 @@ namespace App.ControlLogicaProcesos
             }
 
             return lineaReporte;
+            #endregion
+        }
+
+        /// <summary>
+        /// Metodo que obtiene Reporte SinCUFE
+        /// </summary>
+        /// <returns></returns>
+        private List<string> GetReporteSinCUFE(List<string> pDatosImprimir)
+        {
+            #region GetReporteSinCUFE
+
+            List<string> lineaSinCUFE = new List<string>();
+            string lineaInsert = GetLineasSinCUFE(pDatosImprimir);
+
+            if (!string.IsNullOrEmpty(lineaInsert))
+            {
+                lineaSinCUFE.Add(lineaInsert);
+            }
+
+            return lineaSinCUFE;
             #endregion
         }
 
@@ -682,6 +712,47 @@ namespace App.ControlLogicaProcesos
 
 
             return lineasEstadistico;
+            #endregion
+        }
+
+        /// <summary>
+        /// Metodo que obtiene Linea Sin CUFE
+        /// </summary>
+        /// <returns></returns>
+        private string GetLineasSinCUFE(List<string> pExtracto)
+        {
+            #region GetLineasinCUFE
+            string LineaSinCUFE = string.Empty;
+            List<string> camposLinea = new List<string>();
+
+            foreach (var archivoActual in Directory.GetFiles(rutaSalida))
+            {
+                if (archivoActual.Contains("SIN_CUFE"))
+                {
+                    var result1AAA = from busqueda in pExtracto
+                                     where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("1AAA|")
+                                     select busqueda;
+
+                    var resultCUFE = from busqueda in pExtracto
+                                     where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("CUFE|")
+                                     select busqueda;
+
+                    if (resultCUFE.Any())
+                    {
+
+                    }
+                    else
+                    {
+                        string[] campos1AAA = result1AAA.FirstOrDefault().Split('|');
+                        camposLinea.Add(result1AAA.FirstOrDefault().Split('|')[15]); // Telefono
+                        camposLinea.Add(result1AAA.FirstOrDefault().Split('|')[7]); // Cuenta                
+                        camposLinea.Add(result1AAA.FirstOrDefault().Split('|')[2]); // Nombre
+
+                        LineaSinCUFE = Helpers.ListaCamposToLinea(camposLinea, '|');
+                    }
+                }
+            }
+            return LineaSinCUFE;
             #endregion
         }
 
@@ -1288,6 +1359,32 @@ namespace App.ControlLogicaProcesos
 
             #endregion
         }
+
+        /// <summary>
+        /// Metodo que Escribe Reporte Sin CUFE
+        /// </summary>
+        /// <param name="pDatosImprimir"></param>
+        /// <param name="pNombreArchivo"></param>
+        private void EscribirReporteSinCUFE(List<string> pDatosImprimir)
+        {
+            #region EscribirReporteSinCUFE
+
+            List<string> resultado = new List<string>();
+            string rutaReportes = string.Empty;
+            string nombreArchivo = lote + "_Sin_CUFE.txt";
+            rutaReportes = Path.Combine(rutaSalida, "Reportes", nombreArchivo);
+
+            if (!File.Exists(rutaReportes))
+            {
+                resultado.Add("Telefono|Cuenta|Cliente");
+            }
+            resultado.AddRange(pDatosImprimir);
+
+            Helpers.EscribirEnArchivo(rutaReportes, resultado);
+
+            #endregion
+        }
+
 
         /// <summary>
         /// Metodo que Escribe Reporte Estadistico 

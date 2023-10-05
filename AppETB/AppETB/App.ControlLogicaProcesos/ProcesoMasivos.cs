@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DLL_Utilidades;
+using App.Variables;
 
 namespace App.ControlLogicaProcesos
 {
@@ -92,6 +93,7 @@ namespace App.ControlLogicaProcesos
                 if (linea.Substring(0, 6) == "000000") //Inicio Extracto
                 {
                     extractoCompleto = false;
+                    cuentaErrorLte = false;
 
                     if (datosExtractoFormateo.Count > 1)
                     {
@@ -102,7 +104,39 @@ namespace App.ControlLogicaProcesos
                     {
                         llaveCruce = datosExtractoFormateo.ElementAt(1).Substring(117, 20).Trim();
 
-                        if (!string.IsNullOrEmpty(Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoCuentasExtraer, llaveCruce)))
+                        #region Verificar si son de error LTE
+                        if (IsLte || IsLteCorporativo)
+                        {
+                            if (!IsLteCorporativo)
+                            {
+
+                                var linea040011 = (from busqueda in datosExtractoFormateo
+                                                   where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("040011")
+                                                   select busqueda).Any();
+
+                                var telefonoLinea040000 = (from busqueda in datosExtractoFormateo
+                                                           where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("040000")
+                                                           let telefono = busqueda.Substring(6, 20)
+                                                           where telefono.Substring(0, 1) == "3" && telefono.Trim().Length == 10
+                                                           select busqueda).Any();
+
+                                var linea888888 = from busqueda in datosExtractoFormateo
+                                                  where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("888888")
+                                                  select busqueda;
+
+                                if (!linea040011 && !telefonoLinea040000) //No tiene OOA y no tiene telefono
+                                {
+                                    if (linea888888.Any()) //tiene ODC
+                                    {
+                                        Variables.Variables.DatosErrorLTE.Add(llaveCruce, FormatearArchivo(llaveCruce, datosExtractoFormateo));
+                                        cuentaErrorLte = true;
+                                    }                                 
+                                }
+                            }
+                        }
+                        #endregion
+
+                        if (!string.IsNullOrEmpty(Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoCuentasExtraer, llaveCruce)) && !cuentaErrorLte)
                         {
                             //Cuenta Retenida
                             Variables.Variables.CuentasNoImprimir.Add(llaveCruce, FormatearArchivo(llaveCruce, datosExtractoFormateo));
@@ -110,27 +144,6 @@ namespace App.ControlLogicaProcesos
                         }
                         else
                         {
-                            #region Verificar si son de error LTE
-                            if (IsLte || IsLteCorporativo)
-                            {
-                                if (!IsLteCorporativo)
-                                {
-                                    var linea040011 = from busqueda in datosExtractoFormateo
-                                                      where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("040011")
-                                                      select busqueda;
-
-                                    if (!linea040011.Any())
-                                    {
-                                        if (!Variables.Variables.DatosInsumoProcuni.ContainsKey(llaveCruce))
-                                        {
-                                            //Variables.Variables.DatosErrorLTE.Add(llaveCruce, FormatearArchivo(llaveCruce, datosExtractoFormateo));
-                                            cuentaErrorLte = true;
-                                        }
-                                    }
-                                }
-                            }
-                            #endregion
-
                             if (!cuentaErrorLte & !sinCufe)
                             {
                                 AgregarDiccionario(llaveCruce, FormatearArchivo(llaveCruce, datosExtractoFormateo));
@@ -404,7 +417,30 @@ namespace App.ControlLogicaProcesos
             }
             #endregion
 
+            if (IsLte)
+            {
+                GetPlanPrimario(datosOriginales);
+            }
+
             return resultado;
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pDatosOriginales"></param>
+        private void GetPlanPrimario(List<string> pDatosOriginales)
+        {
+            #region GetPlanPrimario
+            var planPrimario = from busqueda in pDatosOriginales
+                               where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("040011")
+                               select busqueda;
+
+            if (planPrimario.Any())
+            {
+                Variables.Variables.DiccionarioPlanesPrimarios.Add(Cuenta, planPrimario.FirstOrDefault().Substring(6, 50).Trim());
+            }
             #endregion
         }
 
@@ -3281,7 +3317,7 @@ namespace App.ControlLogicaProcesos
                                                   !string.IsNullOrEmpty(busqueda.Substring(16, 14).Trim().TrimStart('0'))
                                                   select busqueda.Substring(139, 8);
 
-                                string FechaDesdeAntigua = Helpers.GetFechaMaximaMinima(fechasDesde.ToList(), 2);
+                                string FechaDesdeAntigua = Helpers.GetFechaMaximaMinima(fechasDesde.ToList(), 1);
                                 string FechaHastaReciente = Helpers.GetFechaMaximaMinima(fechasHasta.ToList(), 1);
                                 #endregion
 
@@ -4974,7 +5010,7 @@ namespace App.ControlLogicaProcesos
                     string mesActual = (Convert.ToDouble(Helpers.FormatearCampos(TiposFormateo.Decimal02, linea070001.FirstOrDefault().Substring(6, 8).Trim())) * 60 / 10).ToString();
                     string promedio = (Convert.ToDouble(Helpers.FormatearCampos(TiposFormateo.Decimal02, linea070001.FirstOrDefault().Substring(62, 8).Trim())) * 60 / 10).ToString();
 
-                    resultado = Helpers.ValidarPipePipe($"1HIS|{numeroConexion}|Mes Actual: {mesActual}|{ArmarMesesHistograma(Helpers.FormatearCampos(TiposFormateo.Fecha01, linea10000.FirstOrDefault().Substring(168, 8)), false)}|" +
+                    resultado = Helpers.ValidarPipePipe($"1HIS|{numeroConexion}|Mes Actual: {mesActual}|{ArmarMesesHistograma(Helpers.FormatearCampos(TiposFormateo.Fecha01, linea10000.FirstOrDefault().Substring(168, 8)), true)}|" +
                         $"{ArmarValoresHistograma(linea070001.FirstOrDefault(), "2")}|Promedio: {promedio}| ");
                 }
                 else
@@ -5031,7 +5067,7 @@ namespace App.ControlLogicaProcesos
                     string mesActual = (Convert.ToDouble(Helpers.FormatearCampos(TiposFormateo.Decimal02, linea070002.FirstOrDefault().Substring(6, 6).Trim())) / 10).ToString();
                     string promedio = (Convert.ToDouble(Helpers.FormatearCampos(TiposFormateo.Decimal02, linea070002.FirstOrDefault().Substring(48, 6).Trim())) / 10).ToString();
 
-                    resultado = Helpers.ValidarPipePipe($"1HDT|{numeroConexion}|Mes Actual: {mesActual}|{ArmarMesesHistograma(Helpers.FormatearCampos(TiposFormateo.Fecha01, linea10000.FirstOrDefault().Substring(168, 8)), false)}|" +
+                    resultado = Helpers.ValidarPipePipe($"1HDT|{numeroConexion}|Mes Actual: {mesActual}|{ArmarMesesHistograma(Helpers.FormatearCampos(TiposFormateo.Fecha01, linea10000.FirstOrDefault().Substring(168, 8)), true)}|" +
                         $"{ArmarValoresHistograma(linea070002.FirstOrDefault(), "3")}|Promedio: {promedio}| ");
                 }
             }
@@ -5435,7 +5471,7 @@ namespace App.ControlLogicaProcesos
             {
                 byte mesFacturacion = Convert.ToByte(pFechaReferencia.Split('/').ElementAt(1));
 
-                if (pRestarMes)
+                if (pRestarMes && !IsLte)
                 {
                     mesFacturacion--;
                 }
@@ -6174,13 +6210,13 @@ namespace App.ControlLogicaProcesos
             {
                 case "1":
                     resultado = $"1ODD|{Helpers.FormatearCampos(TiposFormateo.Fecha06, pPeriodo.Split('-').ElementAt(0).Trim())} a {Helpers.FormatearCampos(TiposFormateo.Fecha06, pPeriodo.Split('-').ElementAt(1).Trim())}|" +
-                        $"Recargo de mora ({Helpers.FormatearCampos(TiposFormateo.Fecha07, pPeriodo.Split('-').ElementAt(0).Trim())} - {Helpers.FormatearCampos(TiposFormateo.Fecha07, pPeriodo.Split('-').ElementAt(1).Trim())})|" +
+                        $"Recargo Mora ({Helpers.FormatearCampos(TiposFormateo.Fecha07, pPeriodo.Split('-').ElementAt(0).Trim())} - {Helpers.FormatearCampos(TiposFormateo.Fecha07, pPeriodo.Split('-').ElementAt(1).Trim())})|" +
                         $"{Helpers.SumarCampos(sumaValoresBase)}|{Helpers.SumarCampos(sumaValoresIva)}|{Helpers.SumarCampos(sumaValoresImpuestos)}|{Helpers.SumarCampos(sumaValoresTotal)}|{Helpers.FormatearCampos(TiposFormateo.Fecha05, PeriodoFacturacion)}|{Helpers.FormatearCampos(TiposFormateo.Fecha05, PeriodoFacturacion)}|" +
                         $"{pNumeroConexion}| ";
                     break;
 
                 case "2":
-                    resultado = $"1CFI| |Recargo de mora|{Helpers.SumarCampos(sumaValoresBase)}|{Helpers.SumarCampos(sumaValoresIva)}|{Helpers.SumarCampos(sumaValoresTotal)}| | ";
+                    resultado = $"1CFI| |Recargo Mora|{Helpers.SumarCampos(sumaValoresBase)}|{Helpers.SumarCampos(sumaValoresIva)}|{Helpers.SumarCampos(sumaValoresTotal)}| | ";
                     break;
             }
 

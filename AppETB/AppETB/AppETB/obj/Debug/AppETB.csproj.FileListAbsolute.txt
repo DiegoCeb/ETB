@@ -150,3 +150,75 @@ U:\ETB\Desarrollo_ETB\AppETB\AppETB\AppETB\obj\Debug\AppETB.csproj.CoreCompileIn
 U:\ETB\Desarrollo_ETB\AppETB\AppETB\AppETB\obj\Debug\AppETB.csproj.CopyComplete
 U:\ETB\Desarrollo_ETB\AppETB\AppETB\AppETB\obj\Debug\AppETB.exe
 U:\ETB\Desarrollo_ETB\AppETB\AppETB\AppETB\obj\Debug\AppETB.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\AppETB\bin\Debug\AppETB.exe.config
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\AppETB\bin\Debug\AppETB.xml
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\AppETB\bin\Debug\AppETB.exe
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\AppETB\bin\Debug\AppETB.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\AppETB\bin\Debug\App.ControlInsumos.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\AppETB\bin\Debug\App.ControlProcesos.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\AppETB\bin\Debug\App.Variables.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\AppETB\bin\Debug\SharpCompress.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\AppETB\bin\Debug\Excel.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\AppETB\bin\Debug\DLL_Utilidades.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\AppETB\bin\Debug\App.ControlEjecucion.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\AppETB\bin\Debug\App.ControlLogicaProcesos.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\AppETB\bin\Debug\App.ControlInsumos.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\AppETB\bin\Debug\App.ControlProcesos.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\AppETB\bin\Debug\App.Variables.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\AppETB\bin\Debug\App.ControlEjecucion.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\AppETB\bin\Debug\App.ControlEjecucion.xml
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\AppETB\bin\Debug\App.ControlLogicaProcesos.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\AppETB\bin\Debug\App.ControlLogicaProcesos.xml
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\AppETB\obj\Debug\AppETB.csproj.AssemblyReference.cache
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\AppETB\obj\Debug\AppETB.csproj.CoreCompileInputs.cache
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\AppETB\obj\Debug\AppETB.csproj.CopyComplete
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\AppETB\obj\Debug\AppETB.exe
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\AppETB\obj\Debug\AppETB.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\AppETB\bin\Debug\AppETB.exe.config
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\AppETB\bin\Debug\AppETB.xml
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\AppETB\bin\Debug\AppETB.exe
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\AppETB\bin\Debug\AppETB.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\AppETB\bin\Debug\App.ControlInsumos.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\AppETB\bin\Debug\App.ControlProcesos.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\AppETB\bin\Debug\App.Variables.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\AppETB\bin\Debug\SharpCompress.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\AppETB\bin\Debug\Excel.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\AppETB\bin\Debug\DLL_Utilidades.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\AppETB\bin\Debug\App.ControlEjecucion.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\AppETB\bin\Debug\App.ControlLogicaProcesos.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\AppETB\bin\Debug\App.ControlInsumos.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\AppETB\bin\Debug\App.ControlProcesos.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\AppETB\bin\Debug\App.Variables.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\AppETB\bin\Debug\App.ControlEjecucion.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\AppETB\bin\Debug\App.ControlEjecucion.xml
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\AppETB\bin\Debug\App.ControlLogicaProcesos.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\AppETB\bin\Debug\App.ControlLogicaProcesos.xml
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\AppETB\obj\Debug\AppETB.csproj.AssemblyReference.cache
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\AppETB\obj\Debug\AppETB.csproj.CoreCompileInputs.cache
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\AppETB\obj\Debug\AppETB.csproj.CopyComplete
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\AppETB\obj\Debug\AppETB.exe
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\AppETB\obj\Debug\AppETB.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\AppETB\bin\Debug\AppETB.exe.config
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\AppETB\bin\Debug\AppETB.xml
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\AppETB\bin\Debug\AppETB.exe
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\AppETB\bin\Debug\AppETB.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\AppETB\bin\Debug\App.ControlInsumos.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\AppETB\bin\Debug\App.ControlProcesos.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\AppETB\bin\Debug\App.Variables.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\AppETB\bin\Debug\SharpCompress.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\AppETB\bin\Debug\Excel.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\AppETB\bin\Debug\DLL_Utilidades.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\AppETB\bin\Debug\App.ControlEjecucion.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\AppETB\bin\Debug\App.ControlLogicaProcesos.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\AppETB\bin\Debug\App.ControlInsumos.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\AppETB\bin\Debug\App.ControlProcesos.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\AppETB\bin\Debug\App.Variables.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\AppETB\bin\Debug\App.ControlEjecucion.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\AppETB\bin\Debug\App.ControlEjecucion.xml
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\AppETB\bin\Debug\App.ControlLogicaProcesos.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\AppETB\bin\Debug\App.ControlLogicaProcesos.xml
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\AppETB\obj\Debug\AppETB.csproj.AssemblyReference.cache
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\AppETB\obj\Debug\AppETB.csproj.CoreCompileInputs.cache
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\AppETB\obj\Debug\AppETB.csproj.CopyComplete
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\AppETB\obj\Debug\AppETB.exe
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\AppETB\obj\Debug\AppETB.pdb

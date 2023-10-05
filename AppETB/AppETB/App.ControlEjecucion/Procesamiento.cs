@@ -559,46 +559,46 @@ namespace App.ControlEjecucion
             {
                 case "1": //Masivos
                     EscribirDatosSalidaCompleto(pDatosImprimir, $"{pRutaSalida}", $"COMPLETO.sal", pLote, "1");
-                    EscribirDatosSalidaSinCufe(pDatosImprimir, $"{pRutaSalida}", $"I_SIN_CUFE.sal", "1");
-                    EscribirDatosSalidaNoImprimir(pDatosImprimir, $"{pRutaSalida}", $"I_NO_IMPRIMIR.sal", "1");
-                    EscribirDatosSalidaSms(pDatosImprimir, $"{pRutaSalida}", $"I_ENVIO_SMS.sal", "1");
-                    EscribirDatosSalidaWhatsapp(pDatosImprimir, $"{pRutaSalida}", $"I_ENVIO_Whatsapp.sal", "1");
-                    EscribirDatosSalidaErrorLte(pDatosImprimir, $"{pRutaSalida}", $"I_ERROR_FACTURA_LTE.sal");
-                    EscribirDatosSalidaDiferencias(pDatosImprimir, $"{pRutaSalida}", $"I_DIFERENCIAS.sal");
-                    EscribirDatosSalidaDistribucionEspecial(pDatosImprimir, $"{pRutaSalida}", $"I_DISTRIBUCION_ESPECIAL.sal", "1");
-                    EscribirDatosSalidaEmail(pDatosImprimir, $"{pRutaSalida}", $"I_FACTURA_SOLO_EMAIL.sal", "1");
-                    EscribirDatosSalidaOtros(pDatosImprimir, $"{pRutaSalida}", $"I_OTROS.sal", "1");
+                    EscribirDatosSalidaSinCufe(pDatosImprimir, $"{pRutaSalida}", $"I_SIN_CUFE.sal", "1", pLote);
+                    EscribirDatosSalidaNoImprimir(pDatosImprimir, $"{pRutaSalida}", $"I_NO_IMPRIMIR.sal", "1", pLote);
+                    EscribirDatosSalidaSms(pDatosImprimir, $"{pRutaSalida}", $"I_ENVIO_SMS.sal", "1", pLote);
+                    EscribirDatosSalidaWhatsapp(pDatosImprimir, $"{pRutaSalida}", $"I_ENVIO_Whatsapp.sal", "1", pLote);
+                    EscribirDatosSalidaErrorLte(pDatosImprimir, $"{pRutaSalida}", $"I_ERROR_FACTURA_LTE.sal", pLote);
+                    EscribirDatosSalidaDiferencias(pDatosImprimir, $"{pRutaSalida}", $"I_DIFERENCIAS.sal", pLote);
+                    EscribirDatosSalidaDistribucionEspecial(pDatosImprimir, $"{pRutaSalida}", $"I_DISTRIBUCION_ESPECIAL.sal", "1", pLote);
+                    EscribirDatosSalidaEmail(pDatosImprimir, $"{pRutaSalida}", $"I_FACTURA_SOLO_EMAIL.sal", "1", pLote);
+                    EscribirDatosSalidaOtros(pDatosImprimir, $"{pRutaSalida}", $"I_OTROS.sal", "1", pLote);
                     EscribirDatosSalidaImpresion(pDatosImprimir, $"{pRutaSalida}", $"Courier00000000I.sal", pLote, "1");
                     break;
 
                 case "2": //Datos
                     EscribirDatosSalidaCompleto(pDatosImprimir, $"{pRutaSalida}", $"COMPLETO.sal", pLote, "2");
-                    EscribirDatosSalidaSinCufe(pDatosImprimir, $"{pRutaSalida}", $"I_SIN_CUFE.sal", "1");
-                    EscribirDatosSalidaNoImprimir(pDatosImprimir, $"{pRutaSalida}", $"I_NO_IMPRIMIR.sal", "2");
-                    EscribirDatosSalidaNumHojas(pDatosImprimir, $"{pRutaSalida}", $"I_NUMHOJAS.sal");
-                    EscribirDatosSalidaClientesEsepeciales(pDatosImprimir, $"{pRutaSalida}", $"INS_CLIENTES_ESPECIALES.sal");
-                    EscribirDatosSalidaDistribucionEspecial(pDatosImprimir, $"{pRutaSalida}", $"I_DISTRIBUCION_ESPECIAL.sal", "2");
-                    EscribirDatosSalidaEmail(pDatosImprimir, $"{pRutaSalida}", $"I_FACTURA_SOLO_EMAIL.sal", "2");
-                    EscribirDatosSalidaOtros(pDatosImprimir, $"{pRutaSalida}", $"I_OTROS.sal", "2");
+                    EscribirDatosSalidaSinCufe(pDatosImprimir, $"{pRutaSalida}", $"I_SIN_CUFE.sal", "1", pLote);
+                    EscribirDatosSalidaNoImprimir(pDatosImprimir, $"{pRutaSalida}", $"I_NO_IMPRIMIR.sal", "2", pLote);
+                    EscribirDatosSalidaNumHojas(pDatosImprimir, $"{pRutaSalida}", $"I_NUMHOJAS.sal", pLote);
+                    EscribirDatosSalidaClientesEsepeciales(pDatosImprimir, $"{pRutaSalida}", $"INS_CLIENTES_ESPECIALES.sal", pLote);
+                    EscribirDatosSalidaDistribucionEspecial(pDatosImprimir, $"{pRutaSalida}", $"I_DISTRIBUCION_ESPECIAL.sal", "2", pLote);
+                    EscribirDatosSalidaEmail(pDatosImprimir, $"{pRutaSalida}", $"I_FACTURA_SOLO_EMAIL.sal", "2", pLote);
+                    EscribirDatosSalidaOtros(pDatosImprimir, $"{pRutaSalida}", $"I_OTROS.sal", "2", pLote);
                     EscribirDatosSalidaImpresion(pDatosImprimir, $"{pRutaSalida}", $"Courier00000000I.sal", pLote, "2");
                     break;
 
                 case "3": //Gobiernos
                     EscribirDatosSalidaCompleto(pDatosImprimir, $"{pRutaSalida}", $"COMPLETO.sal", pLote, "3");
-                    EscribirDatosSalidaSinCufe(pDatosImprimir, $"{pRutaSalida}", $"I_SIN_CUFE.sal", "1");
-                    EscribirDatosSalidaNoImprimir(pDatosImprimir, $"{pRutaSalida}", $"I_NO_IMPRIMIR.sal", "3");
-                    EscribirDatosSalidaNumHojas(pDatosImprimir, $"{pRutaSalida}", $"I_NUMHOJAS.sal");
-                    EscribirDatosSalidaDistribucionEspecial(pDatosImprimir, $"{pRutaSalida}", $"I_DISTRIBUCION_ESPECIAL.sal", "3");
-                    EscribirDatosSalidaEmail(pDatosImprimir, $"{pRutaSalida}", $"I_FACTURA_SOLO_EMAIL.sal", "3");
-                    EscribirDatosSalidaOtros(pDatosImprimir, $"{pRutaSalida}", $"I_OTROS.sal", "3");
+                    EscribirDatosSalidaSinCufe(pDatosImprimir, $"{pRutaSalida}", $"I_SIN_CUFE.sal", "1", pLote);
+                    EscribirDatosSalidaNoImprimir(pDatosImprimir, $"{pRutaSalida}", $"I_NO_IMPRIMIR.sal", "3", pLote);
+                    EscribirDatosSalidaNumHojas(pDatosImprimir, $"{pRutaSalida}", $"I_NUMHOJAS.sal", pLote);
+                    EscribirDatosSalidaDistribucionEspecial(pDatosImprimir, $"{pRutaSalida}", $"I_DISTRIBUCION_ESPECIAL.sal", "3", pLote);
+                    EscribirDatosSalidaEmail(pDatosImprimir, $"{pRutaSalida}", $"I_FACTURA_SOLO_EMAIL.sal", "3", pLote);
+                    EscribirDatosSalidaOtros(pDatosImprimir, $"{pRutaSalida}", $"I_OTROS.sal", "3", pLote);
                     EscribirDatosSalidaImpresion(pDatosImprimir, $"{pRutaSalida}", $"Courier00000000I.sal", pLote, "3");
                     break;
 
                 case "4": //Llanos
                     EscribirDatosSalidaCompleto(pDatosImprimir, $"{pRutaSalida}", $"COMPLETO.sal", pLote, "4");
-                    EscribirDatosSalidaSms(pDatosImprimir, $"{pRutaSalida}", $"I_ENVIO_SMS.sal", "4");
-                    EscribirDatosSalidaNoImprimir(pDatosImprimir, $"{pRutaSalida}", $"I_NO_IMPRIMIR.sal", "4");
-                    EscribirDatosSalidaEmail(pDatosImprimir, $"{pRutaSalida}", $"I_FACTURA_SOLO_EMAIL.sal", "4");
+                    EscribirDatosSalidaSms(pDatosImprimir, $"{pRutaSalida}", $"I_ENVIO_SMS.sal", "4", pLote);
+                    EscribirDatosSalidaNoImprimir(pDatosImprimir, $"{pRutaSalida}", $"I_NO_IMPRIMIR.sal", "4", pLote);
+                    EscribirDatosSalidaEmail(pDatosImprimir, $"{pRutaSalida}", $"I_FACTURA_SOLO_EMAIL.sal", "4", pLote);
                     EscribirDatosSalidaImpresion(pDatosImprimir, $"{pRutaSalida}", $"Courier00000000I.sal", pLote, "4");
                     break;
 
@@ -638,14 +638,14 @@ namespace App.ControlEjecucion
                 case "4":
                     foreach (var datoLinea in datosImprimirFinal)
                     {
-                        //string nuevoConsecutivo = $"{pLote}_{consecutivo.ToString().PadLeft(6, '0')}";
+                        string nuevoConsecutivo = $"{pLote}_{consecutivo.ToString().PadLeft(6, '0')}";
 
-                        //var nuevo1AAA = from n in datoLinea.Value
-                        //                where n.Substring(0, 4) == "1AAA"
-                        //                select n.Replace("KitXXXX", nuevoConsecutivo);
+                        var nuevo1AAA = from n in datoLinea.Value
+                                        where n.Substring(0, 4) == "1AAA"
+                                        select n.Replace("KitXXXX", nuevoConsecutivo);
 
-                        //// Se actualiza el Consecutivo del diccionario Original formateado
-                        //Variables.Variables.DiccionarioExtractosFormateados[datoLinea.Key][0] = Variables.Variables.DiccionarioExtractosFormateados[datoLinea.Key][0].Replace("KitXXXX", nuevoConsecutivo);
+                        // Se actualiza el Consecutivo del diccionario Original formateado
+                        Variables.Variables.DiccionarioExtractosFormateados[datoLinea.Key][0] = Variables.Variables.DiccionarioExtractosFormateados[datoLinea.Key][0].Replace("KitXXXX", nuevoConsecutivo);
                         resultado.AddRange(datoLinea.Value);
                         consecutivo++;
                     }
@@ -665,7 +665,7 @@ namespace App.ControlEjecucion
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRuta"></param>
         /// <param name="pNombreArchivo"></param>
-        private void EscribirDatosSalidaSinCufe(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo, string pTipoProceso)
+        private void EscribirDatosSalidaSinCufe(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo, string pTipoProceso, string pLote)
         {
             #region EscribirDatosSalidaSinCufe
             IEnumerable<KeyValuePair<string, List<string>>> objDatos = null;
@@ -682,7 +682,7 @@ namespace App.ControlEjecucion
 
                     if (objDatos.Any())
                     {
-                        ProcesarSalidas(objDatos, pRuta, pNombreArchivo);
+                        ProcesarSalidas(objDatos, pRuta, pNombreArchivo, pLote);
                     }
                     break;
 
@@ -696,7 +696,7 @@ namespace App.ControlEjecucion
 
                     if (objDatos.Any())
                     {
-                        ProcesarSalidas(objDatos, pRuta, pNombreArchivo);
+                        ProcesarSalidas(objDatos, pRuta, pNombreArchivo, pLote);
                     }
                     break;
 
@@ -710,7 +710,7 @@ namespace App.ControlEjecucion
 
                     if (objDatos.Any())
                     {
-                        ProcesarSalidas(objDatos, pRuta, pNombreArchivo);
+                        ProcesarSalidas(objDatos, pRuta, pNombreArchivo, pLote);
                     }
                     break;
 
@@ -723,7 +723,7 @@ namespace App.ControlEjecucion
         /// </summary>
         /// <param name="pRuta"></param>
         /// <param name="pNombreArchivo"></param>
-        private void EscribirDatosSalidaNoImprimir(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo, string pTipoProceso)
+        private void EscribirDatosSalidaNoImprimir(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo, string pTipoProceso, string pLote)
         {
             #region EscribirDatosSalidaNoImprimir
             List<string> resultado = new List<string>();
@@ -731,6 +731,7 @@ namespace App.ControlEjecucion
             int consecutivoInternoArchivo = 1;
             string cuenta = string.Empty;
             string archivoActual = string.Empty;
+            int consecutivo = 1;
 
             switch (pTipoProceso)
             {
@@ -761,6 +762,13 @@ namespace App.ControlEjecucion
                                     consecutivoInternoDivision = 1;
                                     resultado.Clear();
                                 }
+
+                                string nuevoConsecutivo = $"{pLote}_{consecutivo.ToString().PadLeft(6, '0')}";
+                                consecutivo++;
+
+                                resultado.Add(linea.Replace("KitXXXX", nuevoConsecutivo));
+
+                                continue;
                             }
 
                             resultado.Add(linea);
@@ -806,6 +814,12 @@ namespace App.ControlEjecucion
                                     resultado.Clear();
                                 }
 
+                                string nuevoConsecutivo = $"{pLote}_{consecutivo.ToString().PadLeft(6, '0')}";
+
+                                linea.Replace("KitXXXX", nuevoConsecutivo);
+
+                                consecutivo++;
+
                                 resultado.Add(linea.Replace("****tipo_salida****", "_EXTRAER*"));
                                 continue;
                             }
@@ -828,7 +842,7 @@ namespace App.ControlEjecucion
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRuta"></param>
         /// <param name="pNombreArchivo"></param>
-        private void EscribirDatosSalidaSms(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo, string pTipoProceso)
+        private void EscribirDatosSalidaSms(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo, string pTipoProceso, string pLote)
         {
             #region EscribirDatosSalidaSms
             IEnumerable<KeyValuePair<string, List<string>>> objDatos = null;
@@ -844,7 +858,7 @@ namespace App.ControlEjecucion
 
                     if (objDatos.Any())
                     {
-                        ProcesarSalidas(objDatos, pRuta, pNombreArchivo);
+                        ProcesarSalidas(objDatos, pRuta, pNombreArchivo, pLote);
                     }
                     break;
 
@@ -869,7 +883,7 @@ namespace App.ControlEjecucion
 
                     if (objDatos.Any())
                     {
-                        ProcesarSalidas(objDatos, pRuta, pNombreArchivo, true, "_SMS*");
+                        ProcesarSalidas(objDatos, pRuta, pNombreArchivo, pLote, true, "_SMS*");
                     }
                     break;
             }
@@ -882,7 +896,7 @@ namespace App.ControlEjecucion
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRuta"></param>
         /// <param name="pNombreArchivo"></param>
-        private void EscribirDatosSalidaWhatsapp(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo, string pTipoProceso)
+        private void EscribirDatosSalidaWhatsapp(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo, string pTipoProceso, string pLote)
         {
             #region EscribirDatosSalidaWhatsapp
             IEnumerable<KeyValuePair<string, List<string>>> objDatos = null;
@@ -901,7 +915,7 @@ namespace App.ControlEjecucion
 
                     if (objDatos.Any())
                     {
-                        ProcesarSalidas(objDatos, pRuta, pNombreArchivo);
+                        ProcesarSalidas(objDatos, pRuta, pNombreArchivo, pLote);
                     }
                     break;
 
@@ -915,7 +929,7 @@ namespace App.ControlEjecucion
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRuta"></param>
         /// <param name="pNombreArchivo"></param>
-        private void EscribirDatosSalidaEmail(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo, string pTipoProceso)
+        private void EscribirDatosSalidaEmail(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo, string pTipoProceso, string pLote)
         {
             #region EscribirDatosSalidaEmail
 
@@ -928,18 +942,17 @@ namespace App.ControlEjecucion
                                let cuenta = busqueda.Value.FirstOrDefault().Split('|').ElementAt(7)
                                let factura = busqueda.Value.FirstOrDefault().Split('|').ElementAt(8).TrimStart('0')
                                where Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key) &&
-                               Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey($"{cuenta} {factura}") &&
                                !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
                                !Variables.Variables.DatosInsumoCuentasEnvioSms.ContainsKey(busqueda.Key) &&
                                !Variables.Variables.DatosInsumoCuentasEnvioWhatsapp.ContainsKey(busqueda.Key) &&
                                !Variables.Variables.DatosErrorLTE.ContainsKey(busqueda.Key) &&
-                               !Variables.Variables.Diferencias.ContainsKey(busqueda.Key)
-                               
+                               !Variables.Variables.Diferencias.ContainsKey(busqueda.Key) &&
+                               !Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key)
                                select busqueda;
 
                     if (objDatos.Any())
                     {
-                        ProcesarSalidas(objDatos, pRuta, pNombreArchivo);
+                        ProcesarSalidas(objDatos, pRuta, pNombreArchivo, pLote);
                     }
                     break;
 
@@ -948,15 +961,15 @@ namespace App.ControlEjecucion
                                let cuenta = busqueda.Value.FirstOrDefault().Split('|').ElementAt(7)
                                let factura = busqueda.Value.FirstOrDefault().Split('|').ElementAt(8).TrimStart('0')
                                where Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key) &&
-                               Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey($"{cuenta} {factura}") &&
                                !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
                                !Variables.Variables.NumHojas.ContainsKey(busqueda.Key) &&
-                               !Variables.Variables.DatosInsumoClientesEspecialesDatos.ContainsKey($"{busqueda.Key}-{busqueda.Value.FirstOrDefault().Split('|').ElementAt(9)}")
+                               !Variables.Variables.DatosInsumoClientesEspecialesDatos.ContainsKey($"{busqueda.Key}-{busqueda.Value.FirstOrDefault().Split('|').ElementAt(9)}") &&
+                               !Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key)
                                select busqueda;
 
                     if (objDatos.Any())
                     {
-                        ProcesarSalidas(objDatos, pRuta, pNombreArchivo);
+                        ProcesarSalidas(objDatos, pRuta, pNombreArchivo, pLote);
                     }
                     break;
 
@@ -965,14 +978,14 @@ namespace App.ControlEjecucion
                                let cuenta = busqueda.Value.FirstOrDefault().Split('|').ElementAt(7)
                                let factura = busqueda.Value.FirstOrDefault().Split('|').ElementAt(8).TrimStart('0')
                                where Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key) &&
-                               Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey($"{cuenta} {factura}") &&
                                !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
-                               !Variables.Variables.NumHojas.ContainsKey(busqueda.Key)
+                               !Variables.Variables.NumHojas.ContainsKey(busqueda.Key) &&
+                               !Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key)
                                select busqueda;
 
                     if (objDatos.Any())
                     {
-                        ProcesarSalidas(objDatos, pRuta, pNombreArchivo);
+                        ProcesarSalidas(objDatos, pRuta, pNombreArchivo, pLote);
                     }
                     break;
 
@@ -994,12 +1007,13 @@ namespace App.ControlEjecucion
                                where Variables.Variables.DatosInsumoDistribucionEmailLlanos.ContainsKey(busqueda.Key) &&
                                !Variables.Variables.DatosInsumoExtraerLlanos.ContainsKey(busqueda.Key) &&
                                !Variables.Variables.DatosInsumoLlanosEnvioSMS.ContainsKey(busqueda.Key) &&
-                               !Variables.Variables.DatosInsumoDualLlanos.ContainsKey(busqueda.Key)
+                               !Variables.Variables.DatosInsumoDualLlanos.ContainsKey(busqueda.Key) &&
+                               !Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key)
                                select busqueda;
 
                     if (objDatos.Any())
                     {
-                        ProcesarSalidas(objDatos, pRuta, pNombreArchivo);
+                        ProcesarSalidas(objDatos, pRuta, pNombreArchivo, pLote);
                     }
                     break;
             }
@@ -1013,7 +1027,7 @@ namespace App.ControlEjecucion
         /// <param name="pDatos"></param>
         /// <param name="pRuta"></param>
         /// <param name="pNombreArchivo"></param>
-        private void ProcesarSalidas(IEnumerable<KeyValuePair<string, List<string>>> pDatos, string pRuta, string pNombreArchivo, bool pReemplazarMarcaSalida = false, string pMarcaReemplazo = "")
+        private void ProcesarSalidas(IEnumerable<KeyValuePair<string, List<string>>> pDatos, string pRuta, string pNombreArchivo, string pLote, bool pReemplazarMarcaSalida = false, string pMarcaReemplazo = "")
         {
             #region ProcesarSalidas
             List<string> resultado = new List<string>();
@@ -1021,6 +1035,7 @@ namespace App.ControlEjecucion
             int consecutivoInternoArchivo = 1;
             string cuenta = string.Empty;
             string archivoActual = string.Empty;
+            int consecutivo = 1;
 
             foreach (var linea in pDatos.SelectMany(x => x.Value))
             {
@@ -1043,11 +1058,20 @@ namespace App.ControlEjecucion
                         resultado.Clear();
                     }
 
+                    string nuevoConsecutivo = $"{pLote}_{consecutivo.ToString().PadLeft(6, '0')}";
+                    consecutivo++;
+
                     if (pReemplazarMarcaSalida)
                     {
-                        resultado.Add(linea.Replace("****tipo_salida****", pMarcaReemplazo));
+                        resultado.Add(linea.Replace("****tipo_salida****", pMarcaReemplazo).Replace(linea.Split('|').ElementAt(1), nuevoConsecutivo));
                         continue;
                     }
+                    else
+                    {
+                        resultado.Add(linea.Replace(linea.Split('|').ElementAt(1), nuevoConsecutivo));
+                        continue;
+                    }
+                    
                 }
 
                 resultado.Add(linea);
@@ -1066,7 +1090,7 @@ namespace App.ControlEjecucion
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRuta"></param>
         /// <param name="pNombreArchivo"></param>
-        private void EscribirDatosSalidaDistribucionEspecial(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo, string pTipoProceso)
+        private void EscribirDatosSalidaDistribucionEspecial(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo, string pTipoProceso, string pLote)
         {
             #region EscribirDatosSalidaDistribucionEspecial
             IEnumerable<KeyValuePair<string, List<string>>> objDatos = null;
@@ -1089,7 +1113,7 @@ namespace App.ControlEjecucion
 
                     if (objDatos.Any())
                     {
-                        ProcesarSalidasDistribucionEspecial(objDatos, pDatosImprimir, pRuta, pNombreArchivo);
+                        ProcesarSalidasDistribucionEspecial(objDatos, pDatosImprimir, pRuta, pNombreArchivo, pLote);
                     }
                     break;
 
@@ -1107,7 +1131,7 @@ namespace App.ControlEjecucion
 
                     if (objDatos.Any())
                     {
-                        ProcesarSalidasDistribucionEspecial(objDatos, pDatosImprimir, pRuta, pNombreArchivo);
+                        ProcesarSalidasDistribucionEspecial(objDatos, pDatosImprimir, pRuta, pNombreArchivo, pLote);
                     }
                     break;
 
@@ -1124,7 +1148,7 @@ namespace App.ControlEjecucion
 
                     if (objDatos.Any())
                     {
-                        ProcesarSalidasDistribucionEspecial(objDatos, pDatosImprimir, pRuta, pNombreArchivo);
+                        ProcesarSalidasDistribucionEspecial(objDatos, pDatosImprimir, pRuta, pNombreArchivo, pLote);
                     }
                     break;
 
@@ -1140,10 +1164,11 @@ namespace App.ControlEjecucion
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRuta"></param>
         /// <param name="pNombreArchivo"></param>
-        private void ProcesarSalidasDistribucionEspecial(IEnumerable<KeyValuePair<string, List<string>>> pDatos, Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo)
+        private void ProcesarSalidasDistribucionEspecial(IEnumerable<KeyValuePair<string, List<string>>> pDatos, Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo, string pLote)
         {
             #region ProcesarSalidasDistribucionEspecial
             List<string> datosFinales = new List<string>();
+            int consecutivo = 1;
 
             foreach (var dato in pDatos)
             {
@@ -1154,6 +1179,17 @@ namespace App.ControlEjecucion
 
                     if (fechaPeriodoProceso == fechaPeriodoInsumo)
                     {
+                        string nuevoConsecutivo = $"{pLote}_{consecutivo.ToString().PadLeft(6, '0')}";
+
+                        var nuevo1AAA = from n in dato.Value
+                                        where n.Substring(0, 4) == "1AAA"
+                                        select n.Replace("KitXXXX", nuevoConsecutivo);
+
+                        // Se actualiza el Consecutivo del diccionario Original formateado
+                        Variables.Variables.DiccionarioExtractosFormateados[dato.Key][0] = Variables.Variables.DiccionarioExtractosFormateados[dato.Key][0].Replace(Variables.Variables.DiccionarioExtractosFormateados[dato.Key][0].Split('|').ElementAt(1), nuevoConsecutivo);
+
+                        consecutivo++;
+
                         datosFinales.AddRange(dato.Value);
 
                         // Se agrega la cuenta en el archivo final                                
@@ -1177,11 +1213,12 @@ namespace App.ControlEjecucion
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRuta"></param>
         /// <param name="pNombreArchivo"></param>
-        private void EscribirDatosSalidaErrorLte(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo)
+        private void EscribirDatosSalidaErrorLte(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo, string pLote)
         {
             #region EscribirDatosSalidaErrorLte
             List<string> resultado = new List<string>();
             string cuenta = string.Empty;
+            int consecutivo = 1;
 
             if (Variables.Variables.DatosErrorLTE.Any())
             {
@@ -1191,9 +1228,15 @@ namespace App.ControlEjecucion
                     {
                         cuenta = linea.Split('|')[7];
 
+                        string nuevoConsecutivo = $"{pLote}_{consecutivo.ToString().PadLeft(6, '0')}";
+                        consecutivo++;
+
                         // Se agrega la cuenta en el archivo final                                
                         if (!Variables.Variables.ArchivoSalidaFinal.ContainsKey(cuenta))
                             Variables.Variables.ArchivoSalidaFinal.Add(cuenta, $"{pRuta}\\{pNombreArchivo}");
+
+                        resultado.Add(linea.Replace(linea.Split('|').ElementAt(1), nuevoConsecutivo));
+                        continue;
                     }
 
                     resultado.Add(linea);
@@ -1212,10 +1255,11 @@ namespace App.ControlEjecucion
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRuta"></param>
         /// <param name="pNombreArchivo"></param>
-        private void EscribirDatosSalidaDiferencias(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo)
+        private void EscribirDatosSalidaDiferencias(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo, string pLote)
         {
             #region EscribirDatosSalidaDiferencias
             List<string> resultado = new List<string>();
+            int consecutivo = 1;
 
             //var dfdf = (Convert.ToDecimal(Helpers.FormatearCampos(TiposFormateo.Decimal03, "$ 79.950,00")) - Convert.ToDecimal(Helpers.FormatearCampos(TiposFormateo.Decimal03, "$ 79.947,36"))) > 0.05m;
 
@@ -1240,7 +1284,18 @@ namespace App.ControlEjecucion
 
                 if (pDatosImprimir.ContainsKey(dato.Key))
                 {
+                    string nuevoConsecutivo = $"{pLote}_{consecutivo.ToString().PadLeft(6, '0')}";
+
+                    var nuevo1AAA = from n in dato.Value
+                                    where n.Substring(0, 4) == "1AAA"
+                                    select n.Replace("KitXXXX", nuevoConsecutivo);
+
+                    // Se actualiza el Consecutivo del diccionario Original formateado
+                    Variables.Variables.DiccionarioExtractosFormateados[dato.Key][0] = Variables.Variables.DiccionarioExtractosFormateados[dato.Key][0].Replace(Variables.Variables.DiccionarioExtractosFormateados[dato.Key][0].Split('|').ElementAt(1), nuevoConsecutivo);
+
                     resultado.AddRange(dato.Value);
+
+                    consecutivo++;
                 }
             }
 
@@ -1258,7 +1313,7 @@ namespace App.ControlEjecucion
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRuta"></param>
         /// <param name="pNombreArchivo"></param>
-        private void EscribirDatosSalidaOtros(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo, string pTipoProceso)
+        private void EscribirDatosSalidaOtros(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo, string pTipoProceso, string pLote)
         {
             #region EscribirDatosSalidaOtros
             IEnumerable<KeyValuePair<string, List<string>>> objDatos = null;
@@ -1283,7 +1338,7 @@ namespace App.ControlEjecucion
 
                     if (objDatos.Any())
                     {
-                        ProcesarSalidasOtrosProcesos(objDatos, pRuta, pNombreArchivo);
+                        ProcesarSalidasOtrosProcesos(objDatos, pRuta, pNombreArchivo, pLote);
                     }
                     break;
 
@@ -1303,7 +1358,7 @@ namespace App.ControlEjecucion
 
                     if (objDatos.Any())
                     {
-                        ProcesarSalidasOtrosProcesos(objDatos, pRuta, pNombreArchivo);
+                        ProcesarSalidasOtrosProcesos(objDatos, pRuta, pNombreArchivo, pLote);
                     }
                     break;
 
@@ -1322,7 +1377,7 @@ namespace App.ControlEjecucion
 
                     if (objDatos.Any())
                     {
-                        ProcesarSalidasOtrosProcesos(objDatos, pRuta, pNombreArchivo);
+                        ProcesarSalidasOtrosProcesos(objDatos, pRuta, pNombreArchivo, pLote);
                     }
                     break;
 
@@ -1336,14 +1391,26 @@ namespace App.ControlEjecucion
         /// <param name="pDatos"></param>
         /// <param name="pRuta"></param>
         /// <param name="pNombreArchivo"></param>
-        private void ProcesarSalidasOtrosProcesos(IEnumerable<KeyValuePair<string, List<string>>> pDatos, string pRuta, string pNombreArchivo)
+        private void ProcesarSalidasOtrosProcesos(IEnumerable<KeyValuePair<string, List<string>>> pDatos, string pRuta, string pNombreArchivo, string pLote)
         {
             #region ProcesarSalidasOtrosProcesos
             List<string> resultado = new List<string>();
+            int consecutivo = 1;
 
             foreach (var datoCuenta in pDatos)
             {
+                string nuevoConsecutivo = $"{pLote}_{consecutivo.ToString().PadLeft(6, '0')}";
+
+                var nuevo1AAA = from n in datoCuenta.Value
+                                where n.Substring(0, 4) == "1AAA"
+                                select n.Replace("KitXXXX", nuevoConsecutivo);
+
+                // Se actualiza el Consecutivo del diccionario Original formateado
+                Variables.Variables.DiccionarioExtractosFormateados[datoCuenta.Key][0] = Variables.Variables.DiccionarioExtractosFormateados[datoCuenta.Key][0].Replace(Variables.Variables.DiccionarioExtractosFormateados[datoCuenta.Key][0].Split('|').ElementAt(1), nuevoConsecutivo);
+
                 resultado.AddRange(datoCuenta.Value);
+
+                consecutivo++;
 
                 // Se agrega la cuenta en el archivo final                                
                 if (!Variables.Variables.ArchivoSalidaFinal.ContainsKey(datoCuenta.Key))
@@ -1381,8 +1448,7 @@ namespace App.ControlEjecucion
                                 !Variables.Variables.DatosErrorLTE.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.Diferencias.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
-                                !Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key) &&
-                                !Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key)
+                                !Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key)
                                 select busqueda).ToDictionary(x => x.Key).Values;
 
                     foreach (var item in objDatos)
@@ -1452,8 +1518,7 @@ namespace App.ControlEjecucion
                                 !Variables.Variables.NumHojas.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.DatosInsumoClientesEspecialesDatos.ContainsKey($"{busqueda.Key}-{busqueda.Value.FirstOrDefault().Split('|').ElementAt(9)}") &&
                                 !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
-                                !Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key))&&
-                                !Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key)
+                                !Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key))
                                 select busqueda).ToDictionary(x => x.Key).Values;
 
                     foreach (var item in objDatos)
@@ -1518,8 +1583,7 @@ namespace App.ControlEjecucion
                                 !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.NumHojas.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
-                                !Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key)&&
-                                !Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key)
+                                !Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key)
                                 select busqueda).ToDictionary(x => x.Key).Values;
 
                     foreach (var item in objDatos)
@@ -1728,10 +1792,11 @@ namespace App.ControlEjecucion
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRuta"></param>
         /// <param name="pNombreArchivo"></param>
-        private void EscribirDatosSalidaNumHojas(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo)
+        private void EscribirDatosSalidaNumHojas(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo, string pLote)
         {
             #region EscribirDatosSalidaNumHojas
             List<string> resultado = new List<string>();
+            int consecutivo = 1;
 
             var busquedaCuentasImpresion = (from busqueda in pDatosImprimir
                                             where !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
@@ -1746,6 +1811,17 @@ namespace App.ControlEjecucion
                 foreach (var datoCuenta in busquedaCuentasImpresion)
                 {
                     Variables.Variables.NumHojas.Add(datoCuenta.Key, string.Empty);
+
+                    string nuevoConsecutivo = $"{pLote}_{consecutivo.ToString().PadLeft(6, '0')}";
+
+                    var nuevo1AAA = from n in datoCuenta.Value
+                                    where n.Substring(0, 4) == "1AAA"
+                                    select n.Replace("KitXXXX", nuevoConsecutivo);
+
+                    // Se actualiza el Consecutivo del diccionario Original formateado
+                    Variables.Variables.DiccionarioExtractosFormateados[datoCuenta.Key][0] = Variables.Variables.DiccionarioExtractosFormateados[datoCuenta.Key][0].Replace(Variables.Variables.DiccionarioExtractosFormateados[datoCuenta.Key][0].Split('|').ElementAt(1), nuevoConsecutivo);
+
+                    consecutivo++;
                     resultado.AddRange(datoCuenta.Value);
 
                     // Se agrega la cuenta en el archivo final
@@ -1766,10 +1842,11 @@ namespace App.ControlEjecucion
         /// <param name="pDatosImprimir"></param>
         /// <param name="pRuta"></param>
         /// <param name="pNombreArchivo"></param>
-        private void EscribirDatosSalidaClientesEsepeciales(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo)
+        private void EscribirDatosSalidaClientesEsepeciales(Dictionary<string, List<string>> pDatosImprimir, string pRuta, string pNombreArchivo, string pLote)
         {
             #region EscribirDatosSalidaClientesEsepeciales
             List<string> datosFinales = new List<string>();
+            int consecutivo = 1;
 
             var busquedaCuentas = (from busqueda in pDatosImprimir
                                    where Variables.Variables.DatosInsumoClientesEspecialesDatos.ContainsKey($"{busqueda.Key}-{busqueda.Value.FirstOrDefault().Split('|').ElementAt(9)}")
@@ -1787,6 +1864,18 @@ namespace App.ControlEjecucion
 
                     if (fechaPeriodoProceso == fechaPeriodoInsumo && cicloProceso == cicloInsumo)
                     {
+
+                        string nuevoConsecutivo = $"{pLote}_{consecutivo.ToString().PadLeft(6, '0')}";
+
+                        var nuevo1AAA = from n in dato.Value
+                                        where n.Substring(0, 4) == "1AAA"
+                                        select n.Replace("KitXXXX", nuevoConsecutivo);
+
+                        // Se actualiza el Consecutivo del diccionario Original formateado
+                        Variables.Variables.DiccionarioExtractosFormateados[dato.Key][0] = Variables.Variables.DiccionarioExtractosFormateados[dato.Key][0].Replace("KitXXXX", nuevoConsecutivo);
+
+                        consecutivo++;
+
                         datosFinales.AddRange(dato.Value);
 
                         // Se agrega la cuenta en el archivo final                                

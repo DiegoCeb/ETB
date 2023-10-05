@@ -118,3 +118,60 @@ U:\ETB\Desarrollo_ETB\AppETB\AppETB\App.GestionProcesos\obj\Debug\App.ControlPro
 U:\ETB\Desarrollo_ETB\AppETB\AppETB\App.GestionProcesos\obj\Debug\App.ControlProcesos.csproj.CopyComplete
 U:\ETB\Desarrollo_ETB\AppETB\AppETB\App.GestionProcesos\obj\Debug\App.ControlProcesos.dll
 U:\ETB\Desarrollo_ETB\AppETB\AppETB\App.GestionProcesos\obj\Debug\App.ControlProcesos.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\App.GestionProcesos\bin\Debug\App.ControlProcesos.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\App.GestionProcesos\bin\Debug\App.ControlProcesos.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\App.GestionProcesos\bin\Debug\App.ControlEjecucion.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\App.GestionProcesos\bin\Debug\App.ControlInsumos.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\App.GestionProcesos\bin\Debug\App.Variables.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\App.GestionProcesos\bin\Debug\App.ControlLogicaProcesos.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\App.GestionProcesos\bin\Debug\SharpCompress.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\App.GestionProcesos\bin\Debug\Excel.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\App.GestionProcesos\bin\Debug\App.ControlEjecucion.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\App.GestionProcesos\bin\Debug\App.ControlEjecucion.xml
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\App.GestionProcesos\bin\Debug\App.ControlInsumos.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\App.GestionProcesos\bin\Debug\App.Variables.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\App.GestionProcesos\bin\Debug\App.ControlLogicaProcesos.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\App.GestionProcesos\bin\Debug\App.ControlLogicaProcesos.xml
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\App.GestionProcesos\obj\Debug\App.ControlProcesos.csproj.AssemblyReference.cache
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\App.GestionProcesos\obj\Debug\App.ControlProcesos.csproj.CoreCompileInputs.cache
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\App.GestionProcesos\obj\Debug\App.ControlProcesos.csproj.CopyComplete
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\App.GestionProcesos\obj\Debug\App.ControlProcesos.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\App.GestionProcesos\obj\Debug\App.ControlProcesos.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\App.GestionProcesos\bin\Debug\App.ControlProcesos.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\App.GestionProcesos\bin\Debug\App.ControlProcesos.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\App.GestionProcesos\bin\Debug\App.ControlEjecucion.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\App.GestionProcesos\bin\Debug\App.ControlInsumos.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\App.GestionProcesos\bin\Debug\App.Variables.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\App.GestionProcesos\bin\Debug\App.ControlLogicaProcesos.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\App.GestionProcesos\bin\Debug\SharpCompress.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\App.GestionProcesos\bin\Debug\Excel.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\App.GestionProcesos\bin\Debug\App.ControlEjecucion.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\App.GestionProcesos\bin\Debug\App.ControlEjecucion.xml
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\App.GestionProcesos\bin\Debug\App.ControlInsumos.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\App.GestionProcesos\bin\Debug\App.Variables.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\App.GestionProcesos\bin\Debug\App.ControlLogicaProcesos.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\App.GestionProcesos\bin\Debug\App.ControlLogicaProcesos.xml
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\App.GestionProcesos\obj\Debug\App.ControlProcesos.csproj.AssemblyReference.cache
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\App.GestionProcesos\obj\Debug\App.ControlProcesos.csproj.CoreCompileInputs.cache
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\App.GestionProcesos\obj\Debug\App.ControlProcesos.csproj.CopyComplete
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\App.GestionProcesos\obj\Debug\App.ControlProcesos.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\App.GestionProcesos\obj\Debug\App.ControlProcesos.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\App.GestionProcesos\bin\Debug\App.ControlProcesos.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\App.GestionProcesos\bin\Debug\App.ControlProcesos.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\App.GestionProcesos\bin\Debug\App.ControlEjecucion.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\App.GestionProcesos\bin\Debug\App.ControlInsumos.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\App.GestionProcesos\bin\Debug\App.Variables.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\App.GestionProcesos\bin\Debug\App.ControlLogicaProcesos.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\App.GestionProcesos\bin\Debug\SharpCompress.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\App.GestionProcesos\bin\Debug\Excel.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\App.GestionProcesos\bin\Debug\App.ControlEjecucion.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\App.GestionProcesos\bin\Debug\App.ControlEjecucion.xml
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\App.GestionProcesos\bin\Debug\App.ControlInsumos.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\App.GestionProcesos\bin\Debug\App.Variables.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\App.GestionProcesos\bin\Debug\App.ControlLogicaProcesos.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\App.GestionProcesos\bin\Debug\App.ControlLogicaProcesos.xml
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\App.GestionProcesos\obj\Debug\App.ControlProcesos.csproj.AssemblyReference.cache
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\App.GestionProcesos\obj\Debug\App.ControlProcesos.csproj.CoreCompileInputs.cache
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\App.GestionProcesos\obj\Debug\App.ControlProcesos.csproj.CopyComplete
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\App.GestionProcesos\obj\Debug\App.ControlProcesos.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\App.GestionProcesos\obj\Debug\App.ControlProcesos.pdb

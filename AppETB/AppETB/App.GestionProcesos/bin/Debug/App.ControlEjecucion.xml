@@ -95,7 +95,7 @@
             <param name="pRuta"></param>
             <param name="pNombreArchivo"></param>
         </member>
-        <member name="M:App.ControlEjecucion.Procesamiento.EscribirDatosSalidaSinCufe(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.String,System.String,System.String)">
+        <member name="M:App.ControlEjecucion.Procesamiento.EscribirDatosSalidaSinCufe(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.String,System.String,System.String,System.String)">
             <summary>
             Metodo que Escribe Datos Salida SMS
             </summary>
@@ -103,14 +103,14 @@
             <param name="pRuta"></param>
             <param name="pNombreArchivo"></param>
         </member>
-        <member name="M:App.ControlEjecucion.Procesamiento.EscribirDatosSalidaNoImprimir(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.String,System.String,System.String)">
+        <member name="M:App.ControlEjecucion.Procesamiento.EscribirDatosSalidaNoImprimir(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.String,System.String,System.String,System.String)">
             <summary>
             Metodo que Escribe Datos Salida No Imprimir
             </summary>
             <param name="pRuta"></param>
             <param name="pNombreArchivo"></param>
         </member>
-        <member name="M:App.ControlEjecucion.Procesamiento.EscribirDatosSalidaSms(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.String,System.String,System.String)">
+        <member name="M:App.ControlEjecucion.Procesamiento.EscribirDatosSalidaSms(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.String,System.String,System.String,System.String)">
             <summary>
             Metodo que Escribe Datos Salida SMS
             </summary>
@@ -118,7 +118,7 @@
             <param name="pRuta"></param>
             <param name="pNombreArchivo"></param>
         </member>
-        <member name="M:App.ControlEjecucion.Procesamiento.EscribirDatosSalidaWhatsapp(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.String,System.String,System.String)">
+        <member name="M:App.ControlEjecucion.Procesamiento.EscribirDatosSalidaWhatsapp(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.String,System.String,System.String,System.String)">
             <summary>
             Metodo que Escribe Datos Salida Whatsapp
             </summary>
@@ -126,7 +126,7 @@
             <param name="pRuta"></param>
             <param name="pNombreArchivo"></param>
         </member>
-        <member name="M:App.ControlEjecucion.Procesamiento.EscribirDatosSalidaEmail(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.String,System.String,System.String)">
+        <member name="M:App.ControlEjecucion.Procesamiento.EscribirDatosSalidaEmail(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.String,System.String,System.String,System.String)">
             <summary>
             Metodo que Escribe Datos Salida Email
             </summary>
@@ -134,7 +134,7 @@
             <param name="pRuta"></param>
             <param name="pNombreArchivo"></param>
         </member>
-        <member name="M:App.ControlEjecucion.Procesamiento.ProcesarSalidas(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.Collections.Generic.List{System.String}}},System.String,System.String,System.Boolean,System.String)">
+        <member name="M:App.ControlEjecucion.Procesamiento.ProcesarSalidas(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.Collections.Generic.List{System.String}}},System.String,System.String,System.String,System.Boolean,System.String)">
             <summary>
             Metodo que Procesa Salidas
             </summary>
@@ -142,7 +142,7 @@
             <param name="pRuta"></param>
             <param name="pNombreArchivo"></param>
         </member>
-        <member name="M:App.ControlEjecucion.Procesamiento.EscribirDatosSalidaDistribucionEspecial(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.String,System.String,System.String)">
+        <member name="M:App.ControlEjecucion.Procesamiento.EscribirDatosSalidaDistribucionEspecial(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.String,System.String,System.String,System.String)">
             <summary>
             Metodo que Escribe Datos Salida Distribucion Especial
             </summary>
@@ -150,7 +150,7 @@
             <param name="pRuta"></param>
             <param name="pNombreArchivo"></param>
         </member>
-        <member name="M:App.ControlEjecucion.Procesamiento.ProcesarSalidasDistribucionEspecial(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.Collections.Generic.List{System.String}}},System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.String,System.String)">
+        <member name="M:App.ControlEjecucion.Procesamiento.ProcesarSalidasDistribucionEspecial(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.Collections.Generic.List{System.String}}},System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.String,System.String,System.String)">
             <summary>
             Metodo que Procesa Salidas Distribucion Especial
             </summary>
@@ -159,7 +159,7 @@
             <param name="pRuta"></param>
             <param name="pNombreArchivo"></param>
         </member>
-        <member name="M:App.ControlEjecucion.Procesamiento.EscribirDatosSalidaErrorLte(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.String,System.String)">
+        <member name="M:App.ControlEjecucion.Procesamiento.EscribirDatosSalidaErrorLte(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.String,System.String,System.String)">
             <summary>
             Metodo que Escribe Datos Salida Error Lte
             </summary>
@@ -167,7 +167,7 @@
             <param name="pRuta"></param>
             <param name="pNombreArchivo"></param>
         </member>
-        <member name="M:App.ControlEjecucion.Procesamiento.EscribirDatosSalidaDiferencias(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.String,System.String)">
+        <member name="M:App.ControlEjecucion.Procesamiento.EscribirDatosSalidaDiferencias(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.String,System.String,System.String)">
             <summary>
             Metodo que Escribe Datos Salida Diferencias
             </summary>
@@ -175,7 +175,7 @@
             <param name="pRuta"></param>
             <param name="pNombreArchivo"></param>
         </member>
-        <member name="M:App.ControlEjecucion.Procesamiento.EscribirDatosSalidaOtros(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.String,System.String,System.String)">
+        <member name="M:App.ControlEjecucion.Procesamiento.EscribirDatosSalidaOtros(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.String,System.String,System.String,System.String)">
             <summary>
             Metodo que Escribe Datos Salida Otros
             </summary>
@@ -183,7 +183,7 @@
             <param name="pRuta"></param>
             <param name="pNombreArchivo"></param>
         </member>
-        <member name="M:App.ControlEjecucion.Procesamiento.ProcesarSalidasOtrosProcesos(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.Collections.Generic.List{System.String}}},System.String,System.String)">
+        <member name="M:App.ControlEjecucion.Procesamiento.ProcesarSalidasOtrosProcesos(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.Collections.Generic.List{System.String}}},System.String,System.String,System.String)">
             <summary>
             Metodo que Procesa Salidas Otros Procesos
             </summary>
@@ -217,7 +217,7 @@
             <param name="pNombreArchivo"></param>
             <param name="pLote"></param>
         </member>
-        <member name="M:App.ControlEjecucion.Procesamiento.EscribirDatosSalidaNumHojas(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.String,System.String)">
+        <member name="M:App.ControlEjecucion.Procesamiento.EscribirDatosSalidaNumHojas(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.String,System.String,System.String)">
             <summary>
             Metodo que Escribe Datos Salida Num Hojas
             </summary>
@@ -225,7 +225,7 @@
             <param name="pRuta"></param>
             <param name="pNombreArchivo"></param>
         </member>
-        <member name="M:App.ControlEjecucion.Procesamiento.EscribirDatosSalidaClientesEsepeciales(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.String,System.String)">
+        <member name="M:App.ControlEjecucion.Procesamiento.EscribirDatosSalidaClientesEsepeciales(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.String,System.String,System.String)">
             <summary>
             Metodo que Escribe Datos Salida Clientes Esepeciales
             </summary>

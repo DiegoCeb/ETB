@@ -30,6 +30,7 @@ namespace App.ControlLogicaProcesos
         List<string> listaReporteMaestra = new List<string>();
         List<string> listaReporteDistrEspecial = new List<string>();
         List<string> listaReporteInsertos = new List<string>();
+        List<string> listaReporteSinCUFE = new List<string>();
 
         // Reporte RecaudoEsperado final
         Dictionary<string, List<string>> dicRecaudoEsperadoEscribir = new Dictionary<string, List<string>>();
@@ -129,6 +130,12 @@ namespace App.ControlLogicaProcesos
 
                 //Rpt RecaudoEsperado
                 GetLineaRecaudoEsperado(datosSal.ToList());
+
+                // Rpt Resumen SinCUFE
+                listReporte.AddRange(GetReporteSinCUFE(datosSal.ToList()));
+                if (listReporte.Count > 0)
+                    listaReporteSinCUFE.AddRange(listReporte);
+                listReporte.Clear();
             }
 
             // Escribir Reparto Esperado
@@ -141,6 +148,10 @@ namespace App.ControlLogicaProcesos
             // Escribir Distribucion Especial
             EscribirReporteDistribucionEspecial(listaReporteDistrEspecial);
             listaReporteDistrEspecial.Clear();
+
+            // Escribir SinCUFE
+            EscribirReporteSinCUFE(listaReporteSinCUFE);
+            listaReporteSinCUFE.Clear();
 
             // Rpt Resumen Maestra
             listReporte = GetLineaResumenMaestra(DiccionarioExtractosReporte);
@@ -243,6 +254,26 @@ namespace App.ControlLogicaProcesos
             }
 
             return lineaReporte;
+            #endregion
+        }
+
+        /// <summary>
+        /// Metodo que obtiene Reporte SinCUFE
+        /// </summary>
+        /// <returns></returns>
+        private List<string> GetReporteSinCUFE(List<string> pDatosImprimir)
+        {
+            #region GetReporteSinCUFE
+
+            List<string> lineaSinCUFE = new List<string>();
+            string lineaInsert = GetLineasSinCUFE(pDatosImprimir);
+
+            if (!string.IsNullOrEmpty(lineaInsert))
+            {
+                lineaSinCUFE.Add(lineaInsert);
+            }
+
+            return lineaSinCUFE;
             #endregion
         }
 
@@ -669,31 +700,44 @@ namespace App.ControlLogicaProcesos
         /// Metodo que obtiene Linea Sin CUFE
         /// </summary>
         /// <returns></returns>
-        private List<string> GetLineasSinCUFE()
+        /// <summary>
+        /// Metodo que obtiene Linea Sin CUFE
+        /// </summary>
+        /// <returns></returns>
+        private string GetLineasSinCUFE(List<string> pExtracto)
         {
-            #region GetLineasSinCUFE
-
-            List<string> lineasSinCUFE = new List<string>();
+            #region GetLineasinCUFE
+            string LineaSinCUFE = string.Empty;
+            List<string> camposLinea = new List<string>();
 
             foreach (var archivoActual in Directory.GetFiles(rutaSalida))
             {
                 if (archivoActual.Contains("SIN_CUFE"))
-                    continue;
+                {
+                    var result1AAA = from busqueda in pExtracto
+                                     where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("1AAA|")
+                                     select busqueda;
 
+                    var resultCUFE = from busqueda in pExtracto
+                                     where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("CUFE|")
+                                     select busqueda;
 
-                var result1AAA = from busqueda in File.ReadAllLines(archivoActual)
-                                 where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("1AAA|")
-                                 select busqueda;
+                    if (resultCUFE.Any())
+                    {
 
-                string telefono = result1AAA.FirstOrDefault().Split('|')[15];
-                string Cuenta = result1AAA.LastOrDefault().Split('|')[7];
-                string Nombre = result1AAA.LastOrDefault().Split('|')[2];
+                    }
+                    else
+                    {
+                        string[] campos1AAA = result1AAA.FirstOrDefault().Split('|');
+                        camposLinea.Add(result1AAA.FirstOrDefault().Split('|')[15]); // Telefono
+                        camposLinea.Add(result1AAA.FirstOrDefault().Split('|')[7]); // Cuenta                
+                        camposLinea.Add(result1AAA.FirstOrDefault().Split('|')[2]); // Nombre
 
-                lineasSinCUFE.Add(Path.GetFileName(archivoActual) + "|" + telefono + "|" + Cuenta + "|" + Nombre);
+                        LineaSinCUFE = Helpers.ListaCamposToLinea(camposLinea, '|');
+                    }
+                }
             }
-
-
-            return lineasSinCUFE;
+            return LineaSinCUFE;
             #endregion
         }
 

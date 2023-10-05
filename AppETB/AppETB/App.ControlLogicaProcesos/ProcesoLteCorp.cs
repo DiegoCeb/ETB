@@ -6563,8 +6563,22 @@ namespace App.ControlLogicaProcesos
             #region Formatear
 
             var agrupacionConcepto = from busqueda in dicAgruPorCargo
+                                     where !string.IsNullOrEmpty(busqueda.Key.Substring(7).Trim())
                                      group busqueda by busqueda.Key.Substring(7).Replace(".", "") into busqueda
                                      select busqueda.ToDictionary(x => x.Key, x => x.Value);
+
+            if (agrupacionConcepto.Count() != dicAgruPorCargo.Count)
+            {
+                var faltantes = from busqueda in dicAgruPorCargo
+                                where string.IsNullOrEmpty(busqueda.Key.Substring(7).Trim())
+                                select busqueda;
+
+                foreach (var item in faltantes)
+                {
+                    dicAgruPorCargoAgruPorConcepto.Add(item.Key, item.Value);
+                }
+                
+            }
 
             foreach (var itemAgrup in agrupacionConcepto.ToList())
             {
@@ -6578,6 +6592,10 @@ namespace App.ControlLogicaProcesos
                 dicAgruPorCargoAgruPorConcepto.Add(itemAgrup.Keys.FirstOrDefault(), temp);
             }
 
+            if (Cuenta == "12054697465")
+            {
+
+            }
 
             foreach (var dicAgruPorCargoActual in dicAgruPorCargoAgruPorConcepto)
             {
@@ -6705,6 +6723,8 @@ namespace App.ControlLogicaProcesos
 
             listResultado.Insert(0, Helpers.ValidarPipePipe(LineaTemp));
 
+            listResultado = AgruparConceptosRepetidosDBB(listResultado);
+
             if (tengoRecargoMora) //Si lleva recargo de mora se hace reordenamiento para que quede de ultimas
             {
 
@@ -6729,6 +6749,72 @@ namespace App.ControlLogicaProcesos
             }
 
             return listResultado;
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pListaDetalles"></param>
+        /// <returns></returns>
+        private List<string> AgruparConceptosRepetidosDBB(List<string> pListaDetalles) 
+        {
+            #region AgruparConceptosDBB
+            List<string> resultado = new List<string>();
+            List<string> valor1 = new List<string>();
+            List<string> valor2 = new List<string>();
+            List<string> valor3 = new List<string>();
+            List<string> valor4 = new List<string>();
+
+            var repetidos = from busqueda in pListaDetalles
+                            where busqueda.Split('|').ElementAt(0) != "1DAA"
+                            group busqueda by busqueda.Split('|').ElementAt(1) into final
+                            where final.Count() > 1
+                            select final;
+
+            var noRepetidos = from busqueda in pListaDetalles
+                              where busqueda.Split('|').ElementAt(0) != "1DAA"
+                              group busqueda by busqueda.Split('|').ElementAt(1) into final
+                              where final.Count() < 2
+                              select final;
+
+            var canalPrincipal = from busqueda in pListaDetalles
+                                 where busqueda.Split('|').ElementAt(0) == "1DAA"
+                                 select busqueda;
+
+            if (repetidos.Any())
+            {
+                resultado.AddRange(canalPrincipal);
+
+                foreach (var detalleGrupo in repetidos)
+                {
+                    foreach (var detalle in detalleGrupo)
+                    {
+                        valor1.Add(Helpers.FormatearCampos(TiposFormateo.Decimal03, detalle.Split('|').ElementAt(2)).Replace(".", "").Trim());
+                        valor2.Add(Helpers.FormatearCampos(TiposFormateo.Decimal03, detalle.Split('|').ElementAt(3)).Replace(".", "").Trim());
+                        valor3.Add(Helpers.FormatearCampos(TiposFormateo.Decimal03, detalle.Split('|').ElementAt(5)).Replace(".", "").Trim());
+                        valor4.Add(Helpers.FormatearCampos(TiposFormateo.Decimal03, detalle.Split('|').ElementAt(6)).Replace(".", "").Trim());
+                    }
+
+                    resultado.Add($"{detalleGrupo.FirstOrDefault().Split('|').ElementAt(0)}|{detalleGrupo.FirstOrDefault().Split('|').ElementAt(1)}|" +
+                        $"{Helpers.SumarCampos(valor1, "G")}|{Helpers.SumarCampos(valor2, "G")}| |{Helpers.SumarCampos(valor3, "G")}|" +
+                        $"{Helpers.SumarCampos(valor4, "G")}|{detalleGrupo.FirstOrDefault().Split('|').ElementAt(7)}| ");
+                }
+
+                if (noRepetidos.Any())
+                {
+                    foreach (var detalle in noRepetidos.SelectMany(detalle => detalle))
+                    {
+                        resultado.Add(detalle);
+                    }
+                }   
+            }
+            else
+            {
+                resultado = pListaDetalles;
+            }
+
+            return resultado; 
             #endregion
         }
 

@@ -38,3 +38,18 @@ C:\Proyectos\ETB\AppETB\AppETB\App.Variables\obj\Debug\App.Variables.csproj.Gene
 C:\Proyectos\ETB\AppETB\AppETB\App.Variables\obj\Debug\App.Variables.csproj.CoreCompileInputs.cache
 C:\Proyectos\ETB\AppETB\AppETB\App.Variables\obj\Debug\App.Variables.dll
 C:\Proyectos\ETB\AppETB\AppETB\App.Variables\obj\Debug\App.Variables.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\App.Variables\bin\Debug\App.Variables.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\App.Variables\bin\Debug\App.Variables.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\App.Variables\obj\Debug\App.Variables.RxGeneral.resources
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\App.Variables\obj\Debug\App.Variables.csproj.GenerateResource.cache
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\App.Variables\obj\Debug\App.Variables.csproj.CoreCompileInputs.cache
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\App.Variables\obj\Debug\App.Variables.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy\App.Variables\obj\Debug\App.Variables.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\App.Variables\bin\Debug\App.Variables.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\App.Variables\bin\Debug\App.Variables.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\App.Variables\obj\Debug\App.Variables.csproj.AssemblyReference.cache
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\App.Variables\obj\Debug\App.Variables.RxGeneral.resources
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\App.Variables\obj\Debug\App.Variables.csproj.GenerateResource.cache
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\App.Variables\obj\Debug\App.Variables.csproj.CoreCompileInputs.cache
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\App.Variables\obj\Debug\App.Variables.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB - Copy - copia\App.Variables\obj\Debug\App.Variables.pdb

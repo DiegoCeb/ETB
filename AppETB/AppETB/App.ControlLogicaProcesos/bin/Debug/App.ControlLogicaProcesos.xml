@@ -1987,6 +1987,13 @@
             <returns></returns>
         </member>
         <!-- Badly formed XML comment ignored for member "M:App.ControlLogicaProcesos.ProcesoLteCorp.MapeoGrupo1DAA(System.Collections.Generic.List{System.String})" -->
+        <member name="M:App.ControlLogicaProcesos.ProcesoLteCorp.AgruparConceptosRepetidosDBB(System.Collections.Generic.List{System.String})">
+            <summary>
+            
+            </summary>
+            <param name="pListaDetalles"></param>
+            <returns></returns>
+        </member>
         <!-- Badly formed XML comment ignored for member "M:App.ControlLogicaProcesos.ProcesoLteCorp.MapeoGrupo1JAA(System.Collections.Generic.List{System.String})" -->
         <member name="T:App.ControlLogicaProcesos.ProcesoMasivos">
             <summary>
@@ -2031,6 +2038,12 @@
             <param name="pLLaveCruce"></param>
             <param name="datosOriginales"></param>
             <returns></returns>
+        </member>
+        <member name="M:App.ControlLogicaProcesos.ProcesoMasivos.GetPlanPrimario(System.Collections.Generic.List{System.String})">
+            <summary>
+            
+            </summary>
+            <param name="pDatosOriginales"></param>
         </member>
         <member name="M:App.ControlLogicaProcesos.ProcesoMasivos.FormatearPropiedadesExtracto">
             <summary>
@@ -2936,6 +2949,12 @@
             <param name="pExtracto"></param>
             <returns></returns>
         </member>
+        <member name="M:App.ControlLogicaProcesos.ReportesGobiernos.GetReporteSinCUFE(System.Collections.Generic.List{System.String})">
+            <summary>
+            Metodo que obtiene Reporte SinCUFE
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:App.ControlLogicaProcesos.ReportesGobiernos.GetReporteSMS(System.Collections.Generic.List{System.String})">
             <summary>
             Metodo que obtiene Reporte SMS
@@ -2967,6 +2986,12 @@
         <member name="M:App.ControlLogicaProcesos.ReportesGobiernos.GetLineaEstadistico">
             <summary>
             Metodo que obtiene Linea Estadistico
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:App.ControlLogicaProcesos.ReportesGobiernos.GetLineasSinCUFE(System.Collections.Generic.List{System.String})">
+            <summary>
+            Metodo que obtiene Linea Sin CUFE
             </summary>
             <returns></returns>
         </member>
@@ -3100,6 +3125,13 @@
             <param name="pDatosImprimir"></param>
             <param name="pNombreArchivo"></param>
         </member>
+        <member name="M:App.ControlLogicaProcesos.ReportesGobiernos.EscribirReporteSinCUFE(System.Collections.Generic.List{System.String})">
+            <summary>
+            Metodo que Escribe Reporte Sin CUFE
+            </summary>
+            <param name="pDatosImprimir"></param>
+            <param name="pNombreArchivo"></param>
+        </member>
         <member name="M:App.ControlLogicaProcesos.ReportesGobiernos.EscribirReporteEstadistico(System.Collections.Generic.List{System.String})">
             <summary>
             Metodo que Escribe Reporte Estadistico 
@@ -3207,6 +3239,12 @@
             <param name="pExtracto"></param>
             <returns></returns>
         </member>
+        <member name="M:App.ControlLogicaProcesos.ReportesDatos.GetReporteSinCUFE(System.Collections.Generic.List{System.String})">
+            <summary>
+            Metodo que obtiene Reporte SinCUFE
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:App.ControlLogicaProcesos.ReportesDatos.GetReporteSMS(System.Collections.Generic.List{System.String})">
             <summary>
             Metodo que obtiene Reporte SMS 
@@ -3241,7 +3279,11 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:App.ControlLogicaProcesos.ReportesDatos.GetLineasSinCUFE">
+        <member name="M:App.ControlLogicaProcesos.ReportesDatos.GetLineasSinCUFE(System.Collections.Generic.List{System.String})">
+            <summary>
+            Metodo que obtiene Linea Sin CUFE
+            </summary>
+            <returns></returns>
             <summary>
             Metodo que obtiene Linea Sin CUFE
             </summary>
@@ -3496,6 +3538,12 @@
             <param name="pExtracto"></param>
             <returns></returns>
         </member>
+        <member name="M:App.ControlLogicaProcesos.ReportesLteCorporativo.GetReporteSinCUFE(System.Collections.Generic.List{System.String})">
+            <summary>
+            Metodo que obtiene Reporte SinCUFE
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:App.ControlLogicaProcesos.ReportesLteCorporativo.GetReporteSMS(System.Collections.Generic.List{System.String})">
             <summary>
             Metodo que obtiene Reporte SMS
@@ -3527,6 +3575,16 @@
         <member name="M:App.ControlLogicaProcesos.ReportesLteCorporativo.GetLineaEstadistico">
             <summary>
             Metodo que obtiene Linea Estadistico
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:App.ControlLogicaProcesos.ReportesLteCorporativo.GetLineasSinCUFE(System.Collections.Generic.List{System.String})">
+            <summary>
+            Metodo que obtiene Linea Sin CUFE
+            </summary>
+            <returns></returns>
+            <summary>
+            Metodo que obtiene Linea Sin CUFE
             </summary>
             <returns></returns>
         </member>
@@ -3658,6 +3716,13 @@
             <param name="pDatosImprimir"></param>
             <param name="pNombreArchivo"></param>
         </member>
+        <member name="M:App.ControlLogicaProcesos.ReportesLteCorporativo.EscribirReporteSinCUFE(System.Collections.Generic.List{System.String})">
+            <summary>
+            Metodo que Escribe Reporte Sin CUFE
+            </summary>
+            <param name="pDatosImprimir"></param>
+            <param name="pNombreArchivo"></param>
+        </member>
         <member name="M:App.ControlLogicaProcesos.ReportesLteCorporativo.EscribirReporteEstadistico(System.Collections.Generic.List{System.String})">
             <summary>
             Metodo que Escribe Reporte Estadistico
@@ -3765,7 +3830,7 @@
             <param name="pExtracto"></param>
             <returns></returns>
         </member>
-        <member name="M:App.ControlLogicaProcesos.ReportesMasivos.GetReporteSinCUFE">
+        <member name="M:App.ControlLogicaProcesos.ReportesMasivos.GetReporteSinCUFE(System.Collections.Generic.List{System.String})">
             <summary>
             Metodo que obtiene Reporte SinCUFE
             </summary>
@@ -3805,13 +3870,7 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:App.ControlLogicaProcesos.ReportesMasivos.GetLineasSinCUFE">
-            <summary>
-            Metodo que obtiene Linea Sin CUFE
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:App.ControlLogicaProcesos.ReportesMasivos.GetLineas">
+        <member name="M:App.ControlLogicaProcesos.ReportesMasivos.GetLineasSinCUFE(System.Collections.Generic.List{System.String})">
             <summary>
             Metodo que obtiene Linea Sin CUFE
             </summary>

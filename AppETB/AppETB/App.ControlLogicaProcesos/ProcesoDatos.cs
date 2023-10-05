@@ -1173,10 +1173,6 @@ namespace App.ControlLogicaProcesos
                     }
                 }
             }
-            if (Cuenta == "12053750434" || Cuenta == "7810605108")
-            {
-
-            }
 
             if (!string.IsNullOrEmpty(email))
             {

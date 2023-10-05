@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using App.ControlInsumos;
+using App.Variables;
 
 namespace App.ControlLogicaProcesos
 {
@@ -30,6 +31,7 @@ namespace App.ControlLogicaProcesos
         List<string> listaReporteDistrEspecial = new List<string>();
         List<string> listaReporteInsertos = new List<string>();
         List<string> listaReporteSMS = new List<string>();
+        List<string> listaReporteSinCUFE = new List<string>();
 
         // Reporte RecaudoEsperado final
         Dictionary<string, List<string>> dicRecaudoEsperadoEscribir = new Dictionary<string, List<string>>();
@@ -143,6 +145,12 @@ namespace App.ControlLogicaProcesos
 
                 //Rpt RecaudoEsperado
                 GetLineaRecaudoEsperado(datosSal.ToList());
+
+                // Rpt Resumen SinCUFE
+                listReporte.AddRange(GetReporteSinCUFE(datosSal.ToList()));
+                if (listReporte.Count > 0)
+                    listaReporteSinCUFE.AddRange(listReporte);
+                listReporte.Clear();
             }
 
             // Escribir Reparto Esperado
@@ -159,6 +167,10 @@ namespace App.ControlLogicaProcesos
             // Escribir Insertos
             EscribirReporteMaestraInserto(listaReporteInsertos);
             listaReporteInsertos.Clear();
+
+            // Escribir SinCUFE
+            EscribirReporteSinCUFE(listaReporteSinCUFE);
+            listaReporteSinCUFE.Clear();
 
             // Escribir SMS Det
             EscribirReporteSMS(listaReporteSMS);
@@ -181,11 +193,6 @@ namespace App.ControlLogicaProcesos
                 EscribirReporteEstadistico(listReporte);
             listReporte.Clear();
 
-            // Rpt Resumen SinCUFE
-            listReporte = GetReporteSinCUFE();
-            if (listReporte.Count > 0)
-                EscribirReporteSinCUFE(listReporte);
-            listReporte.Clear();
             #endregion
         }
 
@@ -280,14 +287,19 @@ namespace App.ControlLogicaProcesos
         /// Metodo que obtiene Reporte SinCUFE
         /// </summary>
         /// <returns></returns>
-        private List<string> GetReporteSinCUFE()
+        private List<string> GetReporteSinCUFE(List<string> pDatosImprimir)
         {
             #region GetReporteSinCUFE
-            List<string> lineaMaestraResumen = new List<string>();
 
-            lineaMaestraResumen = GetLineasSinCUFE();
+            List<string> lineaSinCUFE = new List<string>();
+            string lineaInsert = GetLineasSinCUFE(pDatosImprimir);
 
-            return lineaMaestraResumen;
+            if (!string.IsNullOrEmpty(lineaInsert))
+            {
+                lineaSinCUFE.Add(lineaInsert);
+            }
+
+            return lineaSinCUFE;
             #endregion
         }
 
@@ -387,7 +399,7 @@ namespace App.ControlLogicaProcesos
                 }
                 else
                 {
-                    camposLinea.Add(campos1AAA[10].Split(',')[0].Replace("$", "").Replace(".", "").Trim()); // Valor Pagar Mes
+                    camposLinea.Add(campos1AAA[10]); // Valor Pagar Mes
                 }
 
                 camposLinea.Add(campos1AAA[27]); // Actividad
@@ -413,7 +425,15 @@ namespace App.ControlLogicaProcesos
                 
                 camposLinea.Add(campos1AAA[23]); // TipoProducto
 
-                camposLinea.Add(string.Empty); // PlanPrimarioLTE
+
+                if (!Variables.Variables.DiccionarioPlanesPrimarios.ContainsKey(cuenta))
+                {
+                    camposLinea.Add(string.Empty); // PlanPrimarioLTE
+                }
+                else
+                {
+                    camposLinea.Add(Variables.Variables.DiccionarioPlanesPrimarios[cuenta]); // PlanPrimarioLTE
+                }   
 
                 camposLinea.Add(GetPlanActual(pExtracto)); // PlanActual
                 camposLinea.Add(string.Empty); // ConceptoFinanciacion
@@ -625,63 +645,40 @@ namespace App.ControlLogicaProcesos
         /// Metodo que obtiene Linea Sin CUFE
         /// </summary>
         /// <returns></returns>
-        private List<string> GetLineasSinCUFE()
+        private string GetLineasSinCUFE(List<string> pExtracto)
         {
-            #region GetLineasSinCUFE
-
-            List<string> lineasSinCUFE = new List<string>();
+            #region GetLineasinCUFE
+            string LineaSinCUFE = string.Empty;
+            List<string> camposLinea = new List<string>();
 
             foreach (var archivoActual in Directory.GetFiles(rutaSalida))
             {
                 if (archivoActual.Contains("SIN_CUFE"))
-                    continue;
+                {
+                    var result1AAA = from busqueda in pExtracto
+                                     where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("1AAA|")
+                                     select busqueda;
 
+                    var resultCUFE = from busqueda in pExtracto
+                                     where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("CUFE|")
+                                     select busqueda;
 
-                var result1AAA = from busqueda in File.ReadAllLines(archivoActual)
-                                 where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("1AAA|")
-                                 select busqueda;
+                    if (resultCUFE.Any())
+                    {
 
-                string telefono = result1AAA.FirstOrDefault().Split('|')[15];
-                string Cuenta = result1AAA.LastOrDefault().Split('|')[7];
-                string Nombre = result1AAA.LastOrDefault().Split('|')[2];
+                    }
+                    else
+                    {
+                        string[] campos1AAA = result1AAA.FirstOrDefault().Split('|');
+                        camposLinea.Add(result1AAA.FirstOrDefault().Split('|')[15]); // Telefono
+                        camposLinea.Add(result1AAA.FirstOrDefault().Split('|')[7]); // Cuenta                
+                        camposLinea.Add(result1AAA.FirstOrDefault().Split('|')[2]); // Nombre
 
-                lineasSinCUFE.Add(Path.GetFileName(archivoActual) + "|" + telefono + "|" + Cuenta + "|" + Nombre);
+                        LineaSinCUFE = Helpers.ListaCamposToLinea(camposLinea, '|');
+                    }
+                }
             }
-
-
-            return lineasSinCUFE;
-            #endregion
-        }
-
-        /// <summary>
-        /// Metodo que obtiene Linea Sin CUFE
-        /// </summary>
-        /// <returns></returns>
-        private List<string> GetLineas()
-        {
-            #region GetLineasSinCUFE
-
-            List<string> lineasSinCUFE = new List<string>();
-
-            foreach (var archivoActual in Directory.GetFiles(rutaSalida))
-            {
-                if (archivoActual.Contains("SIN_CUFE"))
-                    continue;
-
-
-                var result1AAA = from busqueda in File.ReadAllLines(archivoActual)
-                                 where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("1AAA|")
-                                 select busqueda;
-
-                string telefono = result1AAA.FirstOrDefault().Split('|')[15];
-                string Cuenta = result1AAA.LastOrDefault().Split('|')[7];
-                string Nombre = result1AAA.LastOrDefault().Split('|')[2];
-
-                lineasSinCUFE.Add(Path.GetFileName(archivoActual) + "|" + telefono + "|" + Cuenta + "|" + Nombre);
-            }
-
-
-            return lineasSinCUFE;
+            return LineaSinCUFE;
             #endregion
         }
 
@@ -880,7 +877,7 @@ namespace App.ControlLogicaProcesos
             {
                 nombreArchivo = Path.GetFileNameWithoutExtension(Variables.Variables.ArchivoSalidaFinal[cuenta]);
 
-                if (!nombreArchivo.Contains("OTROS"))
+                if (!nombreArchivo.Contains("OTROS") || !nombreArchivo.Contains("DISTRIBUCION_ESPECIAL") || !nombreArchivo.Contains("DIFERENCIAS"))
                 {
                     nombreArchivo = nombreArchivo.Substring(0, nombreArchivo.Length - 4);
                 }
@@ -913,7 +910,7 @@ namespace App.ControlLogicaProcesos
                         resultado = canalActual.Split('|')[4];
                         break;
                     }
-                    else if (canalActual.Contains("CONS|IVA"))
+                    else if (canalActual.ToUpper().Contains("CONS|IVA"))
                     {
                         resultado = Helpers.FormatearCampos(TiposFormateo.Decimal01, canalActual.Split('|')[3]);
                         break;
@@ -936,7 +933,7 @@ namespace App.ControlLogicaProcesos
             string resultado = string.Empty;
 
             var result1BBB = from busqueda in pExtracto
-                             where busqueda.Contains("1BBB|Valor Factura Anterior")
+                             where busqueda.Contains("1BBB|Valor factura anterior")
                              select busqueda;
 
             if (result1BBB.Any())
