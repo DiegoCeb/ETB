@@ -16,6 +16,8 @@ namespace App.ControlEjecucion
     /// </summary>
     public class Procesamiento
     {
+        private int _consecutivoUnico = 1;
+
         /// <summary>
         /// constructor Procesamiento
         /// </summary>
@@ -625,9 +627,7 @@ namespace App.ControlEjecucion
             #region EscribirDatosSalidaCompleto
             List<string> resultado = new List<string>();
             int consecutivo = 1;
-
             string cuenta = string.Empty;
-
             var datosImprimirFinal = new Dictionary<string, List<string>>(pDatosImprimir);
 
             switch (pTipoProceso)
@@ -731,7 +731,6 @@ namespace App.ControlEjecucion
             int consecutivoInternoArchivo = 1;
             string cuenta = string.Empty;
             string archivoActual = string.Empty;
-            int consecutivo = 1;
 
             switch (pTipoProceso)
             {
@@ -747,6 +746,7 @@ namespace App.ControlEjecucion
                             {
                                 consecutivoInternoDivision++;
                                 cuenta = linea.Split('|')[7].Trim();
+
                                 archivoActual = $"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}_{consecutivoInternoArchivo.ToString().PadLeft(3, '0')}.sal";
 
                                 // Se agrega la cuenta en el archivo final                                
@@ -763,10 +763,13 @@ namespace App.ControlEjecucion
                                     resultado.Clear();
                                 }
 
-                                string nuevoConsecutivo = $"{pLote}_{consecutivo.ToString().PadLeft(6, '0')}";
-                                consecutivo++;
+                                string nuevoConsecutivo = $"{pLote}_{_consecutivoUnico.ToString().PadLeft(6, '0')}";
+                                _consecutivoUnico++;
 
-                                resultado.Add(linea.Replace("KitXXXX", nuevoConsecutivo));
+                                if(!Variables.Variables.ConsecutivosOrden.ContainsKey(cuenta))
+                                    Variables.Variables.ConsecutivosOrden.Add(cuenta, nuevoConsecutivo);
+
+                                resultado.Add(linea.Replace(linea.Split('|').ElementAt(1), nuevoConsecutivo));
 
                                 continue;
                             }
@@ -814,11 +817,13 @@ namespace App.ControlEjecucion
                                     resultado.Clear();
                                 }
 
-                                string nuevoConsecutivo = $"{pLote}_{consecutivo.ToString().PadLeft(6, '0')}";
+                                string nuevoConsecutivo = $"{pLote}_{_consecutivoUnico.ToString().PadLeft(6, '0')}";
 
                                 linea.Replace("KitXXXX", nuevoConsecutivo);
 
-                                consecutivo++;
+                                _consecutivoUnico++;
+                                if (!Variables.Variables.ConsecutivosOrden.ContainsKey(cuenta))
+                                    Variables.Variables.ConsecutivosOrden.Add(cuenta, nuevoConsecutivo);
 
                                 resultado.Add(linea.Replace("****tipo_salida****", "_EXTRAER*"));
                                 continue;
@@ -1035,7 +1040,6 @@ namespace App.ControlEjecucion
             int consecutivoInternoArchivo = 1;
             string cuenta = string.Empty;
             string archivoActual = string.Empty;
-            int consecutivo = 1;
 
             foreach (var linea in pDatos.SelectMany(x => x.Value))
             {
@@ -1058,8 +1062,10 @@ namespace App.ControlEjecucion
                         resultado.Clear();
                     }
 
-                    string nuevoConsecutivo = $"{pLote}_{consecutivo.ToString().PadLeft(6, '0')}";
-                    consecutivo++;
+                    string nuevoConsecutivo = $"{pLote}_{_consecutivoUnico.ToString().PadLeft(6, '0')}";
+                    _consecutivoUnico++;
+                    if (!Variables.Variables.ConsecutivosOrden.ContainsKey(cuenta))
+                        Variables.Variables.ConsecutivosOrden.Add(cuenta, nuevoConsecutivo);
 
                     if (pReemplazarMarcaSalida)
                     {
@@ -1168,7 +1174,6 @@ namespace App.ControlEjecucion
         {
             #region ProcesarSalidasDistribucionEspecial
             List<string> datosFinales = new List<string>();
-            int consecutivo = 1;
 
             foreach (var dato in pDatos)
             {
@@ -1179,7 +1184,7 @@ namespace App.ControlEjecucion
 
                     if (fechaPeriodoProceso == fechaPeriodoInsumo)
                     {
-                        string nuevoConsecutivo = $"{pLote}_{consecutivo.ToString().PadLeft(6, '0')}";
+                        string nuevoConsecutivo = $"{pLote}_{_consecutivoUnico.ToString().PadLeft(6, '0')}";
 
                         var nuevo1AAA = from n in dato.Value
                                         where n.Substring(0, 4) == "1AAA"
@@ -1188,7 +1193,9 @@ namespace App.ControlEjecucion
                         // Se actualiza el Consecutivo del diccionario Original formateado
                         Variables.Variables.DiccionarioExtractosFormateados[dato.Key][0] = Variables.Variables.DiccionarioExtractosFormateados[dato.Key][0].Replace(Variables.Variables.DiccionarioExtractosFormateados[dato.Key][0].Split('|').ElementAt(1), nuevoConsecutivo);
 
-                        consecutivo++;
+                        _consecutivoUnico++;
+                        if (!Variables.Variables.ConsecutivosOrden.ContainsKey(dato.Key))
+                            Variables.Variables.ConsecutivosOrden.Add(dato.Key, nuevoConsecutivo);
 
                         datosFinales.AddRange(dato.Value);
 
@@ -1218,7 +1225,6 @@ namespace App.ControlEjecucion
             #region EscribirDatosSalidaErrorLte
             List<string> resultado = new List<string>();
             string cuenta = string.Empty;
-            int consecutivo = 1;
 
             if (Variables.Variables.DatosErrorLTE.Any())
             {
@@ -1228,8 +1234,10 @@ namespace App.ControlEjecucion
                     {
                         cuenta = linea.Split('|')[7];
 
-                        string nuevoConsecutivo = $"{pLote}_{consecutivo.ToString().PadLeft(6, '0')}";
-                        consecutivo++;
+                        string nuevoConsecutivo = $"{pLote}_{_consecutivoUnico.ToString().PadLeft(6, '0')}";
+                        _consecutivoUnico++;
+                        if (!Variables.Variables.ConsecutivosOrden.ContainsKey(cuenta))
+                            Variables.Variables.ConsecutivosOrden.Add(cuenta, nuevoConsecutivo);
 
                         // Se agrega la cuenta en el archivo final                                
                         if (!Variables.Variables.ArchivoSalidaFinal.ContainsKey(cuenta))
@@ -1259,7 +1267,6 @@ namespace App.ControlEjecucion
         {
             #region EscribirDatosSalidaDiferencias
             List<string> resultado = new List<string>();
-            int consecutivo = 1;
 
             //var dfdf = (Convert.ToDecimal(Helpers.FormatearCampos(TiposFormateo.Decimal03, "$ 79.950,00")) - Convert.ToDecimal(Helpers.FormatearCampos(TiposFormateo.Decimal03, "$ 79.947,36"))) > 0.05m;
 
@@ -1284,7 +1291,7 @@ namespace App.ControlEjecucion
 
                 if (pDatosImprimir.ContainsKey(dato.Key))
                 {
-                    string nuevoConsecutivo = $"{pLote}_{consecutivo.ToString().PadLeft(6, '0')}";
+                    string nuevoConsecutivo = $"{pLote}_{_consecutivoUnico.ToString().PadLeft(6, '0')}";
 
                     var nuevo1AAA = from n in dato.Value
                                     where n.Substring(0, 4) == "1AAA"
@@ -1295,7 +1302,9 @@ namespace App.ControlEjecucion
 
                     resultado.AddRange(dato.Value);
 
-                    consecutivo++;
+                    _consecutivoUnico++;
+                    if (!Variables.Variables.ConsecutivosOrden.ContainsKey(dato.Key))
+                        Variables.Variables.ConsecutivosOrden.Add(dato.Key, nuevoConsecutivo);
                 }
             }
 
@@ -1395,11 +1404,10 @@ namespace App.ControlEjecucion
         {
             #region ProcesarSalidasOtrosProcesos
             List<string> resultado = new List<string>();
-            int consecutivo = 1;
 
             foreach (var datoCuenta in pDatos)
             {
-                string nuevoConsecutivo = $"{pLote}_{consecutivo.ToString().PadLeft(6, '0')}";
+                string nuevoConsecutivo = $"{pLote}_{_consecutivoUnico.ToString().PadLeft(6, '0')}";
 
                 var nuevo1AAA = from n in datoCuenta.Value
                                 where n.Substring(0, 4) == "1AAA"
@@ -1410,7 +1418,9 @@ namespace App.ControlEjecucion
 
                 resultado.AddRange(datoCuenta.Value);
 
-                consecutivo++;
+                _consecutivoUnico++;
+                if (!Variables.Variables.ConsecutivosOrden.ContainsKey(datoCuenta.Key))
+                    Variables.Variables.ConsecutivosOrden.Add(datoCuenta.Key, nuevoConsecutivo);
 
                 // Se agrega la cuenta en el archivo final                                
                 if (!Variables.Variables.ArchivoSalidaFinal.ContainsKey(datoCuenta.Key))
@@ -1683,7 +1693,6 @@ namespace App.ControlEjecucion
         {
             #region ProcesoSalidasImpresion
             List<string> resultado = new List<string>();
-            int consecutivo = 1;
             int consecutivoInternoDivision = 0;
             int consecutivoInternoArchivo = 1;
             string cuenta = string.Empty;
@@ -1691,7 +1700,7 @@ namespace App.ControlEjecucion
 
             foreach (var datoCuenta in pDatos)
             {
-                string nuevoConsecutivo = $"{pLote}_{consecutivo.ToString().PadLeft(6, '0')}";
+                string nuevoConsecutivo = $"{pLote}_{_consecutivoUnico.ToString().PadLeft(6, '0')}";
 
                 if (datoCuenta.Value.FirstOrDefault().Substring(0, 4) == "1AAA")
                 {
@@ -1713,11 +1722,13 @@ namespace App.ControlEjecucion
                     }
                 }
 
-                Variables.Variables.DiccionarioExtractosFormateados[datoCuenta.Key][0] = Variables.Variables.DiccionarioExtractosFormateados[datoCuenta.Key][0].Replace("KitXXXX", nuevoConsecutivo);
+                Variables.Variables.DiccionarioExtractosFormateados[datoCuenta.Key][0] = Variables.Variables.DiccionarioExtractosFormateados[datoCuenta.Key][0].Replace(Variables.Variables.DiccionarioExtractosFormateados[datoCuenta.Key][0].Split('|').ElementAt(1), nuevoConsecutivo);
 
                 resultado.AddRange(datoCuenta.Value);
 
-                consecutivo++;
+                _consecutivoUnico++;
+                if (!Variables.Variables.ConsecutivosOrden.ContainsKey(cuenta))
+                    Variables.Variables.ConsecutivosOrden.Add(cuenta, nuevoConsecutivo);
             }
 
             Helpers.EscribirEnArchivo(archivoActual, resultado);
@@ -1738,7 +1749,6 @@ namespace App.ControlEjecucion
         {
             #region ProcesoSalidasImpresion
             List<string> resultado = new List<string>();
-            int consecutivo = 1;
             int consecutivoInternoDivision = 0;
             int consecutivoInternoArchivo = 1;
             string cuenta = string.Empty;
@@ -1746,7 +1756,7 @@ namespace App.ControlEjecucion
 
             foreach (var datoCuenta in pDatos)
             {
-                string nuevoConsecutivo = $"{pLote}_{consecutivo.ToString().PadLeft(6, '0')}";
+                string nuevoConsecutivo = $"{pLote}_{_consecutivoUnico.ToString().PadLeft(6, '0')}";
 
                 var nuevo1AAA = from n in datoCuenta.Value
                                 where n.Substring(0, 4) == "1AAA"
@@ -1772,11 +1782,13 @@ namespace App.ControlEjecucion
                     }
                 }
 
-                Variables.Variables.DiccionarioExtractosFormateados[cuenta][0] = Variables.Variables.DiccionarioExtractosFormateados[cuenta][0].Replace("KitXXXX", nuevoConsecutivo);
+                Variables.Variables.DiccionarioExtractosFormateados[cuenta][0] = Variables.Variables.DiccionarioExtractosFormateados[cuenta][0].Replace(Variables.Variables.DiccionarioExtractosFormateados[datoCuenta.Key][0].Split('|').ElementAt(1), nuevoConsecutivo);
 
                 resultado.AddRange(datoCuenta.Value);
 
-                consecutivo++;
+                _consecutivoUnico++;
+                if (!Variables.Variables.ConsecutivosOrden.ContainsKey(cuenta))
+                    Variables.Variables.ConsecutivosOrden.Add(cuenta, nuevoConsecutivo);
             }
 
             Helpers.EscribirEnArchivo(archivoActual, resultado);
@@ -1796,7 +1808,6 @@ namespace App.ControlEjecucion
         {
             #region EscribirDatosSalidaNumHojas
             List<string> resultado = new List<string>();
-            int consecutivo = 1;
 
             var busquedaCuentasImpresion = (from busqueda in pDatosImprimir
                                             where !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
@@ -1812,7 +1823,7 @@ namespace App.ControlEjecucion
                 {
                     Variables.Variables.NumHojas.Add(datoCuenta.Key, string.Empty);
 
-                    string nuevoConsecutivo = $"{pLote}_{consecutivo.ToString().PadLeft(6, '0')}";
+                    string nuevoConsecutivo = $"{pLote}_{_consecutivoUnico.ToString().PadLeft(6, '0')}";
 
                     var nuevo1AAA = from n in datoCuenta.Value
                                     where n.Substring(0, 4) == "1AAA"
@@ -1821,7 +1832,9 @@ namespace App.ControlEjecucion
                     // Se actualiza el Consecutivo del diccionario Original formateado
                     Variables.Variables.DiccionarioExtractosFormateados[datoCuenta.Key][0] = Variables.Variables.DiccionarioExtractosFormateados[datoCuenta.Key][0].Replace(Variables.Variables.DiccionarioExtractosFormateados[datoCuenta.Key][0].Split('|').ElementAt(1), nuevoConsecutivo);
 
-                    consecutivo++;
+                    _consecutivoUnico++;
+                    if (!Variables.Variables.ConsecutivosOrden.ContainsKey(datoCuenta.Key))
+                        Variables.Variables.ConsecutivosOrden.Add(datoCuenta.Key, nuevoConsecutivo);
                     resultado.AddRange(datoCuenta.Value);
 
                     // Se agrega la cuenta en el archivo final
@@ -1846,7 +1859,6 @@ namespace App.ControlEjecucion
         {
             #region EscribirDatosSalidaClientesEsepeciales
             List<string> datosFinales = new List<string>();
-            int consecutivo = 1;
 
             var busquedaCuentas = (from busqueda in pDatosImprimir
                                    where Variables.Variables.DatosInsumoClientesEspecialesDatos.ContainsKey($"{busqueda.Key}-{busqueda.Value.FirstOrDefault().Split('|').ElementAt(9)}")
@@ -1865,16 +1877,18 @@ namespace App.ControlEjecucion
                     if (fechaPeriodoProceso == fechaPeriodoInsumo && cicloProceso == cicloInsumo)
                     {
 
-                        string nuevoConsecutivo = $"{pLote}_{consecutivo.ToString().PadLeft(6, '0')}";
+                        string nuevoConsecutivo = $"{pLote}_{_consecutivoUnico.ToString().PadLeft(6, '0')}";
 
                         var nuevo1AAA = from n in dato.Value
                                         where n.Substring(0, 4) == "1AAA"
                                         select n.Replace("KitXXXX", nuevoConsecutivo);
 
                         // Se actualiza el Consecutivo del diccionario Original formateado
-                        Variables.Variables.DiccionarioExtractosFormateados[dato.Key][0] = Variables.Variables.DiccionarioExtractosFormateados[dato.Key][0].Replace("KitXXXX", nuevoConsecutivo);
+                        Variables.Variables.DiccionarioExtractosFormateados[dato.Key][0] = Variables.Variables.DiccionarioExtractosFormateados[dato.Key][0].Replace(Variables.Variables.DiccionarioExtractosFormateados[dato.Key][0].Split('|').ElementAt(1), nuevoConsecutivo);
 
-                        consecutivo++;
+                        _consecutivoUnico++;
+                        if (!Variables.Variables.ConsecutivosOrden.ContainsKey(dato.Key))
+                            Variables.Variables.ConsecutivosOrden.Add(dato.Key, nuevoConsecutivo);
 
                         datosFinales.AddRange(dato.Value);
 
@@ -1903,7 +1917,6 @@ namespace App.ControlEjecucion
         {
             #region EscribirDatosSalidaImpresionNormal
             List<string> resultado = new List<string>();
-            int consecutivo = 1;
             string cuenta = string.Empty;
 
             var busquedaCuentasImpresion = (from busqueda in pDatosImprimir
@@ -1913,11 +1926,11 @@ namespace App.ControlEjecucion
             {
                 foreach (var datoCuenta in busquedaCuentasImpresion)
                 {
-                    string nuevoConsecutivo = $"KIT{consecutivo.ToString().PadLeft(6, '0')}";
+                    string nuevoConsecutivo = $"KIT{_consecutivoUnico.ToString().PadLeft(6, '0')}";
 
                     var nuevo1AAA = from n in datoCuenta.Value
                                     where n.Substring(0, 4) == "1AAA"
-                                    select n.Replace("KitXXXXX", nuevoConsecutivo);
+                                    select n.Replace("KitXXXX", nuevoConsecutivo);
 
                     cuenta = nuevo1AAA.FirstOrDefault().Split('|')[7];
 
@@ -1929,12 +1942,14 @@ namespace App.ControlEjecucion
 
                     //datoCuenta.Value.RemoveAt(0);
 
-                    Variables.Variables.DiccionarioExtractosFormateados[datoCuenta.Key][0] = Variables.Variables.DiccionarioExtractosFormateados[datoCuenta.Key][0].Replace("KitXXXX", nuevoConsecutivo);
+                    Variables.Variables.DiccionarioExtractosFormateados[datoCuenta.Key][0] = Variables.Variables.DiccionarioExtractosFormateados[datoCuenta.Key][0].Replace(Variables.Variables.DiccionarioExtractosFormateados[datoCuenta.Key][0].Split('|').ElementAt(1), nuevoConsecutivo);
 
                     resultado.AddRange(datoCuenta.Value);
 
 
-                    consecutivo++;
+                    _consecutivoUnico++;
+                    if (!Variables.Variables.ConsecutivosOrden.ContainsKey(cuenta))
+                        Variables.Variables.ConsecutivosOrden.Add(cuenta, nuevoConsecutivo);
                 }
 
                 Helpers.EscribirEnArchivo($"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}.sal", resultado);

@@ -141,8 +141,20 @@ namespace App.ControlLogicaProcesos
             // Escribir Reparto Esperado
             EscribirReporteRecaudoEsperado();
 
+            #region Ordenar Datos Maestra
+            SortedList<int, string> nuevoReporteMaestra = new SortedList<int, string>();
+
+            foreach (var item in listaReporteMaestra)
+            {
+                int orden = Convert.ToInt32(Variables.Variables.ConsecutivosOrden[item.Split('|').ElementAt(1)].Split('_').ElementAt(1));
+
+                nuevoReporteMaestra.Add(orden, item.Replace(item.Split('|').ElementAt(5), Variables.Variables.ConsecutivosOrden[item.Split('|').ElementAt(1)]));
+            }
+
+            #endregion
+
             // Escribir Maestra
-            EscribirReporteMaestra(listaReporteMaestra);
+            EscribirReporteMaestra(nuevoReporteMaestra.Values.ToList());
             listaReporteMaestra.Clear();
 
             // Escribir Distribucion Especial

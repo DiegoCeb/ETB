@@ -497,6 +497,11 @@ namespace App.ControlLogicaProcesos
                                where busqueda.Length > 6 && busqueda.Substring(0, 6).Equals("040000")
                                select busqueda;
 
+            if (Cuenta == "12054959568")
+            {
+
+            }
+
             if (result.Any())
             {
                 Linea010000 = result.FirstOrDefault();
@@ -1429,14 +1434,14 @@ namespace App.ControlLogicaProcesos
 
             string lineaSMS = Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoCuentasEnvioSms, $"{Cuenta}") ?? string.Empty;
 
-            if (!string.IsNullOrEmpty(lineaSMS))
+            if (!string.IsNullOrEmpty(lineaSMS) && string.IsNullOrEmpty(tipoEmail))
             {
                 tipoEmail = "ENVIO_SMS";
             }
 
             string lineaWhatsapp = Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoCuentasEnvioWhatsapp, $"{Cuenta}") ?? string.Empty;
 
-            if (!string.IsNullOrEmpty(lineaWhatsapp))
+            if (!string.IsNullOrEmpty(lineaWhatsapp) && string.IsNullOrEmpty(tipoEmail))
             {
                 tipoEmail = "ENVIO_Whatsapp";
             }

@@ -65,7 +65,7 @@ namespace App.ControlLogicaProcesos
                 Helpers.EscribirLogVentana(StructError, true);
             }
             #endregion
-        } 
+        }
         #endregion
 
         /// <summary>
@@ -78,7 +78,7 @@ namespace App.ControlLogicaProcesos
             Helpers.CrearCarpeta(rutaSalida + @"\Reportes");
             Helpers.CrearCarpeta(rutaSalida + @"\Reportes\RecaudoEsperado");
             CargarDiccionario();
-            ExtraccionReportes(DiccionarioExtractosReporte);            
+            ExtraccionReportes(DiccionarioExtractosReporte);
             #endregion
         }
 
@@ -102,7 +102,7 @@ namespace App.ControlLogicaProcesos
             {
                 if (!DiccionarioExtractosReporte.ContainsKey(keyErrorLTE))
                     DiccionarioExtractosReporte.Add(keyErrorLTE, new List<string>(Variables.Variables.DatosErrorLTE[keyErrorLTE]));
-            } 
+            }
             #endregion
         }
 
@@ -140,7 +140,7 @@ namespace App.ControlLogicaProcesos
                 // Rpt Resumen SMS
                 listReporte = GetReporteSMS(datosSal.ToList());
                 if (listReporte.Count > 0)
-                    listaReporteSMS.AddRange(listReporte);                    
+                    listaReporteSMS.AddRange(listReporte);
                 listReporte.Clear();
 
                 //Rpt RecaudoEsperado
@@ -156,8 +156,20 @@ namespace App.ControlLogicaProcesos
             // Escribir Reparto Esperado
             EscribirReporteRecaudoEsperado();
 
+            #region Ordenar Datos Maestra
+            SortedList<int, string> nuevoReporteMaestra = new SortedList<int, string>();
+
+            foreach (var item in listaReporteMaestra)
+            {
+                int orden = Convert.ToInt32(Variables.Variables.ConsecutivosOrden[item.Split('|').ElementAt(1)].Split('_').ElementAt(1));
+
+                nuevoReporteMaestra.Add(orden, item.Replace(item.Split('|').ElementAt(5), Variables.Variables.ConsecutivosOrden[item.Split('|').ElementAt(1)]));
+            }
+
+            #endregion
+
             // Escribir Maestra
-            EscribirReporteMaestra(listaReporteMaestra);
+            EscribirReporteMaestra(nuevoReporteMaestra.Values.ToList());
             listaReporteMaestra.Clear();
 
             // Escribir Distribucion Especial
@@ -205,7 +217,10 @@ namespace App.ControlLogicaProcesos
         {
             #region GetReporteMaestra
             List<string> lineaMaestra = new List<string>();
-            lineaMaestra.Add(GetLineaMaestra(pDatosImprimir));
+
+            string lineaMaestraFormateada = GetLineaMaestra(pDatosImprimir);
+
+            lineaMaestra.Add(lineaMaestraFormateada);
 
             return lineaMaestra;
             #endregion
@@ -388,7 +403,7 @@ namespace App.ControlLogicaProcesos
                 camposLinea.Add(string.Empty); // Fecb
                 camposLinea.Add(string.Empty); // Fecc
                 camposLinea.Add(GetTotalIva(pExtracto)); // Total Iva
-                
+
                 camposLinea.Add(string.Empty); // Total IVA Otros Operadores
 
                 camposLinea.Add(campos1AAA[33]); // Insertos
@@ -422,7 +437,7 @@ namespace App.ControlLogicaProcesos
                 {
                     camposLinea.Add(campos1AAA[3]); // NIT/CED
                 }
-                
+
                 camposLinea.Add(campos1AAA[23]); // TipoProducto
 
 
@@ -433,7 +448,7 @@ namespace App.ControlLogicaProcesos
                 else
                 {
                     camposLinea.Add(Variables.Variables.DiccionarioPlanesPrimarios[cuenta]); // PlanPrimarioLTE
-                }   
+                }
 
                 camposLinea.Add(GetPlanActual(pExtracto)); // PlanActual
                 camposLinea.Add(string.Empty); // ConceptoFinanciacion
@@ -753,7 +768,7 @@ namespace App.ControlLogicaProcesos
                     }
 
                     var vencimiento = campos1AAA[15].Trim() == "1" ? campos1AAA[17].Trim() : "Pago Inmediato";
-                    mensaje2 = $"Pago electronico {cuenta} valor {campos1AAA[10].Replace("$", "").Trim()} vence: { vencimiento}";
+                    mensaje2 = $"Pago electronico {cuenta} valor {campos1AAA[10].Replace("$", "").Trim()} vence: {vencimiento}";
 
                     lineaSMS = campos1AAA[15].Trim() + mensaje + mensaje2;
 
@@ -877,7 +892,7 @@ namespace App.ControlLogicaProcesos
             {
                 nombreArchivo = Path.GetFileNameWithoutExtension(Variables.Variables.ArchivoSalidaFinal[cuenta]);
 
-                if (!nombreArchivo.Contains("OTROS") || !nombreArchivo.Contains("DISTRIBUCION_ESPECIAL") || !nombreArchivo.Contains("DIFERENCIAS"))
+                if (!nombreArchivo.Contains("OTROS") && !nombreArchivo.Contains("DISTRIBUCION_ESPECIAL") && !nombreArchivo.Contains("DIFERENCIAS"))
                 {
                     nombreArchivo = nombreArchivo.Substring(0, nombreArchivo.Length - 4);
                 }
