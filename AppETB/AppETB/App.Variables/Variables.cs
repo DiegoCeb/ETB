@@ -72,6 +72,7 @@ namespace App.Variables
         public static Dictionary<string, string> DatosInsumoExtraerLlanos = new Dictionary<string, string>();
         public static Dictionary<string, string> DatosInsumoLlanosMinPlan = new Dictionary<string, string>();
         public static Dictionary<string, List<string>> DatosInsumoLlanosSuple = new Dictionary<string, List<string>>();
+        public static Dictionary<string, List<string>> DatosInsumoLlanosImpuestos = new Dictionary<string, List<string>>();
 
         public static Dictionary<string, string> DatosAuxAnexosVerdes = new Dictionary<string, string>();
         public static Dictionary<string, string> DatosCartasHipotecario = new Dictionary<string, string>();
@@ -191,6 +192,8 @@ namespace App.Variables
         Llanos_suple = 41,
         [System.ComponentModel.Description("cuentas_Envio_Whatsapp")]
         cuentas_Envio_Whatsapp = 42,
+        [System.ComponentModel.Description("Impuestos_Llanos")]
+        Impuestos_Llanos = 43,
 
     }
 

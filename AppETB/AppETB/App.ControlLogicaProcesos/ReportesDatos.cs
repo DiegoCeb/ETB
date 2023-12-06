@@ -95,11 +95,19 @@ namespace App.ControlLogicaProcesos
                 DiccionarioExtractosReporte.Add(keyNoImprimir, new List<string>(Variables.Variables.CuentasNoImprimir[keyNoImprimir]));
             }
 
+            // Agrego los datos SIN_CUFE
+            foreach (var keySinCufe in Variables.Variables.CuentasSinCufe.Keys)
+            {
+                DiccionarioExtractosReporte.Add(keySinCufe, new List<string>(Variables.Variables.CuentasSinCufe[keySinCufe]));
+            }
+
             // Agrego los datos de ErrorLTE
             foreach (var keyErrorLTE in Variables.Variables.DatosErrorLTE.Keys)
             {
                 DiccionarioExtractosReporte.Add(keyErrorLTE, new List<string>(Variables.Variables.DatosErrorLTE[keyErrorLTE]));
             }
+
+
             #endregion
         }
 
@@ -421,11 +429,11 @@ namespace App.ControlLogicaProcesos
                 }
                 else
                 {
-                    camposLinea.Add(string.Empty); // CUFE
-                    camposLinea.Add(string.Empty); // QR
+                    camposLinea.Add(string.Empty.Trim()); // CUFE
+                    camposLinea.Add(string.Empty.Trim()); // QR
                 }
 
-                LineaMaestra = Helpers.ListaCamposToLinea(camposLinea, '|').Replace('\t', ' ');
+                LineaMaestra = Helpers.ListaCamposToLinea(camposLinea, '|').Replace('\t', ' ').Replace(" |", "|");
             }
 
             return Helpers.GetTextoSinTildes(LineaMaestra);
@@ -1002,7 +1010,7 @@ namespace App.ControlLogicaProcesos
             {
                 nombreArchivo = Path.GetFileNameWithoutExtension(Variables.Variables.ArchivoSalidaFinal[cuenta]);
 
-                if (!nombreArchivo.Contains("OTROS"))
+                if (!nombreArchivo.Contains("OTROS") && !nombreArchivo.Contains("ESPECIAL") && !nombreArchivo.Contains("DIFEREN"))
                 {
                     nombreArchivo = nombreArchivo.Substring(0, nombreArchivo.Length - 4);
                 }
@@ -1157,7 +1165,7 @@ namespace App.ControlLogicaProcesos
             string resultado = "0";
 
             var result1EE3 = from busqueda in pExtracto
-                             where busqueda.Substring(0, 4).Equals("1EE3") && !busqueda.Contains("Consumo Fijo Etb A Móvil|")
+                             where busqueda.Substring(0, 4).Equals("1EE3") && !busqueda.Contains("Consumo Fijo ETB a Móvil|")
                              select busqueda;
 
             if (result1EE3.Any())

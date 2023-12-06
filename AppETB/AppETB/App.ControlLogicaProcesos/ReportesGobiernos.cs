@@ -1118,7 +1118,7 @@ namespace App.ControlLogicaProcesos
             string resultado = "0";
 
             var result1EE3 = from busqueda in pExtracto
-                             where busqueda.Substring(0, 4).Equals("1EE3") && !busqueda.Contains("Consumo Fijo Etb A Móvil|")
+                             where busqueda.Substring(0, 4).Equals("1EE3") && !busqueda.Contains("Consumo Fijo ETB a Móvil|")
                              select busqueda;
 
             if (result1EE3.Any())

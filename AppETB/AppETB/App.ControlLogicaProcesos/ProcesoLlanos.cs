@@ -18,8 +18,12 @@ namespace App.ControlLogicaProcesos
         #region Variables del proceso
         private string Cuenta { get; set; }
         private string Telefono { get; set; }
+        private string Nombre { get; set; }
+        private string Factura { get; set; }
+        private string NroFac { get; set; }
         private string NombreArchivo { get; set; }
         private string MesConsumo { get; set; }
+        private string IdCliente { get; set; }
         #endregion
 
         /// <summary>
@@ -287,11 +291,28 @@ namespace App.ControlLogicaProcesos
             {
                 resultado.AddRange(resultadoFormateoLinea);
             }
+
+            resultadoFormateoLinea = MapeoCanalCUFE(datosOriginales);
+
+            if (((IEnumerable<string>)resultadoFormateoLinea).Any())
+            {
+                resultado.AddRange(resultadoFormateoLinea);
+            }
+
+
+            resultadoFormateoLinea = FormateoCanal1IMP(datosOriginales);
+
+            if (((IEnumerable<string>)resultadoFormateoLinea).Any())
+            {
+                resultado.AddRange(resultadoFormateoLinea);
+            }
+
             #endregion
 
             return resultado;
             #endregion
         }
+
 
         #region Canales Logica
 
@@ -311,8 +332,10 @@ namespace App.ControlLogicaProcesos
             ListaCanal1AAA.Add("1AAA");
 
             camposllanos.Add(new CamposLLanos(11, "*p2000x190Y"));                                                  // numero_factura
+            Factura = Helpers.GetCampoLLanos(datosOriginales, 11, "*p2000x190Y");                                                  // numero_factura
             Cuenta = GetCuentaSinLetras(Helpers.GetCampoLLanos(datosOriginales, 11, "*p2000x190Y"));
             camposllanos.Add(new CamposLLanos(8, "*p30x80Y"));                                                      // nombre
+            Nombre = Helpers.GetCampoLLanos(datosOriginales, 8, "*p30x80Y");
             camposllanos.Add(new CamposLLanos(9, "*p30x110Y", TiposFormateo.Cadena01));                             // direccion1
             camposllanos.Add(new CamposLLanos(9, "*p30x140Y", TiposFormateo.Cadena01));                             // direccion2
             camposllanos.Add(new CamposLLanos(9, "*p30x170Y"));                                                     // cedula
@@ -354,6 +377,7 @@ namespace App.ControlLogicaProcesos
             ListaCanal1AAA.Add(NombreArchivo);                                                                      // Nombre Archivo
             ListaCanal1AAA.AddRange(GetEmail());                                                                    // EMaill, Dual, Prevalidador
             ListaCanal1AAA.Add("****tipo_salida****");                                                              // Tipo Salida
+            ListaCanal1AAA.AddRange(GetQR(Nombre));
 
             resultado = Helpers.ValidarPipePipe(Helpers.ListaCamposToLinea(ListaCanal1AAA, '|'));
             return resultado;
@@ -480,11 +504,12 @@ namespace App.ControlLogicaProcesos
         /// <returns></returns>
         private List<string> GetEmail()
         {
-            #region GetActividad
+            #region GetEmail
             List<string> resultado = new List<string>();
             bool IsDual = false;
             string insumoDual = Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoDualLlanos, $"{Telefono}");
             string insumoEmail = Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoDistribucionEmailLlanos, $"{Telefono}");
+            string insumoSMS = Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoLlanosEnvioSMS, $"{Telefono}");
 
             string tipoEmail = string.Empty;
             string email = string.Empty;
@@ -517,6 +542,11 @@ namespace App.ControlLogicaProcesos
                     }
                 }
                 else { tipoEmail = string.Empty; }
+            }
+
+            if (!string.IsNullOrEmpty(insumoSMS))
+            {
+                tipoEmail = "_SMS";
             }
 
             resultado.Add(email);
@@ -567,6 +597,25 @@ namespace App.ControlLogicaProcesos
             #endregion
         }
 
+        // <summary>
+        /// Metodo que Obtiene QR
+        /// </summary>
+        /// <returns></returns>
+        private List<string> GetQR(string pNombre)
+        {
+            #region GetLocBar
+            List<string> listaFacturaElectronica = new List<string>();
+
+            string url_qr = $"https://tracking.carvajalcomunicacion.com/wdelta/w/m/aa/?ack=H1" +
+                $"{Convert.ToBase64String(Encoding.UTF8.GetBytes(Telefono))}" +
+                $"H1" +
+                $"{Convert.ToBase64String(Encoding.UTF8.GetBytes(pNombre.Substring(0, 30).Trim()))}";
+
+            listaFacturaElectronica.Add(url_qr);
+
+            return listaFacturaElectronica;
+            #endregion
+        }
         /// <summary>
         /// Metodo que Obtiene VlrMinInt
         /// </summary>
@@ -589,6 +638,7 @@ namespace App.ControlLogicaProcesos
             return resultado;
             #endregion
         }
+
 
         /// <summary>
         /// Metodo de FormateoCanal1BBB
@@ -1243,7 +1293,7 @@ namespace App.ControlLogicaProcesos
                     pDiccionario1CPC.Add(llave, new List<string>() { GetCampoValor1CPC(linea.Substring(5).Trim()) });
                 }
 
-            } 
+            }
             #endregion
         }
 
@@ -1348,6 +1398,71 @@ namespace App.ControlLogicaProcesos
                 {
                     resultado.Add($"1LSP|{campos[2]}|{campos[3]} ");
                 }
+            }
+
+            return resultado;
+            #endregion
+        }
+
+
+        /// <summary>
+        /// Metodo que obtiene canal CUFE
+        /// </summary>
+        /// <param name="datosOriginales"></param>
+        /// <returns></returns>
+        public IEnumerable<string> MapeoCanalCUFE(List<string> datosOriginales)
+        {
+            #region Canal 1CUFE
+            List<string> resultado = new List<string>();
+            string LineaCUFE = string.Empty;
+            string valor = string.Empty;
+
+
+            LineaCUFE = "CUFE|";
+
+            string clave = Telefono + " LN" + Factura.Substring(1, 11).Trim();
+
+            if (Variables.Variables.DatosInsumoETBFacturaElectronica.ContainsKey(clave))
+            {
+                valor = Variables.Variables.DatosInsumoETBFacturaElectronica[clave];
+            }
+
+            if (string.IsNullOrEmpty(valor))
+            {
+                LineaCUFE = string.Empty;
+                NroFac = "0000000000";
+            }
+            else
+            {
+                LineaCUFE += valor + "| ";
+                resultado.Add(Helpers.ValidarPipePipe(LineaCUFE));
+
+                NroFac = LineaCUFE.Split('|').ElementAt(1);
+                NroFac = NroFac.Substring(13, 8);
+            }
+
+            return resultado;
+
+            #endregion
+        }
+
+
+        /// <summary>
+        /// Metodo de FormateoCanal1IMP
+        /// </summary>
+        /// <param name="datosOriginales"></param>
+        /// <returns></returns>
+        private IEnumerable<string> FormateoCanal1IMP(List<string> datosOriginales)
+        {
+            #region FormateoCanal1IMP
+            List<string> resultado = new List<string>();
+
+
+            List<string> linea1IMP = Helpers.GetValueInsumoLista(Variables.Variables.DatosInsumoLlanosImpuestos, NroFac);
+
+            foreach (var item in linea1IMP)
+            {
+                resultado.Add($"1IMP|{item}|");
             }
 
             return resultado;

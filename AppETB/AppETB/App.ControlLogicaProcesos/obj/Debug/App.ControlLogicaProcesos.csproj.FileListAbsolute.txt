@@ -127,3 +127,17 @@ U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\App.ControlLogi
 U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaProcesos.csproj.CopyComplete
 U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaProcesos.dll
 U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version29082023_2\AppETB_3\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaProcesos.pdb
+C:\Proyectos\ETB\AppETB19102023\AppETB\App.ControlLogicaProcesos\bin\Debug\App.ControlLogicaProcesos.xml
+C:\Proyectos\ETB\AppETB19102023\AppETB\App.ControlLogicaProcesos\bin\Debug\App.ControlLogicaProcesos.dll
+C:\Proyectos\ETB\AppETB19102023\AppETB\App.ControlLogicaProcesos\bin\Debug\App.ControlLogicaProcesos.pdb
+C:\Proyectos\ETB\AppETB19102023\AppETB\App.ControlLogicaProcesos\bin\Debug\App.ControlInsumos.dll
+C:\Proyectos\ETB\AppETB19102023\AppETB\App.ControlLogicaProcesos\bin\Debug\App.Variables.dll
+C:\Proyectos\ETB\AppETB19102023\AppETB\App.ControlLogicaProcesos\bin\Debug\SharpCompress.dll
+C:\Proyectos\ETB\AppETB19102023\AppETB\App.ControlLogicaProcesos\bin\Debug\Excel.dll
+C:\Proyectos\ETB\AppETB19102023\AppETB\App.ControlLogicaProcesos\bin\Debug\App.ControlInsumos.pdb
+C:\Proyectos\ETB\AppETB19102023\AppETB\App.ControlLogicaProcesos\bin\Debug\App.Variables.pdb
+C:\Proyectos\ETB\AppETB19102023\AppETB\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaProcesos.csproj.AssemblyReference.cache
+C:\Proyectos\ETB\AppETB19102023\AppETB\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaProcesos.csproj.CoreCompileInputs.cache
+C:\Proyectos\ETB\AppETB19102023\AppETB\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaProcesos.csproj.CopyComplete
+C:\Proyectos\ETB\AppETB19102023\AppETB\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaProcesos.dll
+C:\Proyectos\ETB\AppETB19102023\AppETB\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaProcesos.pdb

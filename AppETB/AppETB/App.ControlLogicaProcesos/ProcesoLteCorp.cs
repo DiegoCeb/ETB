@@ -2887,6 +2887,7 @@ namespace App.ControlLogicaProcesos
                                 string llaveDos = $"{lineaDetalle.Substring(6, 6)}";
                                 string valorLetra = string.Empty;
                                 descripcionConcepto = string.Empty;
+                                banderaExclusion = true;
 
                                 valorLetra = Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoParametrizacionPaquetesFibra, llaveUno);
 

@@ -103,6 +103,7 @@ namespace App.ControlLogicaProcesos
                     if (extractoCompleto)
                     {
                         llaveCruce = datosExtractoFormateo.ElementAt(1).Substring(117, 20).Trim();
+                        string llaveCruceFE = datosExtractoFormateo.ElementAt(1).Substring(117, 20).Trim() + " " + datosExtractoFormateo.ElementAt(1).Substring(139, 12).Trim().TrimStart('0');
 
                         #region Verificar si son de error LTE
                         if (IsLte || IsLteCorporativo)
@@ -136,7 +137,13 @@ namespace App.ControlLogicaProcesos
                         }
                         #endregion
 
-                        if (!string.IsNullOrEmpty(Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoCuentasExtraer, llaveCruce)) && !cuentaErrorLte)
+                        if (string.IsNullOrEmpty(Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoETBFacturaElectronica, llaveCruceFE)))
+                        {
+                            //Cuenta sin Cufe
+                            Variables.Variables.CuentasSinCufe.Add(llaveCruce, FormatearArchivo(llaveCruce, datosExtractoFormateo));
+                            datosExtractoFormateo.Clear();
+                        }
+                        else if (!string.IsNullOrEmpty(Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoCuentasExtraer, llaveCruce)))
                         {
                             //Cuenta Retenida
                             Variables.Variables.CuentasNoImprimir.Add(llaveCruce, FormatearArchivo(llaveCruce, datosExtractoFormateo));
@@ -165,8 +172,15 @@ namespace App.ControlLogicaProcesos
             if (datosExtractoFormateo.Count > 1)
             {
                 llaveCruce = datosExtractoFormateo.ElementAt(1).Substring(117, 20).Trim();
+                string llaveCruceFE = datosExtractoFormateo.ElementAt(1).Substring(117, 20).Trim() + " " + datosExtractoFormateo.ElementAt(1).Substring(139, 12).Trim().TrimStart('0');
 
-                if (!string.IsNullOrEmpty(Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoCuentasExtraer, llaveCruce)))
+                if (string.IsNullOrEmpty(Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoETBFacturaElectronica, llaveCruceFE)))
+                {
+                    //Cuenta sin Cufe
+                    Variables.Variables.CuentasSinCufe.Add(llaveCruce, FormatearArchivo(llaveCruce, datosExtractoFormateo));
+                    datosExtractoFormateo.Clear();
+                }
+                else if (!string.IsNullOrEmpty(Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoCuentasExtraer, llaveCruce)))
                 {
                     //Cuenta Retenida
                     Variables.Variables.CuentasNoImprimir.Add(llaveCruce, FormatearArchivo(llaveCruce, datosExtractoFormateo));
@@ -2885,6 +2899,7 @@ namespace App.ControlLogicaProcesos
                                 string llaveDos = $"{lineaDetalle.Substring(6, 6)}";
                                 string valorLetra = string.Empty;
                                 descripcionConcepto = string.Empty;
+                                banderaExclusion = false;
 
                                 valorLetra = Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoParametrizacionPaquetesFibra, llaveUno);
 
@@ -3305,11 +3320,6 @@ namespace App.ControlLogicaProcesos
 
                                 periodo = Helpers.GetFechaMasReciente(fechas.ToList());
 
-                                if (string.IsNullOrEmpty(periodo))
-                                {
-                                    periodo = "99999999-99999999";
-                                }
-
                                 string Corte = string.IsNullOrEmpty(datosPaqueteAgrupado.Key.Trim()) || !char.IsNumber(datosPaqueteAgrupado.Key.Trim().First()) ? "       " : datosPaqueteAgrupado.FirstOrDefault().Substring(128, 6).Trim();
 
                                 var fechasDesde = from busqueda in lineas11C
@@ -3324,6 +3334,14 @@ namespace App.ControlLogicaProcesos
 
                                 string FechaDesdeAntigua = Helpers.GetFechaMaximaMinima(fechasDesde.ToList(), 1);
                                 string FechaHastaReciente = Helpers.GetFechaMaximaMinima(fechasHasta.ToList(), 1);
+
+                                if (string.IsNullOrEmpty(periodo))
+                                {
+                                    periodo = "99999999-99999999";
+                                    FechaDesdeAntigua = "99999999";
+                                    FechaHastaReciente = "99999999";
+                                }
+
                                 #endregion
 
                                 string lineaAfi = Helpers.ValidarPipePipe($"1AFI|{Corte.Substring(0, 6).Trim()}|{nombrePaquete}|{Helpers.SumarCampos(sumaValoresBase)}|" +
@@ -5476,7 +5494,7 @@ namespace App.ControlLogicaProcesos
             {
                 byte mesFacturacion = Convert.ToByte(pFechaReferencia.Split('/').ElementAt(1));
 
-                if (pRestarMes && !IsLte)
+                if (pRestarMes /*&& !IsLte*/)
                 {
                     mesFacturacion--;
                 }

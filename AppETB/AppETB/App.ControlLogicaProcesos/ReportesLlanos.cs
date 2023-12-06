@@ -261,9 +261,9 @@ namespace App.ControlLogicaProcesos
                     tmp_recesp_nro_identificacion_cliente = tmp_recesp_nro_identificacion_cliente.PadLeft(10, ' ');
                     tmp_recesp_nombre_cliente = tmp_recesp_nombre_cliente.PadLeft(22, ' ');
                     tmp_recesp_codigo_entidad_financiera = tmp_recesp_codigo_entidad_financiera.PadLeft(3, '0');
-                    tmp_recesp_reserva = GetFechaPagoRecaudoEsperado(campos1AAA[10]).PadRight(24,' ');
+                    tmp_recesp_reserva = GetFechaPagoRecaudoEsperado(campos1AAA[10]).PadRight(24, ' ');
 
-                    llaveDiccionario = "LLA" + GetFechaPago(campos1AAA[16]) + "_01_"+ tmp_recesp_fecha_venc + ".as";
+                    llaveDiccionario = "LLA" + GetFechaPago(campos1AAA[16]) + "_01_" + tmp_recesp_fecha_venc + ".as";
 
                     #endregion
 
@@ -311,6 +311,14 @@ namespace App.ControlLogicaProcesos
             var result1BBA = from busqueda in pExtracto
                              where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("1BBA|")
                              select busqueda;
+
+            var resultCUFE = from busqueda in pExtracto
+                             where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("CUFE|")
+                             select busqueda;
+
+            var resultIMP = from busqueda in pExtracto
+                            where busqueda.Length > 5 && busqueda.Substring(0, 5).Equals("1IMP|") && busqueda.Substring(6, 5).Equals("28000")
+                            select busqueda;
             #endregion
 
             if (result1AAA.Any())
@@ -324,14 +332,36 @@ namespace App.ControlLogicaProcesos
                     campos1BBA = result1BBA.FirstOrDefault().Split('|');
                 }
 
+                string[] camposCUFE = null;
+                if (resultCUFE.Any())
+                {
+                    camposCUFE = resultCUFE.FirstOrDefault().Split('|');
+                }
+
+                string[] camposIMP = null;
+                if (resultIMP.Any())
+                {
+                    camposIMP = resultIMP.FirstOrDefault().Split('|');
+                }
+
                 camposLinea.Add(GetSinLetras(campos1AAA[27]).TrimStart('0')); // Consecutivo
                 camposLinea.Add(GetSinLetras(campos1AAA[1])); // Num_Factura
                 camposLinea.Add(campos1AAA[2]); // Nombre                
                 camposLinea.Add(campos1AAA[3]); // Dir_1
                 camposLinea.Add(campos1AAA[4]); // Dir_2
-                camposLinea.Add(GetSinLetras(campos1AAA[5])); // Identif
+
+                if (camposIMP != null && camposIMP.Length > 10)
+                {
+                    camposLinea.Add(camposIMP[1].Substring(25, 30).Trim()); // Identif desde Insumo
+                }
+                else
+                {
+                    camposLinea.Add(GetSinLetras(campos1AAA[5])); // Identif dese Plano
+                }
+
                 camposLinea.Add(campos1AAA[6]); // Telefono
                 camposLinea.Add(GetValorPagar(campos1AAA[8])); // Valor Pagar
+
                 if (campos1BBA != null && campos1BBA.Length > 10)
                 {
                     camposLinea.Add(campos1BBA[10]); // Zona_Sector_Manzana
@@ -340,7 +370,7 @@ namespace App.ControlLogicaProcesos
                 {
                     camposLinea.Add(string.Empty); // Zona_Sector_Manzana
                 }
-                
+
                 camposLinea.Add($"{campos1AAA[11]}-{campos1AAA[25]}"); // Zona_Postal
                 camposLinea.Add(campos1AAA[14]); // Estrato
                 camposLinea.Add(campos1AAA[15]); // Mes_Deuda
@@ -349,16 +379,27 @@ namespace App.ControlLogicaProcesos
                 camposLinea.Add(string.Empty); // Inserto
                 camposLinea.Add(GetDiferencia(pExtracto, campos1AAA[8])); // Diferencia
                 camposLinea.Add(campos1AAA[22]);  // Cupon
-                camposLinea.Add(campos1AAA[24].Substring(20,12)); // Referencia Pago
+                camposLinea.Add(campos1AAA[24].Substring(20, 12)); // Referencia Pago
                 camposLinea.Add(campos1AAA[30]); // Tipo Email
                 camposLinea.Add(campos1AAA[31]); // Email
                 camposLinea.Add(GetCodSuscriptor(campos1AAA[2])); // ID_SUSCRIPTOR
                 camposLinea.Add(GetTipoEnvio(campos1AAA[6])); // ID_SUSCRIPTOR
 
+                if (camposCUFE != null)
+                {
+                    camposLinea.Add(camposCUFE[2]); // CUFE
+                    camposLinea.Add(camposCUFE[3]); // QR
+                }
+                else
+                {
+                    camposLinea.Add(string.Empty); // CUFE
+                    camposLinea.Add(string.Empty); // QR
+                }
+
                 linea = Helpers.ListaCamposToLinea(camposLinea, '|').Replace('\t', ' ');
                 periodo = GetFechaPeriodo(campos1AAA[9]);
 
-                lineaMaestra = new LineaMaestra(periodo, Helpers.GetTextoSinTildes(linea));
+                lineaMaestra = new LineaMaestra(periodo, linea);
             }
 
             return lineaMaestra;
@@ -418,7 +459,7 @@ namespace App.ControlLogicaProcesos
         {
             #region GetValorPagar
 
-            string result = pCampo.Substring(0, pCampo.IndexOf(".")).Replace("$","").Replace(",","").Replace(".","");
+            string result = pCampo.Substring(0, pCampo.IndexOf(".")).Replace("$", "").Replace(",", "").Replace(".", "");
             return result.Trim();
             #endregion
         }
@@ -561,7 +602,7 @@ namespace App.ControlLogicaProcesos
                 result = "Sin Diferencia";
             }
 
-            return result; 
+            return result;
             #endregion
         }
 
@@ -653,7 +694,7 @@ namespace App.ControlLogicaProcesos
 
             if (!File.Exists(rutaReportes))
             {
-                resultado.Add("Consec.|Num_Factura|Nombre|Dir_1|Dir_2|Identif.|Telefono|Valor Pagar|Zona_Sector_Manzana|Zona_Postal|Estrato|Mes_Deuda|Fecha_Pago|Fecha_Exp|Inserto|Diferencia|Cupon|Referencia Pago|Tipo Email|Email|ID_SUSCRIPTOR|salida");
+                resultado.Add("Consec.|Num_Factura|Nombre|Dir_1|Dir_2|Identif.|Telefono|Valor Pagar|Zona_Sector_Manzana|Zona_Postal|Estrato|Mes_Deuda|Fecha_Pago|Fecha_Exp|Inserto|Diferencia|Cupon|Referencia Pago|Tipo Email|Email|ID_SUSCRIPTOR|salida|CUFE|QR");
             }
 
             foreach (LineaMaestra linea in pDatosImprimir)

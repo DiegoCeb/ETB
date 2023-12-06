@@ -1225,6 +1225,7 @@
             <param name="datosOriginales"></param>
             <returns></returns>
         </member>
+        <!-- Badly formed XML comment ignored for member "M:App.ControlLogicaProcesos.ProcesoLlanos.GetQR(System.String)" -->
         <member name="M:App.ControlLogicaProcesos.ProcesoLlanos.GetVlrMinInt(System.String,System.String)">
             <summary>
             Metodo que Obtiene VlrMinInt
@@ -1334,6 +1335,20 @@
         <member name="M:App.ControlLogicaProcesos.ProcesoLlanos.FormateoCanal1LSP(System.Collections.Generic.List{System.String})">
             <summary>
             Metodo de FormateoCanal1LSP
+            </summary>
+            <param name="datosOriginales"></param>
+            <returns></returns>
+        </member>
+        <member name="M:App.ControlLogicaProcesos.ProcesoLlanos.MapeoCanalCUFE(System.Collections.Generic.List{System.String})">
+            <summary>
+            Metodo que obtiene canal CUFE
+            </summary>
+            <param name="datosOriginales"></param>
+            <returns></returns>
+        </member>
+        <member name="M:App.ControlLogicaProcesos.ProcesoLlanos.FormateoCanal1IMP(System.Collections.Generic.List{System.String})">
+            <summary>
+            Metodo de FormateoCanal1IMP
             </summary>
             <param name="datosOriginales"></param>
             <returns></returns>

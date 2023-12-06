@@ -2976,7 +2976,8 @@ namespace App.ControlLogicaProcesos
                                 select busqueda;
 
             var result02T9 = from busqueda in datosOriginales
-                             where busqueda.Length > 3 && busqueda.Substring(0, 4).Equals("02T9") && !busqueda.Substring(0, 6).Equals("02T942")
+                             where busqueda.Length > 3 && busqueda.Substring(0, 4).Equals("02T9") && !busqueda.Substring(6, 42).Equals(" 0000000000000 0000000000000 0000000000000") &&
+                             !busqueda.Substring(0, 6).Equals("02T942") 
                              select busqueda;
             #endregion
 

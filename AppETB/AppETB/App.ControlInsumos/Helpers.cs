@@ -1250,6 +1250,49 @@ namespace App.ControlInsumos
         /// 
         /// </summary>
         /// <param name="pDatosInsumo"></param>
+        public static void GetETBImpuestosLlanos(List<string> pDatosInsumo)
+        {
+            #region GetETBImpuestosLlanos
+            string pllaveCruce = "";
+            foreach (var datoLinea in pDatosInsumo)
+            {
+                switch (datoLinea.Substring(0, 5))
+                {
+                    case "28000":
+                        pllaveCruce = datoLinea.Substring(57, 8);
+                        break;
+                    case "29000":
+                        pllaveCruce = datoLinea.Substring(51, 8);
+                        break;
+                    case "30003":
+                        pllaveCruce = datoLinea.Substring(34, 8);
+                        break;
+                    case "30004":
+                        pllaveCruce = datoLinea.Substring(34, 8);
+                        break;
+                    default:
+                        break;
+                }
+
+                string llaveCruce = pllaveCruce;
+
+                if (Variables.Variables.DatosInsumoLlanosImpuestos.ContainsKey(llaveCruce))
+                {
+                    Variables.Variables.DatosInsumoLlanosImpuestos[llaveCruce].Add(datoLinea);
+                }
+                else
+                {
+                    Variables.Variables.DatosInsumoLlanosImpuestos.Add(llaveCruce, new List<string> { datoLinea });
+                }
+            }
+
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pDatosInsumo"></param>
         public static void GetDualLlanos(List<string> pDatosInsumo)
         {
             #region GetDualLlanos
@@ -1822,15 +1865,15 @@ namespace App.ControlInsumos
                         return "99";
                     }
 
-                    dicMeses.Add("01", "Ene");
-                    dicMeses.Add("02", "Feb");
-                    dicMeses.Add("03", "Mar");
-                    dicMeses.Add("04", "Abr");
-                    dicMeses.Add("05", "May");
-                    dicMeses.Add("06", "Jun");
-                    dicMeses.Add("07", "Jul");
-                    dicMeses.Add("08", "Ago");
-                    dicMeses.Add("09", "Sep");
+                    dicMeses.Add("1", "Ene");
+                    dicMeses.Add("2", "Feb");
+                    dicMeses.Add("3", "Mar");
+                    dicMeses.Add("4", "Abr");
+                    dicMeses.Add("5", "May");
+                    dicMeses.Add("6", "Jun");
+                    dicMeses.Add("7", "Jul");
+                    dicMeses.Add("8", "Ago");
+                    dicMeses.Add("9", "Sep");
                     dicMeses.Add("10", "Oct");
                     dicMeses.Add("11", "Nov");
                     dicMeses.Add("12", "Dic");
@@ -1839,7 +1882,7 @@ namespace App.ControlInsumos
                     dia = pCampo.Substring(2, 2);
                     Mes = dicMeses[pCampo.Substring(0, 2)];
 
-                    return string.Format("{0} {1}", dia, Mes);
+                    return string.Format("{0} {1}", dia.TrimStart('0'), Mes);
 
                 case "05":
                     return string.Format("{0}{1}", pCampo.Substring(2, 4), pCampo.Substring(0, 2));
