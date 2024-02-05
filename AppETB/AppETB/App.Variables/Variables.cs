@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.IO;
 
 namespace App.Variables
@@ -73,7 +74,7 @@ namespace App.Variables
         public static Dictionary<string, string> DatosInsumoLlanosMinPlan = new Dictionary<string, string>();
         public static Dictionary<string, List<string>> DatosInsumoLlanosSuple = new Dictionary<string, List<string>>();
         public static Dictionary<string, List<string>> DatosInsumoLlanosImpuestos = new Dictionary<string, List<string>>();
-
+        public static Dictionary<string, string> DatosSalidaOtros = new Dictionary<string, string>();
         public static Dictionary<string, string> DatosAuxAnexosVerdes = new Dictionary<string, string>();
         public static Dictionary<string, string> DatosCartasHipotecario = new Dictionary<string, string>();
 

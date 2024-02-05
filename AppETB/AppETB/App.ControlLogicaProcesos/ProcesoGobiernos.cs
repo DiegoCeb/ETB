@@ -247,7 +247,7 @@ namespace App.ControlLogicaProcesos
                     resultado.Add(resultadoFormateoLinea);
                 }
 
-                resultadoFormateoLinea = FormateoCanal1CCD(datosOriginales);
+                resultadoFormateoLinea = FormateoCanal1CCD(datosOriginales, FormateoCanal1CST(datosOriginales));
 
                 if (((IEnumerable<string>)resultadoFormateoLinea).Any())
                 {
@@ -2953,7 +2953,7 @@ namespace App.ControlLogicaProcesos
         /// </summary>
         /// <param name="datosOriginales"></param>
         /// <returns></returns>
-        private IEnumerable<string> FormateoCanal1CCD(List<string> datosOriginales)
+        private IEnumerable<string> FormateoCanal1CCD(List<string> datosOriginales, string pLineaCST)
         {
             #region FormateoCanal1CCD
 
@@ -2977,7 +2977,7 @@ namespace App.ControlLogicaProcesos
 
             var result02T9 = from busqueda in datosOriginales
                              where busqueda.Length > 3 && busqueda.Substring(0, 4).Equals("02T9") && !busqueda.Substring(6, 42).Equals(" 0000000000000 0000000000000 0000000000000") &&
-                             !busqueda.Substring(0, 6).Equals("02T942") 
+                             !busqueda.Substring(0, 6).Equals("02T942")
                              select busqueda;
             #endregion
 
@@ -3032,7 +3032,7 @@ namespace App.ControlLogicaProcesos
             string llaveAgrupacion = string.Empty;
             string llaveDoc = string.Empty;
             string ValorDoc = string.Empty;
-            string llaveProductoInicio = string.Empty; 
+            string llaveProductoInicio = string.Empty;
 
             #region Agrupar 11C y 13M
             foreach (var lineaActual in dataProcesar)
@@ -3069,7 +3069,7 @@ namespace App.ControlLogicaProcesos
                     {
                         cruceTemp = new List<string>();
                     }
-                    else if(Variables.Variables.DatosInsumoTablaSustitucion.ContainsKey("CODF" + llaveDoc))
+                    else if (Variables.Variables.DatosInsumoTablaSustitucion.ContainsKey("CODF" + llaveDoc))
                     {
                         var conceptoValidacion = Variables.Variables.DatosInsumoTablaSustitucion["CODF" + llaveDoc][0].Substring(11).Trim();
 
@@ -3330,7 +3330,7 @@ namespace App.ControlLogicaProcesos
 
                     if (Variables.Variables.DatosInsumoTablaSustitucion.ContainsKey("CODF" + lineaProcesar.Substring(6, 10)))
                     {
-                       var nuevoConcepto = Variables.Variables.DatosInsumoTablaSustitucion["CODF" + lineaProcesar.Substring(6, 10)][0].Substring(15).Trim();
+                        var nuevoConcepto = Variables.Variables.DatosInsumoTablaSustitucion["CODF" + lineaProcesar.Substring(6, 10)][0].Substring(15).Trim();
 
                         if (nuevoConcepto.Contains("Revertido"))
                         {
@@ -3504,7 +3504,41 @@ namespace App.ControlLogicaProcesos
                 resultadoTemp += Helpers.SumarCampos(sumarCamposAux, "D") + "|";
                 sumarCamposAux.Clear();
 
-                resultadoTemp += Helpers.SumarCampos(dicValores["SUBTOTAL"], "D") + "|";
+                #region Segmento que corrige cuando hace falta uan decima en algun valor del subtotal
+                var valoresCST = pLineaCST.Split('|');
+                bool valorIgual = false;
+                Dictionary<string, string> valoresParecidos = new Dictionary<string, string>();
+                string valorSumaActual = Helpers.SumarCampos(dicValores["SUBTOTAL"], "D");
+
+                foreach (var valorOriginal in valoresCST)
+                {
+                    if (valorSumaActual == valorOriginal)
+                    {
+                        valorIgual = true;
+                        break;
+                    }
+                    else if (valorOriginal.Contains(valorSumaActual.Substring(0, valorSumaActual.Length - 1)) && valorOriginal.StartsWith("$"))
+                    {
+                        valoresParecidos.Add(valorSumaActual, valorOriginal);
+                        break;
+                    }
+                }
+                #endregion
+
+                if (valorIgual)
+                {
+                    resultadoTemp += Helpers.SumarCampos(dicValores["SUBTOTAL"], "D") + "|";
+                }
+                else if (valoresParecidos.Any())
+                {
+                    string valorFinal = valoresParecidos[Helpers.SumarCampos(dicValores["SUBTOTAL"], "D")];
+                    resultadoTemp += valorFinal + "|";
+                    resultadoTemp = resultadoTemp.Replace((valoresParecidos.FirstOrDefault(x => x.Value == valorFinal).Key).Trim(), valorFinal);
+                }
+                else
+                {
+                    resultadoTemp += Helpers.SumarCampos(dicValores["SUBTOTAL"], "D") + "|";
+                }
 
                 if (Helpers.SumarCampos(dicValores["IVA"], "D").Substring(0, 1) == "-")
                 {
@@ -3521,7 +3555,25 @@ namespace App.ControlLogicaProcesos
 
                 resultadoTemp += Helpers.SumarCampos(dicValores["IMPUESTOS"], "D") + "|";
 
-                resultadoTemp += Helpers.SumarCampos(dicValores["TOTAL"], "D") + "| ";
+                #region Verificar valores total para cuando les falta una decima
+
+                Dictionary<string, string> valoresSubTotal = new Dictionary<string, string>();
+
+                int longitud = resultadoTemp.Split('|').Length;
+
+                valoresSubTotal.Add(resultadoTemp.Split('|').ElementAt(longitud - 4).Replace(",", string.Empty).Replace(".", string.Empty).Replace("$", string.Empty).Trim(), string.Empty);
+                valoresSubTotal.Add(resultadoTemp.Split('|').ElementAt(longitud - 3).Replace(",", string.Empty).Replace(".", string.Empty).Replace("$", string.Empty).Trim(), string.Empty);
+
+                if (Helpers.SumarCampos(dicValores["TOTAL"], "D") == Helpers.SumarCampos(new List<string>(valoresSubTotal.Keys), "D"))
+                {
+                    resultadoTemp += Helpers.SumarCampos(dicValores["TOTAL"], "D") + "| ";
+                }
+                else
+                {
+                    resultadoTemp += Helpers.SumarCampos(new List<string>(valoresSubTotal.Keys), "D") + "| ";
+                }
+
+                #endregion
 
                 // Se valida si esta vacio el concepto para no pintarlo
                 if (!Helpers.ValidarPipePipe(resultadoTemp).Replace("$ 0.00", "-").Contains("|-|-|-|-|-|-|-|-|-|-|-|"))
@@ -3531,8 +3583,6 @@ namespace App.ControlLogicaProcesos
                         resultado.Add(Helpers.ValidarPipePipe(resultadoTemp).Replace("$ 0.00", "-"));
                     }
                 }
-
-
 
                 #endregion
 
@@ -4165,7 +4215,7 @@ namespace App.ControlLogicaProcesos
             }
 
             return Helpers.ValidarPipePipe($"ADN1|{pLineaDetalle.Key}|{GetTipo(pLineaDetalle.Key)}|{linea040000.FirstOrDefault().Substring(76, 30).Trim()}|" +
-                $"{planMinutos}|{valor090000}| | "); 
+                $"{planMinutos}|{valor090000}| | ");
             #endregion
         }
 

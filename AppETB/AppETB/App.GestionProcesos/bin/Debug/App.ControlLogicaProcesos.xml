@@ -988,7 +988,7 @@
             <param name="datosOriginales"></param>
             <returns></returns>
         </member>
-        <member name="M:App.ControlLogicaProcesos.ProcesoGobiernos.FormateoCanal1CCD(System.Collections.Generic.List{System.String})">
+        <member name="M:App.ControlLogicaProcesos.ProcesoGobiernos.FormateoCanal1CCD(System.Collections.Generic.List{System.String},System.String)">
             <summary>
             Metodo de FormateoCanal1CCD
             </summary>

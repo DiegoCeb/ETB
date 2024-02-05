@@ -1883,8 +1883,8 @@ namespace App.ControlLogicaProcesos
 
                     if (listaFechaInicio.Count != 0 && listaFechaFin.Count != 0)
                     {
-                        fechaInicio = Helpers.GetFechaMaximaMinima(listaFechaInicio, 1);
-                        fechaFin = Helpers.GetFechaMaximaMinima(listaFechaFin, 1);
+                        fechaInicio = Helpers.GetFechaMaximaMinima(listaFechaInicio, 2);
+                        fechaFin = Helpers.GetFechaMaximaMinima(listaFechaFin, 2);
                     }
                     else
                     {
