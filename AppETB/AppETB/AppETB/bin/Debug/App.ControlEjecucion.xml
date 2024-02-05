@@ -142,6 +142,14 @@
             <param name="pRuta"></param>
             <param name="pNombreArchivo"></param>
         </member>
+        <member name="M:App.ControlEjecucion.Procesamiento.ProcesarSalidasLlanos(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.Collections.Generic.List{System.String}}},System.String,System.String,System.String,System.Boolean,System.String)">
+            <summary>
+            Metodo que Procesa Salidas para Llanos
+            </summary>
+            <param name="pDatos"></param>
+            <param name="pRuta"></param>
+            <param name="pNombreArchivo"></param>
+        </member>
         <member name="M:App.ControlEjecucion.Procesamiento.EscribirDatosSalidaDistribucionEspecial(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.String,System.String,System.String,System.String)">
             <summary>
             Metodo que Escribe Datos Salida Distribucion Especial

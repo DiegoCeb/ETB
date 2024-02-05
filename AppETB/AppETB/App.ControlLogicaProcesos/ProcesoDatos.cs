@@ -1171,7 +1171,7 @@ namespace App.ControlLogicaProcesos
             {
                 string[] camposEmail = lineaEmail.Split('|');
 
-                if (camposEmail.Length > 5)
+                if (camposEmail.Length > 1)
                 {
                     for (int i = 1; i < camposEmail.Length - 1; i++)
                     {

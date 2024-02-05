@@ -102,8 +102,16 @@ namespace App.ControlLogicaProcesos
                     if (extractoCompleto)
                     {
                         llaveCruce = datosExtractoFormateo.ElementAt(1).Substring(117, 20).Trim();
+                        string llaveCruceFE = datosExtractoFormateo.ElementAt(1).Substring(117, 20).Trim() + " " + datosExtractoFormateo.ElementAt(1).Substring(139, 12).Trim().TrimStart('0');
 
-                        if (!string.IsNullOrEmpty(Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoCuentasExtraer, llaveCruce)))
+
+                        if (string.IsNullOrEmpty(Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoETBFacturaElectronica, llaveCruceFE)))
+                        {
+                            //Cuenta sin Cufe
+                            Variables.Variables.CuentasSinCufe.Add(llaveCruce, FormatearArchivo(llaveCruce, datosExtractoFormateo));
+                            datosExtractoFormateo.Clear();
+                        }
+                        else if (!string.IsNullOrEmpty(Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoCuentasExtraer, llaveCruce)))
                         {
                             //Cuenta Retenida
                             Variables.Variables.CuentasNoImprimir.Add(llaveCruce, FormatearArchivo(llaveCruce, datosExtractoFormateo));

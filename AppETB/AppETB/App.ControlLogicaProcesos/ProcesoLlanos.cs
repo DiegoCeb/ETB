@@ -334,6 +334,7 @@ namespace App.ControlLogicaProcesos
             camposllanos.Add(new CamposLLanos(11, "*p2000x190Y"));                                                  // numero_factura
             Factura = Helpers.GetCampoLLanos(datosOriginales, 11, "*p2000x190Y");                                                  // numero_factura
             Cuenta = GetCuentaSinLetras(Helpers.GetCampoLLanos(datosOriginales, 11, "*p2000x190Y"));
+
             camposllanos.Add(new CamposLLanos(8, "*p30x80Y"));                                                      // nombre
             Nombre = Helpers.GetCampoLLanos(datosOriginales, 8, "*p30x80Y");
             camposllanos.Add(new CamposLLanos(9, "*p30x110Y", TiposFormateo.Cadena01));                             // direccion1
@@ -430,6 +431,10 @@ namespace App.ControlLogicaProcesos
                     }
                 }
 
+                if (resultado == "")
+                {
+                    resultado = "----------------";
+                }
             }
 
             return resultado;

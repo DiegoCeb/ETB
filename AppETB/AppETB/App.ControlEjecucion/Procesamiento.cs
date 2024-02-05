@@ -867,7 +867,7 @@ namespace App.ControlEjecucion
 
                     if (objDatos.Any())
                     {
-                        ProcesarSalidas(objDatos, pRuta, pNombreArchivo, pLote, true, "_SMS*");
+                        ProcesarSalidasLlanos(objDatos, pRuta, pNombreArchivo, pLote, true, "_SMS*");
                     }
                     break;
             }
@@ -997,7 +997,7 @@ namespace App.ControlEjecucion
 
                     if (objDatos.Any())
                     {
-                        ProcesarSalidas(objDatos, pRuta, pNombreArchivo, pLote);
+                        ProcesarSalidasLlanos(objDatos, pRuta, pNombreArchivo, pLote);
                     }
                     break;
             }
@@ -1054,6 +1054,70 @@ namespace App.ControlEjecucion
                     else
                     {
                         resultado.Add(linea.Replace(linea.Split('|').ElementAt(1), nuevoConsecutivo));
+                        continue;
+                    }
+
+                }
+
+                resultado.Add(linea);
+            }
+
+            Helpers.EscribirEnArchivo(archivoActual, resultado);
+            //Helpers.EscribirEnArchivo($"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}_{consecutivoInternoArchivo.ToString().PadLeft(3, '0')}.sal", resultado);
+
+            resultado.Clear();
+            #endregion
+        }
+
+        /// <summary>
+        /// Metodo que Procesa Salidas para Llanos
+        /// </summary>
+        /// <param name="pDatos"></param>
+        /// <param name="pRuta"></param>
+        /// <param name="pNombreArchivo"></param>
+        private void ProcesarSalidasLlanos(IEnumerable<KeyValuePair<string, List<string>>> pDatos, string pRuta, string pNombreArchivo, string pLote, bool pReemplazarMarcaSalida = false, string pMarcaReemplazo = "")
+        {
+            #region ProcesarSalidasLlanos
+            List<string> resultado = new List<string>();
+            int consecutivoInternoDivision = 0;
+            int consecutivoInternoArchivo = 1;
+            string cuenta = string.Empty;
+            string archivoActual = string.Empty;
+
+            foreach (var linea in pDatos.SelectMany(x => x.Value))
+            {
+                if (linea.Substring(0, 4) == "1AAA")
+                {
+                    consecutivoInternoDivision++;
+                    cuenta = linea.Split('|')[7].Trim();
+                    archivoActual = $"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}_{consecutivoInternoArchivo.ToString().PadLeft(3, '0')}.sal";
+
+                    // Se agrega la cuenta en el archivo final                                
+                    if (!Variables.Variables.ArchivoSalidaFinal.ContainsKey(cuenta))
+                        Variables.Variables.ArchivoSalidaFinal.Add(cuenta, archivoActual);
+
+                    if (consecutivoInternoDivision == 8001)
+                    {
+                        //Helpers.EscribirEnArchivo($"{pRuta}\\{Path.GetFileNameWithoutExtension(pNombreArchivo)}_{consecutivoInternoArchivo.ToString().PadLeft(3, '0')}.sal", resultado);
+                        Helpers.EscribirEnArchivo(archivoActual, resultado);
+                        consecutivoInternoArchivo++;
+                        consecutivoInternoDivision = 1;
+                        resultado.Clear();
+                    }
+
+                    string nuevoConsecutivo = $"{pLote}_{_consecutivoUnico.ToString().PadLeft(6, '0')}";
+                    _consecutivoUnico++;
+                    if (!Variables.Variables.ConsecutivosOrden.ContainsKey(cuenta))
+                        Variables.Variables.ConsecutivosOrden.Add(cuenta, nuevoConsecutivo);
+
+                    if (pReemplazarMarcaSalida)
+                    {
+                        resultado.Add(linea.Replace("****tipo_salida****", pMarcaReemplazo).Replace(linea.Split('|').ElementAt(11), nuevoConsecutivo));
+                        continue;
+                    }
+                    else
+                    {
+                        resultado.Add(linea.Replace(linea.Split('|').ElementAt(11), nuevoConsecutivo));
                         continue;
                     }
 
@@ -1339,7 +1403,8 @@ namespace App.ControlEjecucion
                                        !Variables.Variables.DatosErrorLTE.ContainsKey(busqueda.Key) &&
                                        !Variables.Variables.Diferencias.ContainsKey(busqueda.Key) &&
                                        !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
-                                       !Variables.Variables.DatosInsumoProcuni.ContainsKey(busqueda.Key)
+                                       !Variables.Variables.DatosInsumoProcuni.ContainsKey(busqueda.Key) &&
+                                       !Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key)
                                        select busqueda).ToDictionary(x => x.Key).Values);
 
                     if (objDatos.Any())
@@ -1357,7 +1422,7 @@ namespace App.ControlEjecucion
                                 !Variables.Variables.NumHojas.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.DatosInsumoClientesEspecialesDatos.ContainsKey($"{busqueda.Key}-{busqueda.Value.FirstOrDefault().Split('|').ElementAt(9)}") &&
                                 !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
-                                !Variables.Variables.DatosInsumoProcuni.ContainsKey(busqueda.Key)
+                                !Variables.Variables.DatosInsumoProcuni.ContainsKey(busqueda.Key) 
                                 select busqueda).ToDictionary(x => x.Key).Values.ToList();
 
                     objDatos.AddRange((from busqueda in pDatosImprimir
@@ -1368,7 +1433,8 @@ namespace App.ControlEjecucion
                                        !Variables.Variables.NumHojas.ContainsKey(busqueda.Key) &&
                                        !Variables.Variables.DatosInsumoClientesEspecialesDatos.ContainsKey($"{busqueda.Key}-{busqueda.Value.FirstOrDefault().Split('|').ElementAt(9)}") &&
                                        !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
-                                       !Variables.Variables.DatosInsumoProcuni.ContainsKey(busqueda.Key)
+                                       !Variables.Variables.DatosInsumoProcuni.ContainsKey(busqueda.Key) &&
+                                       !Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key)
                                        select busqueda).ToDictionary(x => x.Key).Values.ToList());
 
                     if (objDatos.Any())
@@ -1395,7 +1461,8 @@ namespace App.ControlEjecucion
                                        !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
                                        !Variables.Variables.NumHojas.ContainsKey(busqueda.Key) &&
                                        !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
-                                       !Variables.Variables.DatosInsumoProcuni.ContainsKey(busqueda.Key)
+                                       !Variables.Variables.DatosInsumoProcuni.ContainsKey(busqueda.Key) &&
+                                       !Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key)
                                        select busqueda).ToDictionary(x => x.Key).Values.ToList());
 
                     if (objDatos.Any())
@@ -1624,6 +1691,7 @@ namespace App.ControlEjecucion
                                 let cuenta = busqueda.Value.FirstOrDefault().Split('|').ElementAt(7)
                                 let factura = busqueda.Value.FirstOrDefault().Split('|').ElementAt(8).TrimStart('0')
                                 where Variables.Variables.DiccionarioDual.ContainsKey(busqueda.Key) &&
+                                Variables.Variables.DatosInsumoDistribucionEmailRevchain.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.CuentasNoImprimir.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.NumHojas.ContainsKey(busqueda.Key) &&
                                 !Variables.Variables.DatosInsumoDistribucionEspecial.ContainsKey(busqueda.Key) &&
@@ -1801,7 +1869,7 @@ namespace App.ControlEjecucion
                     }
                 }
 
-                Variables.Variables.DiccionarioExtractosFormateados[cuenta][0] = Variables.Variables.DiccionarioExtractosFormateados[cuenta][0].Replace(Variables.Variables.DiccionarioExtractosFormateados[cuenta][0].Split('|').ElementAt(1), nuevoConsecutivo);
+                Variables.Variables.DiccionarioExtractosFormateados[cuenta][0] = Variables.Variables.DiccionarioExtractosFormateados[cuenta][0].Replace(Variables.Variables.DiccionarioExtractosFormateados[cuenta][0].Split('|').ElementAt(11), nuevoConsecutivo);
 
                 resultado.AddRange(datoCuenta.Value);
 

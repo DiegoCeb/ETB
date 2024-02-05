@@ -1010,7 +1010,7 @@ namespace App.ControlLogicaProcesos
             {
                 nombreArchivo = Path.GetFileNameWithoutExtension(Variables.Variables.ArchivoSalidaFinal[cuenta]);
 
-                if (!nombreArchivo.Contains("OTROS") && !nombreArchivo.Contains("ESPECIAL") && !nombreArchivo.Contains("DIFEREN"))
+                if (!nombreArchivo.Contains("OTROS") && !nombreArchivo.Contains("ESPECIAL") && !nombreArchivo.Contains("DIFEREN") && !nombreArchivo.Contains("NUMH"))
                 {
                     nombreArchivo = nombreArchivo.Substring(0, nombreArchivo.Length - 4);
                 }

@@ -79,3 +79,12 @@ C:\Proyectos\ETB\AppETB19102023\AppETB\App.ControlInsumos\obj\Debug\App.ControlI
 C:\Proyectos\ETB\AppETB19102023\AppETB\App.ControlInsumos\obj\Debug\App.ControlInsumos.csproj.CopyComplete
 C:\Proyectos\ETB\AppETB19102023\AppETB\App.ControlInsumos\obj\Debug\App.ControlInsumos.dll
 C:\Proyectos\ETB\AppETB19102023\AppETB\App.ControlInsumos\obj\Debug\App.ControlInsumos.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version09012023\AppETB\App.ControlInsumos\bin\Debug\App.ControlInsumos.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version09012023\AppETB\App.ControlInsumos\bin\Debug\App.ControlInsumos.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version09012023\AppETB\App.ControlInsumos\bin\Debug\App.Variables.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version09012023\AppETB\App.ControlInsumos\bin\Debug\App.Variables.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version09012023\AppETB\App.ControlInsumos\obj\Debug\App.ControlInsumos.csproj.AssemblyReference.cache
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version09012023\AppETB\App.ControlInsumos\obj\Debug\App.ControlInsumos.csproj.CoreCompileInputs.cache
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version09012023\AppETB\App.ControlInsumos\obj\Debug\App.ControlInsumos.csproj.CopyComplete
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version09012023\AppETB\App.ControlInsumos\obj\Debug\App.ControlInsumos.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version09012023\AppETB\App.ControlInsumos\obj\Debug\App.ControlInsumos.pdb

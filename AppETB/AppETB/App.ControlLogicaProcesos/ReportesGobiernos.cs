@@ -96,6 +96,13 @@ namespace App.ControlLogicaProcesos
                     DiccionarioExtractosReporte.Add(keyNoImprimir, new List<string>(Variables.Variables.CuentasNoImprimir[keyNoImprimir]));
             }
 
+            // Agrego los datos de SIN CUFE
+            foreach (var keySinCufe in Variables.Variables.CuentasSinCufe.Keys)
+            {
+                if (!DiccionarioExtractosReporte.ContainsKey(keySinCufe))
+                    DiccionarioExtractosReporte.Add(keySinCufe, new List<string>(Variables.Variables.CuentasSinCufe[keySinCufe]));
+            }
+
             // Agrego los datos de ErrorLTE
             foreach (var keyErrorLTE in Variables.Variables.DatosErrorLTE.Keys)
             {
@@ -963,7 +970,7 @@ namespace App.ControlLogicaProcesos
             {
                 nombreArchivo = Path.GetFileNameWithoutExtension(Variables.Variables.ArchivoSalidaFinal[cuenta]);
 
-                if (!nombreArchivo.Contains("OTROS"))
+                if (!nombreArchivo.Contains("OTROS") && !nombreArchivo.Contains("ESPECIAL") && !nombreArchivo.Contains("DIFEREN") && !nombreArchivo.Contains("NUMH"))
                 {
                     nombreArchivo = nombreArchivo.Substring(0, nombreArchivo.Length - 4);
                 }

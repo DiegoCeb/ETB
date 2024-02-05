@@ -94,8 +94,16 @@ namespace App.ControlLogicaProcesos
                     if (extractoCompleto)
                     {
                         llaveCruce = datosExtractoFormateo.ElementAt(1).Substring(117, 20).Trim();
+                        string llaveCruceFE = datosExtractoFormateo.ElementAt(1).Substring(117, 20).Trim() + " " + datosExtractoFormateo.ElementAt(1).Substring(139, 12).Trim().TrimStart('0');
 
-                        if (!string.IsNullOrEmpty(Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoCuentasExtraer, llaveCruce)))
+
+                        if (string.IsNullOrEmpty(Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoETBFacturaElectronica, llaveCruceFE)))
+                        {
+                            //Cuenta sin Cufe
+                            Variables.Variables.CuentasSinCufe.Add(llaveCruce, FormatearArchivo(llaveCruce, datosExtractoFormateo));
+                            datosExtractoFormateo.Clear();
+                        }
+                        else if (!string.IsNullOrEmpty(Helpers.GetValueInsumoCadena(Variables.Variables.DatosInsumoCuentasExtraer, llaveCruce)))
                         {
                             //Cuenta Retenida
                             Variables.Variables.CuentasNoImprimir.Add(llaveCruce, FormatearArchivo(llaveCruce, datosExtractoFormateo));
@@ -1111,7 +1119,7 @@ namespace App.ControlLogicaProcesos
             {
                 string[] camposEmail = lineaEmail.Split('|');
 
-                if (camposEmail.Length > 5)
+                if (camposEmail.Length > 1)
                 {
                     for (int i = 1; i < camposEmail.Length - 1; i++)
                     {
@@ -2977,7 +2985,7 @@ namespace App.ControlLogicaProcesos
 
             var result02T9 = from busqueda in datosOriginales
                              where busqueda.Length > 3 && busqueda.Substring(0, 4).Equals("02T9") && !busqueda.Substring(6, 42).Equals(" 0000000000000 0000000000000 0000000000000") &&
-                             !busqueda.Substring(0, 6).Equals("02T942")
+                             !busqueda.Substring(0, 6).Equals("02T942") 
                              select busqueda;
             #endregion
 
@@ -3032,7 +3040,7 @@ namespace App.ControlLogicaProcesos
             string llaveAgrupacion = string.Empty;
             string llaveDoc = string.Empty;
             string ValorDoc = string.Empty;
-            string llaveProductoInicio = string.Empty;
+            string llaveProductoInicio = string.Empty; 
 
             #region Agrupar 11C y 13M
             foreach (var lineaActual in dataProcesar)
@@ -3069,7 +3077,7 @@ namespace App.ControlLogicaProcesos
                     {
                         cruceTemp = new List<string>();
                     }
-                    else if (Variables.Variables.DatosInsumoTablaSustitucion.ContainsKey("CODF" + llaveDoc))
+                    else if(Variables.Variables.DatosInsumoTablaSustitucion.ContainsKey("CODF" + llaveDoc))
                     {
                         var conceptoValidacion = Variables.Variables.DatosInsumoTablaSustitucion["CODF" + llaveDoc][0].Substring(11).Trim();
 
@@ -3330,7 +3338,7 @@ namespace App.ControlLogicaProcesos
 
                     if (Variables.Variables.DatosInsumoTablaSustitucion.ContainsKey("CODF" + lineaProcesar.Substring(6, 10)))
                     {
-                        var nuevoConcepto = Variables.Variables.DatosInsumoTablaSustitucion["CODF" + lineaProcesar.Substring(6, 10)][0].Substring(15).Trim();
+                       var nuevoConcepto = Variables.Variables.DatosInsumoTablaSustitucion["CODF" + lineaProcesar.Substring(6, 10)][0].Substring(15).Trim();
 
                         if (nuevoConcepto.Contains("Revertido"))
                         {
@@ -3504,7 +3512,7 @@ namespace App.ControlLogicaProcesos
                 resultadoTemp += Helpers.SumarCampos(sumarCamposAux, "D") + "|";
                 sumarCamposAux.Clear();
 
-                #region Segmento que corrige cuando hace falta uan decima en algun valor del subtotal
+                #region Segmento que corrige cuando hace falta una decima en algun valor del subtotal
                 var valoresCST = pLineaCST.Split('|');
                 bool valorIgual = false;
                 Dictionary<string, string> valoresParecidos = new Dictionary<string, string>();
@@ -3522,7 +3530,7 @@ namespace App.ControlLogicaProcesos
                         valoresParecidos.Add(valorSumaActual, valorOriginal);
                         break;
                     }
-                }
+                } 
                 #endregion
 
                 if (valorIgual)
@@ -3531,9 +3539,7 @@ namespace App.ControlLogicaProcesos
                 }
                 else if (valoresParecidos.Any())
                 {
-                    string valorFinal = valoresParecidos[Helpers.SumarCampos(dicValores["SUBTOTAL"], "D")];
-                    resultadoTemp += valorFinal + "|";
-                    resultadoTemp = resultadoTemp.Replace((valoresParecidos.FirstOrDefault(x => x.Value == valorFinal).Key).Trim(), valorFinal);
+                    resultadoTemp += valoresParecidos[Helpers.SumarCampos(dicValores["SUBTOTAL"], "D")] + "|";
                 }
                 else
                 {
@@ -3555,25 +3561,7 @@ namespace App.ControlLogicaProcesos
 
                 resultadoTemp += Helpers.SumarCampos(dicValores["IMPUESTOS"], "D") + "|";
 
-                #region Verificar valores total para cuando les falta una decima
-
-                Dictionary<string, string> valoresSubTotal = new Dictionary<string, string>();
-
-                int longitud = resultadoTemp.Split('|').Length;
-
-                valoresSubTotal.Add(resultadoTemp.Split('|').ElementAt(longitud - 4).Replace(",", string.Empty).Replace(".", string.Empty).Replace("$", string.Empty).Trim(), string.Empty);
-                valoresSubTotal.Add(resultadoTemp.Split('|').ElementAt(longitud - 3).Replace(",", string.Empty).Replace(".", string.Empty).Replace("$", string.Empty).Trim(), string.Empty);
-
-                if (Helpers.SumarCampos(dicValores["TOTAL"], "D") == Helpers.SumarCampos(new List<string>(valoresSubTotal.Keys), "D"))
-                {
-                    resultadoTemp += Helpers.SumarCampos(dicValores["TOTAL"], "D") + "| ";
-                }
-                else
-                {
-                    resultadoTemp += Helpers.SumarCampos(new List<string>(valoresSubTotal.Keys), "D") + "| ";
-                }
-
-                #endregion
+                resultadoTemp += Helpers.SumarCampos(dicValores["TOTAL"], "D") + "| ";
 
                 // Se valida si esta vacio el concepto para no pintarlo
                 if (!Helpers.ValidarPipePipe(resultadoTemp).Replace("$ 0.00", "-").Contains("|-|-|-|-|-|-|-|-|-|-|-|"))
@@ -3583,6 +3571,8 @@ namespace App.ControlLogicaProcesos
                         resultado.Add(Helpers.ValidarPipePipe(resultadoTemp).Replace("$ 0.00", "-"));
                     }
                 }
+
+
 
                 #endregion
 
@@ -4215,7 +4205,7 @@ namespace App.ControlLogicaProcesos
             }
 
             return Helpers.ValidarPipePipe($"ADN1|{pLineaDetalle.Key}|{GetTipo(pLineaDetalle.Key)}|{linea040000.FirstOrDefault().Substring(76, 30).Trim()}|" +
-                $"{planMinutos}|{valor090000}| | ");
+                $"{planMinutos}|{valor090000}| | "); 
             #endregion
         }
 

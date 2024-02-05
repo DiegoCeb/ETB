@@ -141,3 +141,17 @@ C:\Proyectos\ETB\AppETB19102023\AppETB\App.ControlLogicaProcesos\obj\Debug\App.C
 C:\Proyectos\ETB\AppETB19102023\AppETB\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaProcesos.csproj.CopyComplete
 C:\Proyectos\ETB\AppETB19102023\AppETB\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaProcesos.dll
 C:\Proyectos\ETB\AppETB19102023\AppETB\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaProcesos.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version09012023\AppETB\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaProcesos.csproj.AssemblyReference.cache
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version09012023\AppETB\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaProcesos.csproj.CoreCompileInputs.cache
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version09012023\AppETB\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaProcesos.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version09012023\AppETB\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaProcesos.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version09012023\AppETB\App.ControlLogicaProcesos\bin\Debug\App.ControlLogicaProcesos.xml
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version09012023\AppETB\App.ControlLogicaProcesos\bin\Debug\App.ControlLogicaProcesos.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version09012023\AppETB\App.ControlLogicaProcesos\bin\Debug\App.ControlLogicaProcesos.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version09012023\AppETB\App.ControlLogicaProcesos\bin\Debug\App.ControlInsumos.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version09012023\AppETB\App.ControlLogicaProcesos\bin\Debug\App.Variables.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version09012023\AppETB\App.ControlLogicaProcesos\bin\Debug\SharpCompress.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version09012023\AppETB\App.ControlLogicaProcesos\bin\Debug\Excel.dll
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version09012023\AppETB\App.ControlLogicaProcesos\bin\Debug\App.ControlInsumos.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version09012023\AppETB\App.ControlLogicaProcesos\bin\Debug\App.Variables.pdb
+U:\ETB\Documentos\Pruebas\SOLUCIONAPP\Version09012023\AppETB\App.ControlLogicaProcesos\obj\Debug\App.ControlLogicaProcesos.csproj.CopyComplete

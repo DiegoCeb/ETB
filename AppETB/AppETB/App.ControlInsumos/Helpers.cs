@@ -1880,8 +1880,14 @@ namespace App.ControlInsumos
 
                     string dia, Mes = string.Empty;
                     dia = pCampo.Substring(2, 2);
-                    Mes = dicMeses[pCampo.Substring(0, 2)];
-
+                    if (pCampo.Substring(0, 1) == "0")
+                    {
+                        Mes = dicMeses[pCampo.Substring(1, 1)];
+                    }
+                    else
+                    {
+                        Mes = dicMeses[pCampo.Substring(0,2)];
+                    }
                     return string.Format("{0} {1}", dia.TrimStart('0'), Mes);
 
                 case "05":
@@ -3037,6 +3043,11 @@ namespace App.ControlInsumos
                     }
 
                     string transformado = numeroSuma.Replace("$", "").Replace(" ", "");
+                    if (transformado.Contains("-"))
+                    {
+                        transformado = transformado.Replace("-", "");
+                        transformado = "-" + transformado;
+                    }
                     var temTransformado = Convert.ToDouble(transformado);
                     totalSuma += temTransformado;
                 }
